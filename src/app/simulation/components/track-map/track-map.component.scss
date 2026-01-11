@@ -1,0 +1,31 @@
+// .track-svg {
+//   width: 100%;
+//   height: 100%;
+//   display: block;
+
+//   /* 👇 MOVE TRACK LEFT */
+//   transform: translateX(-5%);
+// }
+
+// .track-svg.mirrored {
+//   transform: scaleY(-1);
+// }
+
+.track-container {
+  width: 100%;
+  height: 100%;
+  padding: 8vh 8vw; /* ← THIS is your safe border */
+  box-sizing: border-box;
+  overflow: hidden; /* prevents flip overflow */
+}
+
+.track-svg {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.track-svg.mirrored {
+  transform: scaleY(-1);
+}

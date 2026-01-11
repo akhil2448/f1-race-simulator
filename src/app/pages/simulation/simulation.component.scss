@@ -1,0 +1,14 @@
+.simulation-layout {
+  display: flex;
+  height: 100vh;
+  gap: 16px;
+}
+
+app-leaderboard {
+  width: 320px; // fixed like F1 leaderboard
+  flex-shrink: 0;
+}
+
+app-track-map {
+  flex: 1; // take remaining space
+}

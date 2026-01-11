@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "KHInterference";
+  src: url("/assets/fonts/KHInterference-Regular.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "KHInterference";
+  src: url("/assets/fonts/KHInterference-Light.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "KHInterference";
+  src: url("/assets/fonts/KHInterference-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Full app background */
+html,
+body {
+  height: 100%;
+  font-family: "KHInterference", system-ui, sans-serif;
+}
+
+body {
+  background-color: #1d1b1b;
+  color: #e5e7eb;
+}
+
+.title {
+  font-weight: 700; /* Bold */
+}
+
+.subtitle {
+  font-weight: 500; /* Regular */
+}
+
+.body-text {
+  font-weight: 400; /* Light */
+}

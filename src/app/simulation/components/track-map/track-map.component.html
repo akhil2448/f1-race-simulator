@@ -1,0 +1,62 @@
+<div class="track-container">
+  <svg
+    [class.mirrored]="isMirrored"
+    class="track-svg"
+    [attr.viewBox]="viewBox"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <!-- start/finish line -->
+    <line
+      [attr.x1]="startLine.x1"
+      [attr.y1]="startLine.y1"
+      [attr.x2]="startLine.x2"
+      [attr.y2]="startLine.y2"
+      stroke="#cfcfcf"
+      stroke-width="70"
+      stroke-linecap="round"
+    />
+
+    <!-- direction marker -->
+    <marker
+      id="directionArrow"
+      markerWidth="12"
+      markerHeight="12"
+      refX="6"
+      refY="6"
+      orient="auto"
+    >
+      <path d="M0,0 L12,6 L0,12 Z" fill="#bdbdbd" />
+    </marker>
+
+    <!-- track -->
+    <polyline
+      [attr.points]="trackPoints"
+      fill="none"
+      stroke="#cfcfcf"
+      stroke-width="80"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Arrow  -->
+    <polygon
+      [attr.transform]="
+        'translate(' +
+        arrow.cx +
+        ' ' +
+        arrow.cy +
+        ') rotate(' +
+        arrow.angle +
+        ')'
+      "
+      points="0,-200 300,0 0,200"
+      fill="#d8d8d8"
+      stroke="#1a1a1a"
+      stroke-width="14"
+    />
+  </svg>
+
+  <button class="mirror-btn" (click)="toggleMirror()">
+    Flip Track Direction
+  </button>
+</div>
