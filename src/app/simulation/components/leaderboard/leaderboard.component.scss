@@ -1,23 +1,25 @@
 :host {
   display: block;
-  transform: scale(0.9);
+  transform: scale(0.92);
   transform-origin: top left;
 
-  margin-top: 24px;
-  margin-left: 24px;
+  margin-top: 14px;
+  margin-left: 8px;
 }
 
 .f1-logo-bw {
-  width: 160px;
+  width: 110px;
   height: auto;
   color: #ffffff; /* white on dark background */
-  padding-left: 20%;
-  padding-top: 5%;
+  padding-left: 24%;
+  padding-top: 8%;
   padding-bottom: 1%;
 }
 
 .leaderboard-panel {
-  width: 261px;
+  //width: 261px;
+
+  width: 200px;
   background: #0f0f14; /* slightly lighter than app bg */
   border: 1px solid #2a2a32; /* outer border */
   box-shadow: inset 0 0 0 1px #000,
@@ -25,6 +27,9 @@
 
   color: #e5e7eb;
   font-family: "KHInterference", system-ui, sans-serif;
+
+  position: relative;
+  overflow: visible;
 }
 
 hr {
@@ -41,17 +46,22 @@ hr {
 
 .leaderboard-body {
   background-color: #3a3a3e;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .driver-row {
+  position: relative; /* 🔴 REQUIRED */
   display: grid;
-  grid-template-columns: 22px 20px 1fr 78px max-content;
-  column-gap: 0;
+  grid-template-columns:
+    22px
+    26px
+    56px
+    68px
+    1fr;
+  width: 100%;
   align-items: center;
-
-  height: 32px; /* ↑ slightly taller like F1 */
-
-  font-size: 14px; /* ↑ global row readability */
+  height: 32px;
 }
 
 .driver-row:last-child {
@@ -164,14 +174,10 @@ hr {
   transform: scale(1.6);
 }
 
-/* DRIVER CODE */
 .driver-code {
-  padding-left: 18px;
-
-  font-size: 16px; /* ↑ readability */
+  padding-left: 20px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.3px;
-
   white-space: nowrap;
 }
 
@@ -218,7 +224,8 @@ hr {
 
 /* LEADERBOARD PANEL */
 .leaderboard {
-  width: 260px;
+  width: 100%;
+  box-sizing: border-box;
 
   background: linear-gradient(180deg, #1c1c1c 0%, #0e0e0e 100%);
 
@@ -227,4 +234,41 @@ hr {
 
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04),
     inset 0 -1px 0 rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.pit-indicator {
+  position: absolute;
+  right: calc(-18px - 1px);
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 18px;
+  height: 18px;
+
+  background: #ffffff;
+  color: #000000;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #000;
+
+  //animation: pitPulse 1.2s infinite;
+}
+
+@keyframes pitPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
 }

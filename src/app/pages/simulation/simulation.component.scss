@@ -1,14 +1,24 @@
 .simulation-layout {
-  display: flex;
+  display: grid;
+
+  //1st value: leaderboard, 2nd: weather, 3rd: track-map
+  grid-template-columns: 235px 210px 1fr;
   height: 100vh;
-  gap: 16px;
 }
 
+/* Leaderboard */
 app-leaderboard {
-  width: 320px; // fixed like F1 leaderboard
-  flex-shrink: 0;
+  height: 100%;
 }
 
+/* Weather panel */
+app-weather {
+  height: 100%;
+  //border-right: 1px solid #2a2a2a;
+}
+
+/* Track */
 app-track-map {
-  flex: 1; // take remaining space
+  height: 100%;
+  overflow: hidden;
 }

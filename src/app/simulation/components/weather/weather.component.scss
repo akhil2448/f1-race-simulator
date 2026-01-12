@@ -1,0 +1,48 @@
+.weather-panel {
+  margin-top: 15px;
+
+  width: 180px;
+  padding: 12px 14px;
+
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 6px;
+
+  color: #dfdfdf;
+  font-family: "KHInterference", system-ui, sans-serif;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.weather-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.weather-row {
+  display: grid;
+  grid-template-columns: 18px auto 1fr;
+  column-gap: 6px;
+
+  align-items: center;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.icon {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.label {
+  opacity: 0.85;
+}
+
+.value {
+  justify-self: end;
+  font-weight: 600;
+}
+
+.value.dry {
+  color: #e5e7eb; /* white/grey like F1 */
+}

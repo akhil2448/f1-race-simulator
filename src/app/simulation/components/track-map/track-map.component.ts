@@ -36,7 +36,17 @@ export class TrackMapComponent implements OnInit {
     const minY = Math.min(...ys);
     const maxY = Math.max(...ys);
 
-    this.viewBox = [minX, minY, maxX - minX, maxY - minY].join(' ');
+    // IMPORTANT: must be >= max stroke width / 2
+    const maxStrokeWidth = 300;
+    const strokePadding = maxStrokeWidth * 0.75;
+    // ↑ if outer stroke = 300, half is 150 → 220 gives margin
+
+    this.viewBox = [
+      minX - strokePadding,
+      minY - strokePadding,
+      maxX - minX + strokePadding * 2,
+      maxY - minY + strokePadding * 2,
+    ].join(' ');
 
     // 3️⃣ compute start line
     const startIndex = this.track.findIndex((p) => p.isStart);
@@ -53,7 +63,7 @@ export class TrackMapComponent implements OnInit {
     const ny = dx / len;
 
     // Start line length
-    const halfWidth = 180;
+    const halfWidth = 280;
 
     this.startLine = {
       x1: p1.x + nx * halfWidth,
@@ -80,5 +90,10 @@ export class TrackMapComponent implements OnInit {
 
   toggleMirror() {
     this.isMirrored = !this.isMirrored;
+  }
+
+  get eventYear(): string {
+    const match = this.trackInfo.officialEventName.match(/\d{4}$/);
+    return match ? match[0] : '';
   }
 }
