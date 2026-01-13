@@ -10,7 +10,7 @@
 .f1-logo-bw {
   width: 110px;
   height: auto;
-  color: #ffffff; /* white on dark background */
+  color: #dfdfdf; /* white on dark background */
   padding-left: 24%;
   padding-top: 8%;
   padding-bottom: 1%;
@@ -19,13 +19,13 @@
 .leaderboard-panel {
   //width: 261px;
 
-  width: 200px;
+  width: 210px;
   background: #0f0f14; /* slightly lighter than app bg */
   border: 1px solid #2a2a32; /* outer border */
   box-shadow: inset 0 0 0 1px #000,
     /* inner hard border */ 0 6px 18px rgba(0, 0, 0, 0.6); /* depth */
 
-  color: #e5e7eb;
+  color: #dfdfdf;
   font-family: "KHInterference", system-ui, sans-serif;
 
   position: relative;
@@ -39,7 +39,7 @@ hr {
 }
 
 .session-time {
-  font-weight: 700;
+  font-weight: 500;
   padding-left: 28%;
   padding-bottom: 7%;
 }
@@ -51,14 +51,16 @@ hr {
 }
 
 .driver-row {
-  position: relative; /* 🔴 REQUIRED */
+  position: relative; /* required for absolute-positioned P box */
   display: grid;
+
   grid-template-columns:
-    22px
-    26px
-    56px
-    68px
-    1fr;
+    22px /* ① POSITION (1, 2, 3...) */
+    26px /* ② TEAM LOGO */
+    56px /* ③ DRIVER CODE (LEC, HAM, etc.) */
+    78px /* ④ LAP TIME (1:32.245) */
+    1fr; /* ⑤ FLEX / SPARE (tyre OR empty buffer) */
+
   width: 100%;
   align-items: center;
   height: 32px;
@@ -78,17 +80,17 @@ hr {
   justify-content: center;
 
   background: #e10600;
-  color: #fff;
+  color: #dfdfdf;
 
   font-size: 13px; /* ↑ clearer */
-  font-weight: 700;
+  font-weight: 500;
 
   border-radius: 0; /* F1 = sharp edge */
 }
 
 .driver-row:nth-child(n + 2) .position {
   background: #000000;
-  color: #fff;
+  color: #dfdfdf;
 }
 
 /* TEAM LOGO */
@@ -195,11 +197,11 @@ hr {
 
 /* TYRE */
 .tyre {
-  margin-left: 9px;
-  margin-right: 9px;
+  margin-left: 13px;
+  //margin-right: 9px;
 
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
 
   background: none;
@@ -213,7 +215,7 @@ hr {
   color: #ffd400;
 }
 .tyre.hard {
-  color: #ffffff;
+  color: #dfdfdf;
 }
 .tyre.intermediate {
   color: #3cff00;
@@ -245,7 +247,7 @@ hr {
   width: 18px;
   height: 18px;
 
-  background: #ffffff;
+  background: #dfdfdf;
   color: #000000;
 
   font-size: 12px;
