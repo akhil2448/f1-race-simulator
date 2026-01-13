@@ -3,6 +3,7 @@ import { LeaderboardComponent } from '../../simulation/components/leaderboard/le
 import { TrackMapComponent } from '../../simulation/components/track-map/track-map.component';
 import { RaceClockComponent } from '../../simulation/components/race-clock/race-clock.component';
 import { WeatherComponent } from '../../simulation/components/weather/weather.component';
+import { DriverComponent } from '../../simulation/components/driver/driver.component';
 
 @Component({
   selector: 'app-simulation',
@@ -12,6 +13,7 @@ import { WeatherComponent } from '../../simulation/components/weather/weather.co
     TrackMapComponent,
     RaceClockComponent,
     WeatherComponent,
+    DriverComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',

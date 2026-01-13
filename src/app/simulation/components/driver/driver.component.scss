@@ -1,0 +1,62 @@
+.driver-telemetry-panel {
+  margin-top: 15px;
+  width: 180px;
+
+  background: linear-gradient(180deg, #1c1c1c 0%, #0e0e0e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+
+  padding: 12px 14px;
+  color: #dfdfdf;
+
+  font-family: "KHInterference", system-ui, sans-serif;
+  font-size: 13px;
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.driver-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+
+  color: #dfdfdf;
+  text-transform: uppercase;
+}
+
+.telemetry-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  padding: 3px 0;
+}
+
+.telemetry-row .label {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.telemetry-row .value {
+  color: #dfdfdf;
+  font-weight: 700;
+
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.value.dry {
+  color: #9ca3af;
+}
+
+.value.braking {
+  color: #ff2b2b;
+}
+
+.telemetry-row:nth-child(6) {
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
