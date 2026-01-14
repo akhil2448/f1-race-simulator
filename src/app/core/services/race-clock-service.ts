@@ -17,6 +17,7 @@ export class RaceClockService {
 
     this.timerSub = interval(1000 / this.speed).subscribe(() => {
       this.currentSecond$.next(this.currentSecond$.value + 1);
+      console.log(this.currentSecond$.value);
     });
   }
 

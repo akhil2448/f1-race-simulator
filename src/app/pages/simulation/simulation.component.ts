@@ -56,15 +56,11 @@ export class SimulationComponent implements OnInit {
     //   console.log('Engine frame:', frame.raceTime, frame.cars.length);
     // });
 
-    this.engine.frame$.subscribe((frame) => {
-      console.log('ENGINE FRAME:', frame);
-    });
-
-    this.telemetry.loadChunk(2021, 7, 0, 600).subscribe(() => {
-      console.log('Telemetry loaded');
-
-      this.engine.initialize(); // ✅ MUST happen first
-      this.raceClock.play(); // ✅ start clock AFTER
+    this.telemetry.initialize(2021, 7).subscribe(() => {
+      this.engine.initialize();
+      this.raceClock.play();
+      this.raceClock.setSpeed(4);
+      console.log(this.raceClock.getCurrentSecond());
     });
   }
 }
