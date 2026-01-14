@@ -1,14 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { TRACK_DATA, TrackPoint } from './track-data';
+import { TelemetryCar } from '../../../core/models/race-telemetry.model';
+import { SimulationEngineService } from '../../../core/services/simulation-engine.service';
 
 @Component({
   selector: 'app-track-map',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './track-map.component.html',
   styleUrl: './track-map.component.scss',
 })
 export class TrackMapComponent implements OnInit {
+  constructor(private engine: SimulationEngineService) {}
+
+  /* ---------- UI ---------- */
+  isMirrored = false;
+
+  /* ---------- TRACK DATA ---------- */
   track: TrackPoint[] = TRACK_DATA.coordinates;
   trackInfo = TRACK_DATA.trackInfo;
 
@@ -16,77 +25,143 @@ export class TrackMapComponent implements OnInit {
   viewBox = '';
 
   startLine = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  arrow = { cx: 0, cy: 0, angle: 0 };
 
-  arrow = {
-    cx: 0,
-    cy: 0,
-    angle: 0,
-  };
+  /* ---------- CARS ---------- */
+  cars: TelemetryCar[] = [];
+
+  /* ---------- DISTANCE MAPPING ---------- */
+  trackDistances: number[] = [];
+  totalTrackLength = 0;
+  trackReady = false;
+
+  /* real-world lap length (meters) */
+  realTrackLengthMeters = 0;
 
   ngOnInit(): void {
-    // 1️⃣ build track polyline
+    /* ---------- REAL TRACK LENGTH (SOURCE OF TRUTH) ---------- */
+    this.realTrackLengthMeters = this.trackInfo.trackLength;
+
+    /* ---------- SVG POLYLINE ---------- */
     this.trackPoints = this.track.map((p) => `${p.x},${p.y}`).join(' ');
 
-    // 2️⃣ compute viewBox
     const xs = this.track.map((p) => p.x);
     const ys = this.track.map((p) => p.y);
 
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
-
-    // IMPORTANT: must be >= max stroke width / 2
-    const maxStrokeWidth = 300;
-    const strokePadding = maxStrokeWidth * 0.75;
-    // ↑ if outer stroke = 300, half is 150 → 220 gives margin
-
+    const padding = 380; // MUST be >= outer stroke width
     this.viewBox = [
-      minX - strokePadding,
-      minY - strokePadding,
-      maxX - minX + strokePadding * 2,
-      maxY - minY + strokePadding * 2,
+      Math.min(...xs) - padding,
+      Math.min(...ys) - padding,
+      Math.max(...xs) - Math.min(...xs) + padding * 2,
+      Math.max(...ys) - Math.min(...ys) + padding * 2,
     ].join(' ');
 
-    // 3️⃣ compute start line
+    /* ---------- START LINE + ARROW ---------- */
     const startIndex = this.track.findIndex((p) => p.isStart);
-    if (startIndex === -1 || startIndex === this.track.length - 1) return;
+    if (startIndex > -1 && startIndex < this.track.length - 1) {
+      const p1 = this.track[startIndex];
+      const p2 = this.track[startIndex + 1];
 
-    const p1 = this.track[startIndex];
-    const p2 = this.track[startIndex + 1];
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const len = Math.hypot(dx, dy);
 
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const len = Math.sqrt(dx * dx + dy * dy);
+      const nx = -dy / len;
+      const ny = dx / len;
 
-    const nx = -dy / len;
-    const ny = dx / len;
+      const halfWidth = 300;
 
-    // Start line length
-    const halfWidth = 280;
+      this.startLine = {
+        x1: p1.x + nx * halfWidth,
+        y1: p1.y + ny * halfWidth,
+        x2: p1.x - nx * halfWidth,
+        y2: p1.y - ny * halfWidth,
+      };
 
-    this.startLine = {
-      x1: p1.x + nx * halfWidth,
-      y1: p1.y + ny * halfWidth,
-      x2: p1.x - nx * halfWidth,
-      y2: p1.y - ny * halfWidth,
-    };
+      this.arrow = {
+        cx: p1.x + nx * 740 - (dx / len) * 120,
+        cy: p1.y + ny * 740 - (dy / len) * 120,
+        angle: Math.atan2(dy, dx) * (180 / Math.PI),
+      };
+    }
 
-    // arrow direction (same as track)
-    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    /* ---------- PRECOMPUTE SVG DISTANCES ---------- */
+    this.trackDistances = [0];
+    this.totalTrackLength = 0;
 
-    // offset arrow to the side of track
-    const sideOffset = 740; // distance from track center
-    const forwardOffset = -120; // move slightly ahead of start line
+    for (let i = 1; i < this.track.length; i++) {
+      const dx = this.track[i].x - this.track[i - 1].x;
+      const dy = this.track[i].y - this.track[i - 1].y;
+      const d = Math.hypot(dx, dy);
 
-    this.arrow = {
-      cx: p1.x + (dx / len) * forwardOffset + nx * sideOffset,
-      cy: p1.y + (dy / len) * forwardOffset + ny * sideOffset,
-      angle,
-    };
+      this.totalTrackLength += d;
+      this.trackDistances.push(this.totalTrackLength);
+    }
+
+    /* close loop (last → first) */
+    const last = this.track[this.track.length - 1];
+    const first = this.track[0];
+    this.totalTrackLength += Math.hypot(first.x - last.x, first.y - last.y);
+
+    this.trackReady = true;
+
+    console.log('SVG track length:', this.totalTrackLength);
+    console.log('Real track length (meters):', this.realTrackLengthMeters);
+
+    /* ---------- TELEMETRY ---------- */
+    this.engine.frame$.subscribe((frame) => {
+      if (!frame || !frame.cars.length) return;
+      this.cars = frame.cars;
+    });
   }
 
-  isMirrored = false;
+  /* ---------- METERS → SVG DISTANCE ---------- */
+  toSvgDistance(distanceMeters: number): number {
+    return (
+      ((distanceMeters % this.realTrackLengthMeters) /
+        this.realTrackLengthMeters) *
+      this.totalTrackLength
+    );
+  }
+
+  /* ---------- SVG DISTANCE → POSITION ---------- */
+  getCarPosition(distance: number) {
+    if (!this.trackReady) {
+      return this.track[0];
+    }
+
+    const target =
+      ((distance % this.totalTrackLength) + this.totalTrackLength) %
+      this.totalTrackLength;
+
+    for (let i = 1; i < this.trackDistances.length; i++) {
+      if (this.trackDistances[i] >= target) {
+        const prev = this.trackDistances[i - 1];
+        const ratio = (target - prev) / (this.trackDistances[i] - prev);
+
+        const p1 = this.track[i - 1];
+        const p2 = this.track[i];
+
+        return {
+          x: p1.x + (p2.x - p1.x) * ratio,
+          y: p1.y + (p2.y - p1.y) * ratio,
+        };
+      }
+    }
+
+    /* final loop segment */
+    const last = this.track[this.track.length - 1];
+    const first = this.track[0];
+    const remaining =
+      target - this.trackDistances[this.trackDistances.length - 1];
+    const loopLen = Math.hypot(first.x - last.x, first.y - last.y);
+    const ratio = remaining / loopLen;
+
+    return {
+      x: last.x + (first.x - last.x) * ratio,
+      y: last.y + (first.y - last.y) * ratio,
+    };
+  }
 
   toggleMirror() {
     this.isMirrored = !this.isMirrored;

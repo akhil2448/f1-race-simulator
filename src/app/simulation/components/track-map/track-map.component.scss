@@ -1,13 +1,15 @@
 .track-container {
-  padding: 15vh 3vw; /* ↑ more vertical safety */
+  padding: 6vh 3vw; /* small breathing space */
   box-sizing: border-box;
   overflow: hidden;
-  position: relative;
   width: 100%;
   height: 100%;
 }
 
 .track-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
   transform-origin: center;
   transition: transform 0.3s ease;
   //transform: translateX(-2vw);
@@ -35,4 +37,8 @@
 .track-location {
   font-size: 13px;
   opacity: 0.75;
+}
+
+.cars-layer {
+  pointer-events: none;
 }
