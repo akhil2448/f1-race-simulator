@@ -1,1 +1,18 @@
-<h2>1:03:45:245</h2>
+<div class="race-clock-bar">
+  <div class="time">{{ formattedTime }}</div>
+
+  <div class="controls">
+    <button [class.active-play]="!paused" (click)="play()">▶</button>
+    <button [class.active-pause]="paused" (click)="pause()">⏸</button>
+    <button (click)="reset()">⏹</button>
+
+    <div class="speed-group">
+      <button [class.speed-05]="speed === 0.5" (click)="setSpeed(0.5)">
+        0.5×
+      </button>
+      <button [class.speed-1]="speed === 1" (click)="setSpeed(1)">1×</button>
+      <button [class.speed-2]="speed === 2" (click)="setSpeed(2)">2×</button>
+      <button [class.speed-4]="speed === 4" (click)="setSpeed(4)">4×</button>
+    </div>
+  </div>
+</div>

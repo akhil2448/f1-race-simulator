@@ -39,7 +39,7 @@ export class TrackMapComponent implements OnInit {
   realTrackLengthMeters = 0;
 
   ngOnInit(): void {
-    /* ---------- REAL TRACK LENGTH (SOURCE OF TRUTH) ---------- */
+    /* ---------- REAL TRACK LENGTH ---------- */
     this.realTrackLengthMeters = this.trackInfo.trackLength;
 
     /* ---------- SVG POLYLINE ---------- */
@@ -48,7 +48,7 @@ export class TrackMapComponent implements OnInit {
     const xs = this.track.map((p) => p.x);
     const ys = this.track.map((p) => p.y);
 
-    const padding = 380; // MUST be >= outer stroke width
+    const padding = 380;
     this.viewBox = [
       Math.min(...xs) - padding,
       Math.min(...ys) - padding,
@@ -56,9 +56,16 @@ export class TrackMapComponent implements OnInit {
       Math.max(...ys) - Math.min(...ys) + padding * 2,
     ].join(' ');
 
-    /* ---------- START LINE + ARROW ---------- */
+    /* ---------- START / FINISH INDICES ---------- */
     const startIndex = this.track.findIndex((p) => p.isStart);
-    if (startIndex > -1 && startIndex < this.track.length - 1) {
+    const finishIndex = this.track.findIndex((p) => p.isFinish);
+
+    if (startIndex === -1 || finishIndex === -1) {
+      throw new Error('Track must define isStart and isFinish');
+    }
+
+    /* ---------- START LINE + ARROW ---------- */
+    if (startIndex < this.track.length - 1) {
       const p1 = this.track[startIndex];
       const p2 = this.track[startIndex + 1];
 
@@ -85,23 +92,24 @@ export class TrackMapComponent implements OnInit {
       };
     }
 
-    /* ---------- PRECOMPUTE SVG DISTANCES ---------- */
+    /* ---------- PRECOMPUTE SVG DISTANCES (START → FINISH) ---------- */
     this.trackDistances = [0];
     this.totalTrackLength = 0;
 
-    for (let i = 1; i < this.track.length; i++) {
-      const dx = this.track[i].x - this.track[i - 1].x;
-      const dy = this.track[i].y - this.track[i - 1].y;
-      const d = Math.hypot(dx, dy);
+    for (let i = startIndex + 1; i <= finishIndex; i++) {
+      const prev = this.track[i - 1];
+      const curr = this.track[i];
 
+      const d = Math.hypot(curr.x - prev.x, curr.y - prev.y);
       this.totalTrackLength += d;
       this.trackDistances.push(this.totalTrackLength);
     }
 
-    /* close loop (last → first) */
-    const last = this.track[this.track.length - 1];
-    const first = this.track[0];
-    this.totalTrackLength += Math.hypot(first.x - last.x, first.y - last.y);
+    /* ---------- CLOSE LOOP (FINISH → START) ---------- */
+    const start = this.track[startIndex];
+    const finish = this.track[finishIndex];
+
+    this.totalTrackLength += Math.hypot(start.x - finish.x, start.y - finish.y);
 
     this.trackReady = true;
 
@@ -149,17 +157,22 @@ export class TrackMapComponent implements OnInit {
       }
     }
 
-    /* final loop segment */
-    const last = this.track[this.track.length - 1];
-    const first = this.track[0];
+    /* ---------- FINISH → START SEGMENT ---------- */
+    const startIndex = this.track.findIndex((p) => p.isStart);
+    const finishIndex = this.track.findIndex((p) => p.isFinish);
+
+    const start = this.track[startIndex];
+    const finish = this.track[finishIndex];
+
     const remaining =
       target - this.trackDistances[this.trackDistances.length - 1];
-    const loopLen = Math.hypot(first.x - last.x, first.y - last.y);
+
+    const loopLen = Math.hypot(start.x - finish.x, start.y - finish.y);
     const ratio = remaining / loopLen;
 
     return {
-      x: last.x + (first.x - last.x) * ratio,
-      y: last.y + (first.y - last.y) * ratio,
+      x: finish.x + (start.x - finish.x) * ratio,
+      y: finish.y + (start.y - finish.y) * ratio,
     };
   }
 

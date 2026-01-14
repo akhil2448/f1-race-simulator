@@ -32,8 +32,23 @@ app-weather {
   //border-right: 1px solid #2a2a2a;
 }
 
+.track-column {
+  display: grid;
+  grid-template-rows: auto 1fr; /* clock = auto, map = rest */
+  height: 100%;
+  overflow: hidden;
+}
+
+app-race-clock {
+  display: flex;
+  justify-content: flex-start;
+  padding: 16px 24px;
+  box-sizing: border-box;
+}
+
 /* Track */
 app-track-map {
   height: 100%;
+  width: 100%;
   overflow: hidden;
 }

@@ -36,6 +36,7 @@ export class SimulationComponent implements OnInit {
     // });
     // this.raceClock.play();
     // this.raceClock.setSpeed(0.5);
+
     // TEST RaceTelemetryBufferService
     //-------------------------------------------------
     // this.telemetry.loadChunk(2021, 7, 0, 600).subscribe(() => {
@@ -43,6 +44,7 @@ export class SimulationComponent implements OnInit {
     //   console.log('Frame @120:', this.telemetry.getFrame(120));
     //   console.log('Telemetry loaded');
     // });
+
     // TEST SimulationEngineService
     //-------------------------------------------------
     // 👂 Listen to engine output
@@ -56,11 +58,12 @@ export class SimulationComponent implements OnInit {
     //   console.log('Engine frame:', frame.raceTime, frame.cars.length);
     // });
 
+    // Run SimulationEngineSerice & RaceClock
+    //-------------------------------------------------
     this.telemetry.initialize(2021, 7).subscribe(() => {
       this.engine.initialize();
+      //this.raceClock.setSpeed(4);
       this.raceClock.play();
-      this.raceClock.setSpeed(4);
-      console.log(this.raceClock.getCurrentSecond());
     });
   }
 }

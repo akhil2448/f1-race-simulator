@@ -1,0 +1,117 @@
+.race-clock-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+
+  padding: 12px 20px;
+  background: linear-gradient(180deg, #0f0f0f, #0b0b0b);
+  border-radius: 14px;
+  color: #fff;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ---------------- TIME ---------------- */
+
+.time {
+  font-size: 22px;
+  font-weight: 700;
+  min-width: 72px;
+  text-align: right;
+}
+
+/* ---------------- BUTTON BASE ---------------- */
+
+.controls button,
+.speed-group button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #1b1b1b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.controls button:hover,
+.speed-group button:hover {
+  background: #2a2a2a;
+}
+
+.controls button:active,
+.speed-group button:active {
+  transform: scale(0.95);
+}
+
+/* ---------------- CONTROLS ---------------- */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ▶ PLAY (running) */
+.controls button.active-play {
+  background: #22c55e; /* muted green */
+  color: #041b0d;
+  font-weight: 700;
+
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 0 10px rgba(34, 197, 94, 0.45);
+}
+
+/* ⏸ PAUSE */
+.controls button.active-pause {
+  background: #facc15; /* amber */
+  color: #1a1a1a;
+  font-weight: 700;
+
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 0 10px rgba(250, 204, 21, 0.45);
+}
+
+/* ---------------- SPEED GROUP ---------------- */
+
+.speed-group {
+  display: flex;
+  gap: 6px;
+  margin-left: 12px;
+}
+
+.speed-group button {
+  min-width: 44px;
+}
+
+/* 0.5x – cool gray-blue */
+.speed-group button.speed-05 {
+  background: #334155;
+  color: #e5e7eb;
+}
+
+/* 1x – neutral */
+.speed-group button.speed-1 {
+  background: #374151;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* 2x – warm amber */
+.speed-group button.speed-2 {
+  background: #78350f;
+  color: #fde68a;
+}
+
+/* 4x – restrained red */
+.speed-group button.speed-4 {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* subtle inner outline for active speeds */
+.speed-group button[class^="speed-"] {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}

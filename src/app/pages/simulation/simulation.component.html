@@ -3,10 +3,13 @@
 
   <div class="info-sidebar">
     <app-weather></app-weather>
-
     <app-driver [slot]="1"></app-driver>
     <app-driver [slot]="2"></app-driver>
   </div>
 
-  <app-track-map></app-track-map>
+  <!-- RIGHT COLUMN -->
+  <div class="track-column">
+    <app-race-clock></app-race-clock>
+    <app-track-map></app-track-map>
+  </div>
 </div>
