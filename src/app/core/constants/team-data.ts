@@ -15,10 +15,10 @@ export const TEAM_COLORS: Record<string, string> = {
   Alpine: '#0090FF',
 
   // Aston Martin – British racing green
-  'Aston Martin': '#006F62',
+  'Aston Martin': '#00a894ff',
 
   // AlphaTauri – navy blue
-  AlphaTauri: '#c7d4e2ff',
+  AlphaTauri: '#889aadff',
 
   // Alfa Romeo – deep crimson
   'Alfa Romeo': '#900000',

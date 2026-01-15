@@ -20,7 +20,9 @@ export interface LeaderboardViewState {
   providedIn: 'root',
 })
 export class LeaderboardService {
-  /* ---------- STATE ---------- */
+  /* ===================================================== */
+  /* STATE                                                */
+  /* ===================================================== */
 
   private leaderboardSubject = new BehaviorSubject<LeaderboardViewState>({
     entries: [],
@@ -31,28 +33,42 @@ export class LeaderboardService {
   leaderboard$ = this.leaderboardSubject.asObservable();
 
   private previousFrame?: TelemetryFrame;
-  private driverState = new Map<string, DriverRaceState>();
   private totalLaps = 0;
+
+  /** Per-driver pit + tyre state */
+  private driverState = new Map<string, DriverRaceState>();
+
+  /**
+   * Stores last stable time gaps (leader-relative).
+   * Used to FREEZE gaps when leader is in pit.
+   */
+  private lastStableGaps = new Map<string, number>();
+
+  /**
+   * Tracks current leader.
+   * Needed to RESET gap cache when leader changes.
+   */
+  private lastLeader?: string;
 
   constructor(
     private engine: SimulationEngineService,
     private driverStateService: DriverStateService
   ) {
-    /* ---------- TELEMETRY ---------- */
+    /* ---------- TELEMETRY STREAM ---------- */
     this.engine.frame$.subscribe((frame) => {
       if (!frame || !frame.cars.length) return;
 
       if (this.previousFrame) {
         this.updateLeaderboard(this.previousFrame, frame);
       } else {
-        // FIRST FRAME (important for pit-lane start)
+        // First frame (important for pit-lane start)
         this.updateLeaderboard(frame, frame);
       }
 
       this.previousFrame = frame;
     });
 
-    /* ---------- DRIVER STATE ---------- */
+    /* ---------- DRIVER STATE STREAM ---------- */
     this.driverStateService.driverState$.subscribe((state) => {
       this.driverState = state;
     });
@@ -62,11 +78,11 @@ export class LeaderboardService {
   /* EXTERNAL SETTERS                                      */
   /* ===================================================== */
 
-  /** Called ONCE from orchestration component */
+  /** Called ONCE after race data is loaded */
   setTotalLaps(totalLaps: number): void {
     this.totalLaps = totalLaps;
 
-    // update existing state without touching entries
+    // Update view state without touching entries
     const current = this.leaderboardSubject.value;
     this.leaderboardSubject.next({
       ...current,
@@ -79,22 +95,56 @@ export class LeaderboardService {
   /* ===================================================== */
 
   private updateLeaderboard(prev: TelemetryFrame, curr: TelemetryFrame): void {
-    /* ---------- SORT BY DISTANCE ---------- */
+    /* ---------- SORT BY RACE DISTANCE ---------- */
     const sorted = [...curr.cars].sort((a, b) => b.distance - a.distance);
     const leader = sorted[0];
 
-    /* ---------- LEADER SPEED ---------- */
+    /* ---------- LEADER CHANGE DETECTION ---------- */
+    if (this.lastLeader && this.lastLeader !== leader.driver) {
+      /**
+       * Leader changed (e.g. old leader pitted and got overtaken).
+       * Any cached gaps are now INVALID because they were relative
+       * to the old leader.
+       */
+      this.lastStableGaps.clear();
+    }
+    this.lastLeader = leader.driver;
+
+    /* ---------- LEADER SPEED (m/s) ---------- */
     const prevLeader = prev.cars.find((c) => c.driver === leader.driver);
     const leaderSpeed = prevLeader ? leader.distance - prevLeader.distance : 0;
 
-    /* ---------- BUILD ROWS ---------- */
+    /* ---------- LEADER PIT STATE ---------- */
+    const leaderState = this.driverState.get(leader.driver);
+    const leaderInPit = leaderState?.isInPit === true;
+
+    /* ---------- BUILD LEADERBOARD ROWS ---------- */
     const entries: LeaderboardEntry[] = sorted.map((car, index) => {
       const distanceGap = leader.distance - car.distance;
-
-      const gapToLeader =
-        index === 0 || leaderSpeed <= 0 ? 0 : distanceGap / leaderSpeed;
-
       const state = this.driverState.get(car.driver);
+
+      let gapToLeader = 0;
+
+      if (index === 0) {
+        // Leader always has zero gap
+        gapToLeader = 0;
+      } else if (leaderInPit || leaderSpeed <= 0) {
+        /**
+         * Leader is in pit (or speed invalid).
+         * Freeze gaps to last known stable value.
+         * Matches real F1 broadcast timing behavior.
+         */
+        gapToLeader = this.lastStableGaps.get(car.driver) ?? 0;
+      } else {
+        /**
+         * Normal racing condition:
+         * Convert distance gap → time gap using leader speed.
+         */
+        gapToLeader = distanceGap / leaderSpeed;
+
+        // Cache stable gap for future pit scenarios
+        this.lastStableGaps.set(car.driver, gapToLeader);
+      }
 
       return {
         position: index + 1,

@@ -5,6 +5,7 @@ import { SimulationEngineService } from '../../../core/services/simulation-engin
 import { TrackMapService } from '../../../core/services/track-map.service';
 import { TrackInfo, TrackPoint } from '../../../core/models/track-data.model';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
+import { TelemetryInterpolationService } from '../../../core/services/telemetry-interpolation.service';
 
 @Component({
   selector: 'app-track-map',
@@ -15,6 +16,7 @@ import { DriverMetaService } from '../../../core/services/driver-meta.service';
 })
 export class TrackMapComponent implements OnInit {
   constructor(
+    private interpolatedTelemetry: TelemetryInterpolationService,
     private engine: SimulationEngineService,
     private trackMap: TrackMapService,
     private driverMeta: DriverMetaService
@@ -55,9 +57,9 @@ export class TrackMapComponent implements OnInit {
       this.buildTrack();
     });
 
-    /* ---------- TELEMETRY ---------- */
-    this.engine.frame$.subscribe((frame) => {
-      if (!frame || !frame.cars.length) return;
+    /* ---------- TELEMETRY with INTERPOLATION ADDED ---------- */
+    this.interpolatedTelemetry.interpolatedFrame$.subscribe((frame) => {
+      if (!frame) return;
       this.cars = frame.cars;
     });
   }

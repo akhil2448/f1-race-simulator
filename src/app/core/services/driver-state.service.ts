@@ -100,7 +100,7 @@ export class DriverStateService {
       if (entry.PitOutTime != null) {
         const pitOut = entry.PitOutTime;
 
-        // Pit-lane start (no PitInTime before)
+        // Race start from Pit-lane (no PitInTime before)
         if (openPitIn === null) {
           windows.push({
             in: 0,
@@ -150,7 +150,6 @@ export class DriverStateService {
         compound = pit.compoundAfter;
       }
     }
-
     return compound;
   }
 }
