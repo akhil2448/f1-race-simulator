@@ -57,8 +57,8 @@ hr {
   grid-template-columns:
     22px /* ① POSITION (1, 2, 3...) */
     26px /* ② TEAM LOGO */
-    56px /* ③ DRIVER CODE (LEC, HAM, etc.) */
-    78px /* ④ LAP TIME (1:32.245) */
+    64px /* ③ DRIVER CODE (LEC, HAM, etc.) */
+    78px /* ④ LAP TIME (1:32.245) 78 */
     1fr; /* ⑤ FLEX / SPARE (tyre OR empty buffer) */
 
   width: 100%;
@@ -104,7 +104,6 @@ hr {
   width: 18px;
   height: 18px;
   // object-fit: contain;
-  margin-left: 80%;
 }
 
 .team-icon img.redbull {
@@ -177,20 +176,22 @@ hr {
 }
 
 .driver-code {
-  padding-left: 20px;
+  padding-left: 6px;
   font-size: 16px;
   font-weight: 700;
   white-space: nowrap;
 }
 
 /* LAP TIME */
-.laptime {
+.driver-stats {
   font-size: 13px; /* ↑ readability */
   opacity: 1;
   font-weight: 500;
 
   text-align: right;
   justify-self: end;
+  white-space: nowrap;
+  overflow: hidden;
 
   font-variant-numeric: tabular-nums;
 }

@@ -1,108 +1,110 @@
-<div class="track-container">
-  <div class="track-title">
-    <div class="event-name">{{ trackInfo.eventName }}, {{ eventYear }}</div>
-    <div class="track-location">
-      {{ trackInfo.location }}, {{ trackInfo.country }}
+<div class="track-container" *ngIf="trackInfo">
+  <div class="track-container">
+    <div class="track-title">
+      <div class="event-name">{{ trackInfo.eventName }}, {{ eventYear }}</div>
+      <div class="track-location">
+        {{ trackInfo.location }}, {{ trackInfo.country }}
+      </div>
     </div>
-  </div>
 
-  <svg
-    class="track-svg"
-    [class.mirrored]="isMirrored"
-    [attr.viewBox]="viewBox"
-    preserveAspectRatio="xMinYMid meet"
-  >
-    <defs>
-      <filter id="carGlow">
-        <feGaussianBlur stdDeviation="6" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
+    <svg
+      class="track-svg"
+      [class.mirrored]="isMirrored"
+      [attr.viewBox]="viewBox"
+      preserveAspectRatio="xMinYMid meet"
+    >
+      <defs>
+        <filter id="carGlow">
+          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
 
-    <!-- Track -->
-    <!-- outer border -->
-    <polyline
-      [attr.points]="trackPoints"
-      fill="none"
-      stroke="#cfcfcf"
-      stroke-width="380"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+      <!-- Track -->
+      <!-- outer border -->
+      <polyline
+        [attr.points]="trackPoints"
+        fill="none"
+        stroke="#cfcfcf"
+        stroke-width="380"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
 
-    <!-- asphalt -->
-    <polyline
-      [attr.points]="trackPoints"
-      fill="none"
-      stroke="#2a2a2a"
-      stroke-width="280"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+      <!-- asphalt -->
+      <polyline
+        [attr.points]="trackPoints"
+        fill="none"
+        stroke="#2a2a2a"
+        stroke-width="280"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
 
-    <!-- inner shading -->
-    <polyline
-      [attr.points]="trackPoints"
-      fill="none"
-      stroke="#1a1a1a"
-      stroke-width="220"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+      <!-- inner shading -->
+      <polyline
+        [attr.points]="trackPoints"
+        fill="none"
+        stroke="#1a1a1a"
+        stroke-width="220"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
 
-    <!-- Direction Arrow -->
-    <path
-      [attr.transform]="
-        'translate(' +
-        arrow.cx +
-        ' ' +
-        arrow.cy +
-        ') rotate(' +
-        arrow.angle +
-        ')'
-      "
-      d="
+      <!-- Direction Arrow -->
+      <path
+        [attr.transform]="
+          'translate(' +
+          arrow.cx +
+          ' ' +
+          arrow.cy +
+          ') rotate(' +
+          arrow.angle +
+          ')'
+        "
+        d="
         M -240 -160 L 0 0 L -240 160
         M -80  -160 L 160 0 L -80 160
       "
-      stroke="#ffffff"
-      stroke-width="26"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      fill="none"
-    />
-
-    <!-- start/finish line -->
-    <line
-      [attr.x1]="startLine.x1"
-      [attr.y1]="startLine.y1"
-      [attr.x2]="startLine.x2"
-      [attr.y2]="startLine.y2"
-      stroke="#cfcfcf"
-      stroke-width="70"
-      stroke-linecap="round"
-    />
-
-    <!-- Cars -->
-    <g class="cars-layer" *ngIf="trackReady && cars.length">
-      <circle
-        *ngFor="let car of cars"
-        [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-        [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
-        r="100"
-        fill="#ff2b2b"
-        stroke="#000"
-        stroke-width="10"
-        filter="url(#carGlow)"
+        stroke="#ffffff"
+        stroke-width="26"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
       />
-    </g>
-    <!-- <circle [attr.cx]="track[0].x" [attr.cy]="track[0].y" r="120" fill="red" /> -->
-  </svg>
 
-  <button class="mirror-btn" (click)="toggleMirror()">
-    Flip Track Direction
-  </button>
+      <!-- start/finish line -->
+      <line
+        [attr.x1]="startLine.x1"
+        [attr.y1]="startLine.y1"
+        [attr.x2]="startLine.x2"
+        [attr.y2]="startLine.y2"
+        stroke="#cfcfcf"
+        stroke-width="70"
+        stroke-linecap="round"
+      />
+
+      <!-- Cars -->
+      <g class="cars-layer" *ngIf="trackReady && cars.length">
+        <circle
+          *ngFor="let car of cars"
+          [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+          [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+          r="100"
+          [attr.fill]="getCarColor(car.driver)"
+          stroke="#000"
+          stroke-width="10"
+          filter="url(#carGlow)"
+        />
+      </g>
+      <!-- <circle [attr.cx]="track[0].x" [attr.cy]="track[0].y" r="120" fill="red" /> -->
+    </svg>
+
+    <button class="mirror-btn" (click)="toggleMirror()">
+      Flip Track Direction
+    </button>
+  </div>
 </div>
