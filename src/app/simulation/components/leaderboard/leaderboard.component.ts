@@ -27,13 +27,14 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   leaderLap = 0;
   totalLaps = 0;
 
-  // For leaderboard position change transition
   private rowPositions = new Map<string, number>();
 
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
 
-  gapMode: GapMode = 'LEADER';
+  /** UI STATE */
+  showTyres = false;
+  private tyreTimer?: number;
 
   constructor(
     private leaderboardService: LeaderboardService,
@@ -46,7 +47,6 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
       this.leaderLap = state.leaderLap;
       this.totalLaps = state.totalLaps;
 
-      // wait for DOM update, then animate
       requestAnimationFrame(() => this.runFLIP());
     });
   }
@@ -55,6 +55,9 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
     this.runFLIP();
   }
 
+  /* ===================================================== */
+  /* FLIP ANIMATION                                        */
+  /* ===================================================== */
   private runFLIP(): void {
     if (!this.rows) return;
 
@@ -66,39 +69,67 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
       const prevTop = this.rowPositions.get(driver);
       const newTop = row.offsetTop;
 
-      if (prevTop !== undefined) {
-        const delta = prevTop - newTop;
+      if (prevTop !== undefined && prevTop !== newTop) {
+        row.style.transition = 'none';
+        row.style.transform = `translateY(${prevTop - newTop}px)`;
 
-        if (delta !== 0) {
-          row.style.transition = 'none';
-          row.style.transform = `translateY(${delta}px)`;
-
-          requestAnimationFrame(() => {
-            row.style.transition =
-              'transform 220ms cubic-bezier(0.4, 0, 0.2, 1)';
-            row.style.transform = '';
-          });
-        }
+        requestAnimationFrame(() => {
+          row.style.transition = 'transform 220ms cubic-bezier(0.4, 0, 0.2, 1)';
+          row.style.transform = '';
+        });
       }
 
       this.rowPositions.set(driver, newTop);
     });
   }
 
+  /* ===================================================== */
+  /* UI HELPERS                                            */
+  /* ===================================================== */
+
   getDriverTeam(driverCode: string): string | undefined {
     return this.driverMeta.getTeamByDriverCode(driverCode);
+  }
+
+  getDriverColor(driverCode: string): string {
+    return this.driverMeta.get(driverCode)?.color ?? '#888888';
   }
 
   trackByDriver(_: number, row: LeaderboardEntry) {
     return row.driver;
   }
 
+  /* ===================================================== */
+  /* TYRE LIFE TOGGLE                                      */
+  /* ===================================================== */
+
+  showTyreLife(): void {
+    this.showTyres = true;
+
+    clearTimeout(this.tyreTimer);
+    this.tyreTimer = window.setTimeout(() => {
+      this.showTyres = false;
+    }, 5000);
+  }
+
+  /* ===================================================== */
+  /* GAP FORMATTER                                         */
+  /* ===================================================== */
+
   formatGap(row: LeaderboardEntry): string {
+    // TYRE LIFE MODE
+    if (this.showTyres) {
+      return row.tyreLife !== undefined ? `${row.tyreLife}` : '–';
+    }
+
+    // LEADER
     if (row.position === 1) {
       return row.lap <= 3 ? 'LEADER' : 'INTERVAL';
     }
 
-    const gap = row.lap <= 3 ? row.gapToLeader : row.intervalGap;
+    // FIRST 3 LAPS → LEADER GAP
+    const gap =
+      row.lap <= 3 ? row.gapToLeader : row.intervalGap ?? row.gapToLeader;
 
     return `+${gap.toFixed(3)}`;
   }

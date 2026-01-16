@@ -10,6 +10,8 @@ export interface LeaderboardEntry {
 
   /** ▲ or ▼ (temporary) */
   positionArrow?: 'up' | 'down';
+
+  tyreLife?: number;
 }
 
 export type GapMode = 'LEADER' | 'INTERVAL';

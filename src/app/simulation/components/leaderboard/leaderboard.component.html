@@ -51,6 +51,11 @@
           />
         </div>
 
+        <div
+          class="driver-color"
+          [style.background]="getDriverColor(row.driver)"
+        ></div>
+
         <div class="driver-code">{{ row.driver }}</div>
 
         <div class="driver-stats">
@@ -67,5 +72,7 @@
         </div>
       </div>
     </div>
+
+    <button class="tyre-toggle" (click)="showTyreLife()">TYRE</button>
   </div>
 </div>

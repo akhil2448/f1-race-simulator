@@ -101,6 +101,7 @@ hr {
   grid-template-columns:
     22px /* ① POSITION (1, 2, 3...) */
     40px /* ② TEAM LOGO */
+    3px /* color strip */
     40px /* ③ DRIVER CODE (LEC, HAM, etc.) */
     75px /* ④ LAP TIME (1:32.245) 78 */
     1fr; /* ⑤ FLEX / SPARE (tyre OR empty buffer) */
@@ -285,6 +286,17 @@ hr {
   transform: scale(1.6);
 }
 
+.driver-color {
+  width: 3px;
+  height: 15px;
+
+  border-radius: 1px;
+
+  margin-right: 6px;
+
+  opacity: 1;
+}
+
 .driver-code {
   padding-left: 6px;
   font-size: 16px;
@@ -408,4 +420,13 @@ hr {
 
 .gap-toggle:hover {
   background: #2a2a32;
+}
+
+.tyre-toggle {
+  background: #111;
+  color: #ffd400;
+  border: 1px solid #333;
+  font-size: 11px;
+  padding: 4px 6px;
+  cursor: pointer;
 }

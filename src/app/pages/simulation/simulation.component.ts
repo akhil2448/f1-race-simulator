@@ -12,6 +12,7 @@ import { RaceDataService } from '../../core/services/race-data.service';
 import { DriverStateService } from '../../core/services/driver-state.service';
 import { LeaderboardService } from '../../core/services/leaderboard.service';
 import { DriverMetaService } from '../../core/services/driver-meta.service';
+import { TyreLifeService } from '../../core/services/tyre-life.service';
 
 @Component({
   selector: 'app-simulation',
@@ -77,6 +78,7 @@ export class SimulationComponent implements OnInit {
       this.driverStateService.initialize(raceData);
 
       this.leaderboardService.setTotalLaps(raceData.session.totalLaps);
+      this.leaderboardService.initializeTyreLife(raceData.drivers);
 
       // 2️⃣ Initialize telemetry
       this.telemetry.initialize(2021, 7).subscribe(() => {

@@ -40,6 +40,8 @@ export class LeaderboardService {
 
   private readonly ARROW_DURATION = 700;
 
+  private tyreLifeMap = new Map<string, Map<number, number>>();
+
   constructor(
     private engine: SimulationEngineService,
     private driverStateService: DriverStateService
@@ -57,6 +59,22 @@ export class LeaderboardService {
 
   setTotalLaps(totalLaps: number): void {
     this.totalLaps = totalLaps;
+  }
+
+  initializeTyreLife(drivers: Record<string, any>): void {
+    this.tyreLifeMap.clear();
+
+    Object.entries(drivers).forEach(([driverCode, data]: any) => {
+      const lapMap = new Map<number, number>();
+
+      data.laps?.forEach((lap: any) => {
+        if (lap.LapNumber != null && lap.TyreLife != null) {
+          lapMap.set(lap.LapNumber, lap.TyreLife);
+        }
+      });
+
+      this.tyreLifeMap.set(driverCode, lapMap);
+    });
   }
 
   private updateLeaderboard(prev: TelemetryFrame, curr: TelemetryFrame): void {
@@ -85,6 +103,7 @@ export class LeaderboardService {
       const position = index + 1;
       const prevPosition = this.previousPositions.get(car.driver);
       const state = this.driverState.get(car.driver);
+      const tyreLife = this.tyreLifeMap.get(car.driver)?.get(car.lap);
 
       /* ---------- GAP CALC ---------- */
       let gapToLeader = 0;
@@ -126,6 +145,7 @@ export class LeaderboardService {
         isInPit: state?.isInPit ?? false,
         compound: state?.currentCompound ?? 'UNKNOWN',
         positionArrow,
+        tyreLife,
       });
     });
 
