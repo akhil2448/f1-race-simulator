@@ -6,4 +6,7 @@ export interface LeaderboardEntry {
   gapToLeader: number; // seconds (0 for leader)
   isInPit: boolean;
   compound: string;
+
+  /** ▲ or ▼ (temporary) */
+  positionArrow?: 'up' | 'down';
 }

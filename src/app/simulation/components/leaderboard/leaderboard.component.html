@@ -16,14 +16,40 @@
       </svg>
     </div>
     <hr />
-    <span class="session-time">{{ leaderLap }} / {{ totalLaps }}</span>
-    <hr />
+    <div class="lap-indicator">
+      <span class="lap-label">LAP</span>
+      <span class="lap-current">{{ leaderLap }}</span>
+      <span class="lap-separator">/</span>
+      <span class="lap-total">{{ totalLaps }}</span>
+    </div>
   </div>
 
   <div class="leaderboard">
     <div class="leaderboard-body">
-      <div class="driver-row" *ngFor="let row of leaderboard">
-        <div class="position">{{ row.position }}</div>
+      <div
+        #driverRow
+        class="driver-row"
+        *ngFor="let row of leaderboard; trackBy: trackByDriver"
+        [attr.data-driver]="row.driver"
+      >
+        <div class="position">
+          <span class="pos-number">{{ row.position }}</span>
+
+          <span
+            *ngIf="row.positionArrow"
+            class="pos-arrow"
+            [class.up]="row.positionArrow === 'up'"
+            [class.down]="row.positionArrow === 'down'"
+          ></span>
+        </div>
+
+        <div class="team-icon">
+          <img
+            src="assets/team-logos/{{ getDriverTeam(row.driver) }}.svg"
+            alt="team-logo"
+            class="{{ getDriverTeam(row.driver) }}"
+          />
+        </div>
 
         <div class="driver-code">{{ row.driver }}</div>
 

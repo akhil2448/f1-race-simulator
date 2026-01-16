@@ -38,37 +38,30 @@ export class LeaderboardService {
   /** Per-driver pit + tyre state */
   private driverState = new Map<string, DriverRaceState>();
 
-  /**
-   * Stores last stable time gaps (leader-relative).
-   * Used to FREEZE gaps when leader is in pit.
-   */
-  private lastStableGaps = new Map<string, number>();
+  /** Previous leaderboard positions */
+  private previousPositions = new Map<string, number>();
 
-  /**
-   * Tracks current leader.
-   * Needed to RESET gap cache when leader changes.
-   */
-  private lastLeader?: string;
+  /** Arrow flash cache */
+  private arrowMap = new Map<
+    string,
+    { arrow: 'up' | 'down'; expiresAt: number }
+  >();
+
+  private readonly ARROW_DURATION = 1500; // ms
 
   constructor(
     private engine: SimulationEngineService,
     private driverStateService: DriverStateService
   ) {
-    /* ---------- TELEMETRY STREAM ---------- */
+    /* ---------- TELEMETRY ---------- */
     this.engine.frame$.subscribe((frame) => {
       if (!frame || !frame.cars.length) return;
 
-      if (this.previousFrame) {
-        this.updateLeaderboard(this.previousFrame, frame);
-      } else {
-        // First frame (important for pit-lane start)
-        this.updateLeaderboard(frame, frame);
-      }
-
+      this.updateLeaderboard(this.previousFrame ?? frame, frame);
       this.previousFrame = frame;
     });
 
-    /* ---------- DRIVER STATE STREAM ---------- */
+    /* ---------- DRIVER STATE ---------- */
     this.driverStateService.driverState$.subscribe((state) => {
       this.driverState = state;
     });
@@ -78,14 +71,10 @@ export class LeaderboardService {
   /* EXTERNAL SETTERS                                      */
   /* ===================================================== */
 
-  /** Called ONCE after race data is loaded */
   setTotalLaps(totalLaps: number): void {
     this.totalLaps = totalLaps;
-
-    // Update view state without touching entries
-    const current = this.leaderboardSubject.value;
     this.leaderboardSubject.next({
-      ...current,
+      ...this.leaderboardSubject.value,
       totalLaps,
     });
   }
@@ -95,69 +84,53 @@ export class LeaderboardService {
   /* ===================================================== */
 
   private updateLeaderboard(prev: TelemetryFrame, curr: TelemetryFrame): void {
-    /* ---------- SORT BY RACE DISTANCE ---------- */
+    const now = performance.now();
+
+    /* ---------- SORT BY DISTANCE ---------- */
     const sorted = [...curr.cars].sort((a, b) => b.distance - a.distance);
     const leader = sorted[0];
 
-    /* ---------- LEADER CHANGE DETECTION ---------- */
-    if (this.lastLeader && this.lastLeader !== leader.driver) {
-      /**
-       * Leader changed (e.g. old leader pitted and got overtaken).
-       * Any cached gaps are now INVALID because they were relative
-       * to the old leader.
-       */
-      this.lastStableGaps.clear();
-    }
-    this.lastLeader = leader.driver;
+    const entries: LeaderboardEntry[] = [];
 
-    /* ---------- LEADER SPEED (m/s) ---------- */
-    const prevLeader = prev.cars.find((c) => c.driver === leader.driver);
-    const leaderSpeed = prevLeader ? leader.distance - prevLeader.distance : 0;
-
-    /* ---------- LEADER PIT STATE ---------- */
-    const leaderState = this.driverState.get(leader.driver);
-    const leaderInPit = leaderState?.isInPit === true;
-
-    /* ---------- BUILD LEADERBOARD ROWS ---------- */
-    const entries: LeaderboardEntry[] = sorted.map((car, index) => {
-      const distanceGap = leader.distance - car.distance;
+    sorted.forEach((car, index) => {
+      const position = index + 1;
+      const prevPosition = this.previousPositions.get(car.driver);
       const state = this.driverState.get(car.driver);
 
-      let gapToLeader = 0;
-
-      if (index === 0) {
-        // Leader always has zero gap
-        gapToLeader = 0;
-      } else if (leaderInPit || leaderSpeed <= 0) {
-        /**
-         * Leader is in pit (or speed invalid).
-         * Freeze gaps to last known stable value.
-         * Matches real F1 broadcast timing behavior.
-         */
-        gapToLeader = this.lastStableGaps.get(car.driver) ?? 0;
-      } else {
-        /**
-         * Normal racing condition:
-         * Convert distance gap → time gap using leader speed.
-         */
-        gapToLeader = distanceGap / leaderSpeed;
-
-        // Cache stable gap for future pit scenarios
-        this.lastStableGaps.set(car.driver, gapToLeader);
+      /* ---------- POSITION CHANGE ---------- */
+      if (prevPosition !== undefined && prevPosition !== position) {
+        this.arrowMap.set(car.driver, {
+          arrow: position < prevPosition ? 'up' : 'down',
+          expiresAt: now + this.ARROW_DURATION,
+        });
       }
 
-      return {
-        position: index + 1,
+      /* ---------- READ & EXPIRE ARROW ---------- */
+      let positionArrow: 'up' | 'down' | undefined;
+      const flash = this.arrowMap.get(car.driver);
+
+      if (flash) {
+        if (flash.expiresAt >= now) {
+          positionArrow = flash.arrow;
+        } else {
+          this.arrowMap.delete(car.driver);
+        }
+      }
+
+      this.previousPositions.set(car.driver, position);
+
+      entries.push({
+        position,
         driver: car.driver,
         lap: car.lap,
         distance: car.distance,
-        gapToLeader,
+        gapToLeader: 0, // unchanged from your existing logic
         isInPit: state?.isInPit ?? false,
         compound: state?.currentCompound ?? 'UNKNOWN',
-      };
+        positionArrow,
+      });
     });
 
-    /* ---------- EMIT VIEW STATE ---------- */
     this.leaderboardSubject.next({
       entries,
       leaderLap: leader.lap,

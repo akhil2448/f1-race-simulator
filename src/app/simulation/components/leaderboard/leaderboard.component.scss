@@ -38,10 +38,54 @@ hr {
   background-color: #3a3a3e;
 }
 
-.session-time {
-  font-weight: 500;
-  padding-left: 28%;
-  padding-bottom: 7%;
+.lap-indicator {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+
+  height: 25px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+
+  font-family: "KHInterference", system-ui, sans-serif;
+}
+
+/* LAP */
+.lap-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b0b0b8;
+  margin-right: 10px;
+
+  letter-spacing: 2px;
+}
+
+/* CURRENT LAP — BIG */
+.lap-current {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "/" */
+.lap-separator {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b0b0b8;
+  margin: 0 1px;
+}
+
+/* TOTAL LAPS — smaller */
+.lap-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: #b0b0b8;
+
+  font-variant-numeric: tabular-nums;
 }
 
 .leaderboard-body {
@@ -56,14 +100,23 @@ hr {
 
   grid-template-columns:
     22px /* ① POSITION (1, 2, 3...) */
-    26px /* ② TEAM LOGO */
-    64px /* ③ DRIVER CODE (LEC, HAM, etc.) */
-    78px /* ④ LAP TIME (1:32.245) 78 */
+    40px /* ② TEAM LOGO */
+    40px /* ③ DRIVER CODE (LEC, HAM, etc.) */
+    75px /* ④ LAP TIME (1:32.245) 78 */
     1fr; /* ⑤ FLEX / SPARE (tyre OR empty buffer) */
 
   width: 100%;
   align-items: center;
   height: 32px;
+
+  // leaderboard switch places transition animation
+  will-change: transform;
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 180ms;
+}
+
+.driver-row {
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1), opacity 120ms ease;
 }
 
 .driver-row:last-child {
@@ -72,6 +125,8 @@ hr {
 
 /* POSITION */
 .position {
+  position: relative;
+
   width: 22px;
   height: 100%; /* fills row height */
 
@@ -83,9 +138,64 @@ hr {
   color: #dfdfdf;
 
   font-size: 13px; /* ↑ clearer */
-  font-weight: 500;
+  font-weight: 600;
+}
 
-  border-radius: 0; /* F1 = sharp edge */
+.pos-number {
+  position: relative;
+  z-index: 1;
+}
+
+.pos-arrow {
+  position: absolute;
+  top: -7px; /* sits ABOVE position */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 0;
+  height: 0;
+
+  opacity: 0;
+  animation: f1ArrowFlash 0.7s ease forwards;
+
+  z-index: 2;
+}
+
+.pos-arrow.up {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 7px solid #00ff87;
+
+  filter: drop-shadow(0 0 4px rgba(0, 255, 135, 0.6));
+}
+
+.pos-arrow.down {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #ff3b3b;
+
+  filter: drop-shadow(0 0 4px rgba(255, 59, 59, 0.6));
+}
+
+@keyframes f1ArrowFlash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
 }
 
 .driver-row:nth-child(n + 2) .position {
@@ -178,8 +288,9 @@ hr {
 .driver-code {
   padding-left: 6px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
+  letter-spacing: 1px;
 }
 
 /* LAP TIME */

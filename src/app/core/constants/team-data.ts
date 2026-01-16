@@ -1,6 +1,6 @@
 export const TEAM_COLORS: Record<string, string> = {
   // Red Bull Racing – deep navy + strong blue
-  'Red Bull Racing': '#1E41FF',
+  'Red Bull Racing': '#FFC906',
 
   // Mercedes – iconic PETRONAS teal
   Mercedes: '#00D2BE',
@@ -11,21 +11,31 @@ export const TEAM_COLORS: Record<string, string> = {
   // McLaren – Papaya orange (official)
   McLaren: '#FF8700',
 
-  // Alpine – Alpine blue
-  Alpine: '#0090FF',
+  // Alpine, Renault – Alpine blue
+  Alpine: '#FF87BC',
+  Renault: '#FF87BC',
 
   // Aston Martin – British racing green
-  'Aston Martin': '#00a894ff',
+  'Aston Martin': '#00594F',
+  'Racing Point': '#00594F',
+  'Force India': '#00594F',
 
-  // AlphaTauri – navy blue
-  AlphaTauri: '#889aadff',
-
-  // Alfa Romeo – deep crimson
-  'Alfa Romeo': '#900000',
+  // Toro Rosso, AlphaTauri, Racing Bulls(RB)
+  AlphaTauri: '#0000FF',
+  'Toro Rosso': '#0000FF',
+  'Racing Bulls': '#0000FF',
+  RB: '#0000FF',
 
   // Williams – electric royal blue
-  Williams: '#005AFF',
+  Williams: '#00A3E0',
 
-  // Haas – light gray (white is too harsh on dark UI)
-  'Haas F1 Team': '#B6BABD',
+  // Haas
+  'Haas F1 Team': '#F9F2F2',
+
+  // Kick Sauber
+  'Kick Sauber': '#01C00E',
+  'Alfa Romeo': '#01C00E',
+  Sauber: '#01C00E',
+
+  //
 };

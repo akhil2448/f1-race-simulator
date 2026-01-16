@@ -1,7 +1,16 @@
-import { Component } from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { LeaderboardEntry } from '../../../core/models/leaderboard-entry.model';
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { CommonModule } from '@angular/common';
+import { DriverMetaService } from '../../../core/services/driver-meta.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -10,23 +19,78 @@ import { CommonModule } from '@angular/common';
   templateUrl: './leaderboard.component.html',
   styleUrl: './leaderboard.component.scss',
 })
-export class LeaderboardComponent {
+export class LeaderboardComponent implements OnInit, AfterViewInit {
   leaderboard: LeaderboardEntry[] = [];
   leaderLap = 0;
   totalLaps = 0;
 
-  constructor(private leaderboardService: LeaderboardService) {}
+  // For leaderboard position change transition
+  private rowPositions = new Map<string, number>();
+
+  @ViewChildren('driverRow', { read: ElementRef })
+  rows!: QueryList<ElementRef<HTMLElement>>;
+  Math: any;
+
+  constructor(
+    private leaderboardService: LeaderboardService,
+    private driverMeta: DriverMetaService
+  ) {}
 
   ngOnInit(): void {
     this.leaderboardService.leaderboard$.subscribe((state) => {
       this.leaderboard = state.entries;
       this.leaderLap = state.leaderLap;
       this.totalLaps = state.totalLaps;
+
+      // wait for DOM update, then animate
+      requestAnimationFrame(() => this.runFLIP());
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.runFLIP();
+  }
+
+  private runFLIP(): void {
+    if (!this.rows) return;
+
+    this.rows.forEach((rowRef) => {
+      const row = rowRef.nativeElement;
+      const driver = row.dataset['driver'];
+      if (!driver) return;
+
+      const prevTop = this.rowPositions.get(driver);
+      const newTop = row.offsetTop;
+
+      if (prevTop !== undefined) {
+        const delta = prevTop - newTop;
+
+        if (delta !== 0) {
+          row.style.transition = 'none';
+          row.style.transform = `translateY(${delta}px)`;
+
+          requestAnimationFrame(() => {
+            row.style.transition =
+              'transform 220ms cubic-bezier(0.4, 0, 0.2, 1)';
+            row.style.transform = '';
+          });
+        }
+      }
+
+      this.rowPositions.set(driver, newTop);
     });
   }
 
   formatGap(gap: number): string {
     if (gap === 0) return 'LEADER';
     return `+${gap.toFixed(3)}`;
+  }
+
+  getDriverTeam(driverCode: string): string | undefined {
+    return this.driverMeta.getTeamByDriverCode(driverCode);
+  }
+
+  trackByDriver(_: number, row: LeaderboardEntry) {
+    return row.driver;
   }
 }
