@@ -47,6 +47,12 @@ export class LeaderboardService {
     { arrow: 'up' | 'down'; expiresAt: number }
   >();
 
+  /**
+   * Stores last stable time gaps (leader-relative).
+   * Used to FREEZE gaps when leader is in pit.
+   */
+  private lastStableGaps = new Map<string, number>();
+
   private readonly ARROW_DURATION = 1500; // ms
 
   constructor(
@@ -90,6 +96,17 @@ export class LeaderboardService {
     const sorted = [...curr.cars].sort((a, b) => b.distance - a.distance);
     const leader = sorted[0];
 
+    /* ---------- LEADER SPEED ---------- */
+    const prevLeader = prev.cars.find((c) => c.driver === leader.driver);
+    const leaderSpeed =
+      prevLeader && leader.distance > prevLeader.distance
+        ? leader.distance - prevLeader.distance
+        : 0;
+
+    /* ---------- LEADER PIT STATE ---------- */
+    const leaderState = this.driverState.get(leader.driver);
+    const leaderInPit = leaderState?.isInPit === true;
+
     const entries: LeaderboardEntry[] = [];
 
     sorted.forEach((car, index) => {
@@ -97,7 +114,19 @@ export class LeaderboardService {
       const prevPosition = this.previousPositions.get(car.driver);
       const state = this.driverState.get(car.driver);
 
-      /* ---------- POSITION CHANGE ---------- */
+      /* ---------- GAP TO LEADER ---------- */
+      let gapToLeader = 0;
+
+      if (position === 1) {
+        gapToLeader = 0;
+      } else if (leaderInPit || leaderSpeed <= 0) {
+        gapToLeader = this.lastStableGaps.get(car.driver) ?? 0;
+      } else {
+        gapToLeader = (leader.distance - car.distance) / leaderSpeed;
+        this.lastStableGaps.set(car.driver, gapToLeader);
+      }
+
+      /* ---------- POSITION CHANGE ARROW ---------- */
       if (prevPosition !== undefined && prevPosition !== position) {
         this.arrowMap.set(car.driver, {
           arrow: position < prevPosition ? 'up' : 'down',
@@ -105,7 +134,6 @@ export class LeaderboardService {
         });
       }
 
-      /* ---------- READ & EXPIRE ARROW ---------- */
       let positionArrow: 'up' | 'down' | undefined;
       const flash = this.arrowMap.get(car.driver);
 
@@ -124,7 +152,7 @@ export class LeaderboardService {
         driver: car.driver,
         lap: car.lap,
         distance: car.distance,
-        gapToLeader: 0, // unchanged from your existing logic
+        gapToLeader,
         isInPit: state?.isInPit ?? false,
         compound: state?.currentCompound ?? 'UNKNOWN',
         positionArrow,
