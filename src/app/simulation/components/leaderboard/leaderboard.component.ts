@@ -7,7 +7,10 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { LeaderboardEntry } from '../../../core/models/leaderboard-entry.model';
+import {
+  GapMode,
+  LeaderboardEntry,
+} from '../../../core/models/leaderboard-entry.model';
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { CommonModule } from '@angular/common';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
@@ -29,7 +32,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
 
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
-  Math: any;
+
+  gapMode: GapMode = 'LEADER';
 
   constructor(
     private leaderboardService: LeaderboardService,
@@ -81,16 +85,21 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  formatGap(gap: number): string {
-    if (gap === 0) return 'LEADER';
-    return `+${gap.toFixed(3)}`;
-  }
-
   getDriverTeam(driverCode: string): string | undefined {
     return this.driverMeta.getTeamByDriverCode(driverCode);
   }
 
   trackByDriver(_: number, row: LeaderboardEntry) {
     return row.driver;
+  }
+
+  formatGap(row: LeaderboardEntry): string {
+    if (row.position === 1) {
+      return row.lap <= 3 ? 'LEADER' : 'INTERVAL';
+    }
+
+    const gap = row.lap <= 3 ? row.gapToLeader : row.intervalGap;
+
+    return `+${gap.toFixed(3)}`;
   }
 }

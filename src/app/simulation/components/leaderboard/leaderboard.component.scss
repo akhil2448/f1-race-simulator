@@ -386,3 +386,26 @@ hr {
     opacity: 1;
   }
 }
+
+.gap-toggle {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  padding: 4px 6px;
+  border-radius: 2px;
+
+  background: #1e1e24;
+  color: #dfdfdf;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.gap-toggle:hover {
+  background: #2a2a32;
+}
