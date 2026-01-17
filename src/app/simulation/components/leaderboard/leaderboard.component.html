@@ -22,10 +22,13 @@
       <span class="lap-separator">/</span>
       <span class="lap-total">{{ totalLaps }}</span>
     </div>
+    <div class="track-status">
+      <app-track-status />
+    </div>
   </div>
 
   <div class="leaderboard">
-    <div class="leaderboard-body">
+    <div class="leaderboard-body" *ngIf="trackStatus !== 'RED'">
       <div
         #driverRow
         class="driver-row"
@@ -45,9 +48,10 @@
 
         <div class="team-icon">
           <img
-            src="assets/team-logos/{{ getDriverTeam(row.driver) }}.svg"
+            [src]="'assets/team-logos/' + getDriverTeam(row.driver) + '.svg'"
             alt="team-logo"
-            class="{{ getDriverTeam(row.driver) }}"
+            [class]="getDriverTeam(row.driver)"
+            (error)="onTeamLogoError($event)"
           />
         </div>
 
@@ -58,13 +62,13 @@
 
         <div class="driver-code">{{ row.driver }}</div>
 
-        <div class="driver-stats">
-          <ng-container *ngIf="row.isInPit; else gap">
-            <span class="pit-indicator">P</span>
-          </ng-container>
-          <ng-template #gap>
-            {{ formatGap(row) }}
-          </ng-template>
+        <div
+          class="driver-stats"
+          [class.in-pit]="row.isInPit"
+          [class.toggle-mode]="showTyres || showPitStops"
+          [style.color]="row.isInPit ? getDriverColor(row.driver) : null"
+        >
+          {{ formatGap(row) }}
         </div>
 
         <div class="tyre" [ngClass]="row.compound.toLowerCase()">
@@ -72,7 +76,7 @@
         </div>
       </div>
     </div>
-
-    <button class="tyre-toggle" (click)="showTyreLife()">TYRE</button>
   </div>
 </div>
+<div><button class="tyre-toggle" (click)="showTyreLife()">TYRE</button></div>
+<button class="pit-toggle" (click)="showPitStopsTemporarily()">PIT</button>

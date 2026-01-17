@@ -38,13 +38,17 @@ export class LeaderboardService {
     { arrow: 'up' | 'down'; expiresAt: number }
   >();
 
-  private readonly ARROW_DURATION = 700;
+  private readonly ARROW_DURATION = 500;
 
   private tyreLifeMap = new Map<string, Map<number, number>>();
 
+  private pitStopCount = new Map<string, number>();
+  private wasInPit = new Map<string, boolean>();
+  private raceStarted = false;
+
   constructor(
     private engine: SimulationEngineService,
-    private driverStateService: DriverStateService
+    private driverStateService: DriverStateService,
   ) {
     this.engine.frame$.subscribe((frame) => {
       if (!frame || !frame.cars.length) return;
@@ -77,19 +81,30 @@ export class LeaderboardService {
     });
   }
 
+  private lastLeader?: string;
+
   private updateLeaderboard(prev: TelemetryFrame, curr: TelemetryFrame): void {
     const now = performance.now();
 
+    // Check if any cars are starting race from PitLane
+    if (!this.raceStarted && curr.cars.some((c) => c.lap > 1)) {
+      this.raceStarted = true;
+    }
+
+    /* ---------- SORT BY DISTANCE ---------- */
     const sorted = [...curr.cars].sort((a, b) => b.distance - a.distance);
     const leader = sorted[0];
 
-    const leaderState = this.driverState.get(leader.driver);
-    // const isSafetyCar = leaderState?.isSafetyCar === true;
-    // const isVSC = leaderState?.isVSC === true;
+    /* ---------- LEADER CHANGE DETECTION ---------- */
+    if (this.lastLeader && this.lastLeader !== leader.driver) {
+      // Leader changed → gaps relative to old leader are invalid
+      this.lastStableGaps.clear();
+    }
+    this.lastLeader = leader.driver;
 
-    /** 🔑 F1 AUTO GAP MODE */
-    const gapMode: 'LEADER' | 'INTERVAL' =
-      leader.lap <= 3 ? 'LEADER' : 'INTERVAL';
+    /* ---------- LEADER STATE ---------- */
+    const leaderState = this.driverState.get(leader.driver);
+    const leaderInPit = leaderState?.isInPit === true;
 
     const prevLeader = prev.cars.find((c) => c.driver === leader.driver);
     const leaderSpeed =
@@ -112,8 +127,13 @@ export class LeaderboardService {
       if (position === 1) {
         gapToLeader = 0;
         intervalGap = 0;
-      } else if (leaderSpeed > 0) {
+      } else if (leaderInPit || leaderSpeed <= 0) {
+        // 🔒 FREEZE gaps
+        gapToLeader = this.lastStableGaps.get(car.driver) ?? 0;
+      } else {
+        // 🟢 Normal racing
         gapToLeader = (leader.distance - car.distance) / leaderSpeed;
+        this.lastStableGaps.set(car.driver, gapToLeader);
 
         const prevCar = sorted[index - 1];
         intervalGap = (prevCar.distance - car.distance) / leaderSpeed;
@@ -135,6 +155,26 @@ export class LeaderboardService {
 
       this.previousPositions.set(car.driver, position);
 
+      /* ---------- COUNT PITSTOPS ---------- */
+      const wasInPitBefore = this.wasInPit.get(car.driver) ?? false;
+      const isInPitNow = state?.isInPit === true;
+
+      // Initialize counter if missing
+      if (!this.pitStopCount.has(car.driver)) {
+        this.pitStopCount.set(car.driver, 0);
+      }
+
+      // Count ONLY transition OUT → IN after race start
+      if (this.raceStarted && !wasInPitBefore && isInPitNow) {
+        this.pitStopCount.set(
+          car.driver,
+          (this.pitStopCount.get(car.driver) ?? 0) + 1,
+        );
+      }
+
+      // Save state for next frame
+      this.wasInPit.set(car.driver, isInPitNow);
+
       entries.push({
         position,
         driver: car.driver,
@@ -146,6 +186,7 @@ export class LeaderboardService {
         compound: state?.currentCompound ?? 'UNKNOWN',
         positionArrow,
         tyreLife,
+        pitStops: this.pitStopCount.get(car.driver) ?? 0,
       });
     });
 

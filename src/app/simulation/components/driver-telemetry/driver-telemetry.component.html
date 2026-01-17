@@ -1,0 +1,82 @@
+<div class="driver-telemetry-panel">
+  <!-- NOT SELECTED -->
+  <ng-container *ngIf="!selectedDriver; else telemetryBox">
+    <select class="driver-select" (change)="onSelect($event)">
+      <option value="" disabled selected>Select Driver</option>
+      <option *ngFor="let d of availableDrivers" [value]="d">
+        {{ d }}
+      </option>
+    </select>
+  </ng-container>
+
+  <!-- SELECTED -->
+  <ng-template #telemetryBox>
+    <!-- HEADER -->
+    <div class="telemetry-header">
+      <div class="driver-left">
+        <div
+          class="driver-color-strip"
+          [style.background]="teamColor || '#888'"
+        ></div>
+
+        <span class="driver-name">{{ selectedDriver }}</span>
+      </div>
+
+      <button class="change-btn" (click)="onChangeDriver()">CHANGE</button>
+    </div>
+
+    <!-- ============================ -->
+    <!-- FETCHING PLACEHOLDER -->
+    <!-- ============================ -->
+    <div class="driver-telemetry-body placeholder" *ngIf="!telemetry">
+      <div class="loading-line"></div>
+      <div class="loading-line"></div>
+      <div class="loading-line"></div>
+      <div class="loading-line"></div>
+      <div class="loading-line"></div>
+      <div class="loading-line"></div>
+
+      <div class="loading-text">FETCHING TELEMETRY…</div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- TELEMETRY DATA -->
+    <!-- ============================ -->
+    <div class="driver-telemetry-body" *ngIf="telemetry">
+      <div class="telemetry-row">
+        <span class="label">Speed</span>
+        <span class="value">{{ telemetry.speed }} km/h</span>
+      </div>
+
+      <div class="telemetry-row">
+        <span class="label">Gear</span>
+        <span class="value">{{ telemetry.gear }}</span>
+      </div>
+
+      <div class="telemetry-row">
+        <span class="label">RPM</span>
+        <span class="value">{{ telemetry.rpm }}</span>
+      </div>
+
+      <div
+        class="telemetry-row"
+        [class.throttle-on]="!telemetry.brake && telemetry.throttle > 0"
+      >
+        <span class="label">Throttle</span>
+        <span class="value">{{ telemetry.throttle }}%</span>
+      </div>
+
+      <div class="telemetry-row" [class.brake-on]="telemetry.brake">
+        <span class="label">Brake</span>
+        <span class="value">
+          {{ telemetry.brake ? "ON" : "OFF" }}
+        </span>
+      </div>
+
+      <div class="telemetry-row">
+        <span class="label">Lap</span>
+        <span class="value">{{ telemetry.lap }}</span>
+      </div>
+    </div>
+  </ng-template>
+</div>

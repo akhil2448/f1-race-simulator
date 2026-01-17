@@ -14,11 +14,14 @@ import {
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { CommonModule } from '@angular/common';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
+import { TrackStatusComponent } from '../track-status/track-status.component';
+import { TrackStatusService } from '../../../core/services/track-status.service';
+import { TrackStatusType } from '../../../core/constants/track-status.types';
 
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TrackStatusComponent],
   templateUrl: './leaderboard.component.html',
   styleUrl: './leaderboard.component.scss',
 })
@@ -36,10 +39,19 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   showTyres = false;
   private tyreTimer?: number;
 
+  trackStatus: TrackStatusType | null = null;
+
+  showPitStops = false;
+
   constructor(
     private leaderboardService: LeaderboardService,
-    private driverMeta: DriverMetaService
-  ) {}
+    private driverMeta: DriverMetaService,
+    private trackStatusService: TrackStatusService,
+  ) {
+    this.trackStatusService.status$.subscribe((status) => {
+      this.trackStatus = status;
+    });
+  }
 
   ngOnInit(): void {
     this.leaderboardService.leaderboard$.subscribe((state) => {
@@ -59,7 +71,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   /* FLIP ANIMATION                                        */
   /* ===================================================== */
   private runFLIP(): void {
-    if (!this.rows) return;
+    if (!this.rows || this.trackStatus === 'RED') return;
 
     this.rows.forEach((rowRef) => {
       const row = rowRef.nativeElement;
@@ -91,6 +103,12 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
     return this.driverMeta.getTeamByDriverCode(driverCode);
   }
 
+  onTeamLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/team-logos/plcholder.svg';
+    img.className = 'plcholder';
+  }
+
   getDriverColor(driverCode: string): string {
     return this.driverMeta.get(driverCode)?.color ?? '#888888';
   }
@@ -113,23 +131,44 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   }
 
   /* ===================================================== */
+  /* PITSTOP COUNT TOGGLE                                  */
+  /* ===================================================== */
+  showPitStopsTemporarily(): void {
+    this.showPitStops = true;
+
+    setTimeout(() => {
+      this.showPitStops = false;
+    }, 5000);
+  }
+
+  /* ===================================================== */
   /* GAP FORMATTER                                         */
   /* ===================================================== */
 
   formatGap(row: LeaderboardEntry): string {
+    // 🚧 DRIVER IN PIT — OVERRIDES EVERYTHING
+    if (row.isInPit) {
+      return 'IN PIT';
+    }
+
+    // PIT STOP MODE
+    if (this.showPitStops) {
+      return `${row.pitStops ?? 0}`;
+    }
+
     // TYRE LIFE MODE
     if (this.showTyres) {
       return row.tyreLife !== undefined ? `${row.tyreLife}` : '–';
     }
 
-    // LEADER
+    // LEADER ROW
     if (row.position === 1) {
-      return row.lap <= 3 ? 'LEADER' : 'INTERVAL';
+      return row.lap <= 3 ? 'Leader' : 'Interval';
     }
 
     // FIRST 3 LAPS → LEADER GAP
     const gap =
-      row.lap <= 3 ? row.gapToLeader : row.intervalGap ?? row.gapToLeader;
+      row.lap <= 3 ? row.gapToLeader : (row.intervalGap ?? row.gapToLeader);
 
     return `+${gap.toFixed(3)}`;
   }

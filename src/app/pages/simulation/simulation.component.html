@@ -3,8 +3,25 @@
 
   <div class="info-sidebar">
     <app-weather></app-weather>
-    <app-driver [slot]="1"></app-driver>
-    <app-driver [slot]="2"></app-driver>
+    <div class="telemetry-panels">
+      <app-driver-telemetry
+        [selectedDriver]="selectedDrivers[0]"
+        [availableDrivers]="getAvailableDriversForSlot(0)"
+        [teamColor]="getDriverColor(selectedDrivers[0])"
+        (driverSelected)="onDriverSelected(0, $event)"
+        (clearDriver)="onDriverCleared(0)"
+      >
+      </app-driver-telemetry>
+
+      <app-driver-telemetry
+        [selectedDriver]="selectedDrivers[1]"
+        [availableDrivers]="getAvailableDriversForSlot(1)"
+        [teamColor]="getDriverColor(selectedDrivers[1])"
+        (driverSelected)="onDriverSelected(1, $event)"
+        (clearDriver)="onDriverCleared(1)"
+      >
+      </app-driver-telemetry>
+    </div>
   </div>
 
   <!-- RIGHT COLUMN -->

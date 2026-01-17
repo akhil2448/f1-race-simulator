@@ -8,10 +8,10 @@ export interface LeaderboardEntry {
   isInPit: boolean;
   compound: string;
 
-  /** ▲ or ▼ (temporary) */
   positionArrow?: 'up' | 'down';
 
   tyreLife?: number;
+  pitStops?: number;
 }
 
 export type GapMode = 'LEADER' | 'INTERVAL';

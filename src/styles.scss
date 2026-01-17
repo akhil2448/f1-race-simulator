@@ -19,11 +19,35 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Formula1";
+  src: url("/assets/fonts/Formula1-Regular_web_0.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Formula1Bold";
+  src: url("/assets/fonts/Formula1-Bold_web_0.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* WIDE VERSION — SEPARATE FAMILY */
+@font-face {
+  font-family: "Formula1Wide";
+  src: url("/assets/fonts/Formula1-Wide_web_0.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
 /* Full app background */
 html,
 body {
   height: 100%;
-  font-family: "KHInterference", system-ui, sans-serif;
+  font-family: "Formula1Bold", system-ui, sans-serif;
 }
 
 body {
@@ -40,7 +64,7 @@ body {
 }
 
 .body-text {
-  font-weight: 400; /* Light */
+  font-weight: 500; /* Light */
 }
 
 /* ===== App Footer ===== */

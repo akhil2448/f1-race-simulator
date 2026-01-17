@@ -1,0 +1,151 @@
+.track-status {
+  width: 100%;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Formula1", system-ui, sans-serif;
+
+  text-transform: uppercase;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+
+  animation: statusSlideIn 260ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============================== */
+/* YELLOW FLAG              */
+/* =============================== */
+.track-status.yellow {
+  background: linear-gradient(180deg, #ffd400 0%, #f0c200 100%);
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+
+  color: #000000;
+}
+
+/* subtle broadcast pulse */
+.track-status.yellow .label {
+  animation: vscPulse 1.6s ease-in-out infinite;
+}
+
+/* =============================== */
+/* VIRTUAL SAFETY CAR              */
+/* =============================== */
+.track-status.vsc {
+  background: linear-gradient(180deg, #ffd400 0%, #f0c200 100%);
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+
+  color: #000000;
+}
+
+/* =============================== */
+/* VIRTUAL SAFETY CAR ENDING       */
+/* =============================== */
+/* subtle broadcast pulse */
+.track-status.vsc .label {
+  animation: vscPulse 1.6s ease-in-out infinite;
+}
+
+.track-status.vsc-ending {
+  background: linear-gradient(180deg, #ffd400 0%, #f0c200 100%);
+  color: #000;
+}
+
+.track-status.vsc-ending .label {
+  animation: vscEndingBlink 1s steps(2) infinite;
+}
+
+@keyframes vscEndingBlink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* =============================== */
+/* SAFETY CAR              */
+/* =============================== */
+.track-status.sc {
+  background: linear-gradient(180deg, #ffd400 0%, #f0c200 100%);
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+
+  color: #000000;
+}
+
+/* subtle broadcast pulse */
+.track-status.sc .label {
+  animation: vscPulse 1.6s ease-in-out infinite;
+}
+
+/* =============================== */
+/* RED FLAG              */
+/* =============================== */
+.track-status.red {
+  background: linear-gradient(180deg, #dd0000 0%, #d60000 100%);
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+
+  color: #e2e2e2;
+}
+
+/* subtle broadcast pulse */
+.track-status.red .label {
+  animation: vscPulse 1.6s ease-in-out infinite;
+}
+
+/* =============================== */
+/* GREEN FLAG                      */
+/* =============================== */
+
+.track-status.green {
+  background: linear-gradient(180deg, #30ab00 0%, #63d400 100%);
+  color: #000;
+}
+
+/* TOP LINE */
+.track-status .label {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+/* Subtle F1 pulse */
+.track-status.green {
+  animation:
+    statusSlideIn 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    greenPulse 1.8s ease-in-out infinite;
+}
+
+/* =============================== */
+/* ANIMATIONS                      */
+/* =============================== */
+
+@keyframes statusSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
