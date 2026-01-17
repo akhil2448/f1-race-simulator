@@ -13,16 +13,6 @@
       [attr.viewBox]="viewBox"
       preserveAspectRatio="xMinYMid meet"
     >
-      <defs>
-        <filter id="carGlow">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
       <!-- Track -->
       <!-- outer border -->
       <polyline
@@ -88,18 +78,71 @@
       />
 
       <!-- Cars -->
+      <!-- Cars -->
       <g class="cars-layer" *ngIf="trackReady && cars.length">
-        <circle
-          *ngFor="let car of cars"
-          [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-          [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
-          r="100"
-          [attr.fill]="getCarColor(car.driver)"
-          stroke="#000"
-          stroke-width="10"
-          filter="url(#carGlow)"
-        />
+        <!-- ============================== -->
+        <!-- NON-SELECTED CARS (BACK LAYER) -->
+        <!-- ============================== -->
+        <g *ngFor="let car of cars">
+          <circle
+            *ngIf="!isHighlighted(car.driver)"
+            [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+            [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+            r="90"
+            [attr.fill]="getCarColor(car.driver)"
+            stroke="#000"
+            stroke-width="10"
+          />
+        </g>
+
+        <!-- ============================== -->
+        <!-- SELECTED CARS (TOP LAYER)      -->
+        <!-- ============================== -->
+        <g *ngFor="let car of cars">
+          <ng-container *ngIf="isHighlighted(car.driver)">
+            <!-- OUTER WHITE HALO -->
+            <circle
+              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              r="145"
+              fill="none"
+              stroke="#ffffff"
+              stroke-width="26"
+              opacity="0.95"
+            />
+
+            <!-- INNER BLACK CUT RING (contrast) -->
+            <circle
+              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              r="112"
+              fill="none"
+              stroke="#000000"
+              stroke-width="14"
+              opacity="0.9"
+            />
+
+            <!-- MAIN CAR DOT (larger) -->
+            <circle
+              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              r="125"
+              [attr.fill]="getCarColor(car.driver)"
+              stroke="#000"
+              stroke-width="10"
+            />
+
+            <!-- OPTIONAL CENTER DOT (precision focus) -->
+            <circle
+              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
+              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              r="14"
+              fill="#ffffff"
+            />
+          </ng-container>
+        </g>
       </g>
+
       <!-- <circle [attr.cx]="track[0].x" [attr.cy]="track[0].y" r="120" fill="red" /> -->
     </svg>
 

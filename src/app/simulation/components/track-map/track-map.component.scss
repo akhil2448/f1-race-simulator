@@ -42,3 +42,23 @@
 .cars-layer {
   pointer-events: none;
 }
+
+.cars-layer circle {
+  transition: r 120ms ease;
+}
+
+.cars-layer circle[stroke="#ffffff"] {
+  animation: highlightPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes highlightPulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TelemetryCar } from '../../../core/models/race-telemetry.model';
 import { SimulationEngineService } from '../../../core/services/simulation-engine.service';
@@ -19,7 +19,7 @@ export class TrackMapComponent implements OnInit {
     private interpolatedTelemetry: TelemetryInterpolationService,
     private engine: SimulationEngineService,
     private trackMap: TrackMapService,
-    private driverMeta: DriverMetaService
+    private driverMeta: DriverMetaService,
   ) {}
 
   /* ---------- UI ---------- */
@@ -44,6 +44,8 @@ export class TrackMapComponent implements OnInit {
   trackReady = false;
 
   realTrackLengthMeters = 0;
+
+  @Input() highlightedDrivers: (string | null)[] = [];
 
   ngOnInit(): void {
     /* ---------- TRACK DATA (ASYNC SAFE) ---------- */
@@ -192,5 +194,9 @@ export class TrackMapComponent implements OnInit {
 
   getCarColor(driver: string): string {
     return this.driverMeta.get(driver)?.color ?? '#ffffff';
+  }
+
+  isHighlighted(driver: string): boolean {
+    return this.highlightedDrivers.includes(driver);
   }
 }
