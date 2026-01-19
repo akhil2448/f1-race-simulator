@@ -154,6 +154,16 @@ hr {
   z-index: 1;
 }
 
+.position.provisional-up {
+  background: #1c2b22; // dark green tint
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 135, 0.35);
+}
+
+.position.provisional-down {
+  background: #2a1c1c; // dark red/brown tint
+  box-shadow: inset 0 0 0 1px rgba(255, 90, 90, 0.35);
+}
+
 .pos-arrow {
   position: absolute;
   top: -7px; /* sits ABOVE position */

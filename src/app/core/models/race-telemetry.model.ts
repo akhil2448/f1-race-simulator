@@ -1,7 +1,9 @@
 export interface TelemetryCar {
   driver: string;
   lap: number;
-  distance: number;
+  lapDistance: number;
+  raceDistance: number;
+
   x: number;
   y: number;
 }

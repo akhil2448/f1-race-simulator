@@ -9,19 +9,19 @@ import { DriverMeta } from '../models/driver-meta.model';
 })
 export class DriverMetaService {
   /* ===================================================== */
-  /* STATE                                                */
+  /* STATE                                                 */
   /* ===================================================== */
 
   private metaMap = new Map<string, DriverMeta>();
 
   private metaSubject = new BehaviorSubject<Map<string, DriverMeta>>(
-    this.metaMap
+    this.metaMap,
   );
 
   meta$ = this.metaSubject.asObservable();
 
   /* ===================================================== */
-  /* INITIALIZATION                                       */
+  /* INITIALIZATION                                        */
   /* ===================================================== */
 
   /**
@@ -31,11 +31,11 @@ export class DriverMetaService {
     const map = new Map<string, DriverMeta>();
 
     for (const [driverCode, data] of Object.entries(drivers)) {
-      const team = data.Team;
+      const team = data.team;
 
       map.set(driverCode, {
         driverCode,
-        driverNumber: data.DriverNumber,
+        driverNumber: data.driverNumber,
         team,
         color: TEAM_COLORS[team] ?? '#888888', // safe fallback
       });
@@ -46,11 +46,11 @@ export class DriverMetaService {
   }
 
   /* ===================================================== */
-  /* LOOKUP                                               */
+  /* LOOKUP                                                */
   /* ===================================================== */
 
   /**
-   * Fast synchronous lookup by driver code (ALB, VER, etc.)
+   * Fast synchronous lookup by driver code (ALO, VER, etc.)
    */
   get(driverCode: string): DriverMeta | undefined {
     return this.metaMap.get(driverCode);

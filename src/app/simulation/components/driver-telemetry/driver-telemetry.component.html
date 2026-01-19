@@ -22,7 +22,13 @@
         <span class="driver-name">{{ selectedDriver }}</span>
       </div>
 
-      <button class="change-btn" (click)="onChangeDriver()">CHANGE</button>
+      <button
+        class="change-btn"
+        [class.confirm]="confirmChange"
+        (click)="onChangeDriver()"
+      >
+        {{ confirmChange ? "PROCEED ?" : "CHANGE" }}
+      </button>
     </div>
 
     <!-- ============================ -->

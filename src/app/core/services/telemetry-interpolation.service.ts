@@ -21,7 +21,7 @@ export class TelemetryInterpolationService {
   /* ===================================================== */
 
   private interpolatedFrameSubject = new BehaviorSubject<TelemetryFrame | null>(
-    null
+    null,
   );
 
   interpolatedFrame$ = this.interpolatedFrameSubject.asObservable();
@@ -46,7 +46,7 @@ export class TelemetryInterpolationService {
 
   constructor(
     private engine: SimulationEngineService,
-    private clock: RaceClockService
+    private clock: RaceClockService,
   ) {
     /* ---------- PAUSE / RESUME HANDLING ---------- */
     this.clock.isPaused$.subscribe((paused) => {
@@ -71,7 +71,7 @@ export class TelemetryInterpolationService {
       if (this.frameStartTime > 0) {
         this.frameDurationMs = Math.max(
           now - this.frameStartTime,
-          1 // safety guard
+          1, // safety guard
         );
       }
 
@@ -107,7 +107,7 @@ export class TelemetryInterpolationService {
       const interpolated = this.interpolateFrame(
         this.prevFrame,
         this.currFrame,
-        t
+        t,
       );
 
       this.interpolatedFrameSubject.next(interpolated);
@@ -125,24 +125,23 @@ export class TelemetryInterpolationService {
   private interpolateFrame(
     prev: TelemetryFrame,
     curr: TelemetryFrame,
-    t: number
+    t: number,
   ): TelemetryFrame {
     const cars: TelemetryCar[] = curr.cars.map((currCar) => {
       const prevCar = prev.cars.find((c) => c.driver === currCar.driver);
 
-      // First frame / new car → no interpolation
-      if (!prevCar) {
-        return currCar;
-      }
+      // New car or first frame
+      if (!prevCar) return currCar;
+
+      const interpolatedRaceDistance =
+        prevCar.raceDistance +
+        (currCar.raceDistance - prevCar.raceDistance) * t;
 
       return {
         ...currCar,
 
-        /**
-         * Linear interpolation of DISTANCE ONLY.
-         * Lap, pit state, status remain discrete.
-         */
-        distance: prevCar.distance + (currCar.distance - prevCar.distance) * t,
+        // ✅ smooth ordering
+        raceDistance: interpolatedRaceDistance,
       };
     });
 

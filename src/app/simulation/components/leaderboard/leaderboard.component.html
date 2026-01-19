@@ -35,15 +35,12 @@
         *ngFor="let row of leaderboard; trackBy: trackByDriver"
         [attr.data-driver]="row.driver"
       >
-        <div class="position">
+        <div
+          class="position"
+          [class.provisional-up]="row.provisional === 'UP'"
+          [class.provisional-down]="row.provisional === 'DOWN'"
+        >
           <span class="pos-number">{{ row.position }}</span>
-
-          <span
-            *ngIf="row.positionArrow"
-            class="pos-arrow"
-            [class.up]="row.positionArrow === 'up'"
-            [class.down]="row.positionArrow === 'down'"
-          ></span>
         </div>
 
         <div class="team-icon">

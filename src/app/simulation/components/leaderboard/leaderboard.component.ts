@@ -151,25 +151,49 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
       return 'IN PIT';
     }
 
-    // PIT STOP MODE
-    if (this.showPitStops) {
-      return `${row.pitStops ?? 0}`;
-    }
-
-    // TYRE LIFE MODE
-    if (this.showTyres) {
-      return row.tyreLife !== undefined ? `${row.tyreLife}` : '–';
-    }
-
     // LEADER ROW
     if (row.position === 1) {
-      return row.lap <= 3 ? 'Leader' : 'Interval';
+      return this.leaderLap >= 4 ? 'Interval' : 'Leader';
     }
 
-    // FIRST 3 LAPS → LEADER GAP
-    const gap =
-      row.lap <= 3 ? row.gapToLeader : (row.intervalGap ?? row.gapToLeader);
+    // NO DATA YET
+    if (row.gapToLeader == null && row.intervalGap == null) {
+      return '–';
+    }
 
-    return `+${gap.toFixed(3)}`;
+    /* ==========================================
+     F1 GAP MODE SWITCH
+     ========================================== */
+
+    // 🟡 LAPS 1–3 → GAP TO LEADER
+    if (this.leaderLap < 4) {
+      const gap = row.gapToLeader;
+      return gap != null ? `+${gap.toFixed(3)}` : '–';
+    }
+
+    // 🔵 LAP 4+ → INTERVAL TO CAR AHEAD
+    const interval = row.intervalGap;
+    return interval != null ? `+${interval.toFixed(3)}` : '–';
   }
 }
+
+// ─────────────────────────────────────────────────────
+// 🚨 FUTURE: LAPPED CAR DISPLAY (F1 BROADCAST RULE)
+//
+// F1 DOES NOT show "+1 LAP" during green-flag racing.
+// Time gaps are still shown even if the driver is lapped.
+//
+// "+1 LAP / +2 LAPS" is shown ONLY when:
+//   • Safety Car / Red Flag (timing frozen)
+//   • Race finished (final classification)
+//
+// When enabling later, logic will be:
+//
+// if (row.lapsDown && row.lapsDown > 0) {
+//   if (this.trackStatus !== 'GREEN' || this.raceFinished) {
+//     return `+${row.lapsDown} LAP${row.lapsDown > 1 ? 'S' : ''}`;
+//   }
+// }
+//
+// ⚠️ DO NOT enable during green race — breaks realism
+// ─────────────────────────────────────────────────────

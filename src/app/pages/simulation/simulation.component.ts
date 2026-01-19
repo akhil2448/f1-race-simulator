@@ -15,6 +15,9 @@ import { LeaderboardService } from '../../core/services/leaderboard.service';
 import { DriverMetaService } from '../../core/services/driver-meta.service';
 import { TrackStatusApiService } from '../../core/services/track-status-api.service';
 import { TrackStatusService } from '../../core/services/track-status.service';
+import { RaceLocalTimeService } from '../../core/services/race-local-time.service';
+import { LiveTimingService } from '../../core/services/live-timing.service';
+import { SectorAnchorService } from '../../core/services/sector-anchor.service';
 
 @Component({
   selector: 'app-simulation',
@@ -44,27 +47,67 @@ export class SimulationComponent implements OnInit {
     private driverMetaService: DriverMetaService,
     private trackStatusApiService: TrackStatusApiService,
     private trackStatusService: TrackStatusService,
+    private raceLocalTimeService: RaceLocalTimeService,
+    private liveTimingService: LiveTimingService,
+    private sectorAnchorService: SectorAnchorService,
   ) {}
 
   ngOnInit(): void {
     this.raceDataService.getRaceData(2021, 7).subscribe((raceData) => {
+      // ----- STATIC META DATA -------
       this.driverMetaService.initialize(raceData.drivers);
-      this.driverStateService.initialize(raceData);
-      this.leaderboardService.setTotalLaps(raceData.session.totalLaps);
-      this.leaderboardService.initializeTyreLife(raceData.drivers);
 
+      // ✅ SECTOR ANCHORS (NEW — MUST BE BEFORE LIVE TIMING)
+      this.sectorAnchorService.initialize(raceData);
+
+      /* ----------------------------------------
+   SANITY CHECK (DEV ONLY)
+   ---------------------------------------- */
+      if (!this.sectorAnchorService.hasAnchors()) {
+        console.error('[SectorAnchor] No sector anchors built!');
+      } else {
+        console.log(
+          '[SectorAnchor] Initialized for',
+          this.sectorAnchorService.getDriverCount(),
+          'drivers',
+        );
+      }
+
+      // ----- AUTHORITATIVE TIMING -----
+      this.liveTimingService.initialize(raceData);
+
+      // ----- LEADERBOARD META ---------
+      this.leaderboardService.setTotalLaps(raceData.session.totalLaps);
+
+      //this.leaderboardService.initializeTyreLife(raceData.drivers);
+
+      // ----- DROPDOWN FOR DRIVER TELEMETRY --------
       this.availableDrivers = Object.keys(raceData.drivers);
 
+      // ------- TRACK STATUS ----------
       this.trackStatusApiService
         .getTrackStatusData(2021, 7)
         .subscribe((res) =>
           this.trackStatusService.initialize(res.trackStatusData),
         );
 
-      this.telemetry.initialize(2021, 7).subscribe(() => {
-        this.trackMap.load(2021, 7).subscribe(() => {
+      // ------ LOCAL TIME CLOCK
+      this.raceLocalTimeService.initialize(
+        raceData.session.localTimeAtRaceStart,
+      );
+
+      // --- LOAD TRACK MAP FIRST ---
+      this.trackMap.load(2021, 7).subscribe(() => {
+        // Extract track length safely
+        const trackLengthMeters = this.trackMap.getTrackLength();
+
+        if (!trackLengthMeters) {
+          throw new Error('Track length not available');
+        }
+
+        // --- NOW initialize telemetry with track length ---
+        this.telemetry.initialize(2021, 7, trackLengthMeters).subscribe(() => {
           this.engine.initialize();
-          this.raceClock.play();
         });
       });
     });

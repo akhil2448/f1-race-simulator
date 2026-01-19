@@ -19,7 +19,11 @@ export class TrackMapService {
   load(year: number, round: number): Observable<void> {
     return this.http.get<TrackData>(`/api/track-map/${year}/${round}`).pipe(
       tap((data) => this.trackSubject.next(data)),
-      map(() => void 0)
+      map(() => void 0),
     );
+  }
+
+  getTrackLength(): number | null {
+    return this.trackSubject.value?.trackInfo.trackLength ?? null;
   }
 }

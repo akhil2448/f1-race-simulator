@@ -2,9 +2,20 @@ export interface LeaderboardEntry {
   position: number;
   driver: string;
   lap: number;
-  distance: number;
-  gapToLeader: number; // seconds (0 for leader)
-  intervalGap: number; // seconds from preceeding driver
+
+  /** Gap to leader in seconds, null = hidden */
+  gapToLeader: number | null;
+
+  /** Gap to car ahead, null = hidden */
+  intervalGap: number | null;
+
+  lapsDown?: number;
+
+  /* ---------------- Telemetry (visual only) ----------- */
+  lapDistance: number;
+  raceDistance: number;
+
+  /* ---------------- State ----------------------------- */
   isInPit: boolean;
   compound: string;
 
@@ -12,6 +23,9 @@ export interface LeaderboardEntry {
 
   tyreLife?: number;
   pitStops?: number;
+
+  /** PROVISIONAL UI ONLY */
+  provisional?: 'UP' | 'DOWN' | null; // gained / lost position mid-lap
 }
 
 export type GapMode = 'LEADER' | 'INTERVAL';

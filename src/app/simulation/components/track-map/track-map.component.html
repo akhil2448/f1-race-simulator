@@ -5,6 +5,8 @@
       <div class="track-location">
         {{ trackInfo.location }}, {{ trackInfo.country }}
       </div>
+      <!-- 🕒 LOCAL RACE TIME -->
+      <div class="race-local-time">Local Time: {{ localRaceTime }}</div>
     </div>
 
     <svg
@@ -86,8 +88,8 @@
         <g *ngFor="let car of cars">
           <circle
             *ngIf="!isHighlighted(car.driver)"
-            [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-            [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+            [attr.cx]="getCarPosition(car.raceDistance).x"
+            [attr.cy]="getCarPosition(car.raceDistance).y"
             r="90"
             [attr.fill]="getCarColor(car.driver)"
             stroke="#000"
@@ -102,8 +104,8 @@
           <ng-container *ngIf="isHighlighted(car.driver)">
             <!-- OUTER WHITE HALO -->
             <circle
-              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              [attr.cx]="getCarPosition(car.raceDistance).x"
+              [attr.cy]="getCarPosition(car.raceDistance).y"
               r="145"
               fill="none"
               stroke="#ffffff"
@@ -113,8 +115,8 @@
 
             <!-- INNER BLACK CUT RING (contrast) -->
             <circle
-              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              [attr.cx]="getCarPosition(car.raceDistance).x"
+              [attr.cy]="getCarPosition(car.raceDistance).y"
               r="112"
               fill="none"
               stroke="#000000"
@@ -124,8 +126,8 @@
 
             <!-- MAIN CAR DOT (larger) -->
             <circle
-              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              [attr.cx]="getCarPosition(car.raceDistance).x"
+              [attr.cy]="getCarPosition(car.raceDistance).y"
               r="125"
               [attr.fill]="getCarColor(car.driver)"
               stroke="#000"
@@ -134,8 +136,8 @@
 
             <!-- OPTIONAL CENTER DOT (precision focus) -->
             <circle
-              [attr.cx]="getCarPosition(toSvgDistance(car.distance)).x"
-              [attr.cy]="getCarPosition(toSvgDistance(car.distance)).y"
+              [attr.cx]="getCarPosition(car.raceDistance).x"
+              [attr.cy]="getCarPosition(car.raceDistance).y"
               r="14"
               fill="#ffffff"
             />

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
+import { ScreenWakeLockService } from './screen-wake-lock.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,8 @@ export class RaceClockService {
   private paused$ = new BehaviorSubject<boolean>(true);
   private speed = 1; // 1x by default
   private timerSub?: Subscription;
+
+  constructor(private screenWakeLockService: ScreenWakeLockService) {}
 
   /** Observable for components */
   raceTime$ = this.currentSecond$.asObservable();
@@ -20,14 +23,18 @@ export class RaceClockService {
 
     this.timerSub = interval(1000 / this.speed).subscribe(() => {
       this.currentSecond$.next(this.currentSecond$.value + 1);
-      console.log('RaceClockService: ', this.currentSecond$.value);
+      //console.log('RaceClockService: ', this.currentSecond$.value);
     });
+
+    this.screenWakeLockService.enable();
   }
 
   pause() {
     this.timerSub?.unsubscribe();
     this.timerSub = undefined;
     this.paused$.next(true);
+
+    this.screenWakeLockService.disable();
   }
 
   reset() {

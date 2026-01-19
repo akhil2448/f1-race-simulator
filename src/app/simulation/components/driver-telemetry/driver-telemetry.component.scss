@@ -24,6 +24,12 @@
   margin-bottom: 8px;
 }
 
+.change-btn.confirm {
+  color: #ff3b3b;
+  border-color: #ff3b3b;
+  background: rgba(255, 59, 59, 0.08);
+}
+
 .driver-color-strip {
   width: 4px;
   height: 18px;
@@ -72,30 +78,26 @@
 /* TELEMETRY HIGHLIGHTS            */
 /* =============================== */
 
-.telemetry-row.brake-on {
+/* BRAKE ON → RED (label + value) */
+.telemetry-row.brake-on .label,
+.telemetry-row.brake-on .value {
   color: #ff3b3b;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.telemetry-row.brake-on .label {
-  color: #ff7b7b;
-}
-
-.telemetry-row.throttle-on {
+/* THROTTLE ON → GREEN (label + value) */
+.telemetry-row.throttle-on .label,
+.telemetry-row.throttle-on .value {
   color: #00ff87;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.telemetry-row.throttle-on .label {
-  color: #7bffb4;
+.telemetry-row.throttle-on .value {
+  text-shadow: 0 0 6px rgba(0, 255, 135, 0.35);
 }
 
-.value.dry {
-  color: #9ca3af;
-}
-
-.value.braking {
-  color: #ff2b2b;
+.telemetry-row.brake-on .value {
+  text-shadow: 0 0 6px rgba(255, 59, 59, 0.35);
 }
 
 .telemetry-row:nth-child(6) {

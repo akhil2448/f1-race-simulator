@@ -6,6 +6,7 @@ import { TrackMapService } from '../../../core/services/track-map.service';
 import { TrackInfo, TrackPoint } from '../../../core/models/track-data.model';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
 import { TelemetryInterpolationService } from '../../../core/services/telemetry-interpolation.service';
+import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
 
 @Component({
   selector: 'app-track-map',
@@ -20,6 +21,7 @@ export class TrackMapComponent implements OnInit {
     private engine: SimulationEngineService,
     private trackMap: TrackMapService,
     private driverMeta: DriverMetaService,
+    private raceLocalTimeService: RaceLocalTimeService,
   ) {}
 
   /* ---------- UI ---------- */
@@ -47,6 +49,8 @@ export class TrackMapComponent implements OnInit {
 
   @Input() highlightedDrivers: (string | null)[] = [];
 
+  localRaceTime = '';
+
   ngOnInit(): void {
     /* ---------- TRACK DATA (ASYNC SAFE) ---------- */
     this.trackMap.track$.subscribe((data) => {
@@ -62,7 +66,26 @@ export class TrackMapComponent implements OnInit {
     /* ---------- TELEMETRY with INTERPOLATION ADDED ---------- */
     this.interpolatedTelemetry.interpolatedFrame$.subscribe((frame) => {
       if (!frame) return;
+
+      // 🔎 ADD LOGS HERE (temporary)
+      // frame.cars.forEach((car) => {
+      //   console.log(
+      //     `[TrackMap]`,
+      //     car.driver,
+      //     'lapDist=',
+      //     car.lapDistance.toFixed(1),
+      //     'raceDist=',
+      //     car.raceDistance.toFixed(1),
+      //   );
+      // });
+
       this.cars = frame.cars;
+    });
+
+    /* ---------- LOCAL RACE TIME ---------- */
+    this.raceLocalTimeService.time$.subscribe((d) => {
+      if (!d) return;
+      this.localRaceTime = this.formatTime(d);
     });
   }
 
@@ -149,26 +172,20 @@ export class TrackMapComponent implements OnInit {
   /* ===================================================== */
   /* POSITIONING                                           */
   /* ===================================================== */
-
-  toSvgDistance(distanceMeters: number): number {
-    return (
-      ((distanceMeters % this.realTrackLengthMeters) /
-        this.realTrackLengthMeters) *
-      this.totalTrackLength
-    );
-  }
-
-  getCarPosition(distance: number) {
+  getCarPosition(raceDistance: number) {
     if (!this.trackReady) return this.track[0];
 
-    const target =
-      ((distance % this.totalTrackLength) + this.totalTrackLength) %
+    // 1️⃣ Convert REAL meters → SVG distance
+    const svgDistance =
+      ((raceDistance % this.realTrackLengthMeters) /
+        this.realTrackLengthMeters) *
       this.totalTrackLength;
 
+    // 2️⃣ Find position along SVG polyline
     for (let i = 1; i < this.trackDistances.length; i++) {
-      if (this.trackDistances[i] >= target) {
+      if (this.trackDistances[i] >= svgDistance) {
         const prev = this.trackDistances[i - 1];
-        const ratio = (target - prev) / (this.trackDistances[i] - prev);
+        const ratio = (svgDistance - prev) / (this.trackDistances[i] - prev);
 
         const p1 = this.track[i - 1];
         const p2 = this.track[i];
@@ -198,5 +215,12 @@ export class TrackMapComponent implements OnInit {
 
   isHighlighted(driver: string): boolean {
     return this.highlightedDrivers.includes(driver);
+  }
+
+  private formatTime(d: Date): string {
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
   }
 }

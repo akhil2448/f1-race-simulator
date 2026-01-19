@@ -51,10 +51,14 @@ export class RaceClockComponent implements OnInit, OnDestroy {
     this.raceClock.setSpeed(multiplier); // 👈 engine state
   }
 
-  /** mm:ss formatting */
+  /** HH:mm:ss formatting */
   get formattedTime(): string {
-    const minutes = Math.floor(this.currentSecond / 60);
-    const seconds = this.currentSecond % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const h = Math.floor(this.currentSecond / 3600);
+    const m = Math.floor((this.currentSecond % 3600) / 60);
+    const s = this.currentSecond % 60;
+
+    return h > 0
+      ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+      : `${m}:${s.toString().padStart(2, '0')}`;
   }
 }

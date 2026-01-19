@@ -24,16 +24,23 @@ export class TelemetryBufferService {
   currentFrom: number | undefined;
   currentTo: number | undefined;
 
+  private trackLengthMeters = 0;
+
   constructor(private http: HttpClient) {}
 
   /* ---------------------------------------------------- */
   /* INITIAL LOAD                                         */
   /* ---------------------------------------------------- */
 
-  initialize(year: number, round: number): Observable<void> {
+  initialize(
+    year: number,
+    round: number,
+    trackLengthMeters: number,
+  ): Observable<void> {
     this.clear();
     this.year = year;
     this.round = round;
+    this.trackLengthMeters = trackLengthMeters;
 
     this.currentFrom = 0;
     this.currentTo = 600; // initial 10 minutes
@@ -83,6 +90,7 @@ export class TelemetryBufferService {
     return this.http.get<any>(url).pipe(
       tap((res) => {
         Object.entries(res.frames).forEach(([sec, frame]) => {
+          // 🚨 DO NOT recompute anything here
           this.frameBuffer.set(Number(sec), frame as TelemetryFrame);
         });
 
@@ -92,7 +100,7 @@ export class TelemetryBufferService {
       finalize(() => {
         this.isFetching = false;
       }),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
