@@ -17,10 +17,13 @@ export class LiveTimingService {
   state$ = this.stateSubject.asObservable();
 
   private lastLeaderCompletedLaps = -1;
+  private lastLeaderDriver: string | null = null;
 
-  // 🔒 sector ownership (authoritative here)
+  // 🔒 sector ownership
   private lastSectorByDriver = new Map<string, 1 | 2 | 3>();
   private lastLapByDriver = new Map<string, number>();
+
+  private lastInPitState = new Map<string, boolean>();
 
   constructor(private clock: RaceClockService) {}
 
@@ -36,7 +39,8 @@ export class LiveTimingService {
   private recomputeState(raceTime: number): void {
     const drivers: LiveDriverState[] = [];
 
-    // capture previous sector/lap BEFORE overwriting
+    let anyJustExitedPit = false;
+
     const prevSectorMap = new Map(this.lastSectorByDriver);
     const prevLapMap = new Map(this.lastLapByDriver);
 
@@ -46,7 +50,6 @@ export class LiveTimingService {
       const completedLaps = this.getCompletedLapCount(laps, raceTime);
       const currentLap = completedLaps + 1;
 
-      // 🔒 USE CURRENT LAP FIRST (critical fix)
       const lapRef: TimingLapApi | null =
         laps[completedLaps] ?? laps[completedLaps - 1] ?? null;
 
@@ -65,9 +68,22 @@ export class LiveTimingService {
       /* ---------- SECTOR ---------- */
       const currentSector = this.computeSector(lapTimeSoFar, lapRef);
 
-      // update AFTER snapshot
       this.lastSectorByDriver.set(driver, currentSector);
       this.lastLapByDriver.set(driver, currentLap);
+
+      /* ---------- TYRES (AUTHORITATIVE) ---------- */
+      const compound = this.getCurrentCompound(data, raceTime);
+      const tyreLife = this.getCurrentTyreLife(data, completedLaps);
+
+      /* ---------- PIT LANE DETECTION ---------- */
+      const wasInPit = this.lastInPitState.get(driver) ?? false;
+      const nowInPit = this.isInPit(data, raceTime);
+
+      if (wasInPit && !nowInPit) {
+        anyJustExitedPit = true;
+      }
+
+      this.lastInPitState.set(driver, nowInPit);
 
       drivers.push({
         driver,
@@ -88,6 +104,9 @@ export class LiveTimingService {
         intervalGap: null,
         lapsDown: 0,
 
+        compound,
+        tyreLife,
+
         provisionalStatus: null,
 
         x: 0,
@@ -95,7 +114,7 @@ export class LiveTimingService {
 
         isLeader: false,
         isFinished: completedLaps >= this.raceData.session.totalLaps,
-        isInPit: this.isInPit(data, raceTime),
+        isInPit: nowInPit,
       });
     }
 
@@ -110,30 +129,15 @@ export class LiveTimingService {
     const leader = drivers[0];
     leader.isLeader = true;
 
-    /* ===============================
-       🔒 LEADER-ONLY SECTOR EDGE
-       =============================== */
+    const leaderChanged =
+      this.lastLeaderDriver !== null && this.lastLeaderDriver !== leader.driver;
 
-    const prevSector = prevSectorMap.get(leader.driver);
-    const prevLap = prevLapMap.get(leader.driver);
+    this.lastLeaderDriver = leader.driver;
 
-    if (
-      prevSector !== undefined &&
-      prevLap === leader.currentLap &&
-      leader.currentSector > prevSector
-    ) {
-      console.log(
-        '[SECTOR EDGE]',
-        leader.driver,
-        'lap',
-        leader.currentLap,
-        'sector',
-        leader.currentSector,
-      );
-    }
+    this.applyLapsDown(drivers);
 
     /* ===============================
-       🔒 LAP-END FREEZE
+       LAP-END FREEZE
        =============================== */
 
     if (leader.completedLaps !== this.lastLeaderCompletedLaps) {
@@ -146,6 +150,23 @@ export class LiveTimingService {
       drivers.forEach((d, i) => (d.displayPosition = i + 1));
       this.stateSubject.next([...drivers]);
       return;
+    }
+
+    /* ===============================
+       LEADER-CHANGE FREEZE
+       =============================== */
+
+    // 🔓 allow immediate recompute when someone exits pit
+    if (leaderChanged && !anyJustExitedPit) {
+      drivers.forEach((d, i) => (d.displayPosition = i + 1));
+      this.stateSubject.next([...drivers]);
+      return;
+    }
+
+    // 🔓 Force gap recompute immediately after pit exit
+    if (anyJustExitedPit) {
+      leader.gapToLeader = 0;
+      leader.intervalGap = null;
     }
 
     /* ===============================
@@ -188,6 +209,113 @@ export class LiveTimingService {
     this.stateSubject.next([...drivers]);
   }
 
+  /* ===============================
+     HELPERS
+     =============================== */
+
+  private getCompletedLapCount(laps: TimingLapApi[], raceTime: number): number {
+    let count = 0;
+    for (const lap of laps) {
+      if (lap.lapStartTime + lap.lapTime <= raceTime) count++;
+    }
+    return count;
+  }
+
+  private getLapByIndex(
+    driver: string,
+    index: number,
+  ): TimingLapApi | undefined {
+    return this.raceData.drivers[driver].timing.laps[index];
+  }
+
+  private isInPit(data: DriverApiData, raceTime: number): boolean {
+    if (raceTime < 60) return false;
+
+    const pitStops = data.timing.pitStops ?? [];
+
+    let lastPitEvent: 'IN' | 'OUT' | null = null;
+
+    for (const p of pitStops) {
+      // pit-lane entry
+      if (p.pitInTime != null && raceTime >= p.pitInTime) {
+        lastPitEvent = 'IN';
+      }
+
+      // pit-lane exit (track rejoin)
+      if (p.pitOutTime != null && raceTime >= p.pitOutTime) {
+        lastPitEvent = 'OUT';
+      }
+    }
+
+    // IN PIT only if last event was pit entry
+    return lastPitEvent === 'IN';
+  }
+
+  private computeSector(
+    lapTimeSoFar: number,
+    lap: TimingLapApi | null,
+  ): 1 | 2 | 3 {
+    if (!lap || !lap.sectorTimes?.length) return 1;
+
+    const s1 = lap.sectorTimes[0] ?? 0;
+    const s2 = lap.sectorTimes[1] ?? 0;
+
+    if (lapTimeSoFar < s1) return 1;
+    if (lapTimeSoFar < s1 + s2) return 2;
+    return 3;
+  }
+
+  private applyLapsDown(drivers: LiveDriverState[]): void {
+    const leaderLaps = drivers[0].completedLaps;
+    for (const d of drivers) {
+      d.lapsDown = Math.max(0, leaderLaps - d.completedLaps);
+    }
+  }
+
+  /* ===============================
+     TYRES (AUTHORITATIVE)
+     =============================== */
+
+  private getCurrentCompound(data: DriverApiData, raceTime: number): string {
+    const pitStops = data.timing.pitStops;
+    if (!pitStops || pitStops.length === 0) return 'UNKNOWN';
+
+    // starting compound
+    let compound = pitStops[0].compound ?? 'UNKNOWN';
+
+    for (const p of pitStops) {
+      if (p.pitOutTime != null && raceTime >= p.pitOutTime) {
+        compound = p.compound ?? compound;
+      }
+    }
+
+    return compound;
+  }
+
+  private getCurrentTyreLife(
+    data: DriverApiData,
+    completedLaps: number,
+  ): number | null {
+    const laps = data.timing.laps;
+    if (!laps || laps.length === 0) return null;
+
+    const lapIndex = Math.max(0, completedLaps - 1);
+    return laps[lapIndex]?.tyreLife ?? null;
+  }
+
+  private compareByTrackPosition(
+    a: LiveDriverState,
+    b: LiveDriverState,
+  ): number {
+    if (a.completedLaps !== b.completedLaps) {
+      return b.completedLaps - a.completedLaps;
+    }
+    if (a.lapDistance !== b.lapDistance) {
+      return b.lapDistance - a.lapDistance;
+    }
+    return b.raceDistance - a.raceDistance;
+  }
+
   private applyLapEndGaps(
     ordered: LiveDriverState[],
     completedLaps: number,
@@ -212,59 +340,5 @@ export class LiveTimingService {
       const prevGap = ordered[i - 1].gapToLeader;
       curr.intervalGap = prevGap != null ? curr.gapToLeader - prevGap : null;
     }
-  }
-
-  private compareByTrackPosition(
-    a: LiveDriverState,
-    b: LiveDriverState,
-  ): number {
-    if (a.completedLaps !== b.completedLaps) {
-      return b.completedLaps - a.completedLaps;
-    }
-    if (a.lapDistance !== b.lapDistance) {
-      return b.lapDistance - a.lapDistance;
-    }
-    return b.raceDistance - a.raceDistance;
-  }
-
-  private getCompletedLapCount(laps: TimingLapApi[], raceTime: number): number {
-    let count = 0;
-    for (const lap of laps) {
-      if (lap.lapStartTime + lap.lapTime <= raceTime) count++;
-    }
-    return count;
-  }
-
-  private getLapByIndex(
-    driver: string,
-    index: number,
-  ): TimingLapApi | undefined {
-    return this.raceData.drivers[driver].timing.laps[index];
-  }
-
-  private isInPit(data: DriverApiData, raceTime: number): boolean {
-    if (raceTime < 60) return false;
-
-    return data.timing.pitStops.some(
-      (p) =>
-        p.pitInTime != null &&
-        p.pitOutTime != null &&
-        raceTime >= p.pitInTime &&
-        raceTime <= p.pitOutTime,
-    );
-  }
-
-  private computeSector(
-    lapTimeSoFar: number,
-    lap: TimingLapApi | null,
-  ): 1 | 2 | 3 {
-    if (!lap || !lap.sectorTimes?.length) return 1;
-
-    const s1 = lap.sectorTimes[0] ?? 0;
-    const s2 = lap.sectorTimes[1] ?? 0;
-
-    if (lapTimeSoFar < s1) return 1;
-    if (lapTimeSoFar < s1 + s2) return 2;
-    return 3;
   }
 }

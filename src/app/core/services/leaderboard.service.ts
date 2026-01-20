@@ -3,9 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 import { LiveTimingService } from './live-timing.service';
 import { LeaderboardEntry } from '../models/leaderboard-entry.model';
 import { TelemetryInterpolationService } from './telemetry-interpolation.service';
-import { LiveTelemetryVisualTimingService } from './live-telemetry-visual-timing.service';
 import { LiveDriverState } from '../models/live-driver-state.model';
 import { LiveSectorVisualService } from './live-sector-visual.service';
+import { RaceClockService } from './race-clock-service';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -17,11 +17,15 @@ export interface LeaderboardViewState {
 export class LeaderboardService {
   private subject = new BehaviorSubject<LeaderboardViewState>({
     entries: [],
-    leaderLap: 1, // 🔒 never start at 0
+    leaderLap: 1,
     totalLaps: 0,
   });
 
   leaderboard$ = this.subject.asObservable();
+
+  /* ===============================
+     POSITION ARROWS
+     =============================== */
 
   private arrowMap = new Map<
     string,
@@ -31,21 +35,28 @@ export class LeaderboardService {
   private previousPositions = new Map<string, number>();
   private readonly ARROW_DURATION = 500;
 
-  /** 🔒 LAST STABLE LEADER LAP (key fix) */
+  /* ===============================
+     STATE
+     =============================== */
+
   private lastStableLeaderLap = 1;
+  private timingClockTime = 0;
 
   constructor(
     private timing: LiveTimingService,
     private telemetry: TelemetryInterpolationService,
     private sectorVisual: LiveSectorVisualService,
-    //private visualTiming: LiveVisualTimingService,
+    private clock: RaceClockService,
   ) {
+    this.timing.state$.subscribe(() => {
+      this.timingClockTime = this.clock.getCurrentSecond();
+    });
+
     this.bind();
   }
 
   setTotalLaps(totalLaps: number): void {
-    const current = this.subject.value;
-    this.subject.next({ ...current, totalLaps });
+    this.subject.next({ ...this.subject.value, totalLaps });
   }
 
   /* =====================================================
@@ -53,25 +64,17 @@ export class LeaderboardService {
      ===================================================== */
 
   private bind(): void {
-    let latestTelemetry: Map<string, any> = new Map();
+    const latestTelemetry = new Map<string, any>();
 
     /* ---------- TELEMETRY (visual only) ---------- */
     this.telemetry.interpolatedFrame$.subscribe((frame) => {
       if (!frame) return;
-
       latestTelemetry.clear();
       frame.cars.forEach((c) => latestTelemetry.set(c.driver, c));
     });
 
     /* ---------- TIMING (authoritative) ---------- */
     this.sectorVisual.visualState$.subscribe((states: LiveDriverState[]) => {
-      // console.log(
-      //   '[LEADERBOARD]',
-      //   'P1 gap',
-      //   states[1]?.gapToLeader,
-      //   'interval',
-      //   states[1]?.intervalGap,
-      // );
       if (!states.length) return;
 
       const now = performance.now();
@@ -81,8 +84,13 @@ export class LeaderboardService {
         const position = index + 1;
         const prevPos = this.previousPositions.get(s.driver);
 
-        /* ---------- POSITION ARROW ---------- */
-        if (prevPos !== undefined && prevPos !== position) {
+        /* =================================================
+           🔒 POSITION ARROW (MID-LAP ONLY)
+           ================================================= */
+
+        const isMidLap = s.gapToLeader !== null || s.intervalGap !== null;
+
+        if (isMidLap && prevPos !== undefined && prevPos !== position) {
           this.arrowMap.set(s.driver, {
             arrow: position < prevPos ? 'up' : 'down',
             expiresAt: now + this.ARROW_DURATION,
@@ -109,25 +117,24 @@ export class LeaderboardService {
           lapsDown: s.lapsDown,
 
           isInPit: s.isInPit,
-          compound: 'UNKNOWN',
+          compound: s.compound,
+          tyreLife: s.tyreLife,
 
           lapDistance: t?.lapDistance ?? 0,
           raceDistance: t?.raceDistance ?? 0,
 
           provisional: s.provisionalStatus,
-
           positionArrow,
-          tyreLife: undefined,
-          pitStops: 0,
+
+          pitStops: this.getPitStopCount(s.driver, this.timingClockTime),
         });
       });
 
       /* =================================================
-         🔒 LEADER LAP STABILIZATION (F1-correct)
+         🔒 LEADER LAP STABILIZATION
          ================================================= */
 
       const rawLeaderLap = states[0].currentLap;
-
       const leaderLap =
         rawLeaderLap && rawLeaderLap >= 1
           ? rawLeaderLap
@@ -141,5 +148,23 @@ export class LeaderboardService {
         totalLaps: this.subject.value.totalLaps,
       });
     });
+  }
+
+  /* =====================================================
+     PIT STOPS (AUTHORITATIVE)
+     ===================================================== */
+
+  private getPitStopCount(driver: string, raceTime: number): number {
+    const driverData = (this.timing as any).raceData?.drivers?.[driver];
+    if (!driverData) return 0;
+
+    const pitStops = driverData.timing.pitStops ?? [];
+
+    return pitStops.filter((p: any) => {
+      if (p.pitOutTime == null) return false;
+      if (raceTime < p.pitOutTime) return false;
+      if (p.lap === 1 && p.pitInTime == null) return false; // pit-lane start
+      return true;
+    }).length;
   }
 }

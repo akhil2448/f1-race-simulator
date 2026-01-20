@@ -12,7 +12,7 @@ export interface LiveDriverState {
   currentLap: number;
   completedLaps: number;
 
-  currentSector: number;
+  currentSector: 1 | 2 | 3;
 
   /**
    * Official position based on timing data
@@ -42,4 +42,7 @@ export interface LiveDriverState {
   isLeader: boolean;
   isFinished: boolean;
   isInPit: boolean;
+
+  compound: string;
+  tyreLife: number | null;
 }

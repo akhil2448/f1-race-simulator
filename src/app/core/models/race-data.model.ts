@@ -58,6 +58,9 @@ export interface TimingLapApi {
 
   /** Official classification at lap end */
   positionAtLapEnd: number;
+
+  /** laps on current tyre */
+  tyreLife?: number;
 }
 
 /* Sector timing */
@@ -72,14 +75,18 @@ export interface SectorTimingApi {
 /* -------------------- PIT STOPS -------------------- */
 
 export interface PitStopApi {
+  /** Lap on which the pit event occurred (in-lap) */
   lapNumber: number;
 
-  pitInTime: number;
-  pitOutTime: number;
+  /** Seconds since race start when car entered pit lane */
+  pitInTime: number | null;
 
-  totalTime: number;
+  /** Seconds since race start when car exited pit lane */
+  pitOutTime: number | null;
+
+  /** Tyre compound fitted after this stop */
+  compound?: 'SOFT' | 'MEDIUM' | 'HARD' | 'INTERMEDIATE' | 'WET';
 }
-
 /* -------------------- PERSONAL BEST -------------------- */
 
 export interface PersonalBestLapApi {

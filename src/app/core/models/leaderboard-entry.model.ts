@@ -21,7 +21,7 @@ export interface LeaderboardEntry {
 
   positionArrow?: 'up' | 'down';
 
-  tyreLife?: number;
+  tyreLife?: number | null;
   pitStops?: number;
 
   /** PROVISIONAL UI ONLY */

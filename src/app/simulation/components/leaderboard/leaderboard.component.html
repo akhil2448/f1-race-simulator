@@ -41,6 +41,14 @@
           [class.provisional-down]="row.provisional === 'DOWN'"
         >
           <span class="pos-number">{{ row.position }}</span>
+
+          <!-- 🔺🔻 POSITION ARROW -->
+          <span
+            *ngIf="row.positionArrow"
+            class="pos-arrow"
+            [class.up]="row.positionArrow === 'up'"
+            [class.down]="row.positionArrow === 'down'"
+          ></span>
         </div>
 
         <div class="team-icon">
@@ -61,11 +69,26 @@
 
         <div
           class="driver-stats"
-          [class.in-pit]="row.isInPit"
-          [class.toggle-mode]="showTyres || showPitStops"
+          [ngClass]="{
+            'toggle-mode': showTyres || showPitStops,
+            'in-pit': row.isInPit,
+          }"
           [style.color]="row.isInPit ? getDriverColor(row.driver) : null"
         >
-          {{ formatGap(row) }}
+          <!-- GAP MODE -->
+          <ng-container *ngIf="!showTyres && !showPitStops">
+            {{ formatGap(row) }}
+          </ng-container>
+
+          <!-- TYRE MODE -->
+          <ng-container *ngIf="showTyres">
+            {{ row.tyreLife ?? "–" }}
+          </ng-container>
+
+          <!-- PIT MODE -->
+          <ng-container *ngIf="showPitStops">
+            {{ row.pitStops }}
+          </ng-container>
         </div>
 
         <div class="tyre" [ngClass]="row.compound.toLowerCase()">
