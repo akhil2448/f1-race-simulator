@@ -7,7 +7,7 @@ import { LiveDriverState } from '../models/live-driver-state.model';
 import { TelemetryFrame } from '../models/race-telemetry.model';
 
 @Injectable({ providedIn: 'root' })
-export class LiveVisualTimingService {
+export class LiveTelemetryVisualTimingService {
   private subject = new BehaviorSubject<LiveDriverState[]>([]);
   visualState$ = this.subject.asObservable();
 

@@ -17,27 +17,46 @@ export class SectorAnchorService {
         const lapStart = lap.lapStartTime;
         if (lapStart == null) return;
 
+        const times = lap.sectorTimes;
+        if (!times || times.length !== 3) return;
+
         let cumulative = 0;
 
-        // IMPORTANT: sectors must be processed in order 1 → 3
-        const sectors = lap.sectors;
-        if (!sectors || !sectors.length) return;
-
-        // IMPORTANT: sectors must be processed in order 1 → 3
-        sectors
-          .slice() // avoid mutating original
-          .sort((a, b) => a.sector - b.sector)
-          .forEach((sector) => {
-            cumulative += sector.time;
-
-            list.push({
-              driver,
-              lap: lap.lapNumber,
-              sector: sector.sector,
-              raceTime: lapStart + cumulative,
-              sectorTime: sector.time,
-            });
+        // Sector 1
+        if (times[0] != null) {
+          cumulative += times[0];
+          list.push({
+            driver,
+            lap: lap.lapNumber, // ✅ FIXED
+            sector: 1,
+            raceTime: lapStart + cumulative,
+            sectorTime: times[0],
           });
+        }
+
+        // Sector 2
+        if (times[1] != null) {
+          cumulative += times[1];
+          list.push({
+            driver,
+            lap: lap.lapNumber, // ✅ FIXED
+            sector: 2,
+            raceTime: lapStart + cumulative,
+            sectorTime: times[1],
+          });
+        }
+
+        // Sector 3
+        if (times[2] != null) {
+          cumulative += times[2];
+          list.push({
+            driver,
+            lap: lap.lapNumber, // ✅ FIXED
+            sector: 3,
+            raceTime: lapStart + cumulative,
+            sectorTime: times[2],
+          });
+        }
       });
 
       this.anchors.set(driver, list);
@@ -49,7 +68,6 @@ export class SectorAnchorService {
     const list = this.anchors.get(driver);
     if (!list || !list.length) return undefined;
 
-    // anchors are already ordered
     for (let i = list.length - 1; i >= 0; i--) {
       if (list[i].raceTime <= raceTime) {
         return list[i];
@@ -59,7 +77,6 @@ export class SectorAnchorService {
     return undefined;
   }
 
-  // sector-anchor.service.ts
   hasAnchors(): boolean {
     return this.anchors.size > 0;
   }

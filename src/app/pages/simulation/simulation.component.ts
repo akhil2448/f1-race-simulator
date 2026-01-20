@@ -73,9 +73,6 @@ export class SimulationComponent implements OnInit {
         );
       }
 
-      // ----- AUTHORITATIVE TIMING -----
-      this.liveTimingService.initialize(raceData);
-
       // ----- LEADERBOARD META ---------
       this.leaderboardService.setTotalLaps(raceData.session.totalLaps);
 
@@ -104,6 +101,9 @@ export class SimulationComponent implements OnInit {
         if (!trackLengthMeters) {
           throw new Error('Track length not available');
         }
+
+        // ✅ AUTHORITATIVE TIMING — now has track length
+        this.liveTimingService.initialize(raceData, trackLengthMeters);
 
         // --- NOW initialize telemetry with track length ---
         this.telemetry.initialize(2021, 7, trackLengthMeters).subscribe(() => {

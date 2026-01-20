@@ -17,6 +17,9 @@ export interface RaceSession {
 
   /** Local track time when race started */
   localTimeAtRaceStart: string;
+
+  /** Sector distance cut points (normalized lap distance) */
+  sectorDistanceRatios: SectorDistanceRatios;
 }
 
 /* -------------------- DRIVER -------------------- */
@@ -47,7 +50,11 @@ export interface TimingLapApi {
   /** Lap duration in seconds */
   lapTime: number;
 
-  sectors: SectorTimingApi[];
+  /** Sector times in seconds
+   *  Index: [0]=S1, [1]=S2, [2]=S3
+   *  Lap 1 S1 may be null
+   */
+  sectorTimes: (number | null)[];
 
   /** Official classification at lap end */
   positionAtLapEnd: number;
@@ -78,4 +85,12 @@ export interface PitStopApi {
 export interface PersonalBestLapApi {
   lapNumber: number;
   lapTime: number;
+}
+
+/* -------------------- SECTOR DISTANCES RATIOS -------------------- */
+
+export interface SectorDistanceRatios {
+  sector1: number; // 0 → 1
+  sector2: number; // 0 → 1
+  sector3: number; // always 1
 }

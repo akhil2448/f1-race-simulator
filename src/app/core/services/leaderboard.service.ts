@@ -3,8 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 import { LiveTimingService } from './live-timing.service';
 import { LeaderboardEntry } from '../models/leaderboard-entry.model';
 import { TelemetryInterpolationService } from './telemetry-interpolation.service';
-import { LiveVisualTimingService } from './live-visual-timing.service';
+import { LiveTelemetryVisualTimingService } from './live-telemetry-visual-timing.service';
 import { LiveDriverState } from '../models/live-driver-state.model';
+import { LiveSectorVisualService } from './live-sector-visual.service';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -36,6 +37,7 @@ export class LeaderboardService {
   constructor(
     private timing: LiveTimingService,
     private telemetry: TelemetryInterpolationService,
+    private sectorVisual: LiveSectorVisualService,
     //private visualTiming: LiveVisualTimingService,
   ) {
     this.bind();
@@ -62,7 +64,14 @@ export class LeaderboardService {
     });
 
     /* ---------- TIMING (authoritative) ---------- */
-    this.timing.state$.subscribe((states: LiveDriverState[]) => {
+    this.sectorVisual.visualState$.subscribe((states: LiveDriverState[]) => {
+      // console.log(
+      //   '[LEADERBOARD]',
+      //   'P1 gap',
+      //   states[1]?.gapToLeader,
+      //   'interval',
+      //   states[1]?.intervalGap,
+      // );
       if (!states.length) return;
 
       const now = performance.now();

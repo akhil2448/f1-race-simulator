@@ -62,7 +62,7 @@ export class SimulationEngineService {
         const prevLap = this.lastComputedLap.get(car.driver) ?? lap;
 
         if (lap !== prevLap) {
-          console.log('[LAP]', car.driver, '→', lap);
+          // console.log('[LAP]', car.driver, '→', lap);
         }
 
         this.lastComputedLap.set(car.driver, lap);

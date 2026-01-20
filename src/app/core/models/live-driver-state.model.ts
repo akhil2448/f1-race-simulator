@@ -12,6 +12,8 @@ export interface LiveDriverState {
   currentLap: number;
   completedLaps: number;
 
+  currentSector: number;
+
   /**
    * Official position based on timing data
    * (NEVER from telemetry)
