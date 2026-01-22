@@ -23,10 +23,35 @@ export class LiveTimingService {
   private lastLapByDriver = new Map<string, number>();
   private lastInPitState = new Map<string, boolean>();
 
+  // 🔑 broadcast-style timing memory
+  private lastValidGapToLeader = new Map<string, number>();
+
+  // 🔒 recovery lock after untimed lap
+  private timingRecoveryLock = new Set<string>();
+
+  // 🔒 NEW: interval control (external)
+  private intervalsAllowed = true;
+
   private raceFinished = false;
   private finalState: LiveDriverState[] | null = null;
 
   constructor(private clock: RaceClockService) {}
+
+  /* =====================================================
+     EXTERNAL CONTROL (CALLED BY LEADERBOARD)
+     ===================================================== */
+
+  freezeIntervals(): void {
+    this.intervalsAllowed = false;
+  }
+
+  resumeIntervals(): void {
+    this.intervalsAllowed = true;
+  }
+
+  /* =====================================================
+     INITIALIZATION
+     ===================================================== */
 
   initialize(raceData: RaceApiResponse, trackLength: number): void {
     this.raceData = raceData;
@@ -38,7 +63,7 @@ export class LiveTimingService {
   }
 
   /* =====================================================
-     🔑 TIMING VALIDITY
+     TIMING VALIDITY
      ===================================================== */
 
   private isLapTimed(
@@ -47,13 +72,9 @@ export class LiveTimingService {
     return !!lap && typeof lap.lapTime === 'number' && lap.lapTime > 0;
   }
 
-  /** 🔒 Detect broken timing for ANY driver */
-  private hasUnstableTiming(drivers: LiveDriverState[]): boolean {
-    return drivers.some((d) => {
-      const lap = this.getLapByIndex(d.driver, d.completedLaps);
-      return lap && !this.isLapTimed(lap);
-    });
-  }
+  /* =====================================================
+     CORE UPDATE
+     ===================================================== */
 
   private recomputeState(raceTime: number): void {
     // 🔒 HARD FREEZE AFTER FINISH
@@ -67,6 +88,7 @@ export class LiveTimingService {
 
     const totalLaps = this.raceData.session.totalLaps;
 
+    /* ---------- BUILD DRIVER STATES ---------- */
     for (const [driver, data] of Object.entries(this.raceData.drivers)) {
       const laps = data.timing.laps;
 
@@ -74,7 +96,6 @@ export class LiveTimingService {
       const rawCurrentLap = completedLaps + 1;
       const currentLap = Math.min(rawCurrentLap, totalLaps);
 
-      // ✅ SAFE LAP SELECTION
       const candidateLap = laps[completedLaps];
       const prevLap = laps[completedLaps - 1];
 
@@ -147,50 +168,23 @@ export class LiveTimingService {
     const leader = drivers[0];
     leader.isLeader = true;
 
-    /* =================================================
-       🔒 FINAL CLASSIFICATION
-       ================================================= */
+    /* =====================================================
+       FINAL CLASSIFICATION
+       ===================================================== */
 
     if (!this.raceFinished && leader.completedLaps >= totalLaps) {
       this.raceFinished = true;
 
       this.applyLapEndGaps(drivers, totalLaps);
 
-      const leaderFinishDistance = leader.completedLaps * this.trackLength;
-
-      drivers.forEach((d, i) => {
-        d.displayPosition = i + 1;
-        d.currentLap = totalLaps;
-
-        const hasFinalLap =
-          this.getLapByIndex(d.driver, totalLaps - 1) !== undefined;
-
-        if (hasFinalLap) {
-          d.lapsDown = 0;
-          d.intervalGap = null;
-        } else {
-          const distanceDelta = leaderFinishDistance - d.raceDistance;
-          d.lapsDown = Math.max(
-            1,
-            Math.floor(distanceDelta / this.trackLength),
-          );
-          d.gapToLeader = null;
-          d.intervalGap = null;
-        }
-      });
-
       this.finalState = drivers.map((d) => ({ ...d }));
       this.stateSubject.next([...this.finalState]);
       return;
     }
 
-    /* ===============================
-       NORMAL FLOW (STABLE ONLY)
-       =============================== */
-
-    const leaderChanged =
-      this.lastLeaderDriver !== null && this.lastLeaderDriver !== leader.driver;
-    this.lastLeaderDriver = leader.driver;
+    /* =====================================================
+       LAP END
+       ===================================================== */
 
     this.applyLapsDown(drivers);
 
@@ -206,38 +200,66 @@ export class LiveTimingService {
       return;
     }
 
-    if (leaderChanged && !anyJustExitedPit) {
-      drivers.forEach((d, i) => (d.displayPosition = i + 1));
-      this.stateSubject.next([...drivers]);
-      return;
-    }
+    /* =====================================================
+       INTERVAL FREEZE (YELLOW / SC / RESTART)
+       ===================================================== */
 
-    const leaderLap =
-      leader.completedLaps > 0
-        ? this.getLapByIndex(leader.driver, leader.completedLaps - 1)
-        : null;
-
-    /** 🔒 CRITICAL FIX: freeze if ANY timing is unstable */
-    if (!this.isLapTimed(leaderLap) || this.hasUnstableTiming(drivers)) {
+    if (!this.intervalsAllowed) {
       this.applyLapEndGaps(drivers, leader.completedLaps);
       drivers.forEach((d, i) => (d.displayPosition = i + 1));
       this.stateSubject.next([...drivers]);
       return;
     }
 
+    /* =====================================================
+       MID-LAP GAPS
+       ===================================================== */
+
+    const leaderLap =
+      leader.completedLaps > 0
+        ? this.getLapByIndex(leader.driver, leader.completedLaps - 1)
+        : null;
+
+    if (!this.isLapTimed(leaderLap)) return;
+
     leader.gapToLeader = 0;
     leader.intervalGap = null;
+    this.lastValidGapToLeader.set(leader.driver, 0);
 
     const leaderSpeed = this.trackLength / leaderLap.lapTime;
 
     for (let i = 1; i < drivers.length; i++) {
       const curr = drivers[i];
-      const prev = drivers[i - 1];
 
-      const gapMeters = leader.raceDistance - curr.raceDistance;
-      curr.gapToLeader = gapMeters / leaderSpeed;
+      const currLap =
+        curr.completedLaps > 0
+          ? this.getLapByIndex(curr.driver, curr.completedLaps - 1)
+          : null;
+
+      if (!this.isLapTimed(currLap)) {
+        this.timingRecoveryLock.add(curr.driver);
+        curr.gapToLeader = this.lastValidGapToLeader.get(curr.driver) ?? null;
+      } else if (this.timingRecoveryLock.has(curr.driver)) {
+        curr.gapToLeader = this.lastValidGapToLeader.get(curr.driver) ?? null;
+      } else {
+        const gapMeters = leader.raceDistance - curr.raceDistance;
+        const gap = gapMeters / leaderSpeed;
+        curr.gapToLeader = gap;
+        this.lastValidGapToLeader.set(curr.driver, gap);
+      }
+
+      let anchor: LiveDriverState | undefined;
+      for (let j = i - 1; j >= 0; j--) {
+        if (drivers[j].gapToLeader !== null) {
+          anchor = drivers[j];
+          break;
+        }
+      }
+
       curr.intervalGap =
-        prev.gapToLeader != null ? curr.gapToLeader - prev.gapToLeader : null;
+        anchor && curr.gapToLeader !== null
+          ? curr.gapToLeader - anchor.gapToLeader!
+          : null;
     }
 
     drivers.forEach((d, i) => (d.displayPosition = i + 1));
@@ -245,7 +267,7 @@ export class LiveTimingService {
   }
 
   /* ===============================
-     HELPERS (UNCHANGED)
+     HELPERS
      =============================== */
 
   private getCompletedLapCount(laps: TimingLapApi[], raceTime: number): number {
@@ -347,6 +369,9 @@ export class LiveTimingService {
 
       const prevGap = ordered[i - 1].gapToLeader;
       ordered[i].intervalGap = prevGap != null ? currGap - prevGap : null;
+
+      this.timingRecoveryLock.delete(ordered[i].driver);
+      this.lastValidGapToLeader.set(ordered[i].driver, currGap);
     }
   }
 

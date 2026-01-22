@@ -1,5 +1,4 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -7,10 +6,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import {
-  GapMode,
-  LeaderboardEntry,
-} from '../../../core/models/leaderboard-entry.model';
+import { LeaderboardEntry } from '../../../core/models/leaderboard-entry.model';
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { CommonModule } from '@angular/common';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
@@ -39,19 +35,27 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   showTyres = false;
   private tyreTimer?: number;
 
+  showPitStops = false;
+  raceFinished = false;
+
   trackStatus: TrackStatusType | null = null;
 
-  showPitStops = false;
-
-  raceFinished = false;
+  /** 🔑 Broadcast anchors */
+  private greenLap: number | null = null;
 
   constructor(
     private leaderboardService: LeaderboardService,
     private driverMeta: DriverMetaService,
     private trackStatusService: TrackStatusService,
   ) {
+    // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
       this.trackStatus = status;
+    });
+
+    // Fire on every GREEN (race start + restarts)
+    this.trackStatusService.greenEvent$.subscribe(() => {
+      this.greenLap = this.leaderLap || 1;
     });
   }
 
@@ -71,10 +75,38 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   }
 
   /* ===================================================== */
+  /* 🔑 BROADCAST RULE GETTERS (CORRECTED)                 */
+  /* ===================================================== */
+
+  /** Hide leaderboard under flags + first 2 laps after GREEN */
+  get hideLeaderboard(): boolean {
+    if (
+      this.trackStatus === 'RED' ||
+      this.trackStatus === 'SC' ||
+      this.trackStatus === 'VSC' ||
+      this.trackStatus === 'VSC_ENDING' ||
+      this.trackStatus === 'YELLOW'
+    ) {
+      return true;
+    }
+
+    if (this.greenLap === null) return true;
+
+    return this.leaderLap < this.greenLap + 2;
+  }
+
+  /** Gap-to-leader mode for 2 laps after GREEN */
+  get useLeaderGapMode(): boolean {
+    if (this.greenLap === null) return true;
+
+    return this.leaderLap < this.greenLap + 2;
+  }
+
+  /* ===================================================== */
   /* FLIP ANIMATION                                        */
   /* ===================================================== */
   private runFLIP(): void {
-    if (!this.rows || this.trackStatus === 'RED') return;
+    if (!this.rows || this.hideLeaderboard) return;
 
     this.rows.forEach((rowRef) => {
       const row = rowRef.nativeElement;
@@ -121,89 +153,43 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   }
 
   /* ===================================================== */
-  /* TYRE LIFE TOGGLE                                      */
+  /* TOGGLES                                               */
   /* ===================================================== */
 
   showTyreLife(): void {
     this.showTyres = true;
-
     clearTimeout(this.tyreTimer);
     this.tyreTimer = window.setTimeout(() => {
       this.showTyres = false;
     }, 5000);
   }
 
-  /* ===================================================== */
-  /* PITSTOP COUNT TOGGLE                                  */
-  /* ===================================================== */
   showPitStopsTemporarily(): void {
     this.showPitStops = true;
-
     setTimeout(() => {
       this.showPitStops = false;
     }, 5000);
   }
 
   /* ===================================================== */
-  /* GAP FORMATTER                                         */
+  /* GAP FORMATTERS                                        */
   /* ===================================================== */
 
-  formatGap(row: LeaderboardEntry): string {
-    // 🚧 DRIVER IN PIT
-    if (row.isInPit) {
-      return 'IN PIT';
-    }
+  formatLeaderGap(row: LeaderboardEntry): string {
+    // 🚧 PIT HAS HIGHEST PRIORITY
+    if (row.isInPit) return 'IN PIT';
 
-    // 🏁 RACE FINISHED — FINAL CLASSIFICATION
-    if (this.raceFinished) {
-      if (row.position === 1) {
-        return 'Winner';
-      }
+    if (row.position === 1) return 'Leader';
 
-      if (row.lapsDown && row.lapsDown > 0) {
-        return `+${row.lapsDown} LAP${row.lapsDown > 1 ? 'S' : ''}`;
-      }
+    return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(3)}` : '–';
+  }
 
-      return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(3)}` : '–';
-    }
+  formatIntervalGap(row: LeaderboardEntry): string {
+    // 🚧 PIT HAS HIGHEST PRIORITY
+    if (row.isInPit) return 'IN PIT';
 
-    // LEADER ROW (LIVE)
-    if (row.position === 1) {
-      return this.leaderLap >= 4 ? 'Interval' : 'Leader';
-    }
+    if (row.position === 1) return 'Interval';
 
-    // NO DATA YET
-    if (row.gapToLeader == null && row.intervalGap == null) {
-      return '–';
-    }
-
-    // 🟡 LAPS 1–3 → GAP TO LEADER
-    if (this.leaderLap < 4) {
-      return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(3)}` : '–';
-    }
-
-    // 🔵 LAP 4+ → INTERVAL
     return row.intervalGap != null ? `+${row.intervalGap.toFixed(3)}` : '–';
   }
 }
-
-// ─────────────────────────────────────────────────────
-// 🚨 FUTURE: LAPPED CAR DISPLAY (F1 BROADCAST RULE)
-//
-// F1 DOES NOT show "+1 LAP" during green-flag racing.
-// Time gaps are still shown even if the driver is lapped.
-//
-// "+1 LAP / +2 LAPS" is shown ONLY when:
-//   • Safety Car / Red Flag (timing frozen)
-//   • Race finished (final classification)
-//
-// When enabling later, logic will be:
-//
-// if (row.lapsDown && row.lapsDown > 0) {
-//   if (this.trackStatus !== 'GREEN' || this.raceFinished) {
-//     return `+${row.lapsDown} LAP${row.lapsDown > 1 ? 'S' : ''}`;
-//   }
-// }
-//
-// ⚠️ DO NOT enable during green race — breaks realism
-// ─────────────────────────────────────────────────────

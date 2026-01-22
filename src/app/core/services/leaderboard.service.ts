@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LiveTimingService } from './live-timing.service';
 import { LeaderboardEntry } from '../models/leaderboard-entry.model';
 import { TelemetryInterpolationService } from './telemetry-interpolation.service';
@@ -26,6 +27,9 @@ export class LeaderboardService {
 
   leaderboard$ = this.subject.asObservable();
 
+  /** leader lap observable */
+  leaderLap$ = this.leaderboard$.pipe(map((s) => s.leaderLap));
+
   private raceFinished = false;
 
   /* ===============================
@@ -47,7 +51,7 @@ export class LeaderboardService {
   private lastStableLeaderLap = 1;
   private timingClockTime = 0;
 
-  // 🔑 Track when a driver FIRST went OUT
+  /** when a driver retired */
   private outAtTime = new Map<string, number>();
 
   constructor(
@@ -73,6 +77,11 @@ export class LeaderboardService {
       ...this.subject.value,
       totalLaps,
     });
+  }
+
+  /** sync access if needed */
+  getLeaderLap(): number {
+    return this.subject.value.leaderLap;
   }
 
   /* =====================================================
@@ -101,15 +110,14 @@ export class LeaderboardService {
       states.forEach((s, index) => {
         const position = index + 1;
         const prevPos = this.previousPositions.get(s.driver);
-
         const isOut = this.presence.isOut(s.driver);
 
-        // 🔑 Record FIRST time driver goes OUT
+        // record OUT time once
         if (isOut && !this.outAtTime.has(s.driver)) {
           this.outAtTime.set(s.driver, this.timingClockTime);
         }
 
-        /* 🔒 POSITION ARROWS (MID-LAP ONLY, ACTIVE DRIVERS) */
+        /* 🔒 POSITION ARROWS (mid-lap only) */
         const isMidLap =
           !isOut && (s.gapToLeader !== null || s.intervalGap !== null);
 
@@ -130,6 +138,10 @@ export class LeaderboardService {
 
         const t = latestTelemetry.get(s.driver);
 
+        /** 🔑 IMPORTANT:
+         *  We DO NOT modify gap logic here.
+         *  LiveTimingService already decided what is valid.
+         */
         const entry: LeaderboardEntry = {
           position,
           driver: s.driver,
@@ -137,6 +149,7 @@ export class LeaderboardService {
 
           gapToLeader: isOut ? null : s.gapToLeader,
           intervalGap: isOut ? null : s.intervalGap,
+
           lapsDown: s.lapsDown,
 
           isInPit: s.isInPit,
@@ -160,20 +173,19 @@ export class LeaderboardService {
         }
       });
 
-      // 🔑 Sort OUT drivers by when they retired (earlier first)
+      /* OUT drivers sorted by retirement time */
       outEntries.sort((a, b) => {
         const ta = this.outAtTime.get(a.driver) ?? 0;
         const tb = this.outAtTime.get(b.driver) ?? 0;
         return ta - tb;
       });
 
-      // 🔑 Merge + recompute positions
       const entries = [...activeEntries, ...outEntries].map((e, i) => ({
         ...e,
         position: i + 1,
       }));
 
-      /* 🔒 LEADER LAP STABILIZATION */
+      /* leader lap stabilization */
       const rawLeaderLap = states[0].currentLap;
       const leaderLap =
         rawLeaderLap && rawLeaderLap >= 1
@@ -192,7 +204,7 @@ export class LeaderboardService {
   }
 
   /* =====================================================
-     PIT STOPS (AUTHORITATIVE)
+     PIT STOPS
      ===================================================== */
 
   private getPitStopCount(driver: string, raceTime: number): number {
@@ -204,7 +216,7 @@ export class LeaderboardService {
     return pitStops.filter((p: any) => {
       if (p.pitOutTime == null) return false;
       if (raceTime < p.pitOutTime) return false;
-      if (p.lap === 1 && p.pitInTime == null) return false; // pit-lane start
+      if (p.lap === 1 && p.pitInTime == null) return false;
       return true;
     }).length;
   }

@@ -16,3 +16,8 @@ export const TRACK_STATUS_MAP: Record<number, TrackStatusType> = {
   6: 'VSC',
   7: 'VSC_ENDING', // ending → visually same, then GREEN follows
 };
+
+type BroadcastPhase =
+  | 'HIDDEN' // hide leaderboard body
+  | 'GAP_TO_LEADER' // show leaderboard, gap to leader
+  | 'INTERVAL'; // normal interval mode

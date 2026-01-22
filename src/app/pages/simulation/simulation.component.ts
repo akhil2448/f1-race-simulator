@@ -30,7 +30,7 @@ export class SimulationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.bootstrap.startRace({ year: 2020, round: 1 });
+    this.bootstrap.startRace({ year: 2020, round: 3 });
 
     this.bootstrap.availableDrivers$.subscribe((drivers) => {
       this.availableDrivers = drivers;
