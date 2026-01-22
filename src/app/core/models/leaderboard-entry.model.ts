@@ -26,6 +26,9 @@ export interface LeaderboardEntry {
 
   /** PROVISIONAL UI ONLY */
   provisional?: 'UP' | 'DOWN' | null; // gained / lost position mid-lap
+
+  /** Driver state at race time */
+  status?: 'OUT' | null;
 }
 
 export type GapMode = 'LEADER' | 'INTERVAL';

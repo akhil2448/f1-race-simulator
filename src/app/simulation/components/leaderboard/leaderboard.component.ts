@@ -43,6 +43,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
 
   showPitStops = false;
 
+  raceFinished = false;
+
   constructor(
     private leaderboardService: LeaderboardService,
     private driverMeta: DriverMetaService,
@@ -58,6 +60,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
       this.leaderboard = state.entries;
       this.leaderLap = state.leaderLap;
       this.totalLaps = state.totalLaps;
+      this.raceFinished = state.raceFinished;
 
       requestAnimationFrame(() => this.runFLIP());
     });
@@ -146,12 +149,25 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
   /* ===================================================== */
 
   formatGap(row: LeaderboardEntry): string {
-    // 🚧 DRIVER IN PIT — OVERRIDES EVERYTHING
+    // 🚧 DRIVER IN PIT
     if (row.isInPit) {
       return 'IN PIT';
     }
 
-    // LEADER ROW
+    // 🏁 RACE FINISHED — FINAL CLASSIFICATION
+    if (this.raceFinished) {
+      if (row.position === 1) {
+        return 'Winner';
+      }
+
+      if (row.lapsDown && row.lapsDown > 0) {
+        return `+${row.lapsDown} LAP${row.lapsDown > 1 ? 'S' : ''}`;
+      }
+
+      return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(3)}` : '–';
+    }
+
+    // LEADER ROW (LIVE)
     if (row.position === 1) {
       return this.leaderLap >= 4 ? 'Interval' : 'Leader';
     }
@@ -161,19 +177,13 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
       return '–';
     }
 
-    /* ==========================================
-     F1 GAP MODE SWITCH
-     ========================================== */
-
     // 🟡 LAPS 1–3 → GAP TO LEADER
     if (this.leaderLap < 4) {
-      const gap = row.gapToLeader;
-      return gap != null ? `+${gap.toFixed(3)}` : '–';
+      return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(3)}` : '–';
     }
 
-    // 🔵 LAP 4+ → INTERVAL TO CAR AHEAD
-    const interval = row.intervalGap;
-    return interval != null ? `+${interval.toFixed(3)}` : '–';
+    // 🔵 LAP 4+ → INTERVAL
+    return row.intervalGap != null ? `+${row.intervalGap.toFixed(3)}` : '–';
   }
 }
 

@@ -19,11 +19,12 @@ export class LiveTimingService {
   private lastLeaderCompletedLaps = -1;
   private lastLeaderDriver: string | null = null;
 
-  // 🔒 sector ownership
   private lastSectorByDriver = new Map<string, 1 | 2 | 3>();
   private lastLapByDriver = new Map<string, number>();
-
   private lastInPitState = new Map<string, boolean>();
+
+  private raceFinished = false;
+  private finalState: LiveDriverState[] | null = null;
 
   constructor(private clock: RaceClockService) {}
 
@@ -36,53 +37,74 @@ export class LiveTimingService {
     });
   }
 
-  private recomputeState(raceTime: number): void {
-    const drivers: LiveDriverState[] = [];
+  /* =====================================================
+     🔑 TIMING VALIDITY
+     ===================================================== */
 
+  private isLapTimed(
+    lap: TimingLapApi | null | undefined,
+  ): lap is TimingLapApi {
+    return !!lap && typeof lap.lapTime === 'number' && lap.lapTime > 0;
+  }
+
+  /** 🔒 Detect broken timing for ANY driver */
+  private hasUnstableTiming(drivers: LiveDriverState[]): boolean {
+    return drivers.some((d) => {
+      const lap = this.getLapByIndex(d.driver, d.completedLaps);
+      return lap && !this.isLapTimed(lap);
+    });
+  }
+
+  private recomputeState(raceTime: number): void {
+    // 🔒 HARD FREEZE AFTER FINISH
+    if (this.raceFinished && this.finalState) {
+      this.stateSubject.next([...this.finalState]);
+      return;
+    }
+
+    const drivers: LiveDriverState[] = [];
     let anyJustExitedPit = false;
 
-    const prevSectorMap = new Map(this.lastSectorByDriver);
-    const prevLapMap = new Map(this.lastLapByDriver);
+    const totalLaps = this.raceData.session.totalLaps;
 
     for (const [driver, data] of Object.entries(this.raceData.drivers)) {
       const laps = data.timing.laps;
 
       const completedLaps = this.getCompletedLapCount(laps, raceTime);
-      const currentLap = completedLaps + 1;
+      const rawCurrentLap = completedLaps + 1;
+      const currentLap = Math.min(rawCurrentLap, totalLaps);
 
-      const lapRef: TimingLapApi | null =
-        laps[completedLaps] ?? laps[completedLaps - 1] ?? null;
+      // ✅ SAFE LAP SELECTION
+      const candidateLap = laps[completedLaps];
+      const prevLap = laps[completedLaps - 1];
+
+      const lapRef = this.isLapTimed(candidateLap)
+        ? candidateLap
+        : this.isLapTimed(prevLap)
+          ? prevLap
+          : null;
 
       const lapStartTime = lapRef?.lapStartTime ?? 0;
       const lapTimeSoFar = Math.max(0, raceTime - lapStartTime);
 
-      /* ---------- LAP DISTANCE ---------- */
       let lapDistance = 0;
-      if (lapRef && lapRef.lapTime > 0) {
+      if (this.isLapTimed(lapRef)) {
         const capped = Math.min(lapTimeSoFar, lapRef.lapTime);
         lapDistance = (capped / lapRef.lapTime) * this.trackLength;
       }
 
       const raceDistance = completedLaps * this.trackLength + lapDistance;
 
-      /* ---------- SECTOR ---------- */
       const currentSector = this.computeSector(lapTimeSoFar, lapRef);
-
       this.lastSectorByDriver.set(driver, currentSector);
       this.lastLapByDriver.set(driver, currentLap);
 
-      /* ---------- TYRES (AUTHORITATIVE) ---------- */
       const compound = this.getCurrentCompound(data, raceTime);
       const tyreLife = this.getCurrentTyreLife(data, completedLaps);
 
-      /* ---------- PIT LANE DETECTION ---------- */
       const wasInPit = this.lastInPitState.get(driver) ?? false;
       const nowInPit = this.isInPit(data, raceTime);
-
-      if (wasInPit && !nowInPit) {
-        anyJustExitedPit = true;
-      }
-
+      if (wasInPit && !nowInPit) anyJustExitedPit = true;
       this.lastInPitState.set(driver, nowInPit);
 
       drivers.push({
@@ -113,32 +135,64 @@ export class LiveTimingService {
         y: 0,
 
         isLeader: false,
-        isFinished: completedLaps >= this.raceData.session.totalLaps,
+        isFinished: completedLaps >= totalLaps,
         isInPit: nowInPit,
       });
     }
 
     if (!drivers.length) return;
 
-    /* ===============================
-       ORDER BY TRACK POSITION
-       =============================== */
-
     drivers.sort(this.compareByTrackPosition);
 
     const leader = drivers[0];
     leader.isLeader = true;
 
+    /* =================================================
+       🔒 FINAL CLASSIFICATION
+       ================================================= */
+
+    if (!this.raceFinished && leader.completedLaps >= totalLaps) {
+      this.raceFinished = true;
+
+      this.applyLapEndGaps(drivers, totalLaps);
+
+      const leaderFinishDistance = leader.completedLaps * this.trackLength;
+
+      drivers.forEach((d, i) => {
+        d.displayPosition = i + 1;
+        d.currentLap = totalLaps;
+
+        const hasFinalLap =
+          this.getLapByIndex(d.driver, totalLaps - 1) !== undefined;
+
+        if (hasFinalLap) {
+          d.lapsDown = 0;
+          d.intervalGap = null;
+        } else {
+          const distanceDelta = leaderFinishDistance - d.raceDistance;
+          d.lapsDown = Math.max(
+            1,
+            Math.floor(distanceDelta / this.trackLength),
+          );
+          d.gapToLeader = null;
+          d.intervalGap = null;
+        }
+      });
+
+      this.finalState = drivers.map((d) => ({ ...d }));
+      this.stateSubject.next([...this.finalState]);
+      return;
+    }
+
+    /* ===============================
+       NORMAL FLOW (STABLE ONLY)
+       =============================== */
+
     const leaderChanged =
       this.lastLeaderDriver !== null && this.lastLeaderDriver !== leader.driver;
-
     this.lastLeaderDriver = leader.driver;
 
     this.applyLapsDown(drivers);
-
-    /* ===============================
-       LAP-END FREEZE
-       =============================== */
 
     if (leader.completedLaps !== this.lastLeaderCompletedLaps) {
       this.lastLeaderCompletedLaps = leader.completedLaps;
@@ -152,45 +206,29 @@ export class LiveTimingService {
       return;
     }
 
-    /* ===============================
-       LEADER-CHANGE FREEZE
-       =============================== */
-
-    // 🔓 allow immediate recompute when someone exits pit
     if (leaderChanged && !anyJustExitedPit) {
       drivers.forEach((d, i) => (d.displayPosition = i + 1));
       this.stateSubject.next([...drivers]);
       return;
     }
 
-    // 🔓 Force gap recompute immediately after pit exit
-    if (anyJustExitedPit) {
-      leader.gapToLeader = 0;
-      leader.intervalGap = null;
-    }
-
-    /* ===============================
-       MID-LAP GAPS
-       =============================== */
-
-    leader.gapToLeader = 0;
-    leader.intervalGap = null;
-
     const leaderLap =
       leader.completedLaps > 0
         ? this.getLapByIndex(leader.driver, leader.completedLaps - 1)
         : null;
 
-    const leaderSpeed =
-      leaderLap && leaderLap.lapTime > 0
-        ? this.trackLength / leaderLap.lapTime
-        : null;
-
-    if (!leaderSpeed || leaderSpeed <= 0) {
+    /** 🔒 CRITICAL FIX: freeze if ANY timing is unstable */
+    if (!this.isLapTimed(leaderLap) || this.hasUnstableTiming(drivers)) {
+      this.applyLapEndGaps(drivers, leader.completedLaps);
       drivers.forEach((d, i) => (d.displayPosition = i + 1));
       this.stateSubject.next([...drivers]);
       return;
     }
+
+    leader.gapToLeader = 0;
+    leader.intervalGap = null;
+
+    const leaderSpeed = this.trackLength / leaderLap.lapTime;
 
     for (let i = 1; i < drivers.length; i++) {
       const curr = drivers[i];
@@ -198,11 +236,8 @@ export class LiveTimingService {
 
       const gapMeters = leader.raceDistance - curr.raceDistance;
       curr.gapToLeader = gapMeters / leaderSpeed;
-
       curr.intervalGap =
-        curr.gapToLeader != null && prev.gapToLeader != null
-          ? curr.gapToLeader - prev.gapToLeader
-          : null;
+        prev.gapToLeader != null ? curr.gapToLeader - prev.gapToLeader : null;
     }
 
     drivers.forEach((d, i) => (d.displayPosition = i + 1));
@@ -210,13 +245,15 @@ export class LiveTimingService {
   }
 
   /* ===============================
-     HELPERS
+     HELPERS (UNCHANGED)
      =============================== */
 
   private getCompletedLapCount(laps: TimingLapApi[], raceTime: number): number {
     let count = 0;
     for (const lap of laps) {
-      if (lap.lapStartTime + lap.lapTime <= raceTime) count++;
+      if (this.isLapTimed(lap) && lap.lapStartTime + lap.lapTime <= raceTime) {
+        count++;
+      }
     }
     return count;
   }
@@ -230,25 +267,14 @@ export class LiveTimingService {
 
   private isInPit(data: DriverApiData, raceTime: number): boolean {
     if (raceTime < 60) return false;
-
     const pitStops = data.timing.pitStops ?? [];
-
-    let lastPitEvent: 'IN' | 'OUT' | null = null;
+    let lastEvent: 'IN' | 'OUT' | null = null;
 
     for (const p of pitStops) {
-      // pit-lane entry
-      if (p.pitInTime != null && raceTime >= p.pitInTime) {
-        lastPitEvent = 'IN';
-      }
-
-      // pit-lane exit (track rejoin)
-      if (p.pitOutTime != null && raceTime >= p.pitOutTime) {
-        lastPitEvent = 'OUT';
-      }
+      if (p.pitInTime != null && raceTime >= p.pitInTime) lastEvent = 'IN';
+      if (p.pitOutTime != null && raceTime >= p.pitOutTime) lastEvent = 'OUT';
     }
-
-    // IN PIT only if last event was pit entry
-    return lastPitEvent === 'IN';
+    return lastEvent === 'IN';
   }
 
   private computeSector(
@@ -256,39 +282,23 @@ export class LiveTimingService {
     lap: TimingLapApi | null,
   ): 1 | 2 | 3 {
     if (!lap || !lap.sectorTimes?.length) return 1;
-
     const s1 = lap.sectorTimes[0] ?? 0;
     const s2 = lap.sectorTimes[1] ?? 0;
-
     if (lapTimeSoFar < s1) return 1;
     if (lapTimeSoFar < s1 + s2) return 2;
     return 3;
   }
 
-  private applyLapsDown(drivers: LiveDriverState[]): void {
-    const leaderLaps = drivers[0].completedLaps;
-    for (const d of drivers) {
-      d.lapsDown = Math.max(0, leaderLaps - d.completedLaps);
-    }
-  }
-
-  /* ===============================
-     TYRES (AUTHORITATIVE)
-     =============================== */
-
   private getCurrentCompound(data: DriverApiData, raceTime: number): string {
     const pitStops = data.timing.pitStops;
-    if (!pitStops || pitStops.length === 0) return 'UNKNOWN';
+    if (!pitStops?.length) return 'UNKNOWN';
 
-    // starting compound
     let compound = pitStops[0].compound ?? 'UNKNOWN';
-
     for (const p of pitStops) {
       if (p.pitOutTime != null && raceTime >= p.pitOutTime) {
         compound = p.compound ?? compound;
       }
     }
-
     return compound;
   }
 
@@ -297,10 +307,8 @@ export class LiveTimingService {
     completedLaps: number,
   ): number | null {
     const laps = data.timing.laps;
-    if (!laps || laps.length === 0) return null;
-
-    const lapIndex = Math.max(0, completedLaps - 1);
-    return laps[lapIndex]?.tyreLife ?? null;
+    if (!laps?.length) return null;
+    return laps[Math.max(0, completedLaps - 1)]?.tyreLife ?? null;
   }
 
   private compareByTrackPosition(
@@ -326,19 +334,26 @@ export class LiveTimingService {
 
     const lapIndex = completedLaps - 1;
     const leaderLap = this.getLapByIndex(leader.driver, lapIndex);
-    if (!leaderLap) return;
+    if (!leaderLap || !this.isLapTimed(leaderLap)) return;
 
     const leaderTime = leaderLap.lapStartTime + leaderLap.lapTime;
 
     for (let i = 1; i < ordered.length; i++) {
-      const curr = ordered[i];
-      const lap = this.getLapByIndex(curr.driver, lapIndex);
-      if (!lap) continue;
+      const lap = this.getLapByIndex(ordered[i].driver, lapIndex);
+      if (!lap || !this.isLapTimed(lap)) continue;
 
-      curr.gapToLeader = lap.lapStartTime + lap.lapTime - leaderTime;
+      const currGap = lap.lapStartTime + lap.lapTime - leaderTime;
+      ordered[i].gapToLeader = currGap;
 
       const prevGap = ordered[i - 1].gapToLeader;
-      curr.intervalGap = prevGap != null ? curr.gapToLeader - prevGap : null;
+      ordered[i].intervalGap = prevGap != null ? currGap - prevGap : null;
     }
+  }
+
+  private applyLapsDown(drivers: LiveDriverState[]): void {
+    const leaderCompletedLaps = drivers[0].completedLaps;
+    drivers.forEach((d) => {
+      d.lapsDown = Math.max(0, leaderCompletedLaps - d.completedLaps);
+    });
   }
 }

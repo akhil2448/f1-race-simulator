@@ -263,7 +263,7 @@ hr {
 
 .team-icon img.racingpoint {
   filter: brightness(0) invert(1);
-  width: 25px;
+  width: 20px;
   height: 19px;
 }
 
@@ -342,6 +342,10 @@ hr {
   overflow: hidden;
 
   //font-variant-numeric: tabular-nums;
+}
+
+.driver-row.out {
+  opacity: 0.4;
 }
 
 .driver-stats.toggle-mode {

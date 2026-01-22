@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TelemetryFrame, TelemetryCar } from '../models/race-telemetry.model';
 import { SimulationEngineService } from './simulation-engine.service';
 import { RaceClockService } from './race-clock-service';
+import { DriverPresenceService } from './driver-presence.service';
 
 /**
  * Smooth 60fps interpolation of telemetry frames.
@@ -47,6 +48,7 @@ export class TelemetryInterpolationService {
   constructor(
     private engine: SimulationEngineService,
     private clock: RaceClockService,
+    private presence: DriverPresenceService,
   ) {
     /* ---------- PAUSE / RESUME HANDLING ---------- */
     this.clock.isPaused$.subscribe((paused) => {
@@ -60,6 +62,9 @@ export class TelemetryInterpolationService {
     /* ---------- TELEMETRY FRAMES ---------- */
     this.engine.frame$.subscribe((frame) => {
       if (!frame) return;
+
+      // ✅ AUTHORITATIVE DRIVER PRESENCE UPDATE
+      this.presence.update(frame);
 
       const now = performance.now();
 

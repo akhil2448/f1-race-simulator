@@ -34,6 +34,7 @@
         class="driver-row"
         *ngFor="let row of leaderboard; trackBy: trackByDriver"
         [attr.data-driver]="row.driver"
+        [class.out]="row.status === 'OUT'"
       >
         <div
           class="position"
@@ -77,17 +78,20 @@
         >
           <!-- GAP MODE -->
           <ng-container *ngIf="!showTyres && !showPitStops">
-            {{ formatGap(row) }}
+            <span *ngIf="row.status === 'OUT'">OUT</span>
+            <span *ngIf="row.status !== 'OUT'">
+              {{ formatGap(row) }}
+            </span>
           </ng-container>
 
           <!-- TYRE MODE -->
           <ng-container *ngIf="showTyres">
-            {{ row.tyreLife ?? "–" }}
+            {{ row.status === "OUT" ? "–" : (row.tyreLife ?? "–") }}
           </ng-container>
 
           <!-- PIT MODE -->
           <ng-container *ngIf="showPitStops">
-            {{ row.pitStops }}
+            {{ row.status === "OUT" ? "–" : row.pitStops }}
           </ng-container>
         </div>
 

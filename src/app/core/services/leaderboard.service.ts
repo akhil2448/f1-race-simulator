@@ -6,11 +6,13 @@ import { TelemetryInterpolationService } from './telemetry-interpolation.service
 import { LiveDriverState } from '../models/live-driver-state.model';
 import { LiveSectorVisualService } from './live-sector-visual.service';
 import { RaceClockService } from './race-clock-service';
+import { DriverPresenceService } from './driver-presence.service';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
   leaderLap: number;
   totalLaps: number;
+  raceFinished: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -19,9 +21,12 @@ export class LeaderboardService {
     entries: [],
     leaderLap: 1,
     totalLaps: 0,
+    raceFinished: false,
   });
 
   leaderboard$ = this.subject.asObservable();
+
+  private raceFinished = false;
 
   /* ===============================
      POSITION ARROWS
@@ -42,13 +47,21 @@ export class LeaderboardService {
   private lastStableLeaderLap = 1;
   private timingClockTime = 0;
 
+  // 🔑 Track when a driver FIRST went OUT
+  private outAtTime = new Map<string, number>();
+
   constructor(
     private timing: LiveTimingService,
     private telemetry: TelemetryInterpolationService,
     private sectorVisual: LiveSectorVisualService,
     private clock: RaceClockService,
+    private presence: DriverPresenceService,
   ) {
-    this.timing.state$.subscribe(() => {
+    this.timing.state$.subscribe((states) => {
+      if (states.length && states[0].isFinished) {
+        this.raceFinished = true;
+      }
+
       this.timingClockTime = this.clock.getCurrentSecond();
     });
 
@@ -56,7 +69,10 @@ export class LeaderboardService {
   }
 
   setTotalLaps(totalLaps: number): void {
-    this.subject.next({ ...this.subject.value, totalLaps });
+    this.subject.next({
+      ...this.subject.value,
+      totalLaps,
+    });
   }
 
   /* =====================================================
@@ -78,17 +94,24 @@ export class LeaderboardService {
       if (!states.length) return;
 
       const now = performance.now();
-      const entries: LeaderboardEntry[] = [];
+
+      const activeEntries: LeaderboardEntry[] = [];
+      const outEntries: LeaderboardEntry[] = [];
 
       states.forEach((s, index) => {
         const position = index + 1;
         const prevPos = this.previousPositions.get(s.driver);
 
-        /* =================================================
-           🔒 POSITION ARROW (MID-LAP ONLY)
-           ================================================= */
+        const isOut = this.presence.isOut(s.driver);
 
-        const isMidLap = s.gapToLeader !== null || s.intervalGap !== null;
+        // 🔑 Record FIRST time driver goes OUT
+        if (isOut && !this.outAtTime.has(s.driver)) {
+          this.outAtTime.set(s.driver, this.timingClockTime);
+        }
+
+        /* 🔒 POSITION ARROWS (MID-LAP ONLY, ACTIVE DRIVERS) */
+        const isMidLap =
+          !isOut && (s.gapToLeader !== null || s.intervalGap !== null);
 
         if (isMidLap && prevPos !== undefined && prevPos !== position) {
           this.arrowMap.set(s.driver, {
@@ -99,7 +122,7 @@ export class LeaderboardService {
 
         const arrowState = this.arrowMap.get(s.driver);
         const positionArrow =
-          arrowState && arrowState.expiresAt > now
+          !isOut && arrowState && arrowState.expiresAt > now
             ? arrowState.arrow
             : undefined;
 
@@ -107,13 +130,13 @@ export class LeaderboardService {
 
         const t = latestTelemetry.get(s.driver);
 
-        entries.push({
+        const entry: LeaderboardEntry = {
           position,
           driver: s.driver,
           lap: s.currentLap,
 
-          gapToLeader: s.gapToLeader,
-          intervalGap: s.intervalGap,
+          gapToLeader: isOut ? null : s.gapToLeader,
+          intervalGap: isOut ? null : s.intervalGap,
           lapsDown: s.lapsDown,
 
           isInPit: s.isInPit,
@@ -124,16 +147,33 @@ export class LeaderboardService {
           raceDistance: t?.raceDistance ?? 0,
 
           provisional: s.provisionalStatus,
+          status: isOut ? 'OUT' : null,
           positionArrow,
 
           pitStops: this.getPitStopCount(s.driver, this.timingClockTime),
-        });
+        };
+
+        if (isOut) {
+          outEntries.push(entry);
+        } else {
+          activeEntries.push(entry);
+        }
       });
 
-      /* =================================================
-         🔒 LEADER LAP STABILIZATION
-         ================================================= */
+      // 🔑 Sort OUT drivers by when they retired (earlier first)
+      outEntries.sort((a, b) => {
+        const ta = this.outAtTime.get(a.driver) ?? 0;
+        const tb = this.outAtTime.get(b.driver) ?? 0;
+        return ta - tb;
+      });
 
+      // 🔑 Merge + recompute positions
+      const entries = [...activeEntries, ...outEntries].map((e, i) => ({
+        ...e,
+        position: i + 1,
+      }));
+
+      /* 🔒 LEADER LAP STABILIZATION */
       const rawLeaderLap = states[0].currentLap;
       const leaderLap =
         rawLeaderLap && rawLeaderLap >= 1
@@ -146,6 +186,7 @@ export class LeaderboardService {
         entries,
         leaderLap,
         totalLaps: this.subject.value.totalLaps,
+        raceFinished: this.raceFinished,
       });
     });
   }
