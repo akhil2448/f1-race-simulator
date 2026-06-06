@@ -69,13 +69,26 @@ export class DriverTelemetryBufferService {
   /* ===================================================== */
 
   getSampleAt(currentSecond: number): DriverTelemetryPoint | undefined {
-    // ❌ Telemetry not valid yet
     if (currentSecond < this.validFromSecond) {
       return undefined;
     }
 
     this.maybePrefetch(currentSecond);
-    return this.buffer.get(Math.floor(currentSecond * 10));
+
+    const key = Math.floor(currentSecond * 10);
+    const sample = this.buffer.get(key);
+
+    if (sample) return sample;
+
+    // 🔒 HARD SAFETY: driver is OUT or no exact frame → return zeros
+    return {
+      t: currentSecond,
+      rpm: 0,
+      speed: 0,
+      gear: 0,
+      throttle: 0,
+      brake: true,
+    };
   }
 
   /* ===================================================== */

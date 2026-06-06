@@ -8,6 +8,10 @@ import { LiveDriverState } from '../models/live-driver-state.model';
 import { LiveSectorVisualService } from './live-sector-visual.service';
 import { RaceClockService } from './race-clock-service';
 import { DriverPresenceService } from './driver-presence.service';
+import {
+  TimingEventProcessorService,
+  DriverTimingState,
+} from './timing-event-processor.service';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -60,6 +64,7 @@ export class LeaderboardService {
     private sectorVisual: LiveSectorVisualService,
     private clock: RaceClockService,
     private presence: DriverPresenceService,
+    private timingEvents: TimingEventProcessorService,
   ) {
     this.timing.state$.subscribe((states) => {
       if (states.length && states[0].isFinished) {
@@ -91,11 +96,22 @@ export class LeaderboardService {
   private bind(): void {
     const latestTelemetry = new Map<string, any>();
 
+    const authoritativeTiming = new Map<string, DriverTimingState>();
+
     /* ---------- TELEMETRY (visual only) ---------- */
     this.telemetry.interpolatedFrame$.subscribe((frame) => {
       if (!frame) return;
       latestTelemetry.clear();
       frame.cars.forEach((c) => latestTelemetry.set(c.driver, c));
+    });
+
+    /* ---------- FIA TIMING EVENTS ---------- */
+    this.timingEvents.timingState$.subscribe((states) => {
+      authoritativeTiming.clear();
+
+      states.forEach((value, key) => {
+        authoritativeTiming.set(key, value);
+      });
     });
 
     /* ---------- TIMING (authoritative) ---------- */
@@ -138,6 +154,8 @@ export class LeaderboardService {
 
         const t = latestTelemetry.get(s.driver);
 
+        const officialTiming = authoritativeTiming.get(s.driver);
+
         /** 🔑 IMPORTANT:
          *  We DO NOT modify gap logic here.
          *  LiveTimingService already decided what is valid.
@@ -147,8 +165,13 @@ export class LeaderboardService {
           driver: s.driver,
           lap: s.currentLap,
 
-          gapToLeader: isOut ? null : s.gapToLeader,
-          intervalGap: isOut ? null : s.intervalGap,
+          gapToLeader: isOut
+            ? null
+            : (officialTiming?.gapToLeader ?? s.gapToLeader),
+
+          intervalGap: isOut
+            ? null
+            : (officialTiming?.intervalGap ?? s.intervalGap),
 
           lapsDown: s.lapsDown,
 

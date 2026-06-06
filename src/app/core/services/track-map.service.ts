@@ -26,4 +26,8 @@ export class TrackMapService {
   getTrackLength(): number | null {
     return this.trackSubject.value?.trackInfo.trackLength ?? null;
   }
+
+  getTimingLoopCount(): number | null {
+    return this.trackSubject.value?.trackInfo.timingLoopCount ?? null;
+  }
 }

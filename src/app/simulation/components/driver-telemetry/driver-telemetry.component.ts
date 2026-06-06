@@ -114,13 +114,15 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
     p: DriverTelemetryPoint,
     sec: number,
   ): DriverTelemetryView {
+    const isOut = p.speed === 0 && p.rpm === 0 && p.gear === 0;
+
     return {
-      speed: Math.floor(p.speed),
-      gear: p.gear,
-      rpm: Math.floor(p.rpm),
-      throttle: Math.floor(p.throttle),
-      brake: p.brake,
-      lap: Math.floor(sec / 90) + 1, // unchanged logic
+      speed: isOut ? 0 : Math.floor(p.speed),
+      gear: isOut ? 0 : p.gear,
+      rpm: isOut ? 0 : Math.floor(p.rpm),
+      throttle: isOut ? 0 : Math.floor(p.throttle),
+      brake: isOut ? true : p.brake,
+      lap: Math.floor(sec / 90) + 1,
     };
   }
 

@@ -92,14 +92,14 @@ export class LeaderboardComponent implements OnInit, AfterViewInit {
 
     if (this.greenLap === null) return true;
 
-    return this.leaderLap < this.greenLap + 2;
+    return this.leaderLap < this.greenLap + 1;
   }
 
   /** Gap-to-leader mode for 2 laps after GREEN */
   get useLeaderGapMode(): boolean {
     if (this.greenLap === null) return true;
 
-    return this.leaderLap < this.greenLap + 2;
+    return this.leaderLap < this.greenLap + 5;
   }
 
   /* ===================================================== */

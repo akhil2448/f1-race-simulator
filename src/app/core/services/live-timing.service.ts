@@ -212,57 +212,22 @@ export class LiveTimingService {
     }
 
     /* =====================================================
-       MID-LAP GAPS
-       ===================================================== */
+   AUTHORITATIVE TIMING OWNED ELSEWHERE
+   ===================================================== */
 
-    const leaderLap =
-      leader.completedLaps > 0
-        ? this.getLapByIndex(leader.driver, leader.completedLaps - 1)
-        : null;
+    drivers.forEach((d, i) => {
+      d.displayPosition = i + 1;
 
-    if (!this.isLapTimed(leaderLap)) return;
+      /**
+       * TimingEventProcessorService
+       * now owns:
+       * - gapToLeader
+       * - intervalGap
+       */
+      d.gapToLeader = null;
+      d.intervalGap = null;
+    });
 
-    leader.gapToLeader = 0;
-    leader.intervalGap = null;
-    this.lastValidGapToLeader.set(leader.driver, 0);
-
-    const leaderSpeed = this.trackLength / leaderLap.lapTime;
-
-    for (let i = 1; i < drivers.length; i++) {
-      const curr = drivers[i];
-
-      const currLap =
-        curr.completedLaps > 0
-          ? this.getLapByIndex(curr.driver, curr.completedLaps - 1)
-          : null;
-
-      if (!this.isLapTimed(currLap)) {
-        this.timingRecoveryLock.add(curr.driver);
-        curr.gapToLeader = this.lastValidGapToLeader.get(curr.driver) ?? null;
-      } else if (this.timingRecoveryLock.has(curr.driver)) {
-        curr.gapToLeader = this.lastValidGapToLeader.get(curr.driver) ?? null;
-      } else {
-        const gapMeters = leader.raceDistance - curr.raceDistance;
-        const gap = gapMeters / leaderSpeed;
-        curr.gapToLeader = gap;
-        this.lastValidGapToLeader.set(curr.driver, gap);
-      }
-
-      let anchor: LiveDriverState | undefined;
-      for (let j = i - 1; j >= 0; j--) {
-        if (drivers[j].gapToLeader !== null) {
-          anchor = drivers[j];
-          break;
-        }
-      }
-
-      curr.intervalGap =
-        anchor && curr.gapToLeader !== null
-          ? curr.gapToLeader - anchor.gapToLeader!
-          : null;
-    }
-
-    drivers.forEach((d, i) => (d.displayPosition = i + 1));
     this.stateSubject.next([...drivers]);
   }
 

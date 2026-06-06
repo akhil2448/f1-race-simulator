@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap, finalize } from 'rxjs/operators';
 import { TelemetryFrame } from '../models/race-telemetry.model';
+import { TimingEvent } from '../models/timing-event.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TelemetryBufferService {
   private frameBuffer = new Map<number, TelemetryFrame>();
+  private timingEvents: TimingEvent[] = [];
 
   private bufferStart = 0;
   private bufferEnd = -1;
@@ -61,6 +63,10 @@ export class TelemetryBufferService {
     return this.frameBuffer.has(second);
   }
 
+  getTimingEvents(): TimingEvent[] {
+    return this.timingEvents;
+  }
+
   /* ---------------------------------------------------- */
   /* PREFETCH LOGIC                                       */
   /* ---------------------------------------------------- */
@@ -94,6 +100,10 @@ export class TelemetryBufferService {
           this.frameBuffer.set(Number(sec), frame as TelemetryFrame);
         });
 
+        if (res.timingEvents) {
+          this.timingEvents.push(...res.timingEvents);
+        }
+
         this.bufferStart = this.bufferEnd === -1 ? from : this.bufferStart;
         this.bufferEnd = Math.max(this.bufferEnd, to);
       }),
@@ -110,6 +120,7 @@ export class TelemetryBufferService {
 
   clear(): void {
     this.frameBuffer.clear();
+    this.timingEvents = [];
     this.bufferStart = 0;
     this.bufferEnd = -1;
     this.isFetching = false;

@@ -4,6 +4,8 @@ export interface TrackInfo {
   country: string;
   officialEventName: string;
   trackLength: number;
+  timingLoopCount: number;
+  timingLoopSpacing: number;
 }
 
 export interface TrackPoint {
