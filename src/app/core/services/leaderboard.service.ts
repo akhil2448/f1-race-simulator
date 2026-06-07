@@ -97,6 +97,7 @@ export class LeaderboardService {
     const latestTelemetry = new Map<string, any>();
 
     const authoritativeTiming = new Map<string, DriverTimingState>();
+    let orderedTimingStates: DriverTimingState[] = [];
 
     /* ---------- TELEMETRY (visual only) ---------- */
     this.telemetry.interpolatedFrame$.subscribe((frame) => {
@@ -112,9 +113,11 @@ export class LeaderboardService {
       states.forEach((value, key) => {
         authoritativeTiming.set(key, value);
       });
+
+      orderedTimingStates = this.timingEvents.getOrderedStates();
     });
 
-    /* ---------- TIMING (authoritative) ---------- */
+    /* ---------- PRESENTATION STATE ---------- */
     this.sectorVisual.visualState$.subscribe((states: LiveDriverState[]) => {
       if (!states.length) return;
 
@@ -123,7 +126,27 @@ export class LeaderboardService {
       const activeEntries: LeaderboardEntry[] = [];
       const outEntries: LeaderboardEntry[] = [];
 
-      states.forEach((s, index) => {
+      const visualStateByDriver = new Map<string, LiveDriverState>();
+      states.forEach((state) => visualStateByDriver.set(state.driver, state));
+
+      const orderedStates: LiveDriverState[] = [];
+      const orderedDrivers = new Set<string>();
+
+      orderedTimingStates.forEach((timingState) => {
+        const visualState = visualStateByDriver.get(timingState.driver);
+        if (!visualState) return;
+
+        orderedStates.push(visualState);
+        orderedDrivers.add(timingState.driver);
+      });
+
+      states.forEach((state) => {
+        if (!orderedDrivers.has(state.driver)) {
+          orderedStates.push(state);
+        }
+      });
+
+      orderedStates.forEach((s, index) => {
         const position = index + 1;
         const prevPos = this.previousPositions.get(s.driver);
         const isOut = this.presence.isOut(s.driver);
@@ -156,9 +179,9 @@ export class LeaderboardService {
 
         const officialTiming = authoritativeTiming.get(s.driver);
 
-        /** 🔑 IMPORTANT:
-         *  We DO NOT modify gap logic here.
-         *  LiveTimingService already decided what is valid.
+        /**
+         * TimingEventProcessorService owns timing-event gaps.
+         * LiveTimingService values remain as the existing fallback.
          */
         const entry: LeaderboardEntry = {
           position,
@@ -209,7 +232,7 @@ export class LeaderboardService {
       }));
 
       /* leader lap stabilization */
-      const rawLeaderLap = states[0].currentLap;
+      const rawLeaderLap = orderedStates[0].currentLap;
       const leaderLap =
         rawLeaderLap && rawLeaderLap >= 1
           ? rawLeaderLap

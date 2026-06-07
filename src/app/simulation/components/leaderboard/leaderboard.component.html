@@ -77,31 +77,12 @@
         <div
           class="driver-stats"
           [ngClass]="{
-            'toggle-mode': showTyres || showPitStops,
+            'toggle-mode': isTemporaryModeActive,
             'in-pit': row.isInPit,
           }"
           [style.color]="row.isInPit ? getDriverColor(row.driver) : null"
         >
-          <!-- GAP MODE -->
-          <ng-container *ngIf="!showTyres && !showPitStops">
-            <span *ngIf="row.status === 'OUT'">OUT</span>
-
-            <span *ngIf="row.status !== 'OUT'">
-              {{
-                useLeaderGapMode ? formatLeaderGap(row) : formatIntervalGap(row)
-              }}
-            </span>
-          </ng-container>
-
-          <!-- TYRE MODE -->
-          <ng-container *ngIf="showTyres">
-            {{ row.status === "OUT" ? "–" : (row.tyreLife ?? "–") }}
-          </ng-container>
-
-          <!-- PIT MODE -->
-          <ng-container *ngIf="showPitStops">
-            {{ row.status === "OUT" ? "–" : row.pitStops }}
-          </ng-container>
+          {{ formatDisplayValue(row) }}
         </div>
 
         <div class="tyre" [ngClass]="row.compound.toLowerCase()">
@@ -112,7 +93,8 @@
   </div>
 </div>
 
-<div>
+<div class="mode-controls">
   <button class="tyre-toggle" (click)="showTyreLife()">TYRE</button>
+  <button class="pit-toggle" (click)="showPitStopsTemporarily()">PIT</button>
+  <button class="lapped-toggle" (click)="showLappedTemporarily()">LAPPED</button>
 </div>
-<button class="pit-toggle" (click)="showPitStopsTemporarily()">PIT</button>

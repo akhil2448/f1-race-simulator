@@ -109,15 +109,6 @@ export class TrackStatusService {
     this.statusSubject.next(active);
   }
 
-  /**
-   * 🔑 Broadcast rule:
-   * If GREEN happened mid-lap,
-   * intervals resume ONLY from the next lap.
-   */
-  canResumeIntervals(currentLap: number): boolean {
-    return this.greenAtLap === null || currentLap > this.greenAtLap;
-  }
-
   /** ✅ Synchronous access for services */
   isNeutralizedSnapshot(): boolean {
     return this.neutralizedSubject.value;

@@ -22,8 +22,6 @@ export class SimulationEngineService {
 
   private lastRaceDistance = new Map<string, number>();
 
-  private lastComputedLap = new Map<string, number>();
-
   constructor(
     private clock: RaceClockService,
     private telemetry: TelemetryBufferService,
@@ -58,14 +56,6 @@ export class SimulationEngineService {
         // 🔑 Deterministic lap math
         const lap = Math.floor(safeRaceDist / this.trackLengthMeters) + 1;
         const lapDistance = safeRaceDist % this.trackLengthMeters;
-
-        const prevLap = this.lastComputedLap.get(car.driver) ?? lap;
-
-        if (lap !== prevLap) {
-          // console.log('[LAP]', car.driver, '→', lap);
-        }
-
-        this.lastComputedLap.set(car.driver, lap);
 
         return {
           ...car,

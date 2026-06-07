@@ -31,6 +31,7 @@ export class TimingEventProcessorService {
    * Latest timing state per driver
    */
   private driverStates = new Map<string, DriverTimingState>();
+  private orderedStates: DriverTimingState[] = [];
 
   /**
    * Reactive timing state
@@ -124,51 +125,7 @@ export class TimingEventProcessorService {
      * 2. timing loop
      * 3. crossing time
      */
-    states.sort((a, b) => {
-      /**
-       * PRIMARY:
-       * official timing-loop progression
-       */
-      const progressionDelta =
-        (b.progressionScore ?? 0) - (a.progressionScore ?? 0);
-
-      /**
-       * Different timing progression:
-       * FIA timing loops remain authoritative
-       */
-      if (progressionDelta !== 0) {
-        return progressionDelta;
-      }
-
-      /**
-       * SAME LOOP:
-       * allow meaningful RaceDistance crossover
-       *
-       * Prevents pit-stop freeze while
-       * avoiding normal racing jitter.
-       */
-      const distanceDelta = b.raceDistance - a.raceDistance;
-
-      /**
-       * Require meaningful crossover
-       * (~25m threshold)
-       */
-      if (Math.abs(distanceDelta) > 25) {
-        return distanceDelta;
-      }
-
-      /**
-       * FINAL fallback:
-       * same-loop crossing timestamp
-       */
-      return a.lastCrossingTime - b.lastCrossingTime;
-
-      /**
-       * SECONDARY:
-       * same-loop timestamp
-       */
-      return a.lastCrossingTime - b.lastCrossingTime;
-    });
+    states.sort((a, b) => this.compareTimingStates(a, b));
 
     if (!states.length) return;
 
@@ -216,6 +173,51 @@ export class TimingEventProcessorService {
     states.forEach((state) => {
       this.driverStates.set(state.driver, state);
     });
+
+    this.orderedStates = [...states];
+  }
+
+  private compareTimingStates(
+    a: DriverTimingState,
+    b: DriverTimingState,
+  ): number {
+    /**
+     * PRIMARY:
+     * official timing-loop progression
+     */
+    const progressionDelta =
+      (b.progressionScore ?? 0) - (a.progressionScore ?? 0);
+
+    /**
+     * Different timing progression:
+     * FIA timing loops remain authoritative
+     */
+    if (progressionDelta !== 0) {
+      return progressionDelta;
+    }
+
+    /**
+     * SAME LOOP:
+     * allow meaningful RaceDistance crossover
+     *
+     * Prevents pit-stop freeze while
+     * avoiding normal racing jitter.
+     */
+    const distanceDelta = b.raceDistance - a.raceDistance;
+
+    /**
+     * Require meaningful crossover
+     * (~25m threshold)
+     */
+    if (Math.abs(distanceDelta) > 25) {
+      return distanceDelta;
+    }
+
+    /**
+     * FINAL fallback:
+     * same-loop crossing timestamp
+     */
+    return a.lastCrossingTime - b.lastCrossingTime;
   }
 
   /* ===================================================== */
@@ -226,6 +228,10 @@ export class TimingEventProcessorService {
     return this.driverStates.get(driver);
   }
 
+  getOrderedStates(): DriverTimingState[] {
+    return [...this.orderedStates];
+  }
+
   setTimingLoopCount(count: number): void {
     this.totalTimingLoops = count;
   }
@@ -234,6 +240,7 @@ export class TimingEventProcessorService {
     this.processedIndex = 0;
 
     this.driverStates.clear();
+    this.orderedStates = [];
 
     this.timingStateSubject.next(new Map());
   }

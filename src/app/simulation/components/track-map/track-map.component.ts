@@ -7,7 +7,6 @@ import { TrackInfo, TrackPoint } from '../../../core/models/track-data.model';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
 import { TelemetryInterpolationService } from '../../../core/services/telemetry-interpolation.service';
 import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
-import { TimingEventProcessorService } from '../../../core/services/timing-event-processor.service';
 
 @Component({
   selector: 'app-track-map',
@@ -23,7 +22,6 @@ export class TrackMapComponent implements OnInit {
     private trackMap: TrackMapService,
     private driverMeta: DriverMetaService,
     private raceLocalTimeService: RaceLocalTimeService,
-    private timingProcessor: TimingEventProcessorService,
   ) {}
 
   /* ---------- UI ---------- */
@@ -61,7 +59,6 @@ export class TrackMapComponent implements OnInit {
       this.track = data.coordinates;
       this.trackInfo = data.trackInfo;
       this.realTrackLengthMeters = data.trackInfo.trackLength;
-      this.timingProcessor.setTimingLoopCount(data.trackInfo.timingLoopCount);
 
       this.buildTrack();
     });

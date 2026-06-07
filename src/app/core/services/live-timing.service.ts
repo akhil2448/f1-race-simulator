@@ -17,37 +17,11 @@ export class LiveTimingService {
   state$ = this.stateSubject.asObservable();
 
   private lastLeaderCompletedLaps = -1;
-  private lastLeaderDriver: string | null = null;
-
-  private lastSectorByDriver = new Map<string, 1 | 2 | 3>();
-  private lastLapByDriver = new Map<string, number>();
-  private lastInPitState = new Map<string, boolean>();
-
-  // 🔑 broadcast-style timing memory
-  private lastValidGapToLeader = new Map<string, number>();
-
-  // 🔒 recovery lock after untimed lap
-  private timingRecoveryLock = new Set<string>();
-
-  // 🔒 NEW: interval control (external)
-  private intervalsAllowed = true;
 
   private raceFinished = false;
   private finalState: LiveDriverState[] | null = null;
 
   constructor(private clock: RaceClockService) {}
-
-  /* =====================================================
-     EXTERNAL CONTROL (CALLED BY LEADERBOARD)
-     ===================================================== */
-
-  freezeIntervals(): void {
-    this.intervalsAllowed = false;
-  }
-
-  resumeIntervals(): void {
-    this.intervalsAllowed = true;
-  }
 
   /* =====================================================
      INITIALIZATION
@@ -84,7 +58,6 @@ export class LiveTimingService {
     }
 
     const drivers: LiveDriverState[] = [];
-    let anyJustExitedPit = false;
 
     const totalLaps = this.raceData.session.totalLaps;
 
@@ -117,16 +90,11 @@ export class LiveTimingService {
       const raceDistance = completedLaps * this.trackLength + lapDistance;
 
       const currentSector = this.computeSector(lapTimeSoFar, lapRef);
-      this.lastSectorByDriver.set(driver, currentSector);
-      this.lastLapByDriver.set(driver, currentLap);
 
       const compound = this.getCurrentCompound(data, raceTime);
       const tyreLife = this.getCurrentTyreLife(data, completedLaps);
 
-      const wasInPit = this.lastInPitState.get(driver) ?? false;
       const nowInPit = this.isInPit(data, raceTime);
-      if (wasInPit && !nowInPit) anyJustExitedPit = true;
-      this.lastInPitState.set(driver, nowInPit);
 
       drivers.push({
         driver,
@@ -195,17 +163,6 @@ export class LiveTimingService {
         this.applyLapEndGaps(drivers, leader.completedLaps);
       }
 
-      drivers.forEach((d, i) => (d.displayPosition = i + 1));
-      this.stateSubject.next([...drivers]);
-      return;
-    }
-
-    /* =====================================================
-       INTERVAL FREEZE (YELLOW / SC / RESTART)
-       ===================================================== */
-
-    if (!this.intervalsAllowed) {
-      this.applyLapEndGaps(drivers, leader.completedLaps);
       drivers.forEach((d, i) => (d.displayPosition = i + 1));
       this.stateSubject.next([...drivers]);
       return;
@@ -334,9 +291,6 @@ export class LiveTimingService {
 
       const prevGap = ordered[i - 1].gapToLeader;
       ordered[i].intervalGap = prevGap != null ? currGap - prevGap : null;
-
-      this.timingRecoveryLock.delete(ordered[i].driver);
-      this.lastValidGapToLeader.set(ordered[i].driver, currGap);
     }
   }
 

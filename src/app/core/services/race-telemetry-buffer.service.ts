@@ -26,8 +26,6 @@ export class TelemetryBufferService {
   currentFrom: number | undefined;
   currentTo: number | undefined;
 
-  private trackLengthMeters = 0;
-
   constructor(private http: HttpClient) {}
 
   /* ---------------------------------------------------- */
@@ -37,12 +35,11 @@ export class TelemetryBufferService {
   initialize(
     year: number,
     round: number,
-    trackLengthMeters: number,
+    _trackLengthMeters: number,
   ): Observable<void> {
     this.clear();
     this.year = year;
     this.round = round;
-    this.trackLengthMeters = trackLengthMeters;
 
     this.currentFrom = 0;
     this.currentTo = 600; // initial 10 minutes

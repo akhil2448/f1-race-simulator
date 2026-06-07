@@ -12,6 +12,7 @@ import { TrackMapService } from './track-map.service';
 import { LiveTimingService } from './live-timing.service';
 import { TelemetryBufferService } from './race-telemetry-buffer.service';
 import { SimulationEngineService } from './simulation-engine.service';
+import { TimingEventProcessorService } from './timing-event-processor.service';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
@@ -30,6 +31,7 @@ export class SimulationBootstrapService {
     private liveTiming: LiveTimingService,
     private telemetry: TelemetryBufferService,
     private engine: SimulationEngineService,
+    private timingProcessor: TimingEventProcessorService,
   ) {}
 
   /** 🚦 SINGLE ENTRY POINT */
@@ -57,6 +59,11 @@ export class SimulationBootstrapService {
         const trackLength = this.trackMap.getTrackLength();
         if (!trackLength) {
           throw new Error('Track length not available');
+        }
+
+        const timingLoopCount = this.trackMap.getTimingLoopCount();
+        if (timingLoopCount !== null) {
+          this.timingProcessor.setTimingLoopCount(timingLoopCount);
         }
 
         this.liveTiming.initialize(raceData, trackLength);
