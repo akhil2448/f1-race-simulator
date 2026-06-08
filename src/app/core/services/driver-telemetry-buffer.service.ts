@@ -78,17 +78,20 @@ export class DriverTelemetryBufferService {
     const key = Math.floor(currentSecond * 10);
     const sample = this.buffer.get(key);
 
-    if (sample) return sample;
+    if (sample) {
+      return sample;
+    }
 
-    // 🔒 HARD SAFETY: driver is OUT or no exact frame → return zeros
-    return {
-      t: currentSecond,
-      rpm: 0,
-      speed: 0,
-      gear: 0,
-      throttle: 0,
-      brake: true,
-    };
+    // try nearby samples before declaring missing
+    for (let offset = 1; offset <= 2; offset++) {
+      const previous = this.buffer.get(key - offset);
+      if (previous) return previous;
+
+      const next = this.buffer.get(key + offset);
+      if (next) return next;
+    }
+
+    return undefined;
   }
 
   /* ===================================================== */

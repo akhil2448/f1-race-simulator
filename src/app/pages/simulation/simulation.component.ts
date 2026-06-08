@@ -24,13 +24,20 @@ export class SimulationComponent implements OnInit {
   availableDrivers: string[] = [];
   selectedDrivers: (string | null)[] = [null, null];
 
+  // Change these values to change the race
+  currentYear = 2020;
+  currentRound = 3;
+
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
   ) {}
 
   ngOnInit(): void {
-    this.bootstrap.startRace({ year: 2020, round: 3 });
+    this.bootstrap.startRace({
+      year: this.currentYear,
+      round: this.currentRound,
+    });
 
     this.bootstrap.availableDrivers$.subscribe((drivers) => {
       this.availableDrivers = drivers;

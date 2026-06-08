@@ -6,6 +6,8 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  HostListener,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RaceClockService } from '../../../core/services/race-clock-service';
@@ -41,6 +43,9 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   @Output() driverSelected = new EventEmitter<string>();
   @Output() clearDriver = new EventEmitter<void>();
 
+  @Input() year!: number;
+  @Input() round!: number;
+
   telemetry: DriverTelemetryView | null = null;
 
   confirmChange = false;
@@ -50,6 +55,7 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   constructor(
     private raceClock: RaceClockService,
     private buffer: DriverTelemetryBufferService,
+    private elementRef: ElementRef,
   ) {
     /**
      * 🚀 10 Hz telemetry sampling interval(100)
@@ -87,7 +93,10 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
           lastRaceSecond + (elapsedMs / 1000) * this.getRaceSpeed();
 
         const p = this.buffer.getSampleAt(fractionalRaceTime);
-        if (!p) return;
+        if (!p) {
+          this.telemetry = null;
+          return;
+        }
 
         this.telemetry = this.mapTelemetry(p, fractionalRaceTime);
       });
@@ -105,8 +114,13 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
 
       const now = this.raceClock.getCurrentSecond();
 
+      // clear stale telemetry immediately
+      this.telemetry = null;
+
       // 🔁 Fetch telemetry window starting from *current* race time
-      this.buffer.initialize(2021, 7, this.selectedDriver, now).subscribe();
+      this.buffer
+        .initialize(this.year, this.round, this.selectedDriver, now)
+        .subscribe();
     }
   }
 
@@ -141,6 +155,17 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
     // Second click → actually clear
     this.confirmChange = false;
     this.clearDriver.emit();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.confirmChange) return;
+
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+
+    if (!clickedInside) {
+      this.confirmChange = false;
+    }
   }
 
   private raceClockSpeed(): number {
