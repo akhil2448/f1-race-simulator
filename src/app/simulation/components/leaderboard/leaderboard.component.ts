@@ -35,6 +35,9 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private displayedArrows = new Map<string, HTMLDivElement>();
 
+  finishedDrivers = new Set<string>();
+  animatingFinishFlags = new Set<string>();
+
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
 
@@ -168,6 +171,19 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
 
+      // TEMP TEST — show chequered flag when driver reaches lap 2
+      const rowData = this.leaderboard.find((r) => r.driver === driver);
+
+      if (rowData?.lap === 2 && !this.finishedDrivers.has(driver)) {
+        this.finishedDrivers.add(driver);
+
+        this.animatingFinishFlags.add(driver);
+
+        setTimeout(() => {
+          this.animatingFinishFlags.delete(driver);
+        }, 2200);
+      }
+
       this.rowPositions.set(driver, newTop);
     });
   }
@@ -252,6 +268,14 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   trackByDriver(_: number, row: LeaderboardEntry) {
     return row.driver;
+  }
+
+  isDriverFinished(driver: string): boolean {
+    return this.finishedDrivers.has(driver);
+  }
+
+  isFinishFlagAnimating(driver: string): boolean {
+    return this.animatingFinishFlags.has(driver);
   }
 
   /* ===================================================== */

@@ -83,6 +83,15 @@
         <div class="tyre" [ngClass]="row.compound.toLowerCase()">
           {{ row.compound[0] }}
         </div>
+
+        <div class="broadcast-icons">
+          <img
+            *ngIf="isDriverFinished(row.driver)"
+            src="assets/leaderboard/chequered-flag.svg"
+            class="finish-flag-popup"
+            [class.animate]="isFinishFlagAnimating(row.driver)"
+          />
+        </div>
       </div>
     </div>
   </div>
