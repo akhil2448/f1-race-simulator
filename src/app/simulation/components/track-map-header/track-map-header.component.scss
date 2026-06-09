@@ -69,3 +69,17 @@
 
   line-height: 1;
 }
+
+.header-divider {
+  width: 210px;
+  height: 2px;
+
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+
+  margin: 2px 0 4px;
+}

@@ -1,4 +1,5 @@
 <button
+  (click)="clicked.emit()"
   class="app-button"
   [class.secondary]="variant === 'secondary'"
   [class.sm]="size === 'sm'"

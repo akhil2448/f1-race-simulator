@@ -3,7 +3,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { RaceClockService } from './race-clock-service';
 import { TelemetryBufferService } from './race-telemetry-buffer.service';
 import { TelemetryFrame } from '../models/race-telemetry.model';
-import { TrackMapService } from './track-map.service';
+import { TrackMapStateService } from './track-map-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class SimulationEngineService {
   constructor(
     private clock: RaceClockService,
     private telemetry: TelemetryBufferService,
-    private trackMap: TrackMapService,
+    private trackMapState: TrackMapStateService,
   ) {}
 
   /**
@@ -36,10 +36,10 @@ export class SimulationEngineService {
     this.initialized = true;
 
     // Get track length ONCE
-    this.trackMap.track$.subscribe((data) => {
-      if (data) {
-        this.trackLengthMeters = data.trackInfo.trackLength;
-      }
+    this.trackMapState.trackData$.subscribe((data) => {
+      if (!data) return;
+
+      this.trackLengthMeters = data.trackInfo.trackLength;
     });
 
     this.clockSub = this.clock.raceTime$.subscribe((second) => {

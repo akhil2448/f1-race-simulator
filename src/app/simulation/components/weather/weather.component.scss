@@ -46,3 +46,17 @@
 .value.dry {
   color: #e5e7eb; /* white/grey like F1 */
 }
+
+.header-divider {
+  width: 210px;
+  height: 2px;
+
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+
+  margin: -12px 0 12px;
+}

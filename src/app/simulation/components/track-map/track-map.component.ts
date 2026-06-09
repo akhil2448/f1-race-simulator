@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TelemetryCar } from '../../../core/models/race-telemetry.model';
 import { SimulationEngineService } from '../../../core/services/simulation-engine.service';
+import { TrackPoint } from '../../../core/models/track-data.model';
 import { TrackMapService } from '../../../core/services/track-map.service';
-import { TrackInfo, TrackPoint } from '../../../core/models/track-data.model';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
 import { TelemetryInterpolationService } from '../../../core/services/telemetry-interpolation.service';
-import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
+import { TrackMapStateService } from '../../../core/services/track-map-state.service';
 
 @Component({
   selector: 'app-track-map',
@@ -21,18 +21,15 @@ export class TrackMapComponent implements OnInit {
     private engine: SimulationEngineService,
     private trackMap: TrackMapService,
     private driverMeta: DriverMetaService,
-    private raceLocalTimeService: RaceLocalTimeService,
+    private trackState: TrackMapStateService,
   ) {}
 
-  /* ---------- UI ---------- */
-  isMirrored = false;
-
   /* ---------- TRACK DATA ---------- */
-  track!: TrackPoint[];
-  trackInfo!: TrackInfo;
-
   trackPoints = '';
   viewBox = '';
+
+  track: TrackPoint[] = [];
+  trackInfo: any = null;
 
   startLine = { x1: 0, y1: 0, x2: 0, y2: 0 };
   arrow = { cx: 0, cy: 0, angle: 0 };
@@ -49,11 +46,11 @@ export class TrackMapComponent implements OnInit {
 
   @Input() highlightedDrivers: (string | null)[] = [];
 
-  localRaceTime = '';
+  isMirrored = false;
 
   ngOnInit(): void {
     /* ---------- TRACK DATA (ASYNC SAFE) ---------- */
-    this.trackMap.track$.subscribe((data) => {
+    this.trackState.trackData$.subscribe((data) => {
       if (!data) return;
 
       this.track = data.coordinates;
@@ -61,6 +58,11 @@ export class TrackMapComponent implements OnInit {
       this.realTrackLengthMeters = data.trackInfo.trackLength;
 
       this.buildTrack();
+    });
+
+    /* ---------- MIRROR STATE ---------- */
+    this.trackState.mirrored$.subscribe((mirrored) => {
+      this.isMirrored = mirrored;
     });
 
     /* ---------- TELEMETRY with INTERPOLATION ADDED ---------- */
@@ -80,12 +82,6 @@ export class TrackMapComponent implements OnInit {
       // });
 
       this.cars = frame.cars;
-    });
-
-    /* ---------- LOCAL RACE TIME ---------- */
-    this.raceLocalTimeService.time$.subscribe((d) => {
-      if (!d) return;
-      this.localRaceTime = this.formatTime(d);
     });
   }
 
@@ -200,27 +196,11 @@ export class TrackMapComponent implements OnInit {
     return this.track[0];
   }
 
-  toggleMirror() {
-    this.isMirrored = !this.isMirrored;
-  }
-
-  get eventYear(): string {
-    const match = this.trackInfo?.officialEventName.match(/\d{4}$/);
-    return match ? match[0] : '';
-  }
-
   getCarColor(driver: string): string {
     return this.driverMeta.get(driver)?.color ?? '#ffffff';
   }
 
   isHighlighted(driver: string): boolean {
     return this.highlightedDrivers.includes(driver);
-  }
-
-  private formatTime(d: Date): string {
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mm = String(d.getMinutes()).padStart(2, '0');
-    const ss = String(d.getSeconds()).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
   }
 }

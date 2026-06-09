@@ -4,7 +4,8 @@
   <div class="info-sidebar">
     <app-weather></app-weather>
     <div class="telemetry-panels">
-      <p>Driver Telemetry</p>
+      <h4>Driver Telemetry</h4>
+      <div class="header-divider"></div>
       <app-driver-telemetry
         [selectedDriver]="selectedDrivers[0]"
         [availableDrivers]="getAvailableDriversForSlot(0)"
