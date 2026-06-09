@@ -14,13 +14,10 @@ import { DriverMetaService } from '../../../core/services/driver-meta.service';
 import { TrackStatusComponent } from '../track-status/track-status.component';
 import { TrackStatusService } from '../../../core/services/track-status.service';
 import { TrackStatusType } from '../../../core/constants/track-status.types';
-
-type LeaderboardDisplayMode =
-  | 'INTERVAL'
-  | 'LEADER_GAP'
-  | 'TYRE'
-  | 'PIT'
-  | 'LAPPED';
+import {
+  LeaderboardDisplayMode,
+  LeaderboardDisplayService,
+} from '../../../core/services/leaderboard-display.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -42,7 +39,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   /** UI STATE */
   baseMode: LeaderboardDisplayMode = 'LEADER_GAP';
   activeTemporaryMode: LeaderboardDisplayMode | null = null;
-  private temporaryModeTimer?: number;
+  //private temporaryModeTimer?: number;
 
   raceFinished = false;
 
@@ -55,6 +52,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private leaderboardService: LeaderboardService,
     private driverMeta: DriverMetaService,
     private trackStatusService: TrackStatusService,
+    private leaderboardDisplay: LeaderboardDisplayService,
   ) {
     // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
@@ -66,6 +64,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.greenLap = this.leaderLap || 1;
       this.clearTemporaryMode();
       this.updateBaseMode();
+    });
+
+    this.leaderboardDisplay.temporaryMode$.subscribe((mode) => {
+      this.activeTemporaryMode = mode;
     });
   }
 
@@ -85,9 +87,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.runFLIP();
   }
 
-  ngOnDestroy(): void {
-    clearTimeout(this.temporaryModeTimer);
-  }
+  ngOnDestroy(): void {}
 
   /* ===================================================== */
   /* 🔑 BROADCAST RULE GETTERS (CORRECTED)                 */
@@ -182,29 +182,19 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ===================================================== */
 
   showTyreLife(): void {
-    this.showTemporaryMode('TYRE');
+    this.leaderboardDisplay.showTemporaryMode('TYRE');
   }
 
   showPitStopsTemporarily(): void {
-    this.showTemporaryMode('PIT');
+    this.leaderboardDisplay.showTemporaryMode('PIT');
   }
 
   showLappedTemporarily(): void {
-    this.showTemporaryMode('LAPPED');
-  }
-
-  private showTemporaryMode(mode: 'TYRE' | 'PIT' | 'LAPPED'): void {
-    this.activeTemporaryMode = mode;
-    clearTimeout(this.temporaryModeTimer);
-
-    this.temporaryModeTimer = window.setTimeout(() => {
-      this.activeTemporaryMode = null;
-    }, 3000);
+    this.leaderboardDisplay.showTemporaryMode('LAPPED');
   }
 
   private clearTemporaryMode(): void {
-    clearTimeout(this.temporaryModeTimer);
-    this.activeTemporaryMode = null;
+    this.leaderboardDisplay.clearTemporaryMode();
   }
 
   /* ===================================================== */
@@ -213,7 +203,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formatDisplayValue(row: LeaderboardEntry): string {
     if (row.status === 'OUT') {
-      return this.activeDisplayMode === 'TYRE' || this.activeDisplayMode === 'PIT'
+      return this.activeDisplayMode === 'TYRE' ||
+        this.activeDisplayMode === 'PIT'
         ? '–'
         : 'OUT';
     }
@@ -236,7 +227,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // 🚧 PIT HAS HIGHEST PRIORITY
     if (row.isInPit) return 'IN PIT';
 
-    if (row.position === 1) return 'Interval';
+    if (row.position === 1) return 'Leader';
 
     return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(1)}` : '–';
   }

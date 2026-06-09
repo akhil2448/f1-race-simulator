@@ -1,14 +1,46 @@
 .simulation-layout {
   display: grid;
 
-  //1st value: leaderboard, 2nd: weather, 3rd: track-map
-  grid-template-columns: 235px 210px 1fr;
+  grid-template-columns: 445px 1fr;
+
   height: 100vh;
+}
+
+.left-panel-area {
+  display: grid;
+
+  grid-template-rows: 1fr 120px;
+
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.top-info-row {
+  display: grid;
+
+  grid-template-columns: 235px 210px;
+
+  align-content: start;
+  align-items: start;
+
+  overflow: hidden;
+}
+
+.controls-row {
+  display: flex;
+  align-items: flex-start;
+
+  padding: 18px 16px 0;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-sizing: border-box;
 }
 
 /* Leaderboard */
 app-leaderboard {
-  height: 100%;
+  align-self: start;
 }
 
 /* Sidebar column */
@@ -29,7 +61,7 @@ app-weather {
   margin-top: -16px;
   flex: 0 0 auto;
   max-height: 180px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   //border-right: 1px solid #2a2a2a;
 }
 

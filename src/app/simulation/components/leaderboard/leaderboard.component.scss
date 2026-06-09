@@ -1,7 +1,14 @@
+// :host {
+//   display: block;
+//   transform: scale(0.92);
+//   transform-origin: top left;
+
+//   margin-top: 14px;
+//   margin-left: 8px;
+// }
+
 :host {
   display: block;
-  transform: scale(0.92);
-  transform-origin: top left;
 
   margin-top: 14px;
   margin-left: 8px;
@@ -20,6 +27,11 @@
   //width: 261px;
 
   width: 210px;
+  margin-bottom: -48px;
+
+  transform: scale(0.92);
+  transform-origin: top left;
+
   background: #0f0f14; /* slightly lighter than app bg */
   border: 1px solid #2a2a32; /* outer border */
   box-shadow:
@@ -351,8 +363,8 @@ hr {
 .driver-stats.toggle-mode {
   justify-self: center;
   text-align: center;
-  padding-left: 40px;
-  font-family: "Formula1Bold";
+  padding-left: 20px;
+  //font-family: "Formula1Bold";
 
   transform: none; /* important – removes squish */
   opacity: 1;

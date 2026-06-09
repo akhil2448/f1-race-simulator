@@ -1,35 +1,48 @@
 <div class="simulation-layout">
-  <app-leaderboard></app-leaderboard>
+  <!-- LEFT SIDE -->
+  <div class="left-panel-area">
+    <div class="top-info-row">
+      <app-leaderboard></app-leaderboard>
 
-  <div class="info-sidebar">
-    <app-weather></app-weather>
-    <div class="telemetry-panels">
-      <h4>Driver Telemetry</h4>
-      <div class="header-divider"></div>
-      <app-driver-telemetry
-        [selectedDriver]="selectedDrivers[0]"
-        [availableDrivers]="getAvailableDriversForSlot(0)"
-        [teamColor]="getDriverColor(selectedDrivers[0])"
-        [year]="currentYear"
-        [round]="currentRound"
-        (driverSelected)="onDriverSelected(0, $event)"
-        (clearDriver)="onDriverCleared(0)"
-      >
-      </app-driver-telemetry>
+      <div class="info-sidebar">
+        <app-weather></app-weather>
 
-      <app-driver-telemetry
-        [selectedDriver]="selectedDrivers[1]"
-        [availableDrivers]="getAvailableDriversForSlot(1)"
-        [teamColor]="getDriverColor(selectedDrivers[1])"
-        [year]="currentYear"
-        [round]="currentRound"
-        (driverSelected)="onDriverSelected(1, $event)"
-        (clearDriver)="onDriverCleared(1)"
-      >
-      </app-driver-telemetry>
+        <div class="telemetry-panels">
+          <h4>Driver Telemetry</h4>
+
+          <div class="header-divider"></div>
+
+          <app-driver-telemetry
+            [selectedDriver]="selectedDrivers[0]"
+            [availableDrivers]="getAvailableDriversForSlot(0)"
+            [teamColor]="getDriverColor(selectedDrivers[0])"
+            [year]="currentYear"
+            [round]="currentRound"
+            (driverSelected)="onDriverSelected(0, $event)"
+            (clearDriver)="onDriverCleared(0)"
+          >
+          </app-driver-telemetry>
+
+          <app-driver-telemetry
+            [selectedDriver]="selectedDrivers[1]"
+            [availableDrivers]="getAvailableDriversForSlot(1)"
+            [teamColor]="getDriverColor(selectedDrivers[1])"
+            [year]="currentYear"
+            [round]="currentRound"
+            (driverSelected)="onDriverSelected(1, $event)"
+            (clearDriver)="onDriverCleared(1)"
+          >
+          </app-driver-telemetry>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <app-race-controls></app-race-controls>
     </div>
   </div>
 
+  <!-- TRACK SIDE -->
   <div class="track-column">
     <!-- TOP HUD -->
     <div class="track-hud">
@@ -42,7 +55,7 @@
       </div>
     </div>
 
-    <!-- TRACK CANVAS -->
+    <!-- TRACK -->
     <div class="track-stage">
       <app-track-map [highlightedDrivers]="selectedDrivers"></app-track-map>
     </div>
