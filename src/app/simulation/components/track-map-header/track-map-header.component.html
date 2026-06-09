@@ -1,0 +1,19 @@
+<div class="track-header">
+  <div class="event-name">{{ trackInfo?.eventName }}, {{ eventYear }}</div>
+
+  <div class="track-location">
+    {{ trackInfo?.location }}, {{ trackInfo?.country }}
+  </div>
+
+  <div class="race-local-time">
+    <span class="time-label">TRACK TIME</span>
+
+    <span class="time-separator"></span>
+
+    <span class="time-value">
+      {{ localRaceTime }}
+    </span>
+  </div>
+
+  <app-button size="sm" (clicked)="flipTrack.emit()"> Flip Track </app-button>
+</div>

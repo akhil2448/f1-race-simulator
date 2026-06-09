@@ -1,155 +1,140 @@
 <div class="track-container" *ngIf="trackInfo">
-  <div class="track-container">
-    <div class="track-title">
-      <div class="event-name">{{ trackInfo.eventName }}, {{ eventYear }}</div>
-      <div class="track-location">
-        {{ trackInfo.location }}, {{ trackInfo.country }}
-      </div>
-      <!-- 🕒 LOCAL RACE TIME -->
-      <div class="race-local-time">Track Time: {{ localRaceTime }}</div>
-    </div>
+  <svg
+    class="track-svg"
+    [class.mirrored]="isMirrored"
+    [attr.viewBox]="viewBox"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <!-- Track -->
+    <!-- outer border -->
+    <polyline
+      [attr.points]="trackPoints"
+      fill="none"
+      stroke="#cfcfcf"
+      stroke-width="380"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
 
-    <svg
-      class="track-svg"
-      [class.mirrored]="isMirrored"
-      [attr.viewBox]="viewBox"
-      preserveAspectRatio="xMinYMid meet"
-    >
-      <!-- Track -->
-      <!-- outer border -->
-      <polyline
-        [attr.points]="trackPoints"
-        fill="none"
-        stroke="#cfcfcf"
-        stroke-width="380"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
+    <!-- asphalt -->
+    <polyline
+      [attr.points]="trackPoints"
+      fill="none"
+      stroke="#2a2a2a"
+      stroke-width="280"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
 
-      <!-- asphalt -->
-      <polyline
-        [attr.points]="trackPoints"
-        fill="none"
-        stroke="#2a2a2a"
-        stroke-width="280"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
+    <!-- inner shading -->
+    <polyline
+      [attr.points]="trackPoints"
+      fill="none"
+      stroke="#1a1a1a"
+      stroke-width="220"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
 
-      <!-- inner shading -->
-      <polyline
-        [attr.points]="trackPoints"
-        fill="none"
-        stroke="#1a1a1a"
-        stroke-width="220"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-
-      <!-- Direction Arrow -->
-      <path
-        [attr.transform]="
-          'translate(' +
-          arrow.cx +
-          ' ' +
-          arrow.cy +
-          ') rotate(' +
-          arrow.angle +
-          ')'
-        "
-        d="
+    <!-- Direction Arrow -->
+    <path
+      [attr.transform]="
+        'translate(' +
+        arrow.cx +
+        ' ' +
+        arrow.cy +
+        ') rotate(' +
+        arrow.angle +
+        ')'
+      "
+      d="
         M -240 -160 L 0 0 L -240 160
         M -80  -160 L 160 0 L -80 160
       "
-        stroke="#ffffff"
-        stroke-width="26"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        fill="none"
-      />
+      stroke="#ffffff"
+      stroke-width="26"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
 
-      <!-- start/finish line -->
-      <line
-        [attr.x1]="startLine.x1"
-        [attr.y1]="startLine.y1"
-        [attr.x2]="startLine.x2"
-        [attr.y2]="startLine.y2"
-        stroke="#cfcfcf"
-        stroke-width="70"
-        stroke-linecap="round"
-      />
+    <!-- start/finish line -->
+    <line
+      [attr.x1]="startLine.x1"
+      [attr.y1]="startLine.y1"
+      [attr.x2]="startLine.x2"
+      [attr.y2]="startLine.y2"
+      stroke="#cfcfcf"
+      stroke-width="70"
+      stroke-linecap="round"
+    />
 
-      <!-- Cars -->
-      <!-- Cars -->
-      <g class="cars-layer" *ngIf="trackReady && cars.length">
-        <!-- ============================== -->
-        <!-- NON-SELECTED CARS (BACK LAYER) -->
-        <!-- ============================== -->
-        <g *ngFor="let car of cars">
+    <!-- Cars -->
+    <!-- Cars -->
+    <g class="cars-layer" *ngIf="trackReady && cars.length">
+      <!-- ============================== -->
+      <!-- NON-SELECTED CARS (BACK LAYER) -->
+      <!-- ============================== -->
+      <g *ngFor="let car of cars">
+        <circle
+          *ngIf="!isHighlighted(car.driver)"
+          [attr.cx]="getCarPosition(car.raceDistance).x"
+          [attr.cy]="getCarPosition(car.raceDistance).y"
+          r="90"
+          [attr.fill]="getCarColor(car.driver)"
+          stroke="#000"
+          stroke-width="10"
+        />
+      </g>
+
+      <!-- ============================== -->
+      <!-- SELECTED CARS (TOP LAYER)      -->
+      <!-- ============================== -->
+      <g *ngFor="let car of cars">
+        <ng-container *ngIf="isHighlighted(car.driver)">
+          <!-- OUTER WHITE HALO -->
           <circle
-            *ngIf="!isHighlighted(car.driver)"
             [attr.cx]="getCarPosition(car.raceDistance).x"
             [attr.cy]="getCarPosition(car.raceDistance).y"
-            r="90"
+            r="145"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="26"
+            opacity="0.95"
+          />
+
+          <!-- INNER BLACK CUT RING (contrast) -->
+          <circle
+            [attr.cx]="getCarPosition(car.raceDistance).x"
+            [attr.cy]="getCarPosition(car.raceDistance).y"
+            r="112"
+            fill="none"
+            stroke="#000000"
+            stroke-width="14"
+            opacity="0.9"
+          />
+
+          <!-- MAIN CAR DOT (larger) -->
+          <circle
+            [attr.cx]="getCarPosition(car.raceDistance).x"
+            [attr.cy]="getCarPosition(car.raceDistance).y"
+            r="125"
             [attr.fill]="getCarColor(car.driver)"
             stroke="#000"
             stroke-width="10"
           />
-        </g>
 
-        <!-- ============================== -->
-        <!-- SELECTED CARS (TOP LAYER)      -->
-        <!-- ============================== -->
-        <g *ngFor="let car of cars">
-          <ng-container *ngIf="isHighlighted(car.driver)">
-            <!-- OUTER WHITE HALO -->
-            <circle
-              [attr.cx]="getCarPosition(car.raceDistance).x"
-              [attr.cy]="getCarPosition(car.raceDistance).y"
-              r="145"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="26"
-              opacity="0.95"
-            />
-
-            <!-- INNER BLACK CUT RING (contrast) -->
-            <circle
-              [attr.cx]="getCarPosition(car.raceDistance).x"
-              [attr.cy]="getCarPosition(car.raceDistance).y"
-              r="112"
-              fill="none"
-              stroke="#000000"
-              stroke-width="14"
-              opacity="0.9"
-            />
-
-            <!-- MAIN CAR DOT (larger) -->
-            <circle
-              [attr.cx]="getCarPosition(car.raceDistance).x"
-              [attr.cy]="getCarPosition(car.raceDistance).y"
-              r="125"
-              [attr.fill]="getCarColor(car.driver)"
-              stroke="#000"
-              stroke-width="10"
-            />
-
-            <!-- OPTIONAL CENTER DOT (precision focus) -->
-            <circle
-              [attr.cx]="getCarPosition(car.raceDistance).x"
-              [attr.cy]="getCarPosition(car.raceDistance).y"
-              r="14"
-              fill="#ffffff"
-            />
-          </ng-container>
-        </g>
+          <!-- OPTIONAL CENTER DOT (precision focus) -->
+          <circle
+            [attr.cx]="getCarPosition(car.raceDistance).x"
+            [attr.cy]="getCarPosition(car.raceDistance).y"
+            r="14"
+            fill="#ffffff"
+          />
+        </ng-container>
       </g>
+    </g>
 
-      <!-- <circle [attr.cx]="track[0].x" [attr.cy]="track[0].y" r="120" fill="red" /> -->
-    </svg>
-
-    <button class="mirror-btn" (click)="toggleMirror()">
-      Flip Track Direction
-    </button>
-  </div>
+    <!-- <circle [attr.cx]="track[0].x" [attr.cy]="track[0].y" r="120" fill="red" /> -->
+  </svg>
 </div>

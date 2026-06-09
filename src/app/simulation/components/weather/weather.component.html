@@ -1,33 +1,79 @@
+<p>Weather</p>
 <div class="weather-panel">
-  <div class="weather-title">Weather</div>
+  <!-- <div class="weather-title">Weather</div> -->
 
-  <div class="weather-row">
-    <span class="icon">🌡️</span>
-    <span class="label">Track:</span>
-    <span class="value">30.2°C</span>
-  </div>
+  <ng-container *ngIf="weather$ | async as weather">
+    <div class="weather-row">
+      <span class="icon">🌡️</span>
+      <span class="label">Track:</span>
+      <span class="value"> {{ weather.TrackTemp | number: "1.1-1" }}°C </span>
+    </div>
 
-  <div class="weather-row">
-    <span class="icon">🌡️</span>
-    <span class="label">Air:</span>
-    <span class="value">17.3°C</span>
-  </div>
+    <div class="weather-row">
+      <span class="icon">🌡️</span>
+      <span class="label">Air:</span>
+      <span class="value"> {{ weather.AirTemp | number: "1.1-1" }}°C </span>
+    </div>
 
-  <div class="weather-row">
-    <span class="icon">💧</span>
-    <span class="label">Humidity:</span>
-    <span class="value">70%</span>
-  </div>
+    <div class="weather-row">
+      <span class="icon">💧</span>
+      <span class="label">Humidity:</span>
+      <span class="value"> {{ weather.Humidity | number: "1.0-0" }}% </span>
+    </div>
 
-  <div class="weather-row">
-    <span class="icon">🌬️</span>
-    <span class="label">Wind:</span>
-    <span class="value">1.4 km/h S</span>
-  </div>
+    <div class="weather-row">
+      <span class="icon">🌬️</span>
+      <span class="label">Wind:</span>
+      <span class="value">
+        {{ weather.WindSpeed | number: "1.1-1" }}
+        km/h
+        {{ getWindDirection(weather.WindDirection) }}
+      </span>
+    </div>
 
-  <div class="weather-row">
-    <span class="icon">☁️</span>
-    <span class="label">Rain:</span>
-    <span class="value dry">DRY</span>
-  </div>
+    <div class="weather-row">
+      <span class="icon">☁️</span>
+      <span class="label">Rain:</span>
+
+      <span
+        class="value"
+        [class.wet]="weather.Rainfall"
+        [class.dry]="!weather.Rainfall"
+      >
+        {{ weather.Rainfall ? "YES" : "NO" }}
+      </span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!(weather$ | async)">
+    <div class="weather-row">
+      <span class="icon">🌡️</span>
+      <span class="label">Track:</span>
+      <span class="value">-</span>
+    </div>
+
+    <div class="weather-row">
+      <span class="icon">🌡️</span>
+      <span class="label">Air:</span>
+      <span class="value">-</span>
+    </div>
+
+    <div class="weather-row">
+      <span class="icon">💧</span>
+      <span class="label">Humidity:</span>
+      <span class="value">-</span>
+    </div>
+
+    <div class="weather-row">
+      <span class="icon">🌬️</span>
+      <span class="label">Wind:</span>
+      <span class="value">-</span>
+    </div>
+
+    <div class="weather-row">
+      <span class="icon">☁️</span>
+      <span class="label">Rain:</span>
+      <span class="value">-</span>
+    </div>
+  </ng-container>
 </div>

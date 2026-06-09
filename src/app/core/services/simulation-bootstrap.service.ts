@@ -13,6 +13,7 @@ import { LiveTimingService } from './live-timing.service';
 import { TelemetryBufferService } from './race-telemetry-buffer.service';
 import { SimulationEngineService } from './simulation-engine.service';
 import { TimingEventProcessorService } from './timing-event-processor.service';
+import { WeatherStatusService } from './weather-status.service';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
@@ -32,6 +33,7 @@ export class SimulationBootstrapService {
     private telemetry: TelemetryBufferService,
     private engine: SimulationEngineService,
     private timingProcessor: TimingEventProcessorService,
+    private weatherService: WeatherStatusService,
   ) {}
 
   /** 🚦 SINGLE ENTRY POINT */
@@ -53,6 +55,9 @@ export class SimulationBootstrapService {
 
       /* ---------- LOCAL TIME ---------- */
       this.raceLocalTime.initialize(raceData.session.localTimeAtRaceStart);
+
+      /* ---------- WEATHER ---------- */
+      this.weatherService.load(year, round);
 
       /* ---------- TRACK MAP → TIMING → TELEMETRY ---------- */
       this.trackMap.load(year, round).subscribe(() => {

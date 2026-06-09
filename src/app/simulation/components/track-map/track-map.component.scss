@@ -1,50 +1,41 @@
 .track-container {
-  padding: 6vh 3vw; /* small breathing space */
-  box-sizing: border-box;
-  overflow: hidden;
   width: 100%;
   height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+// .track-svg {
+//   width: 100%;
+//   height: 100%;
+//   display: block;
+//   transform-origin: center;
+//   transition: transform 0.3s ease;
+//   //transform: translateX(-2vw);
+// }
 
 .track-svg {
   width: 100%;
   height: 100%;
+
   display: block;
-  transform-origin: center;
+
+  transform-origin: center center;
+
   transition: transform 0.3s ease;
-  //transform: translateX(-2vw);
+
+  object-fit: contain;
 }
 
 .track-svg.mirrored {
   transform: scaleY(-1);
-}
-
-.track-title {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  z-index: 10;
-
-  text-align: right;
-  color: #eaeaea;
-}
-
-.race-local-time {
-  margin-top: 6px;
-  font-size: 14px;
-  letter-spacing: 1px;
-  color: #bcbcbc;
-  font-variant-numeric: tabular-nums;
-}
-
-.event-name {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.track-location {
-  font-size: 13px;
-  opacity: 0.75;
 }
 
 .cars-layer {

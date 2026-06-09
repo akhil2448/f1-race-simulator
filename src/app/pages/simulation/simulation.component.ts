@@ -6,6 +6,7 @@ import { WeatherComponent } from '../../simulation/components/weather/weather.co
 import { DriverTelemetryComponent } from '../../simulation/components/driver-telemetry/driver-telemetry.component';
 import { RaceClockComponent } from '../../simulation/components/race-clock/race-clock.component';
 import { TrackMapComponent } from '../../simulation/components/track-map/track-map.component';
+import { TrackMapHeaderComponent } from '../../simulation/components/track-map-header/track-map-header.component';
 
 @Component({
   selector: 'app-simulation',
@@ -16,6 +17,7 @@ import { TrackMapComponent } from '../../simulation/components/track-map/track-m
     DriverTelemetryComponent,
     RaceClockComponent,
     TrackMapComponent,
+    TrackMapHeaderComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',

@@ -1,1 +1,11 @@
-<p>button works!</p>
+<button
+  class="app-button"
+  [class.secondary]="variant === 'secondary'"
+  [class.sm]="size === 'sm'"
+  [class.md]="size === 'md'"
+  [class.lg]="size === 'lg'"
+  [disabled]="disabled"
+  type="button"
+>
+  <ng-content></ng-content>
+</button>

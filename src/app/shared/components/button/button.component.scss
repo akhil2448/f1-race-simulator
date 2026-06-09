@@ -1,0 +1,97 @@
+.app-button {
+  min-width: 220px;
+  height: 58px;
+
+  padding: 0 28px;
+
+  border-radius: 999px;
+
+  border: 3px solid rgba(255, 255, 255, 0.85);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #ffffff;
+
+  font-family: "Rajdhani", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+
+  backdrop-filter: blur(4px);
+
+  touch-action: manipulation;
+
+  cursor: pointer;
+
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 120ms ease,
+    box-shadow 140ms ease;
+
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: #e10600;
+
+    border-color: #ff3b30;
+
+    color: #ffffff;
+
+    box-shadow: 0 0 18px rgba(225, 6, 0, 0.35);
+
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    background: #ff1801;
+
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.app-button.sm {
+  min-width: 120px;
+  height: 40px;
+
+  padding: 0 16px;
+
+  font-size: 15px;
+
+  border-width: 2px;
+
+  letter-spacing: 0.3px;
+}
+
+.app-button.md {
+  min-width: 200px;
+  height: 58px;
+
+  padding: 0 26px;
+
+  font-size: 20px;
+
+  border-width: 3px;
+
+  letter-spacing: 0.5px;
+}
+
+.app-button.lg {
+  min-width: 300px;
+  height: 76px;
+
+  padding: 0 42px;
+
+  font-size: 30px;
+
+  border-width: 4px;
+
+  letter-spacing: 1px;
+}

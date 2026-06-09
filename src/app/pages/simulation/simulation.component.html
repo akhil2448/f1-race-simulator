@@ -4,6 +4,7 @@
   <div class="info-sidebar">
     <app-weather></app-weather>
     <div class="telemetry-panels">
+      <p>Driver Telemetry</p>
       <app-driver-telemetry
         [selectedDriver]="selectedDrivers[0]"
         [availableDrivers]="getAvailableDriversForSlot(0)"
@@ -28,9 +29,21 @@
     </div>
   </div>
 
-  <!-- RIGHT COLUMN -->
   <div class="track-column">
-    <app-race-clock></app-race-clock>
-    <app-track-map [highlightedDrivers]="selectedDrivers"></app-track-map>
+    <!-- TOP HUD -->
+    <div class="track-hud">
+      <div class="hud-left">
+        <app-race-clock></app-race-clock>
+      </div>
+
+      <div class="hud-right">
+        <app-track-map-header></app-track-map-header>
+      </div>
+    </div>
+
+    <!-- TRACK CANVAS -->
+    <div class="track-stage">
+      <app-track-map [highlightedDrivers]="selectedDrivers"></app-track-map>
+    </div>
   </div>
 </div>

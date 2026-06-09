@@ -26,6 +26,7 @@ app-leaderboard {
 
 /* Weather panel */
 app-weather {
+  margin-top: 0%;
   flex: 0 0 auto;
   max-height: 180px;
   margin-bottom: 40px;
@@ -33,16 +34,59 @@ app-weather {
 }
 
 .track-column {
-  display: grid;
-  grid-template-rows: auto 1fr; /* clock = auto, map = rest */
-  height: 100%;
+  min-width: 0;
   overflow: hidden;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  height: 100%;
+}
+
+.hud-left {
+  display: flex;
+  align-items: flex-start;
+}
+
+.hud-right {
+  display: flex;
+  justify-content: flex-end;
+
+  text-align: right;
+}
+
+.track-hud {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding: 18px 28px 0 28px;
+
+  z-index: 20;
+}
+
+.track-stage {
+  position: relative;
+
+  flex: 1;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 app-race-clock {
   display: flex;
   justify-content: flex-start;
-  padding: 16px 24px;
   box-sizing: border-box;
 }
 

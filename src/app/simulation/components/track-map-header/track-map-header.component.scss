@@ -1,0 +1,71 @@
+.track-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 10px;
+
+  text-align: right;
+
+  color: #eaeaea;
+}
+
+/* EVENT NAME */
+
+.event-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* LOCATION */
+
+.track-location {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+/* TRACK TIME */
+
+.race-local-time {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  color: #ffffff;
+}
+
+.time-label {
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  text-transform: uppercase;
+}
+
+.time-separator {
+  width: 2px;
+  height: 22px;
+
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.time-value {
+  font-family: "Roboto Mono", monospace;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  color: #ffffff;
+
+  font-variant-numeric: tabular-nums;
+
+  line-height: 1;
+}
