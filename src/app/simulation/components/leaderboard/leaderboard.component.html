@@ -49,15 +49,6 @@
           <span class="pos-number">
             {{ row.position }}
           </span>
-
-          <div
-            *ngIf="row.positionArrow"
-            class="position-arrow-overlay-text"
-            [class.up]="row.positionArrow === 'up'"
-            [class.down]="row.positionArrow === 'down'"
-          >
-            {{ row.positionArrow === "up" ? "▲" : "▼" }}
-          </div>
         </div>
 
         <!-- TEAM -->

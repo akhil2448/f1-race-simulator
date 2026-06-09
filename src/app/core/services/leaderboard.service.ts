@@ -37,19 +37,6 @@ export class LeaderboardService {
   private raceFinished = false;
 
   /* ===============================
-     POSITION ARROWS
-     =============================== */
-
-  private arrowMap = new Map<
-    string,
-    { arrow: 'up' | 'down'; expiresAt: number }
-  >();
-
-  private previousPositions = new Map<string, number>();
-
-  private readonly ARROW_DURATION = 1500;
-
-  /* ===============================
      STATE
      =============================== */
 
@@ -149,45 +136,13 @@ export class LeaderboardService {
 
       orderedStates.forEach((s, index) => {
         const position = index + 1;
-        const prevPos = this.previousPositions.get(s.driver);
+        // const prevPos = this.previousPositions.get(s.driver);
         const isOut = this.presence.isOut(s.driver);
 
         // record OUT time once
         if (isOut && !this.outAtTime.has(s.driver)) {
           this.outAtTime.set(s.driver, this.timingClockTime);
         }
-
-        /* 🔒 POSITION ARROWS (mid-lap only) */
-        const isMidLap =
-          !isOut && (s.gapToLeader !== null || s.intervalGap !== null);
-
-        if (prevPos === undefined) {
-          this.previousPositions.set(s.driver, position);
-        }
-
-        const hasPositionChanged =
-          prevPos !== undefined && prevPos !== position;
-
-        if (isMidLap && hasPositionChanged) {
-          this.arrowMap.set(s.driver, {
-            arrow: position < prevPos ? 'up' : 'down',
-            expiresAt: now + this.ARROW_DURATION,
-          });
-        }
-
-        let positionArrow: 'up' | 'down' | undefined;
-
-        const arrowState = this.arrowMap.get(s.driver);
-
-        if (!isOut && arrowState) {
-          if (arrowState.expiresAt > now) {
-            positionArrow = arrowState.arrow;
-          } else {
-            this.arrowMap.delete(s.driver);
-          }
-        }
-        // UNCOMMENT THIS IF LEADERBOARD BEHAVES BUGGY!!!!!!!!
-        this.previousPositions.set(s.driver, position);
 
         const t = latestTelemetry.get(s.driver);
 
@@ -221,7 +176,6 @@ export class LeaderboardService {
 
           provisional: s.provisionalStatus,
           status: isOut ? 'OUT' : null,
-          positionArrow,
 
           pitStops: this.getPitStopCount(s.driver, this.timingClockTime),
         };

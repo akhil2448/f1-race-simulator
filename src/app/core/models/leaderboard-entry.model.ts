@@ -19,7 +19,7 @@ export interface LeaderboardEntry {
   isInPit: boolean;
   compound: string;
 
-  positionArrow?: 'up' | 'down';
+  // positionArrow?: 'up' | 'down';
 
   tyreLife?: number | null;
   pitStops?: number;

@@ -33,6 +33,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private rowPositions = new Map<string, number>();
 
+  private displayedArrows = new Map<string, HTMLDivElement>();
+
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
 
@@ -142,6 +144,21 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const newTop = row.offsetTop;
 
       if (prevTop !== undefined && prevTop !== newTop) {
+        const movedUp = newTop < prevTop;
+
+        const rowHeight = row.offsetHeight || 32;
+
+        const placesChanged = Math.max(
+          1,
+          Math.round(Math.abs(prevTop - newTop) / rowHeight),
+        );
+
+        this.spawnPositionArrow(
+          row,
+          movedUp ? 'up' : 'down',
+          Math.round(placesChanged),
+        );
+
         row.style.transition = 'none';
         row.style.transform = `translateY(${prevTop - newTop}px)`;
 
@@ -153,6 +170,66 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.rowPositions.set(driver, newTop);
     });
+  }
+
+  private spawnPositionArrow(
+    row: HTMLElement,
+    direction: 'up' | 'down',
+    places: number,
+  ): void {
+    const driver = row.dataset['driver'];
+
+    if (!driver) return;
+
+    const positionBox = row.querySelector('.position') as HTMLElement | null;
+
+    const posNumber = row.querySelector('.pos-number') as HTMLElement | null;
+
+    if (!positionBox || !posNumber) return;
+
+    // remove old arrow if already active
+    const existingArrow = this.displayedArrows.get(driver);
+
+    if (existingArrow) {
+      existingArrow.remove();
+      this.displayedArrows.delete(driver);
+    }
+
+    positionBox.classList.add('arrow-active');
+
+    const arrow = document.createElement('div');
+
+    arrow.className = `flip-overtake-arrow ${direction}`;
+
+    arrow.style.color = direction === 'up' ? '#00ff87' : '#ff3b3b';
+
+    arrow.textContent =
+      places > 1
+        ? `${direction === 'up' ? '▲' : '▼'}${places}`
+        : direction === 'up'
+          ? '▲'
+          : '▼';
+
+    positionBox.appendChild(arrow);
+
+    this.displayedArrows.set(driver, arrow);
+
+    const currentArrow = arrow;
+
+    setTimeout(() => {
+      const activeArrow = this.displayedArrows.get(driver);
+
+      // another newer arrow already exists
+      if (activeArrow !== currentArrow) {
+        return;
+      }
+
+      currentArrow.remove();
+
+      positionBox.classList.remove('arrow-active');
+
+      this.displayedArrows.delete(driver);
+    }, 1200);
   }
 
   /* ===================================================== */
