@@ -244,6 +244,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private formatLappedMode(row: LeaderboardEntry): string {
     if (row.isInPit) return 'IN PIT';
 
+    if (row.position === 1) return 'Leader';
+
     const lapsDown = row.lapsDown ?? 0;
     if (lapsDown > 0) {
       return `+${lapsDown} ${lapsDown === 1 ? 'LAP' : 'LAPS'}`;

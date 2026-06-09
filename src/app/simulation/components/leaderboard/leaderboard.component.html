@@ -46,14 +46,18 @@
           [class.provisional-up]="row.provisional === 'UP'"
           [class.provisional-down]="row.provisional === 'DOWN'"
         >
-          <span class="pos-number">{{ row.position }}</span>
+          <span class="pos-number">
+            {{ row.position }}
+          </span>
 
-          <span
+          <div
             *ngIf="row.positionArrow"
-            class="pos-arrow"
+            class="position-arrow-overlay-text"
             [class.up]="row.positionArrow === 'up'"
             [class.down]="row.positionArrow === 'down'"
-          ></span>
+          >
+            {{ row.positionArrow === "up" ? "▲" : "▼" }}
+          </div>
         </div>
 
         <!-- TEAM -->

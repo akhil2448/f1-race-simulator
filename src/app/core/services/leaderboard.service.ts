@@ -46,7 +46,8 @@ export class LeaderboardService {
   >();
 
   private previousPositions = new Map<string, number>();
-  private readonly ARROW_DURATION = 500;
+
+  private readonly ARROW_DURATION = 1500;
 
   /* ===============================
      STATE
@@ -160,19 +161,32 @@ export class LeaderboardService {
         const isMidLap =
           !isOut && (s.gapToLeader !== null || s.intervalGap !== null);
 
-        if (isMidLap && prevPos !== undefined && prevPos !== position) {
+        if (prevPos === undefined) {
+          this.previousPositions.set(s.driver, position);
+        }
+
+        const hasPositionChanged =
+          prevPos !== undefined && prevPos !== position;
+
+        if (isMidLap && hasPositionChanged) {
           this.arrowMap.set(s.driver, {
             arrow: position < prevPos ? 'up' : 'down',
             expiresAt: now + this.ARROW_DURATION,
           });
         }
 
-        const arrowState = this.arrowMap.get(s.driver);
-        const positionArrow =
-          !isOut && arrowState && arrowState.expiresAt > now
-            ? arrowState.arrow
-            : undefined;
+        let positionArrow: 'up' | 'down' | undefined;
 
+        const arrowState = this.arrowMap.get(s.driver);
+
+        if (!isOut && arrowState) {
+          if (arrowState.expiresAt > now) {
+            positionArrow = arrowState.arrow;
+          } else {
+            this.arrowMap.delete(s.driver);
+          }
+        }
+        // UNCOMMENT THIS IF LEADERBOARD BEHAVES BUGGY!!!!!!!!
         this.previousPositions.set(s.driver, position);
 
         const t = latestTelemetry.get(s.driver);
