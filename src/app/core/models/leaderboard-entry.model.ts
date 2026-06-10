@@ -29,6 +29,10 @@ export interface LeaderboardEntry {
 
   /** Driver state at race time */
   status?: 'OUT' | null;
+
+  displayGap?: string;
+  points?: number;
+  isOfficialClassification?: boolean;
 }
 
 export type GapMode = 'LEADER' | 'INTERVAL';

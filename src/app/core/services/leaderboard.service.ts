@@ -13,6 +13,7 @@ import {
   DriverTimingState,
 } from './timing-event-processor.service';
 import { RaceFinishService } from './race-finish.service';
+import { RaceApiResponse } from '../models/race-data.model';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -36,6 +37,12 @@ export class LeaderboardService {
   leaderLap$ = this.leaderboard$.pipe(map((s) => s.leaderLap));
 
   private raceFinished = false;
+
+  private raceData!: RaceApiResponse;
+
+  initialize(raceData: RaceApiResponse): void {
+    this.raceData = raceData;
+  }
 
   /* ===============================
      STATE
@@ -110,6 +117,30 @@ export class LeaderboardService {
     /* ---------- PRESENTATION STATE ---------- */
     this.sectorVisual.visualState$.subscribe((states: LiveDriverState[]) => {
       if (!states.length) return;
+
+      /**
+       * 🔒 FINAL CLASSIFICATION MODE
+       *
+       * Once race officially finishes:
+       * - stop using live timing
+       * - stop using telemetry ordering
+       * - stop using interval engine
+       *
+       * Use ONLY backend FIA classification.
+       */
+      if (this.raceFinished) {
+        this.subject.next({
+          entries: this.buildFinalClassificationEntries(),
+
+          leaderLap: this.subject.value.totalLaps,
+
+          totalLaps: this.subject.value.totalLaps,
+
+          raceFinished: true,
+        });
+
+        return;
+      }
 
       const now = performance.now();
 
@@ -235,5 +266,69 @@ export class LeaderboardService {
       if (p.lap === 1 && p.pitInTime == null) return false;
       return true;
     }).length;
+  }
+
+  /* =====================================================
+     FINAL FIA OFFICIAL CLASSIFICATION
+     ===================================================== */
+
+  private buildFinalClassificationEntries(): LeaderboardEntry[] {
+    const totalLaps = this.raceData.session.totalLaps;
+
+    return this.raceData.results.classification.map((c) => {
+      let displayGap = c.displayGap;
+
+      /**
+       * FIA terminal states
+       */
+      if (c.status === 'OUT') {
+        displayGap = c.lapsDown >= totalLaps ? 'DNS' : 'DNF';
+      }
+
+      return {
+        position: c.position,
+
+        driver: c.driver,
+
+        lap: c.lapsCompleted,
+
+        /**
+         * Official FIA classification values
+         */
+        gapToLeader: c.gapToLeader,
+
+        intervalGap: null,
+
+        lapsDown: c.lapsDown,
+
+        /**
+         * Telemetry irrelevant after finish
+         */
+        lapDistance: 0,
+
+        raceDistance: 0,
+
+        isInPit: false,
+
+        compound: '',
+
+        tyreLife: null,
+
+        pitStops: undefined,
+
+        provisional: null,
+
+        status: c.status === 'OUT' ? 'OUT' : null,
+
+        /**
+         * Final-classification-only fields
+         */
+        displayGap,
+
+        points: c.points,
+
+        isOfficialClassification: true,
+      };
+    });
   }
 }

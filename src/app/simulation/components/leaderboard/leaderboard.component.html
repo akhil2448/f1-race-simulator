@@ -38,7 +38,7 @@
         class="driver-row"
         *ngFor="let row of leaderboard; trackBy: trackByDriver"
         [attr.data-driver]="row.driver"
-        [class.out]="row.status === 'OUT'"
+        [class.out]="row.status === 'OUT' && !row.isOfficialClassification"
       >
         <!-- POSITION -->
         <div

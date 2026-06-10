@@ -53,6 +53,7 @@ export class SimulationBootstrapService {
       this.raceFinish.initialize(raceData);
 
       this.leaderboard.setTotalLaps(raceData.session.totalLaps);
+      this.leaderboard.initialize(raceData);
       this.availableDriversSubject.next(Object.keys(raceData.drivers));
 
       const outDrivers = raceData.results.classification

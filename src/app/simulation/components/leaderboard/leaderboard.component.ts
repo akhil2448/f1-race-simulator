@@ -310,6 +310,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ===================================================== */
 
   formatDisplayValue(row: LeaderboardEntry): string {
+    if (row.isOfficialClassification) {
+      return row.displayGap ?? '–';
+    }
+
     if (row.status === 'OUT') {
       return this.activeDisplayMode === 'TYRE' ||
         this.activeDisplayMode === 'PIT'
