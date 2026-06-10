@@ -15,6 +15,8 @@ import { SimulationEngineService } from './simulation-engine.service';
 import { TimingEventProcessorService } from './timing-event-processor.service';
 import { WeatherStatusService } from './weather-status.service';
 import { TrackMapStateService } from '../services/track-map-state.service';
+import { RaceFinishService } from './race-finish.service';
+import { DriverPresenceService } from './driver-presence.service';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
@@ -36,6 +38,8 @@ export class SimulationBootstrapService {
     private timingProcessor: TimingEventProcessorService,
     private weatherService: WeatherStatusService,
     private trackMapState: TrackMapStateService,
+    private raceFinish: RaceFinishService,
+    private driverPresence: DriverPresenceService,
   ) {}
 
   /** 🚦 SINGLE ENTRY POINT */
@@ -46,9 +50,16 @@ export class SimulationBootstrapService {
       /* ---------- STATIC META ---------- */
       this.driverMeta.initialize(raceData.drivers);
       this.sectorAnchors.initialize(raceData);
+      this.raceFinish.initialize(raceData);
 
       this.leaderboard.setTotalLaps(raceData.session.totalLaps);
       this.availableDriversSubject.next(Object.keys(raceData.drivers));
+
+      const outDrivers = raceData.results.classification
+        .filter((result) => result.status === 'OUT')
+        .map((result) => result.driver);
+
+      this.driverPresence.setOfficiallyOutDrivers(outDrivers);
 
       /* ---------- TRACK STATUS ---------- */
       this.trackStatusApi

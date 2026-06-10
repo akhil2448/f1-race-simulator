@@ -18,6 +18,7 @@ import {
   LeaderboardDisplayMode,
   LeaderboardDisplayService,
 } from '../../../core/services/leaderboard-display.service';
+import { RaceFinishService } from '../../../core/services/race-finish.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -36,6 +37,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private displayedArrows = new Map<string, HTMLDivElement>();
 
   finishedDrivers = new Set<string>();
+  private alreadyAnimatedDrivers = new Set<string>();
   animatingFinishFlags = new Set<string>();
 
   @ViewChildren('driverRow', { read: ElementRef })
@@ -58,6 +60,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private driverMeta: DriverMetaService,
     private trackStatusService: TrackStatusService,
     private leaderboardDisplay: LeaderboardDisplayService,
+    private raceFinish: RaceFinishService,
   ) {
     // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
@@ -85,6 +88,23 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateBaseMode();
 
       requestAnimationFrame(() => this.runFLIP());
+    });
+
+    this.raceFinish.finishedDrivers$.subscribe((drivers) => {
+      this.finishedDrivers = drivers;
+
+      drivers.forEach((driver) => {
+        if (this.alreadyAnimatedDrivers.has(driver)) {
+          return;
+        }
+
+        this.alreadyAnimatedDrivers.add(driver);
+        this.animatingFinishFlags.add(driver);
+
+        setTimeout(() => {
+          this.animatingFinishFlags.delete(driver);
+        }, 2200);
+      });
     });
   }
 
@@ -169,19 +189,6 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
           row.style.transition = 'transform 220ms cubic-bezier(0.4, 0, 0.2, 1)';
           row.style.transform = '';
         });
-      }
-
-      // TEMP TEST — show chequered flag when driver reaches lap 2
-      const rowData = this.leaderboard.find((r) => r.driver === driver);
-
-      if (rowData?.lap === 2 && !this.finishedDrivers.has(driver)) {
-        this.finishedDrivers.add(driver);
-
-        this.animatingFinishFlags.add(driver);
-
-        setTimeout(() => {
-          this.animatingFinishFlags.delete(driver);
-        }, 2200);
       }
 
       this.rowPositions.set(driver, newTop);

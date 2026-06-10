@@ -2,6 +2,7 @@
 
 export interface RaceApiResponse {
   session: RaceSession;
+  results: RaceResultsApi;
   drivers: Record<string, DriverApiData>; // ALO, VER, HAM...
 }
 
@@ -20,6 +21,38 @@ export interface RaceSession {
 
   /** Sector distance cut points (normalized lap distance) */
   sectorDistanceRatios: SectorDistanceRatios;
+}
+
+/* -------------------- RACE RESULTS -------------------- */
+
+export interface RaceResultsApi {
+  winnerFinishTime: number;
+  raceEndTime: number;
+  totalLaps: number;
+
+  classification: RaceClassificationEntry[];
+}
+
+export interface RaceClassificationEntry {
+  driver: string;
+
+  position: number;
+
+  status: 'FINISHED' | 'OUT';
+
+  statusText: string;
+
+  displayGap: string;
+
+  finishTime: number | null;
+
+  gapToLeader: number | null;
+
+  lapsCompleted: number;
+
+  lapsDown: number;
+
+  points: number;
 }
 
 /* -------------------- DRIVER -------------------- */

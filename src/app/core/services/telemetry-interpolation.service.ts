@@ -63,7 +63,11 @@ export class TelemetryInterpolationService {
     this.engine.frame$.subscribe((frame) => {
       if (!frame) return;
 
+      // update currently visible telemetry drivers
+      // this.presence.updateVisibleDrivers(frame.cars.map((c) => c.driver));
+
       // ✅ AUTHORITATIVE DRIVER PRESENCE UPDATE
+      // REMOVED BECAUSE THE DRIVER PRESENCE IS HANDLED DIFFERENTLY
       this.presence.update(frame);
 
       const now = performance.now();
