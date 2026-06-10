@@ -18,9 +18,6 @@ export class LiveTimingService {
 
   private lastLeaderCompletedLaps = -1;
 
-  private raceFinished = false;
-  private finalState: LiveDriverState[] | null = null;
-
   constructor(private clock: RaceClockService) {}
 
   /* =====================================================
@@ -51,12 +48,6 @@ export class LiveTimingService {
      ===================================================== */
 
   private recomputeState(raceTime: number): void {
-    // 🔒 HARD FREEZE AFTER FINISH
-    if (this.raceFinished && this.finalState) {
-      this.stateSubject.next([...this.finalState]);
-      return;
-    }
-
     const drivers: LiveDriverState[] = [];
 
     const totalLaps = this.raceData.session.totalLaps;
@@ -68,6 +59,8 @@ export class LiveTimingService {
       const completedLaps = this.getCompletedLapCount(laps, raceTime);
       const rawCurrentLap = completedLaps + 1;
       const currentLap = Math.min(rawCurrentLap, totalLaps);
+
+      const totalRecordedLaps = laps.filter((l) => this.isLapTimed(l)).length;
 
       const candidateLap = laps[completedLaps];
       const prevLap = laps[completedLaps - 1];
@@ -124,7 +117,7 @@ export class LiveTimingService {
         y: 0,
 
         isLeader: false,
-        isFinished: completedLaps >= totalLaps,
+        isFinished: completedLaps >= totalRecordedLaps,
         isInPit: nowInPit,
       });
     }
@@ -135,20 +128,6 @@ export class LiveTimingService {
 
     const leader = drivers[0];
     leader.isLeader = true;
-
-    /* =====================================================
-       FINAL CLASSIFICATION
-       ===================================================== */
-
-    if (!this.raceFinished && leader.completedLaps >= totalLaps) {
-      this.raceFinished = true;
-
-      this.applyLapEndGaps(drivers, totalLaps);
-
-      this.finalState = drivers.map((d) => ({ ...d }));
-      this.stateSubject.next([...this.finalState]);
-      return;
-    }
 
     /* =====================================================
        LAP END

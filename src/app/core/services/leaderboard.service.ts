@@ -12,6 +12,7 @@ import {
   TimingEventProcessorService,
   DriverTimingState,
 } from './timing-event-processor.service';
+import { RaceFinishService } from './race-finish.service';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -53,13 +54,14 @@ export class LeaderboardService {
     private clock: RaceClockService,
     private presence: DriverPresenceService,
     private timingEvents: TimingEventProcessorService,
+    private raceFinish: RaceFinishService,
   ) {
-    this.timing.state$.subscribe((states) => {
-      if (states.length && states[0].isFinished) {
-        this.raceFinished = true;
-      }
-
+    this.timing.state$.subscribe(() => {
       this.timingClockTime = this.clock.getCurrentSecond();
+    });
+
+    this.raceFinish.raceFinished$.subscribe((finished) => {
+      this.raceFinished = finished;
     });
 
     this.bind();

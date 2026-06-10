@@ -34,16 +34,25 @@ export class RaceFinishService {
     Object.entries(raceData.drivers).forEach(([driver, data]) => {
       const laps = data.timing.laps ?? [];
 
-      const finalLap = laps.find(
-        (l) => l.lapNumber === raceData.session.totalLaps,
+      const classification = raceData.results.classification.find(
+        (c) => c.driver === driver,
       );
 
-      // driver never finished race distance
-      if (!finalLap) {
+      if (!classification || classification.status === 'OUT') {
         return;
       }
 
-      const finishTime = finalLap.lapStartTime + finalLap.lapTime;
+      const validLaps = laps.filter(
+        (l) => typeof l.lapTime === 'number' && l.lapTime > 0,
+      );
+
+      if (!validLaps.length) {
+        return;
+      }
+
+      const finishTime = Math.max(
+        ...validLaps.map((l) => l.lapStartTime + l.lapTime),
+      );
 
       this.driverFinishTimes.set(driver, finishTime);
 
