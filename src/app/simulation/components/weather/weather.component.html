@@ -23,17 +23,16 @@
     </div>
 
     <div class="weather-row">
-      <span class="icon">🌬️</span>
-      <span class="label">Wind:</span>
+      <span class="icon">💨</span>
+      <span class="label"> Wind<span class="unit">(m/s)</span>: </span>
       <span class="value">
         {{ weather.WindSpeed | number: "1.1-1" }}
-        km/h
         {{ getWindDirection(weather.WindDirection) }}
       </span>
     </div>
 
     <div class="weather-row">
-      <span class="icon">☁️</span>
+      <span class="icon">🌧️</span>
       <span class="label">Rain:</span>
 
       <span
@@ -66,13 +65,13 @@
     </div>
 
     <div class="weather-row">
-      <span class="icon">🌬️</span>
-      <span class="label">Wind:</span>
+      <span class="icon">💨</span>
+      <span class="label"> Wind<span class="unit">(m/s)</span>: </span>
       <span class="value">-</span>
     </div>
 
     <div class="weather-row">
-      <span class="icon">☁️</span>
+      <span class="icon">🌧️</span>
       <span class="label">Rain:</span>
       <span class="value">-</span>
     </div>

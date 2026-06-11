@@ -24,7 +24,7 @@ export interface DriverTelemetryView {
   rpm: number;
   throttle: number;
   brake: boolean;
-  lap: number;
+  // lap: number;
 }
 
 @Component({
@@ -136,7 +136,7 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
       rpm: isOut ? 0 : Math.floor(p.rpm),
       throttle: isOut ? 0 : Math.floor(p.throttle),
       brake: isOut ? true : p.brake,
-      lap: Math.floor(sec / 90) + 1,
+      //lap: Math.floor(sec / 90) + 1,
     };
   }
 
