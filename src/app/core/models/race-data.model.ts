@@ -63,7 +63,7 @@ export interface DriverApiData {
 
   timing: DriverTimingApiData;
 
-  personalBestLaps: PersonalBestLapApi[];
+  personalBestLaps: number[];
 }
 
 /* -------------------- TIMING (AUTHORITATIVE) -------------------- */
@@ -75,7 +75,7 @@ export interface DriverTimingApiData {
 
 /* One completed lap */
 export interface TimingLapApi {
-  lapNumber: number;
+  lap: number;
 
   /** Absolute race seconds */
   lapStartTime: number;
@@ -119,12 +119,6 @@ export interface PitStopApi {
 
   /** Tyre compound fitted after this stop */
   compound?: 'SOFT' | 'MEDIUM' | 'HARD' | 'INTERMEDIATE' | 'WET';
-}
-/* -------------------- PERSONAL BEST -------------------- */
-
-export interface PersonalBestLapApi {
-  lapNumber: number;
-  lapTime: number;
 }
 
 /* -------------------- SECTOR DISTANCES RATIOS -------------------- */

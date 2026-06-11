@@ -84,12 +84,23 @@
           {{ row.compound[0] }}
         </div>
 
-        <div class="broadcast-icons">
+        <div
+          class="broadcast-icons"
+          [class.has-fastest]="
+            isDriverFinished(row.driver) && isFastestLapHolder(row.driver)
+          "
+        >
           <img
             *ngIf="isDriverFinished(row.driver)"
             src="assets/leaderboard/chequered-flag.svg"
             class="finish-flag-popup"
             [class.animate]="isFinishFlagAnimating(row.driver)"
+          />
+
+          <img
+            *ngIf="isFastestLapHolder(row.driver)"
+            src="assets/leaderboard/fastest-lap.jpg"
+            class="fastest-lap-icon"
           />
         </div>
       </div>

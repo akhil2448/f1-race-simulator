@@ -17,6 +17,7 @@ import { WeatherStatusService } from './weather-status.service';
 import { TrackMapStateService } from '../services/track-map-state.service';
 import { RaceFinishService } from './race-finish.service';
 import { DriverPresenceService } from './driver-presence.service';
+import { FastestLapService } from './fastest-lap.service';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
@@ -40,6 +41,7 @@ export class SimulationBootstrapService {
     private trackMapState: TrackMapStateService,
     private raceFinish: RaceFinishService,
     private driverPresence: DriverPresenceService,
+    private fastestLap: FastestLapService,
   ) {}
 
   /** 🚦 SINGLE ENTRY POINT */
@@ -51,6 +53,7 @@ export class SimulationBootstrapService {
       this.driverMeta.initialize(raceData.drivers);
       this.sectorAnchors.initialize(raceData);
       this.raceFinish.initialize(raceData);
+      this.fastestLap.initialize(raceData);
 
       this.leaderboard.setTotalLaps(raceData.session.totalLaps);
       this.leaderboard.initialize(raceData);

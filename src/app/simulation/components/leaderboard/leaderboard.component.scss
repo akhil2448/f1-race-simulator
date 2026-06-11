@@ -485,20 +485,43 @@ hr {
   }
 }
 
+// .broadcast-icons {
+//   position: absolute;
+
+//   right: -17px;
+//   top: 50%;
+
+//   width: 16px;
+//   height: 16px;
+
+//   transform: translateY(-50%);
+
+//   pointer-events: none;
+
+//   overflow: visible;
+// }
+
 .broadcast-icons {
   position: absolute;
 
   right: -17px;
   top: 50%;
 
-  width: 16px;
-  height: 16px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 
   transform: translateY(-50%);
 
   pointer-events: none;
 
   overflow: visible;
+
+  transition: right 180ms ease;
+}
+
+.broadcast-icons.has-fastest {
+  right: -35px;
 }
 
 .finish-flag-popup {
@@ -541,3 +564,33 @@ hr {
     transform: translateX(0px) scale(1);
   }
 }
+
+.fastest-lap-icon {
+  width: 16px;
+  height: 16px;
+
+  position: relative;
+  top: -2px;
+
+  margin-left: 0px;
+
+  border-radius: 10%;
+
+  opacity: 1;
+
+  pointer-events: none;
+}
+
+// .fastest-lap-icon {
+//   width: 28px;
+//   height: 28px;
+
+//   background: red;
+
+//   position: absolute;
+
+//   right: -18px;
+//   top: 16px;
+
+//   z-index: 9999;
+// }

@@ -161,8 +161,8 @@ export class TrackMapComponent implements OnInit {
 
     this.trackReady = true;
 
-    console.log('SVG track length:', this.totalTrackLength);
-    console.log('Real track length:', this.realTrackLengthMeters);
+    // console.log('SVG track length:', this.totalTrackLength);
+    // console.log('Real track length:', this.realTrackLengthMeters);
   }
 
   /* ===================================================== */

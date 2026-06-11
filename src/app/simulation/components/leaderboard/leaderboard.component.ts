@@ -19,6 +19,7 @@ import {
   LeaderboardDisplayService,
 } from '../../../core/services/leaderboard-display.service';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
+import { FastestLapService } from '../../../core/services/fastest-lap.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -36,8 +37,12 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private displayedArrows = new Map<string, HTMLDivElement>();
 
+  fastestLapDriver: string | null = null;
+
   finishedDrivers = new Set<string>();
+
   private alreadyAnimatedDrivers = new Set<string>();
+
   animatingFinishFlags = new Set<string>();
 
   @ViewChildren('driverRow', { read: ElementRef })
@@ -61,6 +66,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private trackStatusService: TrackStatusService,
     private leaderboardDisplay: LeaderboardDisplayService,
     private raceFinish: RaceFinishService,
+    private fastestLap: FastestLapService,
   ) {
     // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
@@ -105,6 +111,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.animatingFinishFlags.delete(driver);
         }, 2200);
       });
+    });
+
+    this.fastestLap.fastestDriver$.subscribe((driver) => {
+      this.fastestLapDriver = driver;
     });
   }
 
@@ -279,6 +289,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isDriverFinished(driver: string): boolean {
     return this.finishedDrivers.has(driver);
+  }
+
+  isFastestLapHolder(driver: string): boolean {
+    return this.fastestLapDriver === driver;
   }
 
   isFinishFlagAnimating(driver: string): boolean {

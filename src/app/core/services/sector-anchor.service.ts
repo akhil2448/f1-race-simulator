@@ -27,7 +27,7 @@ export class SectorAnchorService {
           cumulative += times[0];
           list.push({
             driver,
-            lap: lap.lapNumber, // ✅ FIXED
+            lap: lap.lap, // ✅ FIXED
             sector: 1,
             raceTime: lapStart + cumulative,
             sectorTime: times[0],
@@ -39,7 +39,7 @@ export class SectorAnchorService {
           cumulative += times[1];
           list.push({
             driver,
-            lap: lap.lapNumber, // ✅ FIXED
+            lap: lap.lap, // ✅ FIXED
             sector: 2,
             raceTime: lapStart + cumulative,
             sectorTime: times[1],
@@ -51,7 +51,7 @@ export class SectorAnchorService {
           cumulative += times[2];
           list.push({
             driver,
-            lap: lap.lapNumber, // ✅ FIXED
+            lap: lap.lap, // ✅ FIXED
             sector: 3,
             raceTime: lapStart + cumulative,
             sectorTime: times[2],

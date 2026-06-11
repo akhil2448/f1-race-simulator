@@ -18,7 +18,7 @@ export class TrackStatusComponent implements OnInit {
   ngOnInit(): void {
     this.trackStatus.status$.subscribe((s) => {
       this.status = s;
-      console.log('TRACK STATUS:', s);
+      // console.log('TRACK STATUS:', s);
     });
   }
 
