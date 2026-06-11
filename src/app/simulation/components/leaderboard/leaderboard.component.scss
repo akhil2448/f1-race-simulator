@@ -152,6 +152,15 @@ hr {
   border-bottom: none;
 }
 
+.driver-row.final-classification {
+  grid-template-columns:
+    22px
+    40px
+    3px
+    40px
+    1fr;
+}
+
 /* POSITION */
 .position {
   position: relative;
@@ -346,6 +355,15 @@ hr {
   font-size: 13px;
   letter-spacing: 1.75px;
   text-transform: uppercase;
+}
+
+.driver-stats.winner {
+  font-family: Formula1Bold;
+  font-weight: 700;
+  opacity: 1;
+  letter-spacing: 0.5px;
+
+  padding-right: 4px;
 }
 
 /* TYRE */

@@ -36,6 +36,7 @@
       <div
         #driverRow
         class="driver-row"
+        [class.final-classification]="row.isOfficialClassification"
         *ngFor="let row of leaderboard; trackBy: trackByDriver"
         [attr.data-driver]="row.driver"
         [class.out]="row.status === 'OUT' && !row.isOfficialClassification"
@@ -71,6 +72,7 @@
         <!-- STATS -->
         <div
           class="driver-stats"
+          [class.winner]="row.isOfficialClassification && row.position === 1"
           [ngClass]="{
             'toggle-mode': isTemporaryModeActive,
             'in-pit': row.isInPit,
@@ -80,7 +82,11 @@
           {{ formatDisplayValue(row) }}
         </div>
 
-        <div class="tyre" [ngClass]="row.compound.toLowerCase()">
+        <div
+          class="tyre"
+          *ngIf="!row.isOfficialClassification"
+          [ngClass]="row.compound.toLowerCase()"
+        >
           {{ row.compound[0] }}
         </div>
 
