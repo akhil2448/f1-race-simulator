@@ -46,6 +46,8 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   @Input() year!: number;
   @Input() round!: number;
 
+  @Input() highlightColor: string = '#ffffff';
+
   telemetry: DriverTelemetryView | null = null;
 
   confirmChange = false;

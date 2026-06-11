@@ -18,6 +18,7 @@
             [teamColor]="getDriverColor(selectedDrivers[0])"
             [year]="currentYear"
             [round]="currentRound"
+            [highlightColor]="'#ffffff'"
             (driverSelected)="onDriverSelected(0, $event)"
             (clearDriver)="onDriverCleared(0)"
           >
@@ -29,6 +30,7 @@
             [teamColor]="getDriverColor(selectedDrivers[1])"
             [year]="currentYear"
             [round]="currentRound"
+            [highlightColor]="'#ffe600'"
             (driverSelected)="onDriverSelected(1, $event)"
             (clearDriver)="onDriverCleared(1)"
           >
@@ -57,7 +59,12 @@
 
     <!-- TRACK -->
     <div class="track-stage">
-      <app-track-map [highlightedDrivers]="selectedDrivers"></app-track-map>
+      <app-track-map
+        [highlightedDrivers]="[
+          { driver: selectedDrivers[0], color: '#ffffff' },
+          { driver: selectedDrivers[1], color: '#ffe600' },
+        ]"
+      ></app-track-map>
     </div>
   </div>
 </div>

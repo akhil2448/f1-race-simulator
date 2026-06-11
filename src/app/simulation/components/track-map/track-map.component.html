@@ -5,6 +5,17 @@
     [attr.viewBox]="viewBox"
     preserveAspectRatio="xMidYMid meet"
   >
+    <defs>
+      <filter id="haloGlow">
+        <feGaussianBlur stdDeviation="12" result="blur" />
+
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
     <!-- Track -->
     <!-- outer border -->
     <polyline
@@ -92,15 +103,16 @@
       <!-- ============================== -->
       <g *ngFor="let car of cars">
         <ng-container *ngIf="isHighlighted(car.driver)">
-          <!-- OUTER WHITE HALO -->
+          <!-- OUTER HALO -->
           <circle
             [attr.cx]="getCarPosition(car.raceDistance).x"
             [attr.cy]="getCarPosition(car.raceDistance).y"
             r="145"
             fill="none"
-            stroke="#ffffff"
-            stroke-width="26"
-            opacity="0.95"
+            [attr.stroke]="getHighlightColor(car.driver)"
+            stroke-width="34"
+            opacity="1"
+            filter="url(#haloGlow)"
           />
 
           <!-- INNER BLACK CUT RING (contrast) -->

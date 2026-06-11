@@ -1,4 +1,4 @@
-<div class="driver-telemetry-panel">
+<div class="driver-telemetry-panel" [style.border-color]="highlightColor">
   <!-- NOT SELECTED -->
   <ng-container *ngIf="!selectedDriver; else telemetryBox">
     <select class="driver-select" (change)="onSelect($event)">

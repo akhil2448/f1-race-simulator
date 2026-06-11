@@ -44,7 +44,10 @@ export class TrackMapComponent implements OnInit {
 
   realTrackLengthMeters = 0;
 
-  @Input() highlightedDrivers: (string | null)[] = [];
+  @Input() highlightedDrivers: {
+    driver: string | null;
+    color: string;
+  }[] = [];
 
   isMirrored = false;
 
@@ -201,6 +204,13 @@ export class TrackMapComponent implements OnInit {
   }
 
   isHighlighted(driver: string): boolean {
-    return this.highlightedDrivers.includes(driver);
+    return this.highlightedDrivers.some((d) => d.driver === driver);
+  }
+
+  getHighlightColor(driver: string): string {
+    return (
+      this.highlightedDrivers.find((d) => d.driver === driver)?.color ??
+      '#ffffff'
+    );
   }
 }

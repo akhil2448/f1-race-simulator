@@ -46,7 +46,7 @@
   transition: r 120ms ease;
 }
 
-.cars-layer circle[stroke="#ffffff"] {
+.cars-layer circle[fill="none"] {
   animation: highlightPulse 1.2s ease-in-out infinite;
 }
 
