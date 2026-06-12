@@ -18,6 +18,7 @@ import { TrackMapStateService } from '../services/track-map-state.service';
 import { RaceFinishService } from './race-finish.service';
 import { DriverPresenceService } from './driver-presence.service';
 import { FastestLapService } from './fastest-lap.service';
+import { RaceControlService } from './race-control.service';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
@@ -42,6 +43,7 @@ export class SimulationBootstrapService {
     private raceFinish: RaceFinishService,
     private driverPresence: DriverPresenceService,
     private fastestLap: FastestLapService,
+    private raceControl: RaceControlService,
   ) {}
 
   /** 🚦 SINGLE ENTRY POINT */
@@ -75,6 +77,9 @@ export class SimulationBootstrapService {
 
       /* ---------- WEATHER ---------- */
       this.weatherService.load(year, round);
+
+      /* ---------- RACE CONTROL ---------- */
+      this.raceControl.getRaceControl(year, round).subscribe();
 
       /* ---------- TRACK MAP → TIMING → TELEMETRY ---------- */
       this.trackMap.load(year, round).subscribe((data) => {

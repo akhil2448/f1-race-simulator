@@ -50,6 +50,9 @@
     <div class="track-hud">
       <div class="hud-left">
         <app-race-clock></app-race-clock>
+
+        <app-race-control-messages [year]="currentYear" [round]="currentRound">
+        </app-race-control-messages>
       </div>
 
       <div class="hud-right">

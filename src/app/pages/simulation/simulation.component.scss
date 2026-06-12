@@ -90,7 +90,19 @@ app-weather {
 
 .hud-left {
   display: flex;
+  flex-direction: column;
+
   align-items: flex-start;
+
+  gap: 14px;
+
+  height: 100%;
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding-right: 28px;
 }
 
 .hud-right {
@@ -133,6 +145,16 @@ app-race-clock {
   display: flex;
   justify-content: flex-start;
   box-sizing: border-box;
+}
+
+app-race-control-messages {
+  max-width: 100%;
+
+  max-height: 240px;
+
+  overflow: visible;
+
+  display: block;
 }
 
 /* Track */

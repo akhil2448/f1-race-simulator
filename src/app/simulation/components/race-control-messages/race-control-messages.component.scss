@@ -1,0 +1,106 @@
+.race-control-container {
+  width: fit-content;
+
+  max-width: min(920px, calc(100vw - 760px));
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: opacity 120ms ease;
+}
+
+.race-control-container.visible {
+  opacity: 1;
+}
+
+.message-bar {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 12px 18px;
+
+  background: rgba(10, 12, 18, 0.92);
+
+  border-left: 4px solid #ffffff;
+
+  border-radius: 8px;
+
+  color: #ffffff;
+
+  font-family: "Formula1", system-ui, sans-serif;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+
+  min-width: 320px;
+}
+
+.message-category {
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.6px;
+
+  opacity: 0.62;
+
+  text-transform: uppercase;
+}
+
+.message-text {
+  font-size: 15px;
+
+  font-weight: 600;
+
+  line-height: 1.35;
+
+  color: rgba(255, 255, 255, 0.96);
+
+  word-break: break-word;
+}
+
+/* FLAG COLORS */
+
+.message-bar.yellow {
+  border-left-color: #ffd400;
+}
+
+.message-bar.red {
+  border-left-color: #ff3b3b;
+}
+
+.message-bar.green {
+  border-left-color: #00ff87;
+}
+
+.message-bar.chequered-special {
+  padding: 16px 22px;
+
+  border-left: 6px solid transparent;
+
+  border-image: repeating-linear-gradient(
+      180deg,
+      #ffffff 0px,
+      #ffffff 12px,
+      #000000 12px,
+      #000000 24px
+    )
+    1;
+
+  background: linear-gradient(
+    135deg,
+    rgba(18, 18, 22, 0.96),
+    rgba(10, 10, 14, 0.92)
+  );
+
+  position: relative;
+}
+
+.message-bar.chequered-special .message-text {
+  font-size: 17px;
+
+  letter-spacing: 0.4px;
+}

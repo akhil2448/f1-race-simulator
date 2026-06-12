@@ -1,0 +1,19 @@
+<div class="race-control-container" [class.visible]="displayMessage">
+  <div
+    class="message-bar"
+    [class.yellow]="displayMessage?.flag === 'YELLOW'"
+    [class.red]="displayMessage?.flag === 'RED'"
+    [class.green]="
+      displayMessage?.flag === 'GREEN' || displayMessage?.flag === 'CLEAR'
+    "
+    [class.chequered-special]="displayMessage?.flag === 'CHEQUERED'"
+  >
+    <div class="message-category">
+      {{ displayMessage?.category }}
+    </div>
+
+    <div class="message-text">
+      {{ displayMessage?.message }}
+    </div>
+  </div>
+</div>

@@ -8,6 +8,7 @@ import { RaceClockComponent } from '../../simulation/components/race-clock/race-
 import { TrackMapComponent } from '../../simulation/components/track-map/track-map.component';
 import { TrackMapHeaderComponent } from '../../simulation/components/track-map-header/track-map-header.component';
 import { RaceControlsComponent } from '../../simulation/components/race-controls/race-controls.component';
+import { RaceControlMessagesComponent } from '../../simulation/components/race-control-messages/race-control-messages.component';
 
 @Component({
   selector: 'app-simulation',
@@ -20,6 +21,7 @@ import { RaceControlsComponent } from '../../simulation/components/race-controls
     TrackMapComponent,
     TrackMapHeaderComponent,
     RaceControlsComponent,
+    RaceControlMessagesComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
