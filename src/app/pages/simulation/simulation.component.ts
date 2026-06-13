@@ -9,6 +9,7 @@ import { TrackMapComponent } from '../../simulation/components/track-map/track-m
 import { TrackMapHeaderComponent } from '../../simulation/components/track-map-header/track-map-header.component';
 import { RaceControlsComponent } from '../../simulation/components/race-controls/race-controls.component';
 import { RaceControlMessagesComponent } from '../../simulation/components/race-control-messages/race-control-messages.component';
+import { FastestLapBannerComponent } from '../../simulation/components/fastest-lap-banner/fastest-lap-banner.component';
 
 @Component({
   selector: 'app-simulation',
@@ -22,6 +23,7 @@ import { RaceControlMessagesComponent } from '../../simulation/components/race-c
     TrackMapHeaderComponent,
     RaceControlsComponent,
     RaceControlMessagesComponent,
+    FastestLapBannerComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',

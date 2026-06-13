@@ -1,0 +1,65 @@
+<!-- ===================================================== -->
+<!-- PRODUCTION VERSION                                    -->
+<!-- ===================================================== -->
+
+<div class="fastest-lap-wrapper" *ngIf="fastestLap">
+  <div class="icon-box">
+    <img src="assets/leaderboard/fastest-lap.jpg" alt="Fastest Lap" />
+  </div>
+
+  <div class="info-bar">
+    <div class="title">FASTEST LAP</div>
+
+    <div class="bottom-row">
+      <div class="driver-color" [style.background]="teamColor"></div>
+
+      <div class="driver">
+        {{ fastestLap.driver }}
+      </div>
+
+      <div class="team-icon">
+        <img
+          [src]="teamLogo"
+          [class]="teamLogoClass"
+          alt="team-logo"
+          (error)="onTeamLogoError($event)"
+        />
+      </div>
+
+      <div class="lap-time">
+        {{ fastestLap.lapTime }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- TEST VERSION                                          -->
+<!-- ===================================================== -->
+
+<!-- <div class="fastest-lap-wrapper">
+  <div class="icon-box">
+    <img src="assets/leaderboard/fastest-lap.jpg" alt="Fastest Lap" />
+  </div>
+
+  <div class="info-bar">
+    <div class="title">FASTEST LAP</div>
+
+    <div class="bottom-row">
+  
+      <div class="driver-color" style="background: #2b4562"></div>
+
+      <div class="driver">TSU</div>
+
+      <div class="team-icon">
+        <img
+          class="williams"
+          src="assets/team-logos/williams.svg"
+          alt="team-logo"
+        />
+      </div>
+
+      <div class="lap-time">1:16.627</div>
+    </div>
+  </div>
+</div> -->

@@ -5,6 +5,14 @@ import { RaceApiResponse, TimingLapApi } from '../models/race-data.model';
 
 import { RaceClockService } from './race-clock-service';
 
+export interface FastestLapData {
+  driver: string;
+
+  team: string;
+
+  lapTime: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,9 +26,17 @@ export class FastestLapService {
 
   fastestDriver$ = this.fastestDriverSubject.asObservable();
 
+  private fastestLapDataSubject = new BehaviorSubject<FastestLapData | null>(
+    null,
+  );
+
+  fastestLapData$ = this.fastestLapDataSubject.asObservable();
+
   private currentFastestDriver: string | null = null;
 
   private currentFastestLapTime = Infinity;
+
+  private currentFastestLapDisplay: string | null = null;
 
   constructor(private raceClock: RaceClockService) {
     this.raceClock.raceTime$.subscribe((second) => {
@@ -36,6 +52,7 @@ export class FastestLapService {
     this.currentFastestLapTime = Infinity;
 
     this.fastestDriverSubject.next(null);
+    this.fastestLapDataSubject.next(null);
   }
 
   private update(currentRaceTime: number): void {
@@ -60,6 +77,8 @@ export class FastestLapService {
         if (lap.lapTime < bestLapTime) {
           bestLapTime = lap.lapTime;
 
+          this.currentFastestLapDisplay = this.formatLapTime(lap.lapTime);
+
           bestDriver = driver;
         }
       });
@@ -71,6 +90,18 @@ export class FastestLapService {
       this.currentFastestLapTime = bestLapTime;
       console.log('[FASTEST LAP]', bestDriver, bestLapTime);
 
+      if (bestDriver) {
+        const driverData = this.raceData.drivers[bestDriver];
+
+        this.fastestLapDataSubject.next({
+          driver: bestDriver,
+
+          team: driverData.team,
+
+          lapTime: this.currentFastestLapDisplay!,
+        });
+      }
+
       this.fastestDriverSubject.next(bestDriver);
     }
   }
@@ -81,5 +112,17 @@ export class FastestLapService {
 
   isFastestLapHolder(driver: string): boolean {
     return this.currentFastestDriver === driver;
+  }
+
+  getCurrentFastestLapFormatted(): string | null {
+    return this.currentFastestLapDisplay;
+  }
+
+  private formatLapTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+
+    const remaining = seconds % 60;
+
+    return `${minutes}:` + remaining.toFixed(3).padStart(6, '0');
   }
 }
