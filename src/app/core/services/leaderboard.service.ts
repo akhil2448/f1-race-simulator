@@ -335,4 +335,16 @@ export class LeaderboardService {
   getOfficialClassification() {
     return this.raceData.results.classification;
   }
+
+  getDriverStandings() {
+    return this.raceData.results.driverStandings;
+  }
+
+  getConstructorStandings() {
+    return this.raceData.results.constructorStandings;
+  }
+
+  getFastestLap() {
+    return this.raceData.results.fastestLap;
+  }
 }

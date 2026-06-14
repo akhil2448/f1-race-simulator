@@ -3,7 +3,10 @@
   <div class="classification-wrapper">
     <div class="classification-header">FINAL CLASSIFICATION</div>
 
-    <div class="classification-row" *ngFor="let row of classification">
+    <div
+      class="classification-row"
+      *ngFor="let row of classification.slice(0, 10)"
+    >
       <!-- POSITION -->
       <div class="position">
         {{ row.position }}
@@ -55,16 +58,27 @@
       </div>
 
       <div class="fastest-lap-driver-section">
-        <div class="driver-color" [style.background]="getTeamColor('RB')"></div>
+        <div
+          class="driver-color"
+          [style.background]="getTeamColor(fastestLap.team)"
+        ></div>
 
-        <div class="fastest-lap-driver">Yuki Tsunoda</div>
+        <div class="fastest-lap-driver">
+          {{ fastestLap.fullName }}
+        </div>
 
         <div class="team-icon">
-          <img [src]="getTeamLogo('RB')" [class]="getTeamLogoClass('RB')" />
+          <img
+            [src]="getTeamLogo(fastestLap.team)"
+            [class]="getTeamLogoClass(fastestLap.team)"
+            (error)="onTeamLogoError($event)"
+          />
+        </div>
+
+        <div class="fastest-lap-time">
+          {{ fastestLap.lapTime }}
         </div>
       </div>
-
-      <div class="fastest-lap-time">1:16.627</div>
     </div>
   </div>
 

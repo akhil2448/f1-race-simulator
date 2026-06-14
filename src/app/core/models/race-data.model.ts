@@ -27,9 +27,16 @@ export interface RaceSession {
 
 export interface RaceResultsApi {
   winnerFinishTime: number;
+
   totalLaps: number;
 
   classification: RaceClassificationEntry[];
+
+  driverStandings: DriverStandingEntry[];
+
+  constructorStandings: ConstructorStandingEntry[];
+
+  fastestLap: FastestLapEntry;
 }
 
 export interface RaceClassificationEntry {
@@ -58,6 +65,40 @@ export interface RaceClassificationEntry {
   lapsDown: number;
 
   points: number;
+}
+
+export interface DriverStandingEntry {
+  position: number;
+
+  driver: string;
+
+  driverCode: string;
+
+  team: string;
+
+  points: number;
+}
+
+export interface ConstructorStandingEntry {
+  position: number;
+
+  teamName: string;
+
+  team: string;
+
+  points: number;
+}
+
+export interface FastestLapEntry {
+  driver: string;
+
+  fullName: string;
+
+  team: string;
+
+  lapNumber: number;
+
+  lapTime: string;
 }
 
 /* -------------------- DRIVER -------------------- */

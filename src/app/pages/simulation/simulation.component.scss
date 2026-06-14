@@ -273,7 +273,11 @@ app-track-map {
 
   bottom: 88px;
 
-  overflow: visible;
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  min-height: 0;
 
   pointer-events: auto;
 }
