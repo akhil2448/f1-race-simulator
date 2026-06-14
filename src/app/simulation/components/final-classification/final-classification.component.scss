@@ -1,0 +1,568 @@
+.post-race-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(620px, 0.68fr)
+    minmax(420px, 0.5fr);
+
+  width: 100%;
+
+  height: auto;
+
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  gap: 48px;
+
+  align-items: start;
+}
+
+.classification-wrapper {
+  width: 92%;
+
+  max-width: 820px;
+
+  height: auto;
+
+  align-self: start;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background: linear-gradient(
+    135deg,
+    rgba(38, 30, 24, 0.14),
+    rgba(10, 10, 12, 0.38)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.045);
+
+  border-radius: 12px;
+
+  padding: 20px 22px;
+
+  color: white;
+
+  font-family: "Formula1", system-ui, sans-serif;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  overflow: hidden;
+}
+
+.classification-wrapper::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.classification-wrapper::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.025),
+    transparent 18%
+  );
+
+  pointer-events: none;
+}
+
+.classification-row:nth-child(2),
+.classification-row:nth-child(3),
+.classification-row:nth-child(4) {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent);
+}
+
+/* HEADER */
+
+.classification-header {
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+/* ROW */
+
+.classification-row {
+  display: grid;
+
+  grid-template-columns:
+    28px
+    56px
+    44px
+    6px
+    minmax(220px, 1fr)
+    70px
+    80px;
+
+  position: relative;
+  align-items: center;
+
+  column-gap: 14px;
+
+  height: 38px;
+
+  padding: 0 6px;
+
+  transition: background 120ms ease;
+}
+
+.classification-row::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.045),
+    transparent
+  );
+}
+
+.classification-row:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+/* POSITION */
+
+.position {
+  font-size: 18px;
+
+  font-weight: 800;
+
+  text-align: center;
+
+  font-variant-numeric: tabular-nums;
+
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+/* NUMBER */
+
+.number {
+  color: #9f9f9f;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.6px;
+
+  text-align: center;
+}
+
+/* TEAM COLOR STRIP */
+
+.driver-color {
+  width: 4px;
+
+  height: 18px;
+
+  border-radius: 2px;
+
+  opacity: 1;
+}
+
+/* DRIVER */
+
+.driver {
+  font-size: 16px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.5px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* GAP */
+
+.gap {
+  font-family: Formula1;
+  text-align: right;
+
+  opacity: 0.92;
+  font-size: 14px;
+
+  color: #d7d7d7;
+
+  font-variant-numeric: tabular-nums;
+
+  letter-spacing: 0.5px;
+}
+
+/* POINTS */
+
+.points {
+  text-align: right;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+  letter-spacing: 1px;
+
+  justify-self: end;
+  padding-right: 10px;
+}
+
+/* TEAM ICON */
+
+.team-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.team-icon img {
+  width: 20px;
+
+  height: 20px;
+
+  //   object-fit: contain;
+}
+
+/* TEAM LOGO OVERRIDES */
+
+.team-icon img.redbull {
+  transform: scale(1.5);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.renault {
+  filter: brightness(0) invert(1);
+}
+
+.team-icon img.mclaren {
+  padding-top: 2px;
+
+  transform: scale(1.3);
+}
+
+.team-icon img.forceindia {
+  transform: scale(1.4);
+}
+
+.team-icon img.tororosso {
+  width: 20px;
+
+  height: 10px;
+
+  transform: scale(1.2);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.racingpoint {
+  filter: brightness(0) invert(1);
+
+  width: 20px;
+
+  height: 19px;
+}
+
+.team-icon img.alphatauri {
+  filter: brightness(0) invert(1);
+
+  transform: scale(1.8);
+}
+
+.team-icon img.alpine {
+  filter: brightness(0) invert(1);
+
+  transform: scale(1.8);
+}
+
+.team-icon img.astonmartin {
+  padding-top: 3px;
+
+  transform: scale(1.7);
+}
+
+.team-icon img.racingbulls {
+  filter: brightness(0) invert(1);
+
+  transform: scale(1.4);
+}
+
+.team-icon img.kicksauber {
+  transform: scale(1.3);
+}
+
+.team-icon img.cadillac {
+  width: 23px;
+
+  height: 9px;
+
+  filter: brightness(0) invert(1);
+
+  transform: scale(1.1);
+}
+
+.team-icon img.audi {
+  filter: brightness(0) invert(1);
+
+  transform: scale(1.6);
+}
+
+.team-icon img.plcholder {
+  filter: brightness(0) invert(1);
+}
+
+:host {
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  animation: classificationEnter 420ms ease;
+}
+
+@keyframes classificationEnter {
+  from {
+    opacity: 0;
+
+    transform: translateY(14px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+.standings-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+  height: 100%;
+  width: 100%;
+  padding-top: 0;
+}
+
+.standings-card {
+  height: fit-content;
+  width: 100%;
+
+  background: linear-gradient(
+    135deg,
+    rgba(38, 30, 24, 0.14),
+    rgba(10, 10, 12, 0.38)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  border-radius: 12px;
+
+  padding: 18px 20px;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.standings-title {
+  font-size: 16px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+
+  margin-bottom: 18px;
+
+  text-transform: uppercase;
+}
+
+.standings-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  height: 34px;
+
+  font-size: 14px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  letter-spacing: 0.5px;
+}
+
+.fastest-lap-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 18px;
+
+  height: 52px;
+
+  padding: 0 22px;
+
+  border-radius: 10px;
+
+  position: relative;
+
+  background: linear-gradient(
+    90deg,
+    rgba(129, 68, 146, 0.22),
+    rgba(30, 18, 38, 0.38)
+  );
+
+  border: 1px solid rgba(215, 124, 255, 0.16);
+
+  overflow: hidden;
+}
+
+.fastest-lap-row::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 4px;
+
+  background: #d77cff;
+}
+
+.fastest-lap-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.fastest-lap-icon {
+  width: 28px;
+
+  height: 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.fastest-lap-icon img {
+  width: 28px;
+
+  height: 28px;
+
+  object-fit: contain;
+}
+
+.fastest-lap-label {
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+
+  color: #d77cff;
+}
+
+.fastest-lap-driver-section {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  flex: 1;
+
+  margin-left: 28px;
+}
+
+.fastest-lap-driver {
+  font-size: 16px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.4px;
+}
+
+.fastest-lap-time {
+  font-size: 18px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  color: #ffffff;
+
+  font-variant-numeric: tabular-nums;
+}

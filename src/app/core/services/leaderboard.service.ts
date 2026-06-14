@@ -331,4 +331,8 @@ export class LeaderboardService {
       };
     });
   }
+
+  getOfficialClassification() {
+    return this.raceData.results.classification;
+  }
 }

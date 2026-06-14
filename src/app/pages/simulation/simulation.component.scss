@@ -4,7 +4,27 @@
   grid-template-columns: 445px 1fr;
 
   height: 100vh;
+
+  transition: grid-template-columns 420ms ease;
 }
+
+.top-info-row,
+.info-sidebar,
+app-track-map {
+  transition: all 320ms ease;
+}
+//UNCOMMENT THIS IF THE LAYOUT IS BROKEN!!!!!!!
+// .left-panel-area {
+//   display: grid;
+
+//   grid-template-rows: 1fr 120px;
+
+//   height: 100vh;
+
+//   overflow: hidden;
+
+//   transition: width 420ms ease;
+// }
 
 .left-panel-area {
   display: grid;
@@ -13,7 +33,15 @@
 
   height: 100vh;
 
-  overflow: hidden;
+  overflow-y: hidden;
+
+  overflow-x: visible;
+
+  transition: width 420ms ease;
+
+  position: relative;
+
+  z-index: 30;
 }
 
 .top-info-row {
@@ -26,18 +54,38 @@
 
   overflow: hidden;
 }
+// UNCOMMENT THIS CODE IF LAYOUT IS CHANGED!!!!!
+// .controls-row {
+//   display: flex;
+//   align-items: flex-start;
+
+//   padding: 18px 16px 0;
+
+//   border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+//   box-sizing: border-box;
+
+//   margin-top: 2px;
+// }
 
 .controls-row {
   display: flex;
-  align-items: flex-start;
 
-  padding: 18px 16px 0;
+  align-items: center;
+
+  padding: 8px 16px;
+
+  min-height: 120px;
 
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 
   box-sizing: border-box;
 
-  margin-top: 2px;
+  overflow: visible;
+
+  position: relative;
+
+  z-index: 40;
 }
 
 /* Leaderboard */
@@ -55,6 +103,14 @@ app-leaderboard {
   gap: 12px;
   padding: 12px 4px;
   box-sizing: border-box;
+}
+
+.info-sidebar {
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease,
+    width 320ms ease,
+    padding 320ms ease;
 }
 
 /* Weather panel */
@@ -80,14 +136,36 @@ app-weather {
   margin: -12px 0 12px;
 }
 
+// IF ANY PROBLEM, USE THIS AND REMOVE BELOW CODE!!!!!!!
+// .track-column {
+//   min-width: 0;
+//   overflow: hidden;
+
+//   display: grid;
+//   grid-template-rows: auto 1fr;
+
+//   height: 100%;
+// }
+
 .track-column {
   min-width: 0;
-  overflow: hidden;
 
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
 
   height: 100%;
+
+  overflow: hidden;
+
+  min-height: 0;
+}
+
+.post-race .track-column {
+  overflow: visible;
+
+  margin-left: -210px;
+
+  width: calc(100% + 210px);
 }
 
 .hud-left {
@@ -151,6 +229,10 @@ app-weather {
   box-sizing: border-box;
 }
 
+.track-stage > * {
+  min-height: 0;
+}
+
 app-race-clock {
   display: flex;
   justify-content: flex-start;
@@ -170,6 +252,65 @@ app-race-control-messages {
 /* Track */
 app-track-map {
   height: 100%;
+
   width: 100%;
+
   overflow: hidden;
+
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+}
+
+.post-race-overlay {
+  position: absolute;
+
+  top: 8px;
+
+  left: 24px;
+
+  right: 24px;
+
+  bottom: 88px;
+
+  overflow: visible;
+
+  pointer-events: auto;
+}
+
+.post-race app-track-map {
+  opacity: 0;
+
+  transform: scale(0.985);
+}
+
+.post-race .top-info-row {
+  grid-template-columns: 235px 0px;
+}
+
+.post-race .info-sidebar {
+  opacity: 0;
+
+  width: 0;
+
+  padding-left: 0;
+  padding-right: 0;
+
+  overflow: hidden;
+
+  transform: translateX(-12px);
+}
+
+.post-race .info-sidebar > * {
+  opacity: 0;
+}
+
+.post-race ::ng-deep .flip-button {
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform: translateY(-8px);
+
+  transition: all 220ms ease;
 }

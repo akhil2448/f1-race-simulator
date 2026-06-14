@@ -27,7 +27,6 @@ export interface RaceSession {
 
 export interface RaceResultsApi {
   winnerFinishTime: number;
-  raceEndTime: number;
   totalLaps: number;
 
   classification: RaceClassificationEntry[];
@@ -35,6 +34,12 @@ export interface RaceResultsApi {
 
 export interface RaceClassificationEntry {
   driver: string;
+
+  fullName: string;
+
+  driverNumber: string;
+
+  team: string;
 
   position: number;
 

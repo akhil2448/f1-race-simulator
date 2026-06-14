@@ -1,4 +1,4 @@
-<div class="simulation-layout">
+<div class="simulation-layout" [class.post-race]="raceFinished">
   <!-- LEFT SIDE -->
   <div class="left-panel-area">
     <div class="top-info-row">
@@ -62,14 +62,32 @@
       </div>
     </div>
 
-    <!-- TRACK -->
     <div class="track-stage">
-      <app-track-map
-        [highlightedDrivers]="[
-          { driver: selectedDrivers[0], color: '#ffffff' },
-          { driver: selectedDrivers[1], color: '#ffe600' },
-        ]"
-      ></app-track-map>
+      <ng-container *ngIf="!raceFinished; else classification">
+        <app-track-map
+          [highlightedDrivers]="[
+            {
+              driver: selectedDrivers[0],
+              color: '#ffffff',
+            },
+            {
+              driver: selectedDrivers[1],
+              color: '#ffe600',
+            },
+          ]"
+        >
+        </app-track-map>
+      </ng-container>
+
+      <ng-template #classification>
+        <div class="post-race-overlay">
+          <app-final-classification></app-final-classification>
+        </div>
+      </ng-template>
     </div>
+
+    <!-- <div class="track-stage">
+      <app-final-classification> </app-final-classification>
+    </div> -->
   </div>
 </div>

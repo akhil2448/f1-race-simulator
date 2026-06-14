@@ -1,0 +1,133 @@
+<div class="post-race-layout">
+  <!-- LEFT SIDE -->
+  <div class="classification-wrapper">
+    <div class="classification-header">FINAL CLASSIFICATION</div>
+
+    <div class="classification-row" *ngFor="let row of classification">
+      <!-- POSITION -->
+      <div class="position">
+        {{ row.position }}
+      </div>
+
+      <!-- NUMBER -->
+      <div class="number">
+        {{ row.driverNumber }}
+      </div>
+
+      <!-- TEAM LOGO -->
+      <div class="team-icon">
+        <img
+          [src]="getTeamLogo(row.team)"
+          [class]="getTeamLogoClass(row.team)"
+          (error)="onTeamLogoError($event)"
+        />
+      </div>
+
+      <!-- TEAM COLOR -->
+      <div
+        class="driver-color"
+        [style.background]="getTeamColor(row.team)"
+      ></div>
+
+      <!-- DRIVER -->
+      <div class="driver">
+        {{ row.fullName }}
+      </div>
+
+      <!-- GAP -->
+      <div class="gap">
+        {{ row.displayGap }}
+      </div>
+
+      <!-- POINTS -->
+      <div class="points">
+        {{ row.points }}
+      </div>
+    </div>
+
+    <div class="fastest-lap-row">
+      <div class="fastest-lap-left">
+        <div class="fastest-lap-icon">
+          <img src="assets/leaderboard/fastest-lap.jpg" alt="Fastest Lap" />
+        </div>
+
+        <div class="fastest-lap-label">FASTEST LAP</div>
+      </div>
+
+      <div class="fastest-lap-driver-section">
+        <div class="driver-color" [style.background]="getTeamColor('RB')"></div>
+
+        <div class="fastest-lap-driver">Yuki Tsunoda</div>
+
+        <div class="team-icon">
+          <img [src]="getTeamLogo('RB')" [class]="getTeamLogoClass('RB')" />
+        </div>
+      </div>
+
+      <div class="fastest-lap-time">1:16.627</div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="standings-column">
+    <!-- DRIVERS -->
+    <div class="standings-card">
+      <div class="standings-title">DRIVERS</div>
+
+      <div class="standings-row">
+        <span>1&nbsp;&nbsp;VER</span>
+        <span>185</span>
+      </div>
+
+      <div class="standings-row">
+        <span>2&nbsp;&nbsp;HAM</span>
+        <span>173</span>
+      </div>
+
+      <div class="standings-row">
+        <span>3&nbsp;&nbsp;LEC</span>
+        <span>151</span>
+      </div>
+
+      <div class="standings-row">
+        <span>4&nbsp;&nbsp;NOR</span>
+        <span>137</span>
+      </div>
+
+      <div class="standings-row">
+        <span>5&nbsp;&nbsp;ALO</span>
+        <span>119</span>
+      </div>
+    </div>
+
+    <!-- CONSTRUCTORS -->
+    <div class="standings-card">
+      <div class="standings-title">CONSTRUCTORS</div>
+
+      <div class="standings-row">
+        <span>1&nbsp;&nbsp;RED BULL</span>
+        <span>355</span>
+      </div>
+
+      <div class="standings-row">
+        <span>2&nbsp;&nbsp;MERCEDES</span>
+        <span>312</span>
+      </div>
+
+      <div class="standings-row">
+        <span>3&nbsp;&nbsp;FERRARI</span>
+        <span>284</span>
+      </div>
+
+      <div class="standings-row">
+        <span>4&nbsp;&nbsp;MCLAREN</span>
+        <span>221</span>
+      </div>
+
+      <div class="standings-row">
+        <span>5&nbsp;&nbsp;ASTON MARTIN</span>
+        <span>184</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DriverMetaService } from '../../core/services/driver-meta.service';
 import { SimulationBootstrapService } from '../../core/services/simulation-bootstrap.service';
+import { RaceFinishService } from '../../core/services/race-finish.service';
 import { LeaderboardComponent } from '../../simulation/components/leaderboard/leaderboard.component';
 import { WeatherComponent } from '../../simulation/components/weather/weather.component';
 import { DriverTelemetryComponent } from '../../simulation/components/driver-telemetry/driver-telemetry.component';
@@ -10,11 +11,14 @@ import { TrackMapHeaderComponent } from '../../simulation/components/track-map-h
 import { RaceControlsComponent } from '../../simulation/components/race-controls/race-controls.component';
 import { RaceControlMessagesComponent } from '../../simulation/components/race-control-messages/race-control-messages.component';
 import { FastestLapBannerComponent } from '../../simulation/components/fastest-lap-banner/fastest-lap-banner.component';
+import { FinalClassificationComponent } from '../../simulation/components/final-classification/final-classification.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
   imports: [
+    CommonModule,
     LeaderboardComponent,
     WeatherComponent,
     DriverTelemetryComponent,
@@ -24,6 +28,7 @@ import { FastestLapBannerComponent } from '../../simulation/components/fastest-l
     RaceControlsComponent,
     RaceControlMessagesComponent,
     FastestLapBannerComponent,
+    FinalClassificationComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
@@ -36,9 +41,12 @@ export class SimulationComponent implements OnInit {
   currentYear = 2020;
   currentRound = 3;
 
+  raceFinished = false;
+
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
+    private raceFinish: RaceFinishService,
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +58,15 @@ export class SimulationComponent implements OnInit {
     this.bootstrap.availableDrivers$.subscribe((drivers) => {
       this.availableDrivers = drivers;
     });
+
+    //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION
+    // this.raceFinish.raceFinished$.subscribe((finished: boolean) => {
+    //   this.raceFinished = finished;
+    // });
+
+    setTimeout(() => {
+      this.raceFinished = true;
+    }, 3000);
   }
 
   getAvailableDriversForSlot(slot: number): string[] {
