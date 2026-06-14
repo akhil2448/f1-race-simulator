@@ -71,62 +71,119 @@
   <!-- RIGHT SIDE -->
   <div class="standings-column">
     <!-- DRIVERS -->
-    <div class="standings-card">
-      <div class="standings-title">DRIVERS</div>
+    <div
+      class="standings-card"
+      [class.expanded]="isDriversExpanded()"
+      [class.collapsed]="isConstructorsExpanded()"
+    >
+      <div class="standings-title">DRIVERS CHAMPIONSHIP</div>
+      <div
+        class="standings-row"
+        [hidden]="isConstructorsExpanded()"
+        *ngFor="
+          let row of isDriversExpanded()
+            ? driverStandings.slice(0, 10)
+            : driverStandings.slice(0, 5)
+        "
+      >
+        <div class="standings-pos">
+          {{ row.position }}
+        </div>
 
-      <div class="standings-row">
-        <span>1&nbsp;&nbsp;VER</span>
-        <span>185</span>
+        <div class="team-icon standings-team-icon">
+          <img
+            [src]="getTeamLogo(row.team)"
+            [class]="getTeamLogoClass(row.team)"
+          />
+        </div>
+
+        <div
+          class="driver-color standings-color"
+          [style.background]="getTeamColor(row.team)"
+        ></div>
+
+        <div class="standings-name">
+          {{ row.driver }}
+        </div>
+
+        <div class="standings-points">
+          {{ row.points }}
+        </div>
       </div>
 
-      <div class="standings-row">
-        <span>2&nbsp;&nbsp;HAM</span>
-        <span>173</span>
-      </div>
+      <!-- SHOW MORE / LESS -->
+      <div
+        class="standings-expand"
+        [hidden]="isConstructorsExpanded()"
+        (click)="toggleStandings('drivers')"
+      >
+        <span class="expand-chevron" [class.expanded]="isDriversExpanded()">
+          {{ isDriversExpanded() ? "⌃" : "⌄" }}
+        </span>
 
-      <div class="standings-row">
-        <span>3&nbsp;&nbsp;LEC</span>
-        <span>151</span>
-      </div>
-
-      <div class="standings-row">
-        <span>4&nbsp;&nbsp;NOR</span>
-        <span>137</span>
-      </div>
-
-      <div class="standings-row">
-        <span>5&nbsp;&nbsp;ALO</span>
-        <span>119</span>
+        <span>
+          {{ isDriversExpanded() ? "SHOW LESS" : "SHOW MORE" }}
+        </span>
       </div>
     </div>
 
     <!-- CONSTRUCTORS -->
-    <div class="standings-card">
-      <div class="standings-title">CONSTRUCTORS</div>
+    <div
+      class="standings-card constructors-card"
+      [class.expanded]="isConstructorsExpanded()"
+      [class.collapsed]="isDriversExpanded()"
+    >
+      <div class="standings-title">CONSTRUCTORS CHAMPIONSHIP</div>
+      <div
+        class="standings-row"
+        [hidden]="isDriversExpanded()"
+        *ngFor="
+          let row of isConstructorsExpanded()
+            ? constructorStandings
+            : constructorStandings.slice(0, 5)
+        "
+      >
+        <div class="standings-pos">
+          {{ row.position }}
+        </div>
 
-      <div class="standings-row">
-        <span>1&nbsp;&nbsp;RED BULL</span>
-        <span>355</span>
+        <div class="team-icon standings-team-icon">
+          <img
+            [src]="getTeamLogo(row.team)"
+            [class]="getTeamLogoClass(row.team)"
+          />
+        </div>
+
+        <div
+          class="driver-color standings-color"
+          [style.background]="getTeamColor(row.team)"
+        ></div>
+
+        <div class="standings-name">
+          {{ row.teamName }}
+        </div>
+
+        <div class="standings-points">
+          {{ row.points }}
+        </div>
       </div>
 
-      <div class="standings-row">
-        <span>2&nbsp;&nbsp;MERCEDES</span>
-        <span>312</span>
-      </div>
+      <!-- SHOW MORE / LESS -->
+      <div
+        class="standings-expand"
+        [hidden]="isDriversExpanded()"
+        (click)="toggleStandings('constructors')"
+      >
+        <span
+          class="expand-chevron"
+          [class.expanded]="isConstructorsExpanded()"
+        >
+          {{ isConstructorsExpanded() ? "⌃" : "⌄" }}
+        </span>
 
-      <div class="standings-row">
-        <span>3&nbsp;&nbsp;FERRARI</span>
-        <span>284</span>
-      </div>
-
-      <div class="standings-row">
-        <span>4&nbsp;&nbsp;MCLAREN</span>
-        <span>221</span>
-      </div>
-
-      <div class="standings-row">
-        <span>5&nbsp;&nbsp;ASTON MARTIN</span>
-        <span>184</span>
+        <span>
+          {{ isConstructorsExpanded() ? "SHOW LESS" : "SHOW MORE" }}
+        </span>
       </div>
     </div>
   </div>

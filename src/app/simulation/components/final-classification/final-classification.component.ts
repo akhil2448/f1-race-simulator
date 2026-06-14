@@ -224,6 +224,159 @@ export class FinalClassificationComponent {
     },
   ];
 
+  driverStandings = [
+    {
+      position: 1,
+      driver: 'Max Verstappen',
+      team: 'Red Bull Racing',
+      points: 185,
+    },
+
+    {
+      position: 2,
+      driver: 'Lewis Hamilton',
+      team: 'Mercedes',
+      points: 173,
+    },
+
+    {
+      position: 3,
+      driver: 'Charles Leclerc',
+      team: 'Ferrari',
+      points: 151,
+    },
+
+    {
+      position: 4,
+      driver: 'Lando Norris',
+      team: 'McLaren',
+      points: 137,
+    },
+
+    {
+      position: 5,
+      driver: 'Fernando Alonso',
+      team: 'Aston Martin',
+      points: 119,
+    },
+
+    {
+      position: 6,
+      driver: 'Carlos Sainz',
+      team: 'Ferrari',
+      points: 108,
+    },
+
+    {
+      position: 7,
+      driver: 'Oscar Piastri',
+      team: 'McLaren',
+      points: 96,
+    },
+
+    {
+      position: 8,
+      driver: 'George Russell',
+      team: 'Mercedes',
+      points: 89,
+    },
+
+    {
+      position: 9,
+      driver: 'Yuki Tsunoda',
+      team: 'RB',
+      points: 74,
+    },
+
+    {
+      position: 10,
+      driver: 'Alexander Albon',
+      team: 'Williams',
+      points: 61,
+    },
+  ];
+
+  constructorStandings = [
+    {
+      position: 1,
+      teamName: 'Red Bull',
+      team: 'Red Bull Racing',
+      points: 355,
+    },
+
+    {
+      position: 2,
+      teamName: 'Mercedes',
+      team: 'Mercedes',
+      points: 312,
+    },
+
+    {
+      position: 3,
+      teamName: 'Ferrari',
+      team: 'Ferrari',
+      points: 284,
+    },
+
+    {
+      position: 4,
+      teamName: 'McLaren',
+      team: 'McLaren',
+      points: 221,
+    },
+
+    {
+      position: 5,
+      teamName: 'Aston Martin',
+      team: 'Aston Martin',
+      points: 184,
+    },
+
+    {
+      position: 6,
+      teamName: 'RB',
+      team: 'RB',
+      points: 146,
+    },
+
+    {
+      position: 7,
+      teamName: 'Williams',
+      team: 'Williams',
+      points: 118,
+    },
+
+    {
+      position: 8,
+      teamName: 'Alpine',
+      team: 'Alpine',
+      points: 94,
+    },
+
+    {
+      position: 9,
+      teamName: 'Haas',
+      team: 'Haas F1 Team',
+      points: 52,
+    },
+
+    {
+      position: 10,
+      teamName: 'Renault',
+      team: 'Renault',
+      points: 31,
+    },
+
+    {
+      position: 11,
+      teamName: 'Cadillac',
+      team: 'Cadillac',
+      points: 3,
+    },
+  ];
+
+  expandedStandings: 'drivers' | 'constructors' | null = null;
+
   getTeamLogo(team: string): string {
     return 'assets/team-logos/' + this.normalizeTeamName(team) + '.svg';
   }
@@ -234,6 +387,22 @@ export class FinalClassificationComponent {
 
   getTeamColor(team: string): string {
     return TEAM_COLORS[team] ?? '#888888';
+  }
+  toggleStandings(type: 'drivers' | 'constructors'): void {
+    if (this.expandedStandings === type) {
+      this.expandedStandings = null;
+      return;
+    }
+
+    this.expandedStandings = type;
+  }
+
+  isDriversExpanded(): boolean {
+    return this.expandedStandings === 'drivers';
+  }
+
+  isConstructorsExpanded(): boolean {
+    return this.expandedStandings === 'constructors';
   }
 
   private normalizeTeamName(team: string): string {
@@ -268,6 +437,7 @@ export class FinalClassificationComponent {
     if (team === 'Renault') return 'renault';
 
     if (team === 'Haas F1 Team') return 'haas';
+    if (team === 'Cadillac') return 'cadillac';
 
     return 'plcholder';
   }

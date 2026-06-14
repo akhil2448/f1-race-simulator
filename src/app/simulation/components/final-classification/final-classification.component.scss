@@ -2,8 +2,8 @@
   display: grid;
 
   grid-template-columns:
-    minmax(620px, 0.68fr)
-    minmax(420px, 0.5fr);
+    minmax(620px, 0.72fr)
+    minmax(340px, 0.38fr);
 
   width: 100%;
 
@@ -15,7 +15,7 @@
 
   gap: 48px;
 
-  align-items: start;
+  align-items: stretch;
 }
 
 .classification-wrapper {
@@ -397,16 +397,25 @@
 
   flex-direction: column;
 
-  gap: 18px;
+  gap: 22px;
 
   height: 100%;
-  width: 100%;
-  padding-top: 0;
+
+  min-height: 100%;
 }
 
 .standings-card {
-  height: fit-content;
-  width: 100%;
+  width: 92%;
+
+  margin-left: auto;
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
 
   background: linear-gradient(
     135deg,
@@ -418,41 +427,146 @@
 
   border-radius: 12px;
 
-  padding: 18px 20px;
+  padding: 18px 20px 14px;
 
   backdrop-filter: blur(8px);
 
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  transition:
+    height 220ms ease,
+    min-height 220ms ease,
+    padding 220ms ease,
+    flex 220ms ease;
+}
+
+.standings-card.expanded {
+  flex: 1 1 auto;
 }
 
 .standings-title {
-  font-size: 16px;
+  font-size: 12px;
 
   font-weight: 800;
 
-  letter-spacing: 1.5px;
-
-  margin-bottom: 18px;
+  letter-spacing: 1.8px;
 
   text-transform: uppercase;
+
+  opacity: 0.82;
+
+  margin-bottom: 12px;
+
+  line-height: 1;
 }
 
 .standings-row {
-  display: flex;
+  display: grid;
 
-  justify-content: space-between;
+  grid-template-columns:
+    24px
+    56px
+    6px
+    minmax(120px, 1fr)
+    64px;
+
+  column-gap: 12px;
 
   align-items: center;
 
-  height: 34px;
-
-  font-size: 14px;
+  height: 40px;
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
+  font-size: 14px;
+
   letter-spacing: 0.5px;
+}
+
+.standings-pos {
+  font-size: 15px;
+
+  font-weight: 700;
+
+  opacity: 0.9;
+
+  letter-spacing: 0.3px;
+
+  text-align: center;
+
+  font-variant-numeric: tabular-nums;
+
+  color: #ffffff;
+}
+
+.standings-team-icon {
+  width: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  // padding-inline: 6px;
+
+  overflow: visible;
+
+  flex-shrink: 0;
+}
+
+.standings-color {
+  width: 4px;
+
+  height: 18px;
+
+  border-radius: 2px;
+}
+
+.standings-name {
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.42px;
+
+  line-height: 1;
+
+  opacity: 0.92;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  -webkit-font-smoothing: antialiased;
+
+  text-rendering: geometricPrecision;
+}
+
+:host {
+  -webkit-font-smoothing: antialiased;
+
+  -moz-osx-font-smoothing: grayscale;
+
+  text-rendering: geometricPrecision;
+}
+
+.standings-points {
+  text-align: right;
+
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.9;
+
+  letter-spacing: 0.7px;
+
+  justify-self: end;
+
+  font-variant-numeric: tabular-nums;
 }
 
 .fastest-lap-row {
@@ -565,4 +679,120 @@
   color: #ffffff;
 
   font-variant-numeric: tabular-nums;
+}
+
+.standings-card.collapsed {
+  flex: 0 0 72px;
+
+  height: 72px;
+
+  min-height: 72px;
+
+  padding-top: 0;
+
+  padding-bottom: 0;
+
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.standings-card.collapsed .standings-title {
+  margin-bottom: 0;
+}
+
+.standings-card.collapsed::before {
+  top: 0;
+}
+
+.standings-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.standings-expand {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  column-gap: 6px;
+
+  height: 26px;
+
+  margin-top: 2px;
+
+  cursor: pointer;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+
+  opacity: 0.68;
+
+  user-select: none;
+
+  transition: opacity 140ms ease;
+}
+
+.standings-expand span:last-child {
+  transform: translateY(1px);
+}
+
+.standings-expand:hover {
+  opacity: 1;
+}
+
+.standings-card.collapsed .standings-row,
+.standings-card.collapsed .standings-expand {
+  display: none;
+}
+
+.expand-chevron {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 10px;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+  opacity: 0.82;
+
+  transform: translateY(-0.5px);
+}
+
+.constructors-card {
+  justify-content: flex-end;
+}
+
+.standings-card::before {
+  z-index: 0;
+}
+
+.standings-title {
+  position: relative;
+
+  z-index: 1;
 }
