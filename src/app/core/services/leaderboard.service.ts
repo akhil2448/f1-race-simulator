@@ -147,8 +147,7 @@ export class LeaderboardService {
 
       const now = performance.now();
 
-      const activeEntries: LeaderboardEntry[] = [];
-      const outEntries: LeaderboardEntry[] = [];
+      const entries: LeaderboardEntry[] = [];
 
       const visualStateByDriver = new Map<string, LiveDriverState>();
       states.forEach((state) => visualStateByDriver.set(state.driver, state));
@@ -216,24 +215,13 @@ export class LeaderboardService {
           pitStops: this.getPitStopCount(s.driver, this.timingClockTime),
         };
 
-        if (isOut) {
-          outEntries.push(entry);
-        } else {
-          activeEntries.push(entry);
-        }
+        entries.push(entry);
       });
 
       /* OUT drivers sorted by retirement time */
-      outEntries.sort((a, b) => {
-        const ta = this.outAtTime.get(a.driver) ?? 0;
-        const tb = this.outAtTime.get(b.driver) ?? 0;
-        return ta - tb;
+      entries.forEach((e, i) => {
+        e.position = i + 1;
       });
-
-      const entries = [...activeEntries, ...outEntries].map((e, i) => ({
-        ...e,
-        position: i + 1,
-      }));
 
       // SAVE LAST LIVE DATA BEFORE FIA FINAL CLASSIFICATION TAKES OVER
       this.lastLiveEntries = entries.map((e) => ({ ...e }));

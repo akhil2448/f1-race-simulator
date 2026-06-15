@@ -319,6 +319,30 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.leaderboardDisplay.clearTemporaryMode();
   }
 
+  private formatGap(seconds: number): string {
+    /**
+     * Under 2 minutes:
+     * +12.3
+     */
+    if (seconds < 120) {
+      return `+${seconds.toFixed(1)}`;
+    }
+
+    /**
+     * 2 minutes or more:
+     * 2:03.4
+     */
+    const minutes = Math.floor(seconds / 60);
+
+    const remainingSeconds = seconds % 60;
+
+    const wholeSeconds = Math.floor(remainingSeconds);
+
+    const tenth = Math.floor((remainingSeconds % 1) * 10);
+
+    return `+${minutes}:${String(wholeSeconds).padStart(2, '0')}.${tenth}`;
+  }
+
   /* ===================================================== */
   /* GAP FORMATTERS                                        */
   /* ===================================================== */
@@ -360,7 +384,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (row.position === 1) return 'Leader';
 
-    return row.gapToLeader != null ? `+${row.gapToLeader.toFixed(1)}` : '–';
+    return row.gapToLeader != null ? this.formatGap(row.gapToLeader) : '–';
   }
 
   formatIntervalGap(row: LeaderboardEntry): string {
@@ -369,7 +393,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (row.position === 1) return 'Interval';
 
-    return row.intervalGap != null ? `+${row.intervalGap.toFixed(1)}` : '–';
+    return row.intervalGap != null ? this.formatGap(row.intervalGap) : '–';
   }
 
   private formatLappedMode(row: LeaderboardEntry): string {
@@ -378,6 +402,22 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (row.position === 1) return 'Leader';
 
     const lapsDown = row.lapsDown ?? 0;
+
+    /**
+     * EDGE CASE:
+     * leader just crossed line,
+     * but car is still effectively close
+     *
+     * show reconstructed time gap instead
+     * of ugly +1 LAP jump
+     */
+    if (lapsDown === 1 && row.gapToLeader != null && row.gapToLeader < 120) {
+      return this.formatGap(row.gapToLeader);
+    }
+
+    /**
+     * Genuine lapped cars
+     */
     if (lapsDown > 0) {
       return `+${lapsDown} ${lapsDown === 1 ? 'LAP' : 'LAPS'}`;
     }

@@ -8,6 +8,15 @@ import { RaceClockService } from './race-clock-service';
 import { FrameData } from '../models/track-status.model';
 import { LeaderboardService } from './leaderboard.service';
 
+// ‘1’: Track clear (beginning of session or to indicate the end of another status)
+// ‘2’: Yellow flag (sectors are unknown)
+// ‘3’: ??? Never seen so far, does not exist?
+// ‘4’: Safety Car
+// ‘5’: Red Flag
+// ‘6’: Virtual Safety Car deployed
+// ‘7’: Virtual Safety Car ending (As indicated on the drivers steering wheel, on tv and so on;
+//      status ‘1’ will mark the actual end)
+
 @Injectable({ providedIn: 'root' })
 export class TrackStatusService {
   private statusTimeline: { raceSecond: number; status: TrackStatusType }[] =
@@ -27,8 +36,8 @@ export class TrackStatusService {
   /** 🔑 Leader lap when GREEN occurred */
   private greenAtLap: number | null = null;
 
-  private greenTimeout?: number;
   private lastStatus: TrackStatusType | null = null;
+  private transientStatusUntil: number | null = null;
 
   constructor(
     private raceClock: RaceClockService,
@@ -45,6 +54,10 @@ export class TrackStatusService {
       raceSecond: e.raceSecond,
       status: TRACK_STATUS_MAP[e.trackStatus] ?? null,
     }));
+  }
+
+  private isTransientStatus(status: TrackStatusType | null): boolean {
+    return status === 'GREEN' || status === 'VSC_ENDING';
   }
 
   private resolveStatus(currentSecond: number): void {
@@ -72,36 +85,83 @@ export class TrackStatusService {
       return;
     }
 
-    if (active === this.lastStatus) return;
+    /**
+     * Keep transient statuses visible
+     * ONLY if backend status has not changed.
+     */
+    if (
+      active === this.lastStatus &&
+      this.isTransientStatus(this.lastStatus) &&
+      this.transientStatusUntil != null &&
+      currentSecond < this.transientStatusUntil
+    ) {
+      return;
+    }
+
+    /**
+     * Auto-hide transient statuses
+     * after visibility duration expires.
+     */
+    if (
+      active === this.lastStatus &&
+      this.isTransientStatus(active) &&
+      this.transientStatusUntil != null &&
+      currentSecond >= this.transientStatusUntil
+    ) {
+      this.statusSubject.next(null);
+
+      this.lastStatus = null;
+      this.transientStatusUntil = null;
+
+      return;
+    }
+
+    if (active === this.lastStatus) {
+      return;
+    }
 
     this.lastStatus = active;
-    clearTimeout(this.greenTimeout);
 
-    // 🚨 Neutralized states
+    /**
+     * Persistent neutralized states
+     */
     if (
       active === 'YELLOW' ||
       active === 'RED' ||
       active === 'SC' ||
-      active === 'VSC' ||
-      active === 'VSC_ENDING'
+      active === 'VSC'
     ) {
+      this.transientStatusUntil = null;
+
       this.statusSubject.next(active);
       this.neutralizedSubject.next(true);
+
       return;
     }
 
-    // 🟢 GREEN / restart
+    /**
+     * Temporary VSC ENDING
+     */
+    if (active === 'VSC_ENDING') {
+      this.transientStatusUntil = currentSecond + 3;
+
+      this.statusSubject.next(active);
+      this.neutralizedSubject.next(true);
+
+      return;
+    }
+
+    /**
+     * GREEN / restart
+     */
     if (active === 'GREEN') {
+      this.transientStatusUntil = currentSecond + 3;
+
       this.statusSubject.next('GREEN');
       this.neutralizedSubject.next(false);
 
-      // 🔑 record lap of restart
       this.greenAtLap = this.leaderboard.getLeaderLap();
       this.greenEventSubject.next();
-
-      this.greenTimeout = window.setTimeout(() => {
-        this.statusSubject.next(null);
-      }, 5000);
 
       return;
     }

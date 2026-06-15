@@ -77,7 +77,11 @@
             'toggle-mode': isTemporaryModeActive,
             'in-pit': row.isInPit,
           }"
-          [style.color]="row.isInPit ? getDriverColor(row.driver) : null"
+          [style.color]="
+            row.isInPit && row.status !== 'OUT'
+              ? getDriverColor(row.driver)
+              : null
+          "
         >
           {{ formatDisplayValue(row) }}
         </div>
