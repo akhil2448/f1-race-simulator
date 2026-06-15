@@ -17,5 +17,7 @@
 
   <div class="header-divider"></div>
 
-  <app-button size="sm" (clicked)="toggleMirror()"> Flip Track </app-button>
+  <app-button *ngIf="!raceFinished" size="sm" (clicked)="toggleMirror()">
+    Flip Track
+  </app-button>
 </div>

@@ -60,13 +60,13 @@ export class SimulationComponent implements OnInit {
     });
 
     //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION
-    // this.raceFinish.raceFinished$.subscribe((finished: boolean) => {
-    //   this.raceFinished = finished;
-    // });
+    this.raceFinish.raceFinished$.subscribe((finished: boolean) => {
+      this.raceFinished = finished;
+    });
 
-    setTimeout(() => {
-      this.raceFinished = true;
-    }, 3000);
+    // setTimeout(() => {
+    //   this.raceFinished = true;
+    // }, 3000);
   }
 
   getAvailableDriversForSlot(slot: number): string[] {

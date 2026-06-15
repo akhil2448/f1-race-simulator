@@ -6,6 +6,7 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 import { TrackMapStateService } from '../../../core/services/track-map-state.service';
 import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
 import { TrackInfo } from '../../../core/models/track-data.model';
+import { RaceFinishService } from '../../../core/services/race-finish.service';
 
 @Component({
   selector: 'app-track-map-header',
@@ -21,9 +22,12 @@ export class TrackMapHeaderComponent implements OnInit {
 
   localRaceTime = '';
 
+  raceFinished = false;
+
   constructor(
     private trackState: TrackMapStateService,
     private raceLocalTimeService: RaceLocalTimeService,
+    private raceFinish: RaceFinishService,
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +45,10 @@ export class TrackMapHeaderComponent implements OnInit {
       if (!d) return;
 
       this.localRaceTime = this.formatTime(d);
+    });
+
+    this.raceFinish.raceFinished$.subscribe((finished) => {
+      this.raceFinished = finished;
     });
   }
 
