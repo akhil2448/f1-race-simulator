@@ -11,7 +11,7 @@ export interface DriverTimingState {
   timingLoopIndex: number;
   lastCrossingTime: number;
   raceDistance: number;
-  loopCrossings: Map<number, number>;
+  lapLoopCrossings: Map<number, Map<number, number>>;
   progressionScore?: number;
   gapToLeader?: number;
   intervalGap?: number;
@@ -89,12 +89,15 @@ export class TimingEventProcessorService {
   private applyEvent(event: TimingEvent): void {
     const existing = this.driverStates.get(event.driver);
 
-    const loopCrossings = existing?.loopCrossings ?? new Map<number, number>();
+    const lapLoopCrossings =
+      existing?.lapLoopCrossings ?? new Map<number, Map<number, number>>();
 
-    /**
-     * Store timestamp for THIS loop crossing
-     */
-    loopCrossings.set(event.timingLoopIndex, event.raceTime);
+    const lapCrossings =
+      lapLoopCrossings.get(event.lap) ?? new Map<number, number>();
+
+    lapCrossings.set(event.timingLoopIndex, event.raceTime);
+
+    lapLoopCrossings.set(event.lap, lapCrossings);
 
     const progressionScore =
       event.lap * this.totalTimingLoops + event.timingLoopIndex;
@@ -105,11 +108,49 @@ export class TimingEventProcessorService {
       timingLoopIndex: event.timingLoopIndex,
       lastCrossingTime: event.raceTime,
       raceDistance: event.raceDistance,
-      loopCrossings,
+      lapLoopCrossings,
       progressionScore,
       gapToLeader: existing?.gapToLeader,
       intervalGap: existing?.intervalGap,
     });
+  }
+
+  private getEquivalentCrossingTime(
+    reference: DriverTimingState,
+    targetLap: number,
+    targetLoop: number,
+  ): number | undefined {
+    const lapMap = reference.lapLoopCrossings.get(targetLap);
+
+    if (!lapMap) {
+      return undefined;
+    }
+
+    /**
+     * Exact loop match
+     */
+    const exact = lapMap.get(targetLoop);
+
+    if (exact !== undefined) {
+      return exact;
+    }
+
+    /**
+     * Fallback:
+     * search previous loops
+     *
+     * Prevents tiny edge gaps
+     * when exact loop not yet stored.
+     */
+    for (let loop = targetLoop - 1; loop >= 0; loop--) {
+      const fallback = lapMap.get(loop);
+
+      if (fallback !== undefined) {
+        return fallback;
+      }
+    }
+
+    return undefined;
   }
 
   /* ===================================================== */
@@ -144,12 +185,21 @@ export class TimingEventProcessorService {
       }
 
       /**
-       * Compare SAME LOOP ONLY
+       * GAP TO LEADER
        */
-      const leaderLoopTime = leader.loopCrossings.get(current.timingLoopIndex);
+      const leaderEquivalentTime = this.getEquivalentCrossingTime(
+        leader,
+        current.lap,
+        current.timingLoopIndex,
+      );
 
-      if (leaderLoopTime !== undefined) {
-        current.gapToLeader = current.lastCrossingTime - leaderLoopTime;
+      if (leaderEquivalentTime !== undefined) {
+        const equivalentGap = current.lastCrossingTime - leaderEquivalentTime;
+
+        const leaderElapsedSinceEquivalent =
+          leader.lastCrossingTime - leaderEquivalentTime;
+
+        current.gapToLeader = equivalentGap + leaderElapsedSinceEquivalent;
       }
 
       /**
@@ -157,13 +207,19 @@ export class TimingEventProcessorService {
        */
       const ahead = states[i - 1];
 
-      /**
-       * Compare SAME LOOP ONLY
-       */
-      const aheadLoopTime = ahead.loopCrossings.get(current.timingLoopIndex);
+      const aheadEquivalentTime = this.getEquivalentCrossingTime(
+        ahead,
+        current.lap,
+        current.timingLoopIndex,
+      );
 
-      if (aheadLoopTime !== undefined) {
-        current.intervalGap = current.lastCrossingTime - aheadLoopTime;
+      if (aheadEquivalentTime !== undefined) {
+        const equivalentGap = current.lastCrossingTime - aheadEquivalentTime;
+
+        const aheadElapsedSinceEquivalent =
+          ahead.lastCrossingTime - aheadEquivalentTime;
+
+        current.intervalGap = equivalentGap + aheadElapsedSinceEquivalent;
       }
     }
 

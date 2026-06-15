@@ -54,6 +54,9 @@ export class LeaderboardService {
   /** when a driver retired */
   private outAtTime = new Map<string, number>();
 
+  // FOR TOGGLE BUTTONS IN CONTROL ARE AFTER RACE ENDS
+  private lastLiveEntries: LeaderboardEntry[] = [];
+
   constructor(
     private timing: LiveTimingService,
     private telemetry: TelemetryInterpolationService,
@@ -232,6 +235,9 @@ export class LeaderboardService {
         position: i + 1,
       }));
 
+      // SAVE LAST LIVE DATA BEFORE FIA FINAL CLASSIFICATION TAKES OVER
+      this.lastLiveEntries = entries.map((e) => ({ ...e }));
+
       /* leader lap stabilization */
       const rawLeaderLap = orderedStates[0].currentLap;
       const leaderLap =
@@ -302,7 +308,8 @@ export class LeaderboardService {
         lapsDown: c.lapsDown,
 
         /**
-         * Telemetry irrelevant after finish
+         * Preserve last live telemetry values
+         * so control-area temporary modes still work
          */
         lapDistance: 0,
 
@@ -310,11 +317,16 @@ export class LeaderboardService {
 
         isInPit: false,
 
-        compound: '',
+        compound:
+          this.lastLiveEntries.find((e) => e.driver === c.driver)?.compound ??
+          '',
 
-        tyreLife: null,
+        tyreLife:
+          this.lastLiveEntries.find((e) => e.driver === c.driver)?.tyreLife ??
+          null,
 
-        pitStops: undefined,
+        pitStops: this.lastLiveEntries.find((e) => e.driver === c.driver)
+          ?.pitStops,
 
         provisional: null,
 
