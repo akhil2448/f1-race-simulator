@@ -20,6 +20,7 @@ import {
 } from '../../core/models/race-data.model';
 import { RaceClockService } from '../../core/services/race-clock-service';
 import { RedFlagResumeComponent } from '../../simulation/components/red-flag-resume/red-flag-resume.component';
+import { LoadingOverlayComponent } from '../../simulation/components/loading-overlay/loading-overlay.component';
 
 @Component({
   selector: 'app-simulation',
@@ -37,6 +38,7 @@ import { RedFlagResumeComponent } from '../../simulation/components/red-flag-res
     FastestLapBannerComponent,
     FinalClassificationComponent,
     RedFlagResumeComponent,
+    LoadingOverlayComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',

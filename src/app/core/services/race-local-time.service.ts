@@ -32,4 +32,12 @@ export class RaceLocalTimeService {
     this.raceStartMs = base.getTime();
     this.localTimeSubject.next(base);
   }
+
+  getLocalTimeForRaceSecond(raceSecond: number): Date | null {
+    if (this.raceStartMs === null) {
+      return null;
+    }
+
+    return new Date(this.raceStartMs + raceSecond * 1000);
+  }
 }

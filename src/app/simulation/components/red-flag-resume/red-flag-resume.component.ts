@@ -6,6 +6,7 @@ import { RedFlagMetadata } from '../../../core/models/race-data.model';
 
 import { SeekCoordinatorService } from '../../../core/services/seek-coordinator.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
 
 @Component({
   selector: 'app-red-flag-resume',
@@ -18,7 +19,10 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 export class RedFlagResumeComponent {
   @Input() redFlag!: RedFlagMetadata;
 
-  constructor(private seekCoordinator: SeekCoordinatorService) {}
+  constructor(
+    private seekCoordinator: SeekCoordinatorService,
+    private raceLocalTime: RaceLocalTimeService,
+  ) {}
 
   seekToRestart(): void {
     this.seekCoordinator.seekToRaceSecond(
@@ -28,5 +32,22 @@ export class RedFlagResumeComponent {
 
   get restartLap(): number {
     return this.redFlag.restart.lap;
+  }
+
+  get restartLocalTime(): string {
+    const date = this.raceLocalTime.getLocalTimeForRaceSecond(
+      this.redFlag.restart.resumeRaceSecond,
+    );
+
+    if (!date) {
+      return '--:--:--';
+    }
+
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
   }
 }

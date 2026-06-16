@@ -82,4 +82,18 @@ export class DriverPresenceService {
   isOut(driver: string): boolean {
     return this.outDriversSubject.value.has(driver);
   }
+
+  resetAfterSeek(): void {
+    /**
+     * Seeking invalidates telemetry continuity.
+     *
+     * Clear:
+     * - last seen timestamps
+     * - transient OUT state
+     */
+
+    this.lastSeenTime.clear();
+
+    this.outDriversSubject.next(new Set());
+  }
 }
