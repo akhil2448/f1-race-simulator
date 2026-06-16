@@ -17,6 +17,7 @@ import {
 } from '../../../core/services/race-control.service';
 
 import { RaceClockService } from '../../../core/services/race-clock-service';
+import { SeekCoordinatorService } from '../../../core/services/seek-coordinator.service';
 
 @Component({
   selector: 'app-race-control-messages',
@@ -59,10 +60,13 @@ export class RaceControlMessagesComponent implements OnInit, OnDestroy {
   // queue safety
   private readonly MAX_QUEUE_SIZE = 50;
 
+  private previousRaceSecond: number | null = null;
+
   constructor(
     private raceClock: RaceClockService,
     private raceControl: RaceControlService,
     private cdr: ChangeDetectorRef,
+    private seekCoordinator: SeekCoordinatorService,
   ) {}
 
   ngOnInit(): void {
@@ -87,6 +91,22 @@ export class RaceControlMessagesComponent implements OnInit, OnDestroy {
 
       // subscribe AFTER preprocessing
       this.sub = this.raceClock.raceTime$.subscribe((raceSecond) => {
+        /**
+         * Detect discontinuous timeline jump.
+         *
+         * Silent reposition:
+         * - suppress skipped messages
+         * - preserve future replay correctness
+         */
+        if (
+          this.previousRaceSecond !== null &&
+          raceSecond !== this.previousRaceSecond + 1
+        ) {
+          this.resetForSeek(raceSecond);
+        }
+
+        this.previousRaceSecond = raceSecond;
+
         // prevent duplicate processing
         if (this.processedSeconds.has(raceSecond)) {
           return;
@@ -109,6 +129,14 @@ export class RaceControlMessagesComponent implements OnInit, OnDestroy {
         }
 
         for (const msg of messages) {
+          /**
+           * Suppress replay side effects
+           * during deterministic seek rebuild.
+           */
+          if (this.seekCoordinator.isSeekingSnapshot()) {
+            continue;
+          }
+
           // startup GREEN handled
           // via persistent banner only
           if (raceSecond === 0 && msg.flag === 'GREEN') {
@@ -132,6 +160,39 @@ export class RaceControlMessagesComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  private resetForSeek(targetSecond: number): void {
+    console.log('[RaceControl] Resetting for seek:', targetSecond);
+
+    /**
+     * Clear transient UI state
+     */
+    this.queue = [];
+
+    this.currentMessage = null;
+
+    /**
+     * Rebuild processed-second state
+     * so skipped messages NEVER replay.
+     */
+    this.processedSeconds.clear();
+
+    for (let i = 0; i <= targetSecond; i++) {
+      this.processedSeconds.add(i);
+    }
+
+    /**
+     * Preserve chequered flag persistence
+     * only if seeked after finish.
+     */
+    const chequered = this.messagesBySecond
+      .get(targetSecond)
+      ?.find((m) => m.flag === 'CHEQUERED');
+
+    this.persistentMessage = chequered ?? null;
+
+    this.cdr.markForCheck();
   }
 
   private enqueueMessage(msg: RaceControlMessage): void {

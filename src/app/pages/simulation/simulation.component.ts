@@ -14,6 +14,13 @@ import { FastestLapBannerComponent } from '../../simulation/components/fastest-l
 import { FinalClassificationComponent } from '../../simulation/components/final-classification/final-classification.component';
 import { CommonModule } from '@angular/common';
 
+import {
+  RaceApiResponse,
+  RedFlagMetadata,
+} from '../../core/models/race-data.model';
+import { RaceClockService } from '../../core/services/race-clock-service';
+import { RedFlagResumeComponent } from '../../simulation/components/red-flag-resume/red-flag-resume.component';
+
 @Component({
   selector: 'app-simulation',
   standalone: true,
@@ -29,6 +36,7 @@ import { CommonModule } from '@angular/common';
     RaceControlMessagesComponent,
     FastestLapBannerComponent,
     FinalClassificationComponent,
+    RedFlagResumeComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
@@ -38,15 +46,20 @@ export class SimulationComponent implements OnInit {
   selectedDrivers: (string | null)[] = [null, null];
 
   // Change these values to change the race
-  currentYear = 2020;
-  currentRound = 3;
+  currentYear = 2021;
+  currentRound = 11;
 
   raceFinished = false;
+
+  activeRedFlag: RedFlagMetadata | null = null;
+
+  private raceData: RaceApiResponse | null = null;
 
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
     private raceFinish: RaceFinishService,
+    private raceClock: RaceClockService,
   ) {}
 
   ngOnInit(): void {
@@ -55,8 +68,16 @@ export class SimulationComponent implements OnInit {
       round: this.currentRound,
     });
 
+    this.raceClock.raceTime$.subscribe((raceSecond) => {
+      this.updateActiveRedFlag(raceSecond);
+    });
+
     this.bootstrap.availableDrivers$.subscribe((drivers) => {
       this.availableDrivers = drivers;
+    });
+
+    this.bootstrap.raceData$.subscribe((raceData) => {
+      this.raceData = raceData;
     });
 
     //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION
@@ -67,6 +88,24 @@ export class SimulationComponent implements OnInit {
     // setTimeout(() => {
     //   this.raceFinished = true;
     // }, 3000);
+  }
+
+  private updateActiveRedFlag(raceSecond: number): void {
+    if (!this.raceData) {
+      this.activeRedFlag = null;
+      return;
+    }
+
+    const redFlags = this.raceData.raceControl?.redFlags ?? [];
+
+    const active = redFlags.find((rf) => {
+      return (
+        raceSecond >= rf.redFlagRaceSecond &&
+        raceSecond < rf.restart.resumeRaceSecond
+      );
+    });
+
+    this.activeRedFlag = active ?? null;
   }
 
   getAvailableDriversForSlot(slot: number): string[] {

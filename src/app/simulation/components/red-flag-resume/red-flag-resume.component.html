@@ -1,0 +1,13 @@
+<div class="red-flag-banner">
+  <div class="flag-label">RED FLAG</div>
+
+  <div class="message">Session suspended</div>
+
+  <div class="restart-info">Race resumes on Lap {{ restartLap }}</div>
+
+  <div class="actions">
+    <app-button variant="primary" size="md" (clicked)="seekToRestart()">
+      FAST FORWARD TO RESTART
+    </app-button>
+  </div>
+</div>

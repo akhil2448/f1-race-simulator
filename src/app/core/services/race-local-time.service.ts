@@ -26,8 +26,8 @@ export class RaceLocalTimeService {
     const [hms, ms = '0'] = localTimeAtRaceStart.split('.');
     const [h, m, s] = hms.split(':').map(Number);
 
-    const base = new Date();
-    base.setHours(h, m, s, Number(ms));
+    const base = new Date(0);
+    base.setUTCHours(h, m, s, Number(ms));
 
     this.raceStartMs = base.getTime();
     this.localTimeSubject.next(base);

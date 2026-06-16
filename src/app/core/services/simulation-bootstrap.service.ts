@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { RaceDataService } from './race-data.service';
 import { DriverMetaService } from './driver-meta.service';
@@ -19,11 +19,17 @@ import { RaceFinishService } from './race-finish.service';
 import { DriverPresenceService } from './driver-presence.service';
 import { FastestLapService } from './fastest-lap.service';
 import { RaceControlService } from './race-control.service';
+import { RaceApiResponse } from '../models/race-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
   private availableDriversSubject = new BehaviorSubject<string[]>([]);
   availableDrivers$ = this.availableDriversSubject.asObservable();
+
+  private raceDataSubject = new BehaviorSubject<RaceApiResponse | null>(null);
+
+  raceData$: Observable<RaceApiResponse | null> =
+    this.raceDataSubject.asObservable();
 
   constructor(
     private raceDataService: RaceDataService,
@@ -60,6 +66,7 @@ export class SimulationBootstrapService {
       this.leaderboard.setTotalLaps(raceData.session.totalLaps);
       this.leaderboard.initialize(raceData);
       this.availableDriversSubject.next(Object.keys(raceData.drivers));
+      this.raceDataSubject.next(raceData);
 
       const outDrivers = raceData.results.classification
         .filter((result) => result.status === 'OUT')

@@ -3,6 +3,7 @@
 export interface RaceApiResponse {
   session: RaceSession;
   results: RaceResultsApi;
+  raceControl: RaceControlMetadata;
   drivers: Record<string, DriverApiData>; // ALO, VER, HAM...
 }
 
@@ -37,6 +38,26 @@ export interface RaceResultsApi {
   constructorStandings: ConstructorStandingEntry[];
 
   fastestLap: FastestLapEntry;
+}
+
+export interface RaceControlMetadata {
+  redFlags: RedFlagMetadata[];
+}
+
+export interface RedFlagMetadata {
+  id: string;
+
+  redFlagRaceSecond: number;
+
+  restart: RedFlagRestartMetadata;
+}
+
+export interface RedFlagRestartMetadata {
+  lap: number;
+
+  competitiveLapStartTime: number;
+
+  resumeRaceSecond: number;
 }
 
 export interface RaceClassificationEntry {

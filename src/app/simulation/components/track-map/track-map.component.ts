@@ -18,8 +18,6 @@ import { TrackMapStateService } from '../../../core/services/track-map-state.ser
 export class TrackMapComponent implements OnInit {
   constructor(
     private interpolatedTelemetry: TelemetryInterpolationService,
-    private engine: SimulationEngineService,
-    private trackMap: TrackMapService,
     private driverMeta: DriverMetaService,
     private trackState: TrackMapStateService,
   ) {}
@@ -70,19 +68,10 @@ export class TrackMapComponent implements OnInit {
 
     /* ---------- TELEMETRY with INTERPOLATION ADDED ---------- */
     this.interpolatedTelemetry.interpolatedFrame$.subscribe((frame) => {
-      if (!frame) return;
-
-      // 🔎 ADD LOGS HERE (temporary)
-      // frame.cars.forEach((car) => {
-      //   console.log(
-      //     `[TrackMap]`,
-      //     car.driver,
-      //     'lapDist=',
-      //     car.lapDistance.toFixed(1),
-      //     'raceDist=',
-      //     car.raceDistance.toFixed(1),
-      //   );
-      // });
+      if (!frame) {
+        this.cars = [];
+        return;
+      }
 
       this.cars = frame.cars;
     });
@@ -172,7 +161,13 @@ export class TrackMapComponent implements OnInit {
   /* POSITIONING                                           */
   /* ===================================================== */
   getCarPosition(raceDistance: number) {
-    if (!this.trackReady) return this.track[0];
+    if (
+      !this.trackReady ||
+      !Number.isFinite(raceDistance) ||
+      !this.realTrackLengthMeters
+    ) {
+      return this.track[0];
+    }
 
     // 1️⃣ Convert REAL meters → SVG distance
     const svgDistance =

@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { RaceClockService } from './race-clock-service';
 import { FrameData } from '../models/track-status.model';
 import { LeaderboardService } from './leaderboard.service';
+import { SeekCoordinatorService } from './seek-coordinator.service';
 
 // ‘1’: Track clear (beginning of session or to indicate the end of another status)
 // ‘2’: Yellow flag (sectors are unknown)
@@ -38,12 +39,28 @@ export class TrackStatusService {
 
   private lastStatus: TrackStatusType | null = null;
   private transientStatusUntil: number | null = null;
+  private previousRaceSecond: number | null = null;
 
   constructor(
     private raceClock: RaceClockService,
     private leaderboard: LeaderboardService, // ✅ authoritative lap source
+    private seekCoordinator: SeekCoordinatorService,
   ) {
     this.raceClock.raceTime$.subscribe((second) => {
+      /**
+       * Detect discontinuous timeline movement.
+       *
+       * Seek invalidates transient replay continuity.
+       */
+      if (
+        this.previousRaceSecond !== null &&
+        second !== this.previousRaceSecond + 1
+      ) {
+        this.resetForSeek();
+      }
+
+      this.previousRaceSecond = second;
+
       this.resolveStatus(second);
     });
   }
@@ -54,6 +71,21 @@ export class TrackStatusService {
       raceSecond: e.raceSecond,
       status: TRACK_STATUS_MAP[e.trackStatus] ?? null,
     }));
+  }
+
+  private resetForSeek(): void {
+    /**
+     * Reset transient replay state.
+     *
+     * Required because seek invalidates:
+     * - transient visibility timers
+     * - last-status continuity
+     * - restart transition continuity
+     */
+
+    this.lastStatus = null;
+
+    this.transientStatusUntil = null;
   }
 
   private isTransientStatus(status: TrackStatusType | null): boolean {
@@ -81,7 +113,11 @@ export class TrackStatusService {
 
       // 🔑 race start counts as green
       this.greenAtLap = this.leaderboard.getLeaderLap();
-      this.greenEventSubject.next();
+
+      if (!this.seekCoordinator.isSeekingSnapshot()) {
+        this.greenEventSubject.next();
+      }
+
       return;
     }
 
@@ -161,7 +197,10 @@ export class TrackStatusService {
       this.neutralizedSubject.next(false);
 
       this.greenAtLap = this.leaderboard.getLeaderLap();
-      this.greenEventSubject.next();
+
+      if (!this.seekCoordinator.isSeekingSnapshot()) {
+        this.greenEventSubject.next();
+      }
 
       return;
     }

@@ -61,6 +61,7 @@ export class DriverPresenceService {
       const lastSeen = this.lastSeenTime.get(driver);
 
       if (lastSeen == null) {
+        out.add(driver);
         return;
       }
 

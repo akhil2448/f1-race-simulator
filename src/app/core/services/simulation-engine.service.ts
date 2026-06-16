@@ -20,8 +20,6 @@ export class SimulationEngineService {
 
   private trackLengthMeters = 0;
 
-  private lastRaceDistance = new Map<string, number>();
-
   constructor(
     private clock: RaceClockService,
     private telemetry: TelemetryBufferService,
@@ -47,21 +45,15 @@ export class SimulationEngineService {
       if (!frame || !this.trackLengthMeters) return;
 
       const cars = frame.cars.map((car) => {
-        const prevRaceDist = this.lastRaceDistance.get(car.driver) ?? 0;
+        const lap = Math.floor(car.raceDistance / this.trackLengthMeters) + 1;
 
-        // 🔒 Monotonic race distance
-        const safeRaceDist = Math.max(car.raceDistance, prevRaceDist);
-        this.lastRaceDistance.set(car.driver, safeRaceDist);
-
-        // 🔑 Deterministic lap math
-        const lap = Math.floor(safeRaceDist / this.trackLengthMeters) + 1;
-        const lapDistance = safeRaceDist % this.trackLengthMeters;
+        const lapDistance = car.raceDistance % this.trackLengthMeters;
 
         return {
           ...car,
           lap,
           lapDistance,
-          raceDistance: safeRaceDist,
+          raceDistance: car.raceDistance,
         };
       });
 
@@ -79,6 +71,7 @@ export class SimulationEngineService {
     this.clockSub?.unsubscribe();
     this.clockSub = undefined;
     this.initialized = false;
+    this.trackLengthMeters = 0;
     this.currentFrameSubject.next(null);
   }
 

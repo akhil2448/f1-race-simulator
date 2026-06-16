@@ -61,7 +61,14 @@ export class TelemetryInterpolationService {
 
     /* ---------- TELEMETRY FRAMES ---------- */
     this.engine.frame$.subscribe((frame) => {
-      if (!frame) return;
+      if (!frame) {
+        this.prevFrame = undefined;
+        this.currFrame = undefined;
+
+        this.interpolatedFrameSubject.next(null);
+
+        return;
+      }
 
       // update currently visible telemetry drivers
       // this.presence.updateVisibleDrivers(frame.cars.map((c) => c.driver));
@@ -78,10 +85,7 @@ export class TelemetryInterpolationService {
 
       // Measure real frame duration ONLY if not paused
       if (this.frameStartTime > 0) {
-        this.frameDurationMs = Math.max(
-          now - this.frameStartTime,
-          1, // safety guard
-        );
+        this.frameDurationMs = Math.max(now - this.frameStartTime, 16);
       }
 
       this.frameStartTime = now;
@@ -131,16 +135,49 @@ export class TelemetryInterpolationService {
   /* INTERPOLATION LOGIC                                   */
   /* ===================================================== */
 
+  // private interpolateFrame(
+  //   prev: TelemetryFrame,
+  //   curr: TelemetryFrame,
+  //   t: number,
+  // ): TelemetryFrame {
+  //   const cars: TelemetryCar[] = curr.cars.map((currCar) => {
+  //     const prevCar = prev.cars.find((c) => c.driver === currCar.driver);
+
+  //     // New car or first frame
+  //     if (!prevCar) return currCar;
+
+  //     const interpolatedRaceDistance =
+  //       prevCar.raceDistance +
+  //       (currCar.raceDistance - prevCar.raceDistance) * t;
+
+  //     return {
+  //       ...currCar,
+
+  //       // ✅ smooth ordering
+  //       raceDistance: interpolatedRaceDistance,
+  //     };
+  //   });
+
+  //   return {
+  //     ...curr,
+  //     cars,
+  //   };
+  // }
+
+  // BETTER INTERPOLATION LOGIC
   private interpolateFrame(
     prev: TelemetryFrame,
     curr: TelemetryFrame,
     t: number,
   ): TelemetryFrame {
-    const cars: TelemetryCar[] = curr.cars.map((currCar) => {
-      const prevCar = prev.cars.find((c) => c.driver === currCar.driver);
+    const prevCars = new Map(prev.cars.map((c) => [c.driver, c]));
 
-      // New car or first frame
-      if (!prevCar) return currCar;
+    const cars: TelemetryCar[] = curr.cars.map((currCar) => {
+      const prevCar = prevCars.get(currCar.driver);
+
+      if (!prevCar) {
+        return currCar;
+      }
 
       const interpolatedRaceDistance =
         prevCar.raceDistance +
@@ -148,8 +185,6 @@ export class TelemetryInterpolationService {
 
       return {
         ...currCar,
-
-        // ✅ smooth ordering
         raceDistance: interpolatedRaceDistance,
       };
     });
@@ -174,6 +209,29 @@ export class TelemetryInterpolationService {
     this.frameDurationMs = 1000;
   }
 
+  resetAfterSeek(): void {
+    /**
+     * Seeking invalidates interpolation continuity.
+     *
+     * Prevent:
+     * - teleport smoothing
+     * - stale interpolation
+     * - ghost transitions
+     * - pause/resume artifacts
+     */
+
+    this.prevFrame = undefined;
+    this.currFrame = undefined;
+
+    this.frameStartTime = performance.now();
+
+    this.frameDurationMs = 1000;
+
+    this.wasPaused = true;
+
+    this.interpolatedFrameSubject.next(null);
+  }
+
   /* ===================================================== */
   /* CLEANUP                                              */
   /* ===================================================== */
@@ -188,6 +246,8 @@ export class TelemetryInterpolationService {
     this.currFrame = undefined;
     this.frameStartTime = 0;
     this.frameDurationMs = 1000;
+
+    this.wasPaused = true;
 
     this.interpolatedFrameSubject.next(null);
   }

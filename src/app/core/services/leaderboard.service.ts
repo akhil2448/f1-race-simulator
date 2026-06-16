@@ -101,9 +101,15 @@ export class LeaderboardService {
 
     /* ---------- TELEMETRY (visual only) ---------- */
     this.telemetry.interpolatedFrame$.subscribe((frame) => {
-      if (!frame) return;
       latestTelemetry.clear();
-      frame.cars.forEach((c) => latestTelemetry.set(c.driver, c));
+
+      if (!frame) {
+        return;
+      }
+
+      frame.cars.forEach((c) => {
+        latestTelemetry.set(c.driver, c);
+      });
     });
 
     /* ---------- FIA TIMING EVENTS ---------- */

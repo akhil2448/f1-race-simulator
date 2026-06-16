@@ -53,8 +53,17 @@
       <div class="hud-left">
         <app-race-clock></app-race-clock>
 
-        <app-race-control-messages [year]="currentYear" [round]="currentRound">
-        </app-race-control-messages>
+        <ng-container *ngIf="activeRedFlag; else raceControlMessages">
+          <app-red-flag-resume [redFlag]="activeRedFlag"> </app-red-flag-resume>
+        </ng-container>
+
+        <ng-template #raceControlMessages>
+          <app-race-control-messages
+            [year]="currentYear"
+            [round]="currentRound"
+          >
+          </app-race-control-messages>
+        </ng-template>
       </div>
 
       <div class="hud-right">

@@ -11,11 +11,19 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RaceClockService } from '../../../core/services/race-clock-service';
+import { SeekCoordinatorService } from '../../../core/services/seek-coordinator.service';
 import {
   DriverTelemetryBufferService,
   DriverTelemetryPoint,
 } from '../../../core/services/driver-telemetry-buffer.service';
-import { Subject, interval, combineLatest, EMPTY } from 'rxjs';
+import {
+  Subject,
+  interval,
+  combineLatest,
+  EMPTY,
+  pairwise,
+  startWith,
+} from 'rxjs';
 import { takeUntil, switchMap, map } from 'rxjs/operators';
 
 export interface DriverTelemetryView {
@@ -58,6 +66,7 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
     private raceClock: RaceClockService,
     private buffer: DriverTelemetryBufferService,
     private elementRef: ElementRef,
+    private seekCoordinator: SeekCoordinatorService,
   ) {
     /**
      * 🚀 10 Hz telemetry sampling interval(100)
@@ -102,6 +111,25 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
 
         this.telemetry = this.mapTelemetry(p, fractionalRaceTime);
       });
+
+    /**
+     * Rebuild telemetry window AFTER seek completes.
+     *
+     * Important:
+     * - preserve selected driver
+     * - fetch from new replay position
+     * - allow validFromSecond latency compensation
+     */
+    this.seekCoordinator.isSeeking$
+      .pipe(takeUntil(this.destroy$), startWith(false), pairwise())
+      .subscribe(([wasSeeking, isSeeking]) => {
+        /**
+         * SEEK END transition
+         */
+        if (wasSeeking && !isSeeking) {
+          this.reloadTelemetryWindow();
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -114,16 +142,39 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
         return;
       }
 
-      const now = this.raceClock.getCurrentSecond();
-
-      // clear stale telemetry immediately
-      this.telemetry = null;
-
-      // 🔁 Fetch telemetry window starting from *current* race time
-      this.buffer
-        .initialize(this.year, this.round, this.selectedDriver, now)
-        .subscribe();
+      this.reloadTelemetryWindow();
     }
+  }
+
+  private reloadTelemetryWindow(): void {
+    if (!this.selectedDriver) {
+      return;
+    }
+
+    /**
+     * Immediately clear stale telemetry.
+     */
+    this.telemetry = null;
+
+    /**
+     * Reattach telemetry stream
+     * from CURRENT race clock.
+     *
+     * validFromSecond logic inside
+     * DriverTelemetryBufferService
+     * automatically compensates for:
+     * - HTTP latency
+     * - 4x playback
+     * - delayed API completion
+     */
+    this.buffer
+      .initialize(
+        this.year,
+        this.round,
+        this.selectedDriver,
+        this.raceClock.getCurrentSecond(),
+      )
+      .subscribe();
   }
 
   private mapTelemetry(
