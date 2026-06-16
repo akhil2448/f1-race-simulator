@@ -255,6 +255,51 @@ app-red-flag-resume {
   overflow: visible;
 }
 
+.resume-message-bar {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 12px 18px;
+
+  background: rgba(10, 12, 18, 0.92);
+
+  border-left: 4px solid #00c853;
+
+  border-radius: 8px;
+
+  min-width: 340px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+}
+
+.resume-category {
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.6px;
+
+  opacity: 0.62;
+
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.resume-text {
+  font-size: 15px;
+
+  font-weight: 600;
+  letter-spacing: 1.6px;
+
+  line-height: 1.35;
+
+  color: rgba(255, 255, 255, 0.96);
+}
+
 /* Track */
 app-track-map {
   height: 100%;

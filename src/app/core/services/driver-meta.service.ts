@@ -73,7 +73,8 @@ export class DriverMetaService {
     else if (teamName === 'Williams') return 'williams';
     else if (teamName === 'AlphaTauri') return 'alphatauri';
     else if (teamName === 'Alfa Romeo') return 'alfaromeo';
-    else if (teamName === 'Alpine') return 'alpine';
+    else if (teamName === 'Alpine' || teamName === 'Alpine F1 Team')
+      return 'alpine';
     else if (teamName === 'Aston Martin') return 'astonmartin';
     else if (teamName === 'Kick Sauber') return 'kicksauber';
     else if (teamName === 'Audi') return 'audi';

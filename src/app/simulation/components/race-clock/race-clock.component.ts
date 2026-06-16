@@ -35,6 +35,7 @@ export class RaceClockComponent implements OnInit, OnDestroy {
   }
 
   play() {
+    window.dispatchEvent(new CustomEvent('replay-resumed'));
     this.raceClock.play();
   }
 

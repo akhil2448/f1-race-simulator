@@ -24,10 +24,12 @@ export class RedFlagResumeComponent {
     private raceLocalTime: RaceLocalTimeService,
   ) {}
 
-  seekToRestart(): void {
-    this.seekCoordinator.seekToRaceSecond(
+  async seekToRestart(): Promise<void> {
+    await this.seekCoordinator.seekToRaceSecond(
       this.redFlag.restart.resumeRaceSecond,
     );
+
+    window.dispatchEvent(new CustomEvent('replay-seek-complete'));
   }
 
   get restartLap(): number {

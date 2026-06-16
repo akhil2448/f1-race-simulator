@@ -51,6 +51,8 @@ export class SimulationComponent implements OnInit {
   currentYear = 2021;
   currentRound = 11;
 
+  showReplayResumeMessage = false;
+
   raceFinished = false;
 
   activeRedFlag: RedFlagMetadata | null = null;
@@ -80,6 +82,14 @@ export class SimulationComponent implements OnInit {
 
     this.bootstrap.raceData$.subscribe((raceData) => {
       this.raceData = raceData;
+    });
+
+    window.addEventListener('replay-seek-complete', () => {
+      this.showReplayResumeMessage = true;
+    });
+
+    window.addEventListener('replay-resumed', () => {
+      this.showReplayResumeMessage = false;
     });
 
     //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION

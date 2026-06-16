@@ -53,16 +53,33 @@
       <div class="hud-left">
         <app-race-clock></app-race-clock>
 
-        <ng-container *ngIf="activeRedFlag; else raceControlMessages">
-          <app-red-flag-resume [redFlag]="activeRedFlag"> </app-red-flag-resume>
+        <!-- =====================================
+       1. REPLAY READY MESSAGE (highest priority)
+       ===================================== -->
+        <ng-container *ngIf="showReplayResumeMessage; else redFlagOrMessages">
+          <div class="resume-message-bar">
+            <div class="resume-category">REPLAY READY</div>
+
+            <div class="resume-text">PRESS PLAY BUTTON TO RESUME RACE</div>
+          </div>
         </ng-container>
 
-        <ng-template #raceControlMessages>
-          <app-race-control-messages
-            [year]="currentYear"
-            [round]="currentRound"
-          >
-          </app-race-control-messages>
+        <!-- =====================================
+       2. RED FLAG OR NORMAL MESSAGES
+       ===================================== -->
+        <ng-template #redFlagOrMessages>
+          <ng-container *ngIf="activeRedFlag; else raceControlMessages">
+            <app-red-flag-resume [redFlag]="activeRedFlag">
+            </app-red-flag-resume>
+          </ng-container>
+
+          <ng-template #raceControlMessages>
+            <app-race-control-messages
+              [year]="currentYear"
+              [round]="currentRound"
+            >
+            </app-race-control-messages>
+          </ng-template>
         </ng-template>
       </div>
 

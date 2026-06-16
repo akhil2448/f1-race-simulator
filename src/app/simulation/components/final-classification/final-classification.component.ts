@@ -92,9 +92,10 @@ export class FinalClassificationComponent implements OnInit {
 
     if (team === 'AlphaTauri') return 'alphatauri';
 
-    if (team === 'Alfa Romeo') return 'alfaromeo';
+    if (team === 'Alfa Romeo' || team === 'Alfa Romeo Racing')
+      return 'alfaromeo';
 
-    if (team === 'Alpine') return 'alpine';
+    if (team === 'Alpine' || team === 'Alpine F1 Team') return 'alpine';
 
     if (team === 'Aston Martin') return 'astonmartin';
 
