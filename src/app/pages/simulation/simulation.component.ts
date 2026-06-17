@@ -49,7 +49,7 @@ export class SimulationComponent implements OnInit {
 
   // Change these values to change the race
   currentYear = 2021;
-  currentRound = 11;
+  currentRound = 3;
 
   showReplayResumeMessage = false;
 
