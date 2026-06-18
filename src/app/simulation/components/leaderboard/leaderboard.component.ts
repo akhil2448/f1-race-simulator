@@ -6,6 +6,7 @@ import {
   OnInit,
   QueryList,
   ViewChildren,
+  Input,
 } from '@angular/core';
 import { LeaderboardEntry } from '../../../core/models/leaderboard-entry.model';
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
@@ -59,6 +60,9 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** 🔑 Broadcast anchors */
   private greenLap: number | null = null;
+
+  @Input()
+  highlightedDrivers: { driver: string | null; color: string }[] = [];
 
   constructor(
     private leaderboardService: LeaderboardService,
@@ -297,6 +301,16 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isFinishFlagAnimating(driver: string): boolean {
     return this.animatingFinishFlags.has(driver);
+  }
+
+  isHighlighted(driver: string): boolean {
+    return this.highlightedDrivers.some((d) => d.driver === driver);
+  }
+
+  getHighlightColor(driver: string): string | null {
+    return (
+      this.highlightedDrivers.find((d) => d.driver === driver)?.color ?? null
+    );
   }
 
   /* ===================================================== */

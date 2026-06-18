@@ -2,7 +2,19 @@
   <!-- LEFT SIDE -->
   <div class="left-panel-area">
     <div class="top-info-row">
-      <app-leaderboard></app-leaderboard>
+      <app-leaderboard
+        [highlightedDrivers]="[
+          {
+            driver: selectedDrivers[0],
+            color: '#ffffff',
+          },
+          {
+            driver: selectedDrivers[1],
+            color: '#ffe600',
+          },
+        ]"
+      >
+      </app-leaderboard>
 
       <div class="info-sidebar">
         <app-weather></app-weather>

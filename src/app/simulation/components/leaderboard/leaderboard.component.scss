@@ -161,6 +161,53 @@ hr {
     1fr;
 }
 
+.driver-row.highlighted {
+  position: relative;
+
+  border: 1px solid var(--highlight-color);
+
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--highlight-color) 55%, transparent),
+    inset 0 0 10px color-mix(in srgb, var(--highlight-color) 12%, transparent);
+
+  z-index: 2;
+
+  transform: scale(1.015);
+}
+
+/* subtle animated halo */
+.driver-row.highlighted::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -2px;
+
+  border-radius: 4px;
+
+  border: 2px solid var(--highlight-color);
+
+  opacity: 0.7;
+
+  pointer-events: none;
+
+  animation: leaderboardHighlightPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes leaderboardHighlightPulse {
+  0% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0.35;
+  }
+}
+
 /* POSITION */
 .position {
   position: relative;

@@ -48,8 +48,8 @@ export class SimulationComponent implements OnInit {
   selectedDrivers: (string | null)[] = [null, null];
 
   // Change these values to change the race
-  currentYear = 2021;
-  currentRound = 3;
+  currentYear = 2020;
+  currentRound = 5;
 
   showReplayResumeMessage = false;
 

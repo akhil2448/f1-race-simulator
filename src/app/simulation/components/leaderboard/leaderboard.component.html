@@ -36,6 +36,8 @@
       <div
         #driverRow
         class="driver-row"
+        [class.highlighted]="isHighlighted(row.driver)"
+        [style.--highlight-color]="getHighlightColor(row.driver)"
         [class.final-classification]="row.isOfficialClassification"
         *ngFor="let row of leaderboard; trackBy: trackByDriver"
         [attr.data-driver]="row.driver"
