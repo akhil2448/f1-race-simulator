@@ -7,6 +7,9 @@ import { firstValueFrom } from 'rxjs';
 import { countryCodeMap } from '../../core/constants/country-code-map';
 
 import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
+import { RaceSelectionStateService } from '../../core/services/race-selection-state.service';
+
+import { Router } from '@angular/router';
 
 export interface RaceSchedule {
   round: number;
@@ -57,11 +60,16 @@ export class RaceSelectionComponent implements OnInit {
   private readonly MAX_RETRIES = 3;
 
   private readonly overlay = inject(LoadingOverlayService);
+  private readonly state = inject(RaceSelectionStateService);
+
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.initializeYears();
 
-    this.selectedYear = this.years[0];
+    this.selectedYear = this.state.selectedYear ?? this.years[0];
+
+    this.state.selectedYear = this.selectedYear;
 
     this.loadSchedule();
   }
@@ -75,6 +83,8 @@ export class RaceSelectionComponent implements OnInit {
   }
 
   onYearChange(): void {
+    this.state.selectedYear = this.selectedYear;
+
     this.loadSchedule();
   }
 
@@ -145,15 +155,12 @@ export class RaceSelectionComponent implements OnInit {
     });
   }
 
-  jumpToQualifyingResults(race: RaceSchedule): void {
-    console.log('Navigate to qualifying', this.selectedYear, race.round);
+  async jumpToQualifyingResults(race: RaceSchedule): Promise<void> {
+    this.overlay.show('Fetching qualifying results...');
 
-    // next phase
-    // this.router.navigate([
-    //   '/qualifying',
-    //   this.selectedYear,
-    //   race.round
-    // ]);
+    await this.delay(1500);
+
+    this.router.navigate(['/qualifying', this.selectedYear, race.round]);
   }
 
   getFlagUrl(country: string): string {

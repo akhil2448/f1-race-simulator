@@ -1,0 +1,517 @@
+:host {
+  display: block;
+
+  height: 100vh;
+
+  background: #1d1b1b;
+
+  color: #e5e7eb;
+
+  overflow: hidden;
+}
+
+/* =========================================
+   SHELL
+========================================= */
+
+.qualifying-shell {
+  height: calc(100vh - 52px);
+
+  overflow: hidden;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.page-header {
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 0 24px;
+
+  background: #e10600;
+
+  margin-bottom: 8px;
+
+  border-radius: 0;
+
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+.back-button {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+.back-chevron {
+  width: 14px;
+  height: 14px;
+
+  border-left: 4px solid white;
+  border-bottom: 4px solid white;
+
+  transform: rotate(45deg);
+
+  transition: transform 0.15s ease;
+}
+
+.back-button:hover .back-chevron {
+  transform: rotate(45deg) translateX(-2px);
+}
+
+.page-title {
+  font-family: "Formula1Wide", "Formula1Bold", sans-serif;
+
+  font-size: 24px;
+
+  color: white;
+
+  line-height: 1;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.qualifying-page {
+  height: 100%;
+
+  display: grid;
+
+  grid-template-columns: 40% 60%;
+
+  gap: 24px;
+
+  padding: 8px 12px 12px;
+
+  box-sizing: border-box;
+}
+
+.results-panel,
+.grid-panel {
+  background: #262626;
+
+  border-radius: 12px;
+
+  padding: 14px 16px;
+
+  min-height: 0;
+}
+
+/* =========================================
+   RESULTS
+========================================= */
+
+.results-panel {
+  overflow-y: hidden;
+}
+
+.results-title {
+  font-family: "Formula1Bold", sans-serif;
+
+  font-size: 18px;
+
+  margin-bottom: 14px;
+}
+
+.session-group {
+  display: flex;
+
+  gap: 12px;
+
+  margin-bottom: 10px;
+}
+
+.session-rail {
+  width: 26px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  writing-mode: vertical-rl;
+
+  transform: rotate(180deg);
+
+  border-radius: 8px;
+
+  background: #e10600;
+
+  color: white;
+
+  font-size: 11px;
+
+  font-family: "Formula1Bold", sans-serif;
+}
+
+.session-content {
+  flex: 1;
+}
+
+.result-row {
+  display: grid;
+
+  grid-template-columns:
+    44px
+    4px
+    58px
+    44px
+    1fr;
+
+  align-items: center;
+
+  height: 30px;
+
+  gap: 8px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.position {
+  text-align: center;
+
+  opacity: 0.8;
+
+  font-size: 15px;
+}
+
+.driver-code {
+  font-size: 15px;
+
+  font-family: "Formula1", sans-serif;
+}
+
+.lap-time {
+  text-align: right;
+
+  font-size: 15px;
+
+  font-family: "Formula1", sans-serif;
+}
+
+/* =========================================
+   GRID
+========================================= */
+
+.grid-panel {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.panel-title {
+  font-family: "Formula1Bold", sans-serif;
+
+  font-size: 18px;
+
+  margin-bottom: 12px;
+}
+
+.starting-grid {
+  flex: 1;
+
+  min-height: 0;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 22px;
+}
+
+.grid-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.staggered {
+  padding-top: 18px;
+}
+
+.grid-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.grid-position {
+  width: 52px;
+
+  height: 42px;
+
+  background: #1d1d1d;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  font-family: "Formula1Bold", sans-serif;
+
+  flex-shrink: 0;
+}
+
+.grid-driver {
+  flex: 1;
+
+  height: 42px;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 12px;
+
+  color: white;
+}
+
+.driver-name {
+  font-family: "Formula1Bold", sans-serif;
+
+  font-size: 12px;
+}
+
+/* =========================================
+   PITLANE
+========================================= */
+
+.pitlane-section {
+  margin-top: 12px;
+}
+
+.pitlane-title {
+  color: #e10600;
+
+  margin-bottom: 10px;
+
+  font-family: "Formula1Bold", sans-serif;
+}
+
+.pitlane-grid {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.pitlane-card {
+  min-width: 180px;
+
+  height: 42px;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 12px;
+}
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.simulate-button {
+  margin-top: 14px;
+
+  height: 52px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  background: #e10600;
+
+  color: white;
+
+  font-family: "Formula1Bold", sans-serif;
+
+  letter-spacing: 0.5px;
+}
+
+.simulate-button:hover {
+  background: #ff1c15;
+}
+
+/* =========================================
+   TEAM LOGOS
+========================================= */
+
+.team-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-icon img {
+  width: 18px;
+  height: 18px;
+}
+
+.team-icon img.redbull {
+  transform: scale(1.5);
+}
+
+.team-icon img.renault {
+  filter: brightness(0) invert(1);
+}
+
+.team-icon img.mclaren {
+  padding-top: 2px;
+  transform: scale(1.3);
+}
+
+.team-icon img.forceindia {
+  transform: scale(1.4);
+}
+
+.team-icon img.tororosso {
+  width: 20px;
+  height: 10px;
+  transform: scale(1.2);
+}
+
+.team-icon img.racingpoint {
+  filter: brightness(0) invert(1);
+  width: 20px;
+  height: 19px;
+}
+
+.team-icon img.alphatauri {
+  filter: brightness(0) invert(1);
+  transform: scale(1.8);
+}
+
+.team-icon img.alpine {
+  filter: brightness(0) invert(1);
+  transform: scale(1.8);
+}
+
+.team-icon img.astonmartin {
+  padding-top: 3px;
+  transform: scale(1.7);
+}
+
+.team-icon img.racingbulls {
+  filter: brightness(0) invert(1);
+  transform: scale(1.4);
+}
+
+.team-icon img.kicksauber {
+  transform: scale(1.3);
+}
+
+.team-icon img.cadillac {
+  width: 23px;
+  height: 9px;
+  filter: brightness(0) invert(1);
+  transform: scale(1.1);
+}
+
+.team-icon img.audi {
+  filter: brightness(0) invert(1);
+  transform: scale(1.6);
+}
+
+.team-icon img.plcholder {
+  filter: brightness(0) invert(1);
+}
+
+/* =========================================
+   GRID SPECIFIC LOGO TUNING
+========================================= */
+
+.grid-team-icon img.alpine {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.williams {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.mercedes {
+  filter: brightness(0) !important;
+}
+
+// .grid-team-icon img.haas {
+//   filter: brightness(0) saturate(100%);
+// }
+
+.grid-team-icon img.forceindia {
+  filter: brightness(0) invert(1) drop-shadow(0 0 1px rgba(0, 0, 0, 0.7));
+}
+
+.grid-team-icon img.redbull {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));
+}
+
+.grid-team-icon img.mclaren {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.renault {
+  filter: brightness(0) !important;
+  //   drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));
+}
+
+.grid-team-icon img.racingpoint {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.alphatauri {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.racingbulls {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.kicksauber {
+  filter: brightness(0) !important;
+}
+
+.grid-team-icon img.cadillac {
+  filter: brightness(0) !important;
+}
+
+.driver-color {
+  width: 3px;
+
+  height: 14px;
+
+  border-radius: 2px;
+}

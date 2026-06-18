@@ -1,0 +1,219 @@
+<!-- ========================================= -->
+<!-- HEADER
+  ========================================= -->
+
+<header class="page-header">
+  <div class="back-button" (click)="goBack()">
+    <span class="back-chevron"></span>
+  </div>
+
+  <div class="page-title">
+    {{ raceName | uppercase }}
+  </div>
+</header>
+
+<div class="qualifying-shell">
+  <!-- ========================================= -->
+  <!-- CONTENT
+  ========================================= -->
+
+  <div class="qualifying-page">
+    <!-- ========================================= -->
+    <!-- LEFT PANEL
+    ========================================= -->
+
+    <section class="results-panel">
+      <div class="results-title">QUALIFYING RESULTS</div>
+
+      <!-- Q3 -->
+
+      <div class="session-group">
+        <div class="session-rail">Q3</div>
+
+        <div class="session-content">
+          <div class="result-row" *ngFor="let driver of q3Drivers">
+            <div class="position">
+              {{ driver.position }}
+            </div>
+
+            <div
+              class="driver-color"
+              [style.background]="'#' + driver.teamColor"
+            ></div>
+
+            <div class="driver-code">
+              {{ driver.abbreviation }}
+            </div>
+
+            <div class="team-icon">
+              <img
+                [src]="getTeamLogo(driver.teamName)"
+                [class]="getLogoClass(driver.teamName)"
+              />
+            </div>
+
+            <div class="lap-time">
+              {{ driver.finalLapTime }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+
+      <div class="session-group">
+        <div class="session-rail">Q2</div>
+
+        <div class="session-content">
+          <div class="result-row" *ngFor="let driver of q2Drivers">
+            <div class="position">
+              {{ driver.position }}
+            </div>
+
+            <div
+              class="driver-color"
+              [style.background]="'#' + driver.teamColor"
+            ></div>
+
+            <div class="driver-code">
+              {{ driver.abbreviation }}
+            </div>
+
+            <div class="team-icon">
+              <img
+                [src]="getTeamLogo(driver.teamName)"
+                [class]="getLogoClass(driver.teamName)"
+              />
+            </div>
+
+            <div class="lap-time">
+              {{ driver.finalLapTime }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q1 -->
+
+      <div class="session-group">
+        <div class="session-rail">Q1</div>
+
+        <div class="session-content">
+          <div class="result-row" *ngFor="let driver of q1Drivers">
+            <div class="position">
+              {{ driver.position }}
+            </div>
+
+            <div
+              class="driver-color"
+              [style.background]="'#' + driver.teamColor"
+            ></div>
+
+            <div class="driver-code">
+              {{ driver.abbreviation }}
+            </div>
+
+            <div class="team-icon">
+              <img
+                [src]="getTeamLogo(driver.teamName)"
+                [class]="getLogoClass(driver.teamName)"
+              />
+            </div>
+
+            <div class="lap-time">
+              {{ driver.finalLapTime }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================= -->
+    <!-- RIGHT PANEL
+    ========================================= -->
+
+    <section class="grid-panel">
+      <div class="panel-title">STARTING GRID</div>
+
+      <div class="starting-grid">
+        <!-- LEFT -->
+
+        <div class="grid-column">
+          <div class="grid-row" *ngFor="let driver of leftGridDrivers">
+            <div class="grid-position">P{{ driver.gridPosition }}</div>
+
+            <div
+              class="grid-driver"
+              [style.background]="'#' + driver.teamColor"
+              [style.color]="getTextColor(driver.teamColor)"
+            >
+              <div class="team-icon grid-team-icon">
+                <img
+                  [src]="getTeamLogo(driver.teamName)"
+                  [class]="getLogoClass(driver.teamName)"
+                />
+              </div>
+
+              <div class="driver-name">
+                {{ driver.lastName | uppercase }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="grid-column staggered">
+          <div class="grid-row" *ngFor="let driver of rightGridDrivers">
+            <div class="grid-position">P{{ driver.gridPosition }}</div>
+
+            <div
+              class="grid-driver"
+              [style.background]="'#' + driver.teamColor"
+              [style.color]="getTextColor(driver.teamColor)"
+            >
+              <div class="team-icon grid-team-icon">
+                <img
+                  [src]="getTeamLogo(driver.teamName)"
+                  [class]="getLogoClass(driver.teamName)"
+                />
+              </div>
+
+              <div class="driver-name">
+                {{ driver.lastName | uppercase }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIT LANE -->
+
+      <div class="pitlane-section" *ngIf="pitLaneDrivers.length > 0">
+        <div class="pitlane-title">PIT LANE STARTS</div>
+
+        <div class="pitlane-grid">
+          <div
+            class="pitlane-card"
+            *ngFor="let driver of pitLaneDrivers"
+            [style.background]="'#' + driver.teamColor"
+            [style.color]="getTextColor(driver.teamColor)"
+          >
+            <div class="team-icon grid-team-icon">
+              <img
+                [src]="getTeamLogo(driver.teamName)"
+                [class]="getLogoClass(driver.teamName)"
+              />
+            </div>
+
+            <div class="driver-name">
+              {{ driver.lastName | uppercase }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="simulate-button">SIMULATE RACE</button>
+    </section>
+  </div>
+</div>
