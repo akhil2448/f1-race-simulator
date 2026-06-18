@@ -27,6 +27,8 @@ export interface BootstrapStep {
   label: string;
 
   status: 'pending' | 'loading' | 'success' | 'error';
+
+  retryCount?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -64,9 +66,15 @@ export class SimulationBootstrapService {
 
   steps$ = this.stepsSubject.asObservable();
 
+  private bootstrapCompleteSubject = new BehaviorSubject<boolean>(false);
+
+  bootstrapComplete$ = this.bootstrapCompleteSubject.asObservable();
+
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
     this.initializeSteps();
+
+    this.bootstrapCompleteSubject.next(false);
 
     const { year, round } = config;
 
@@ -172,9 +180,15 @@ export class SimulationBootstrapService {
 
             this.telemetry.initialize(year, round, trackLength).subscribe({
               next: () => {
+                this.updateStep('telemetry', 'success');
+
+                this.updateStep('engine', 'loading');
+
                 this.engine.initialize();
 
-                this.updateStep('telemetry', 'success');
+                this.updateStep('engine', 'success');
+
+                this.bootstrapCompleteSubject.next(true);
               },
 
               error: () => {
@@ -183,7 +197,9 @@ export class SimulationBootstrapService {
             });
           },
 
-          error: () => {
+          error: (err) => {
+            console.error('TRACK MAP REQUEST FAILED', err);
+
             this.updateStep('track-map', 'error');
           },
         });
@@ -199,7 +215,7 @@ export class SimulationBootstrapService {
     this.stepsSubject.next([
       {
         id: 'race-data',
-        label: 'Fetching race data',
+        label: 'Loading race data',
         status: 'pending',
       },
       {
@@ -209,27 +225,32 @@ export class SimulationBootstrapService {
       },
       {
         id: 'weather',
-        label: 'Fetching weather data',
+        label: 'Loading weather information',
         status: 'pending',
       },
       {
         id: 'track-status',
-        label: 'Fetching track status',
+        label: 'Loading track status',
         status: 'pending',
       },
       {
         id: 'race-control',
-        label: 'Fetching race control messages',
+        label: 'Loading race control messages',
         status: 'pending',
       },
       {
         id: 'local-time',
-        label: 'Fetching track local time',
+        label: 'Synchronizing local track time',
         status: 'pending',
       },
       {
         id: 'telemetry',
-        label: 'Fetching telemetry data',
+        label: 'Loading telemetry',
+        status: 'pending',
+      },
+      {
+        id: 'engine',
+        label: 'Initializing simulation engine',
         status: 'pending',
       },
     ]);

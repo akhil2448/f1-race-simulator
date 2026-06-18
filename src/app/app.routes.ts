@@ -16,7 +16,7 @@ export const routes: Routes = [
         path: 'qualifying/:year/:round',
         component: QualifyingComponent,
       },
-      { path: 'simulate', component: SimulationComponent },
+      { path: 'simulation', component: SimulationComponent },
     ],
   },
 ];

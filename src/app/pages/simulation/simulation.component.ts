@@ -67,10 +67,10 @@ export class SimulationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.bootstrap.startRace({
-      year: this.currentYear,
-      round: this.currentRound,
-    });
+    // this.bootstrap.startRace({
+    //   year: this.currentYear,
+    //   round: this.currentRound,
+    // });
 
     this.bootstrap.steps$.subscribe((steps) => {
       console.log('BOOTSTRAP STEPS');

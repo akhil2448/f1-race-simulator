@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, filter } from 'rxjs';
 
 import {
   QualifyingDriver,
@@ -13,11 +13,16 @@ import {
 
 import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
 import { RaceSelectionStateService } from '../../core/services/race-selection-state.service';
+import {
+  BootstrapStep,
+  SimulationBootstrapService,
+} from '../../core/services/simulation-bootstrap.service';
+import { BootstrapLoadingOverlayComponent } from '../bootstrap-loading-overlay/bootstrap-loading-overlay.component';
 
 @Component({
   selector: 'app-qualifying',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BootstrapLoadingOverlayComponent],
   templateUrl: './qualifying.component.html',
   styleUrls: ['./qualifying.component.scss'],
 })
@@ -30,6 +35,7 @@ export class QualifyingComponent implements OnInit {
   private readonly qualifyingService = inject(QualifyingService);
 
   private readonly overlay = inject(LoadingOverlayService);
+  private readonly bootstrap = inject(SimulationBootstrapService);
 
   private readonly MIN_LOADING_MS = 2500;
 
@@ -52,6 +58,18 @@ export class QualifyingComponent implements OnInit {
   rightGridDrivers: QualifyingDriver[] = [];
 
   pitLaneDrivers: QualifyingDriver[] = [];
+
+  bootstrapSteps: BootstrapStep[] = [];
+
+  showBootstrapOverlay = false;
+
+  constructor() {
+    this.bootstrap.steps$.subscribe((steps) => {
+      console.log('OVERLAY STEPS', steps);
+
+      this.bootstrapSteps = steps;
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     this.year = Number(this.route.snapshot.paramMap.get('year'));
@@ -177,6 +195,21 @@ export class QualifyingComponent implements OnInit {
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
     return brightness > 120 ? '#000000' : '#ffffff';
+  }
+
+  startSimulation(): void {
+    this.showBootstrapOverlay = true;
+
+    this.bootstrap.startRace({
+      year: this.year,
+      round: this.round,
+    });
+
+    this.bootstrap.bootstrapComplete$
+      .pipe(filter((done) => done))
+      .subscribe(() => {
+        this.router.navigate(['/simulation']);
+      });
   }
 
   goBack(): void {

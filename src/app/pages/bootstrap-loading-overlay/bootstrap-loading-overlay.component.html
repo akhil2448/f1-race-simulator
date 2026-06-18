@@ -1,0 +1,27 @@
+<div class="overlay-backdrop">
+  <div class="overlay-card">
+    <div class="race-title">
+      {{ raceName | uppercase }}
+    </div>
+
+    <div class="steps">
+      <div class="step-row" *ngFor="let step of steps">
+        <div class="step-icon" [ngClass]="step.status">
+          <span *ngIf="step.status === 'pending'">○</span>
+
+          <span *ngIf="step.status === 'success'">✓</span>
+
+          <span *ngIf="step.status === 'error'">✕</span>
+
+          <span *ngIf="step.status === 'loading'" class="spinner"></span>
+        </div>
+
+        <div class="step-label">
+          {{ step.label }}
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-text">PREPARING REPLAY</div>
+  </div>
+</div>

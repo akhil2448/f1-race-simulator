@@ -7,7 +7,7 @@
     <span class="back-chevron"></span>
   </div>
 
-  <div class="page-title">{{ raceName | uppercase }}, {{ year }}</div>
+  <div class="page-title">{{ raceName | uppercase }} {{ year }}</div>
 </header>
 
 <div class="qualifying-shell">
@@ -223,7 +223,16 @@
         </div>
       </div>
 
-      <button class="simulate-button">SIMULATE RACE</button>
+      <button class="simulate-button" (click)="startSimulation()">
+        SIMULATE RACE
+      </button>
     </section>
   </div>
+
+  <app-bootstrap-loading-overlay
+    *ngIf="showBootstrapOverlay"
+    [raceName]="raceName + ' ' + year"
+    [steps]="bootstrapSteps"
+  >
+  </app-bootstrap-loading-overlay>
 </div>
