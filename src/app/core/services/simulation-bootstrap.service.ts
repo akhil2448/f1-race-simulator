@@ -21,6 +21,14 @@ import { FastestLapService } from './fastest-lap.service';
 import { RaceControlService } from './race-control.service';
 import { RaceApiResponse } from '../models/race-data.model';
 
+export interface BootstrapStep {
+  id: string;
+
+  label: string;
+
+  status: 'pending' | 'loading' | 'success' | 'error';
+}
+
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
   private availableDriversSubject = new BehaviorSubject<string[]>([]);
@@ -52,64 +60,186 @@ export class SimulationBootstrapService {
     private raceControl: RaceControlService,
   ) {}
 
+  private stepsSubject = new BehaviorSubject<BootstrapStep[]>([]);
+
+  steps$ = this.stepsSubject.asObservable();
+
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
+    this.initializeSteps();
+
     const { year, round } = config;
 
-    this.raceDataService.getRaceData(year, round).subscribe((raceData) => {
-      /* ---------- STATIC META ---------- */
-      this.driverMeta.initialize(raceData.drivers);
-      this.sectorAnchors.initialize(raceData);
-      this.raceFinish.initialize(raceData);
-      this.fastestLap.initialize(raceData);
+    this.updateStep('race-data', 'loading');
 
-      this.leaderboard.setTotalLaps(raceData.session.totalLaps);
-      this.leaderboard.initialize(raceData);
-      this.availableDriversSubject.next(Object.keys(raceData.drivers));
-      this.raceDataSubject.next(raceData);
+    this.raceDataService.getRaceData(year, round).subscribe({
+      next: (raceData) => {
+        this.updateStep('race-data', 'success');
+        /* ---------- STATIC META ---------- */
+        this.driverMeta.initialize(raceData.drivers);
+        this.sectorAnchors.initialize(raceData);
+        this.raceFinish.initialize(raceData);
+        this.fastestLap.initialize(raceData);
 
-      const outDrivers = raceData.results.classification
-        .filter((result) => result.status === 'OUT')
-        .map((result) => result.driver);
+        this.leaderboard.setTotalLaps(raceData.session.totalLaps);
+        this.leaderboard.initialize(raceData);
+        this.availableDriversSubject.next(Object.keys(raceData.drivers));
+        this.raceDataSubject.next(raceData);
 
-      this.driverPresence.setOfficiallyOutDrivers(outDrivers);
+        const outDrivers = raceData.results.classification
+          .filter((result) => result.status === 'OUT')
+          .map((result) => result.driver);
 
-      /* ---------- TRACK STATUS ---------- */
-      this.trackStatusApi
-        .getTrackStatusData(year, round)
-        .subscribe((res) => this.trackStatus.initialize(res.trackStatusData));
+        this.driverPresence.setOfficiallyOutDrivers(outDrivers);
 
-      /* ---------- LOCAL TIME ---------- */
-      this.raceLocalTime.initialize(raceData.session.localTimeAtRaceStart);
+        /* ---------- TRACK STATUS ---------- */
+        this.updateStep('track-status', 'loading');
 
-      /* ---------- WEATHER ---------- */
-      this.weatherService.load(year, round);
+        this.trackStatusApi.getTrackStatusData(year, round).subscribe({
+          next: (res) => {
+            this.trackStatus.initialize(res.trackStatusData);
 
-      /* ---------- RACE CONTROL ---------- */
-      this.raceControl.getRaceControl(year, round).subscribe();
+            this.updateStep('track-status', 'success');
+          },
 
-      /* ---------- TRACK MAP → TIMING → TELEMETRY ---------- */
-      this.trackMap.load(year, round).subscribe((data) => {
-        this.trackMapState.setTrackData(data);
-
-        const trackLength = data.trackInfo.trackLength;
-
-        if (!trackLength) {
-          throw new Error('Track length not available');
-        }
-
-        const timingLoopCount = data.trackInfo.timingLoopCount;
-
-        if (timingLoopCount !== null) {
-          this.timingProcessor.setTimingLoopCount(timingLoopCount);
-        }
-
-        this.liveTiming.initialize(raceData, trackLength);
-
-        this.telemetry.initialize(year, round, trackLength).subscribe(() => {
-          this.engine.initialize();
+          error: () => {
+            this.updateStep('track-status', 'error');
+          },
         });
-      });
+
+        /* ---------- LOCAL TIME ---------- */
+        this.updateStep('local-time', 'loading');
+
+        this.raceLocalTime.initialize(raceData.session.localTimeAtRaceStart);
+
+        this.updateStep('local-time', 'success');
+
+        /* ---------- WEATHER ---------- */
+        /* ---------- WEATHER ---------- */
+
+        this.updateStep('weather', 'loading');
+
+        this.weatherService.load(year, round).subscribe({
+          next: (res) => {
+            this.weatherService.setWeatherData(res.weatherData);
+
+            this.updateStep('weather', 'success');
+          },
+
+          error: () => {
+            this.updateStep('weather', 'error');
+          },
+        });
+
+        /* ---------- RACE CONTROL ---------- */
+        this.updateStep('race-control', 'loading');
+
+        this.raceControl.getRaceControl(year, round).subscribe({
+          next: () => {
+            this.updateStep('race-control', 'success');
+          },
+
+          error: () => {
+            this.updateStep('race-control', 'error');
+          },
+        });
+
+        /* ---------- TRACK MAP → TIMING → TELEMETRY ---------- */
+
+        this.updateStep('track-map', 'loading');
+
+        this.trackMap.load(year, round).subscribe({
+          next: (data) => {
+            this.trackMapState.setTrackData(data);
+
+            this.updateStep('track-map', 'success');
+
+            const trackLength = data.trackInfo.trackLength;
+
+            if (!trackLength) {
+              throw new Error('Track length not available');
+            }
+
+            const timingLoopCount = data.trackInfo.timingLoopCount;
+
+            if (timingLoopCount !== null) {
+              this.timingProcessor.setTimingLoopCount(timingLoopCount);
+            }
+
+            this.liveTiming.initialize(raceData, trackLength);
+
+            this.updateStep('telemetry', 'loading');
+
+            this.telemetry.initialize(year, round, trackLength).subscribe({
+              next: () => {
+                this.engine.initialize();
+
+                this.updateStep('telemetry', 'success');
+              },
+
+              error: () => {
+                this.updateStep('telemetry', 'error');
+              },
+            });
+          },
+
+          error: () => {
+            this.updateStep('track-map', 'error');
+          },
+        });
+      },
+
+      error: () => {
+        this.updateStep('race-data', 'error');
+      },
     });
+  }
+
+  private initializeSteps(): void {
+    this.stepsSubject.next([
+      {
+        id: 'race-data',
+        label: 'Fetching race data',
+        status: 'pending',
+      },
+      {
+        id: 'track-map',
+        label: 'Building track map',
+        status: 'pending',
+      },
+      {
+        id: 'weather',
+        label: 'Fetching weather data',
+        status: 'pending',
+      },
+      {
+        id: 'track-status',
+        label: 'Fetching track status',
+        status: 'pending',
+      },
+      {
+        id: 'race-control',
+        label: 'Fetching race control messages',
+        status: 'pending',
+      },
+      {
+        id: 'local-time',
+        label: 'Fetching track local time',
+        status: 'pending',
+      },
+      {
+        id: 'telemetry',
+        label: 'Fetching telemetry data',
+        status: 'pending',
+      },
+    ]);
+  }
+
+  private updateStep(id: string, status: BootstrapStep['status']): void {
+    const updated = this.stepsSubject.value.map((step) =>
+      step.id === id ? { ...step, status } : step,
+    );
+
+    this.stepsSubject.next(updated);
   }
 }

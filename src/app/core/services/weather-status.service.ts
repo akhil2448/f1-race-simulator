@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { RaceClockService } from './race-clock-service';
@@ -26,12 +26,12 @@ export class WeatherStatusService {
     });
   }
 
-  load(year: number, round: number): void {
-    this.http
-      .get<WeatherResponse>(`/api/weather/${year}/${round}`)
-      .subscribe((res) => {
-        this.weatherData = res.weatherData;
-      });
+  load(year: number, round: number): Observable<WeatherResponse> {
+    return this.http.get<WeatherResponse>(`/api/weather/${year}/${round}`);
+  }
+
+  setWeatherData(weatherData: WeatherEntry[]): void {
+    this.weatherData = weatherData;
   }
 
   private updateCurrentWeather(raceSecond: number): void {

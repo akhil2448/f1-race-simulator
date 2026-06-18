@@ -72,6 +72,11 @@ export class SimulationComponent implements OnInit {
       round: this.currentRound,
     });
 
+    this.bootstrap.steps$.subscribe((steps) => {
+      console.log('BOOTSTRAP STEPS');
+      console.table(steps);
+    });
+
     this.raceClock.raceTime$.subscribe((raceSecond) => {
       this.updateActiveRedFlag(raceSecond);
     });
