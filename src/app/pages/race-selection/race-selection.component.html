@@ -1,1 +1,65 @@
-<p>race-selection works!</p>
+<div class="race-selection-page">
+  <div class="page-header">
+    <div class="page-title">F1 RACE REPLAY</div>
+
+    <div class="page-subtitle">SELECT SEASON</div>
+
+    <select
+      class="year-selector"
+      [(ngModel)]="selectedYear"
+      (change)="onYearChange()"
+    >
+      <option *ngFor="let year of years" [value]="year">
+        {{ year }}
+      </option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">Loading schedule...</div>
+
+  <div *ngIf="error" class="error-state">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="race-grid">
+    <div class="race-card" *ngFor="let race of races">
+      <div class="round-label">ROUND {{ race.round }}</div>
+
+      <div class="race-header">
+        <div class="race-info">
+          <div class="race-name">
+            {{ race.raceName }}
+          </div>
+
+          <div class="location">{{ race.location }}, {{ race.country }}</div>
+        </div>
+
+        <img
+          class="country-flag"
+          [src]="getFlagUrl(race.country)"
+          [alt]="race.country"
+        />
+      </div>
+
+      <div class="session-block">
+        <div class="session-title">QUALIFYING</div>
+
+        <div class="session-time">
+          {{ formatDate(race.qualifyingDate) }}
+        </div>
+      </div>
+
+      <div class="session-block">
+        <div class="session-title">RACE</div>
+
+        <div class="session-time">
+          {{ formatDate(race.raceDate) }}
+        </div>
+      </div>
+
+      <button class="jump-button" (click)="jumpToQualifyingResults(race)">
+        JUMP TO QUALIFYING RESULTS
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,227 @@
+:host {
+  display: block;
+  min-height: 100vh;
+
+  background: #1d1b1b;
+  color: #e5e7eb;
+}
+
+.race-selection-page {
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding: 40px 32px 60px;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-bottom: 48px;
+}
+
+.page-title {
+  font-family:
+    "Formula1Wide", "Formula1Bold", "Formula1", "KHInterference", sans-serif;
+
+  font-size: 36px;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 20px;
+}
+
+.page-subtitle {
+  font-family: "Formula1Bold", "Formula1", "KHInterference", sans-serif;
+
+  font-size: 16px;
+
+  opacity: 0.85;
+
+  margin-bottom: 16px;
+}
+
+.year-selector {
+  min-width: 180px;
+
+  padding: 10px 14px;
+
+  background: #2a2a2a;
+
+  color: #e5e7eb;
+
+  border: 1px solid #3c3c3c;
+
+  border-radius: 6px;
+
+  font-family: "Formula1", "KHInterference", sans-serif;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+
+  padding: 40px;
+
+  font-family: "Formula1", "KHInterference", sans-serif;
+}
+
+.error-state {
+  color: #ff6b6b;
+}
+
+.race-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+
+  gap: 24px;
+}
+
+.race-card {
+  position: relative;
+
+  overflow: hidden;
+
+  background: #262626;
+
+  border-top: 4px solid #e10600;
+
+  border-radius: 10px;
+
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.race-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.round-label {
+  font-family: "Formula1", "KHInterference", sans-serif;
+
+  font-size: 11px;
+
+  opacity: 0.7;
+
+  margin-bottom: 12px;
+}
+
+.race-header {
+  display: flex;
+
+  align-items: stretch;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 24px;
+}
+
+.race-info {
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: space-between;
+}
+
+.country-flag {
+  width: 60px;
+
+  height: auto;
+
+  align-self: stretch;
+
+  object-fit: cover;
+
+  border-radius: 4px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  flex-shrink: 0;
+}
+
+.race-name {
+  font-family: "Formula1Bold", "Formula1", "KHInterference", sans-serif;
+
+  font-size: 22px;
+
+  line-height: 1.25;
+
+  flex: 1;
+}
+
+.session-block {
+  margin-bottom: 18px;
+}
+
+.session-title {
+  font-family: "Formula1Bold", "Formula1", "KHInterference", sans-serif;
+
+  font-size: 11px;
+
+  color: #e10600;
+
+  margin-bottom: 6px;
+}
+
+.session-time {
+  font-family: "Formula1", "KHInterference", sans-serif;
+
+  font-size: 14px;
+}
+
+.jump-button {
+  margin-top: auto;
+
+  padding: 12px 16px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background: #e10600;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-family: "Formula1Bold", "Formula1", "KHInterference", sans-serif;
+
+  font-size: 12px;
+
+  transition: background 0.2s ease;
+}
+
+.jump-button:hover {
+  background: #ff1c15;
+}
+
+@media (max-width: 768px) {
+  .race-selection-page {
+    padding: 24px 16px 40px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .race-grid {
+    grid-template-columns: 1fr;
+  }
+}
