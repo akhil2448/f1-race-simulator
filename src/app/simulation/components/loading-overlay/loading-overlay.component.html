@@ -2,6 +2,8 @@
   <div class="loader-container">
     <div class="spinner"></div>
 
-    <div class="text">Jumping to race restart...</div>
+    <div class="text">
+      {{ overlay.message$ | async }}
+    </div>
   </div>
 </div>

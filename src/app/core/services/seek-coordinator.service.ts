@@ -54,7 +54,7 @@ export class SeekCoordinatorService {
    2. SHOW LOADING OVERLAY
    ========================================= */
 
-    this.overlay.show();
+    this.overlay.show('Jumping to race restart...');
 
     /* =========================================
    3. PAUSE PLAYBACK

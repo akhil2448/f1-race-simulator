@@ -2,8 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 import { countryCodeMap } from '../../core/constants/country-code-map';
+
+import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
 
 export interface RaceSchedule {
   round: number;
@@ -49,6 +52,12 @@ export class RaceSelectionComponent implements OnInit {
 
   error: string | null = null;
 
+  private readonly MIN_LOADING_MS = 2500;
+
+  private readonly MAX_RETRIES = 3;
+
+  private readonly overlay = inject(LoadingOverlayService);
+
   ngOnInit(): void {
     this.initializeYears();
 
@@ -69,22 +78,62 @@ export class RaceSelectionComponent implements OnInit {
     this.loadSchedule();
   }
 
-  loadSchedule(): void {
-    this.loading = true;
+  async loadSchedule(): Promise<void> {
     this.error = null;
 
-    this.http
-      .get<YearScheduleResponse>(`/api/schedule/${this.selectedYear}`)
-      .subscribe({
-        next: (response) => {
-          this.races = response.races;
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-          this.error = 'Unable to load race schedule.';
-        },
-      });
+    this.races = [];
+
+    this.overlay.show('Fetching race schedule...');
+
+    const startTime = Date.now();
+
+    try {
+      const response = await this.fetchScheduleWithRetry();
+
+      const elapsed = Date.now() - startTime;
+
+      const remaining = Math.max(0, this.MIN_LOADING_MS - elapsed);
+
+      await this.delay(remaining);
+
+      this.races = response.races;
+    } catch {
+      this.error = 'Unable to load race schedule. Please try again.';
+    } finally {
+      this.overlay.hide();
+    }
+  }
+
+  private async fetchScheduleWithRetry(): Promise<YearScheduleResponse> {
+    let attempt = 0;
+
+    while (attempt < this.MAX_RETRIES) {
+      try {
+        return await firstValueFrom(
+          this.http.get<YearScheduleResponse>(
+            `/api/schedule/${this.selectedYear}`,
+          ),
+        );
+      } catch {
+        attempt++;
+
+        if (attempt >= this.MAX_RETRIES) {
+          throw new Error();
+        }
+
+        this.error = `Connection issue. Retrying (${attempt}/${this.MAX_RETRIES})...`;
+
+        await this.delay(1000);
+      }
+    }
+
+    throw new Error();
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   formatDate(dateString: string): string {

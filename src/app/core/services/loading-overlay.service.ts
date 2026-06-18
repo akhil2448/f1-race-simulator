@@ -8,9 +8,15 @@ import { BehaviorSubject } from 'rxjs';
 export class LoadingOverlayService {
   private visibleSubject = new BehaviorSubject<boolean>(false);
 
+  private messageSubject = new BehaviorSubject<string>('Loading...');
+
   visible$ = this.visibleSubject.asObservable();
 
-  show(): void {
+  message$ = this.messageSubject.asObservable();
+
+  show(message: string = 'Loading...'): void {
+    this.messageSubject.next(message);
+
     this.visibleSubject.next(true);
   }
 
