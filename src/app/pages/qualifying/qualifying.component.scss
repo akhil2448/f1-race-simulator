@@ -74,13 +74,14 @@
 }
 
 .page-title {
-  font-family: "Formula1Wide", "Formula1Bold", sans-serif;
+  font-family: "Formula1Bold", sans-serif;
 
   font-size: 24px;
 
   color: white;
 
   line-height: 1;
+  letter-spacing: 3;
 }
 
 /* =========================================
@@ -168,11 +169,12 @@
   display: grid;
 
   grid-template-columns:
-    44px
-    4px
-    58px
-    44px
-    1fr;
+    44px /* pos */
+    4px /* color bar */
+    58px /* abbreviation */
+    44px /* logo */
+    minmax(120px, 1fr) /* team name */
+    75px; /* lap time */
 
   align-items: center;
 
@@ -197,22 +199,43 @@
   font-family: "Formula1", sans-serif;
 }
 
+.team-name {
+  font-size: 15px;
+
+  font-family: "Formula1", sans-serif;
+
+  padding-left: 15px;
+
+  opacity: 0.75;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
 .lap-time {
-  text-align: right;
+  text-align: left;
 
   font-size: 15px;
 
   font-family: "Formula1", sans-serif;
+  opacity: 0.9;
 }
 
+.lap-time.no-time {
+  text-align: center;
+}
 /* =========================================
    GRID
 ========================================= */
 
 .grid-panel {
   display: flex;
-
   flex-direction: column;
+
+  min-height: 0;
 }
 
 .panel-title {
@@ -224,15 +247,13 @@
 }
 
 .starting-grid {
-  flex: 1;
-
-  min-height: 0;
-
   display: grid;
 
   grid-template-columns: 1fr 1fr;
 
   gap: 22px;
+
+  flex: 0 0 auto;
 }
 
 .grid-column {
@@ -304,11 +325,19 @@
 ========================================= */
 
 .pitlane-section {
-  margin-top: 12px;
+  margin-top: 16px;
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-height: 0;
 }
 
 .pitlane-title {
-  color: #e10600;
+  color: #ffffff;
 
   margin-bottom: 10px;
 
@@ -316,16 +345,14 @@
 }
 
 .pitlane-grid {
-  display: flex;
+  display: grid;
 
-  flex-wrap: wrap;
+  grid-template-columns: 1fr 1fr;
 
   gap: 8px;
 }
 
 .pitlane-card {
-  min-width: 180px;
-
   height: 42px;
 
   border-radius: 8px;
@@ -344,7 +371,7 @@
 ========================================= */
 
 .simulate-button {
-  margin-top: 14px;
+  margin-top: auto;
 
   height: 52px;
 

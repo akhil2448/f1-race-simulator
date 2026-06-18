@@ -7,9 +7,7 @@
     <span class="back-chevron"></span>
   </div>
 
-  <div class="page-title">
-    {{ raceName | uppercase }}
-  </div>
+  <div class="page-title">{{ raceName | uppercase }}, {{ year }}</div>
 </header>
 
 <div class="qualifying-shell">
@@ -52,8 +50,12 @@
               />
             </div>
 
-            <div class="lap-time">
-              {{ driver.finalLapTime }}
+            <div class="team-name">
+              {{ driver.teamName }}
+            </div>
+
+            <div class="lap-time" [class.no-time]="!driver.finalLapTime">
+              {{ driver.finalLapTime || "-" }}
             </div>
           </div>
         </div>
@@ -86,8 +88,12 @@
               />
             </div>
 
-            <div class="lap-time">
-              {{ driver.finalLapTime }}
+            <div class="team-name">
+              {{ driver.teamName }}
+            </div>
+
+            <div class="lap-time" [class.no-time]="!driver.finalLapTime">
+              {{ driver.finalLapTime || "-" }}
             </div>
           </div>
         </div>
@@ -120,8 +126,12 @@
               />
             </div>
 
-            <div class="lap-time">
-              {{ driver.finalLapTime }}
+            <div class="team-name">
+              {{ driver.teamName }}
+            </div>
+
+            <div class="lap-time" [class.no-time]="!driver.finalLapTime">
+              {{ driver.finalLapTime || "-" }}
             </div>
           </div>
         </div>
