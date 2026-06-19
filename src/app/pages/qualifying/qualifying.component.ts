@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { firstValueFrom, filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
   QualifyingDriver,
@@ -18,6 +19,7 @@ import {
   SimulationBootstrapService,
 } from '../../core/services/simulation-bootstrap.service';
 import { BootstrapLoadingOverlayComponent } from '../bootstrap-loading-overlay/bootstrap-loading-overlay.component';
+import { BootstrapFailureType } from '../../core/services/simulation-bootstrap.service';
 
 @Component({
   selector: 'app-qualifying',
@@ -36,6 +38,8 @@ export class QualifyingComponent implements OnInit {
 
   private readonly overlay = inject(LoadingOverlayService);
   private readonly bootstrap = inject(SimulationBootstrapService);
+
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly MIN_LOADING_MS = 2500;
 
@@ -63,11 +67,17 @@ export class QualifyingComponent implements OnInit {
 
   showBootstrapOverlay = false;
 
+  failureType: BootstrapFailureType = 'none';
+
   constructor() {
     this.bootstrap.steps$.subscribe((steps) => {
       console.log('OVERLAY STEPS', steps);
 
       this.bootstrapSteps = steps;
+    });
+
+    this.bootstrap.failureType$.subscribe((type) => {
+      this.failureType = type;
     });
   }
 
@@ -78,6 +88,17 @@ export class QualifyingComponent implements OnInit {
     this.round = Number(this.route.snapshot.paramMap.get('round'));
 
     await this.loadQualifying();
+
+    this.bootstrap.bootstrapComplete$
+      .pipe(
+        filter((done) => done),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        if (this.failureType === 'none') {
+          this.router.navigate(['/simulation']);
+        }
+      });
   }
 
   async loadQualifying(): Promise<void> {
@@ -204,12 +225,6 @@ export class QualifyingComponent implements OnInit {
       year: this.year,
       round: this.round,
     });
-
-    this.bootstrap.bootstrapComplete$
-      .pipe(filter((done) => done))
-      .subscribe(() => {
-        this.router.navigate(['/simulation']);
-      });
   }
 
   goBack(): void {

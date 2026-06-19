@@ -30,5 +30,22 @@
     </div>
 
     <div class="footer-text">PREPARING REPLAY</div>
+    <!-- MANDATORY FAILURE -->
+
+    <div class="failure-panel mandatory" *ngIf="failureType === 'mandatory'">
+      <div class="failure-title">Race Metadata Fetch Failed</div>
+
+      <div class="failure-message">Unable to prepare this replay.</div>
+    </div>
+
+    <!-- OPTIONAL FAILURE -->
+
+    <div class="failure-panel optional" *ngIf="failureType === 'optional'">
+      <div class="failure-title">Some Components Failed To Load</div>
+
+      <div class="failure-message">
+        The replay can still run, but some features may not work.
+      </div>
+    </div>
   </div>
 </div>

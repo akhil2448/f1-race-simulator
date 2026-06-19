@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { BootstrapStep } from '../../core/services/simulation-bootstrap.service';
+import {
+  BootstrapFailureType,
+  BootstrapStep,
+} from '../../core/services/simulation-bootstrap.service';
 
 @Component({
   selector: 'app-bootstrap-loading-overlay',
@@ -14,4 +17,16 @@ export class BootstrapLoadingOverlayComponent {
   @Input() raceName = '';
 
   @Input() steps: BootstrapStep[] = [];
+
+  @Input()
+  failureType: BootstrapFailureType = 'none';
+
+  @Output()
+  retry = new EventEmitter<void>();
+
+  @Output()
+  continueAnyway = new EventEmitter<void>();
+
+  @Output()
+  tryAnotherRace = new EventEmitter<void>();
 }

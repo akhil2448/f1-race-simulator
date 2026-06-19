@@ -141,3 +141,31 @@
     transform: rotate(360deg);
   }
 }
+
+.failure-panel {
+  margin-top: 24px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  text-align: center;
+}
+
+.failure-title {
+  color: #ef4444;
+
+  font-size: 18px;
+
+  font-family: "Formula1Bold", sans-serif;
+
+  margin-bottom: 10px;
+}
+
+.failure-message {
+  color: #d1d5db;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
