@@ -1,0 +1,17 @@
+<div class="modal-backdrop" *ngIf="visible" (click)="cancel.emit()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">EXIT REPLAY</div>
+
+    <div class="modal-body">Are you sure you want to leave this replay?</div>
+
+    <div class="modal-subtext">Replay progress will be lost.</div>
+
+    <div class="actions">
+      <app-button variant="secondary" (clicked)="cancel.emit()">
+        NO, CONTINUE
+      </app-button>
+
+      <app-button (clicked)="confirm.emit()"> YES, EXIT </app-button>
+    </div>
+  </div>
+</div>

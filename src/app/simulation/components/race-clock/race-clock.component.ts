@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { RaceClockService } from '../../../core/services/race-clock-service';
@@ -17,6 +23,9 @@ export class RaceClockComponent implements OnInit, OnDestroy {
   speed: 0.5 | 1 | 2 | 4 = 1;
 
   paused!: boolean;
+
+  @Output()
+  stopRequested = new EventEmitter<void>();
 
   constructor(private raceClock: RaceClockService) {}
 
@@ -44,7 +53,7 @@ export class RaceClockComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.raceClock.reset();
+    this.stopRequested.emit();
   }
 
   setSpeed(multiplier: 0.5 | 1 | 2 | 4) {

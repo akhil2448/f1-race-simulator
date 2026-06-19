@@ -61,6 +61,12 @@
     <div class="controls-row">
       <app-race-controls></app-race-controls>
     </div>
+    <!-- <button
+      style="position: absolute; top: 20px; right: 20px; z-index: 10000"
+      (click)="openExitModal()"
+    >
+      TEST EXIT
+    </button> -->
   </div>
 
   <!-- TRACK SIDE -->
@@ -68,7 +74,7 @@
     <!-- TOP HUD -->
     <div class="track-hud">
       <div class="hud-left">
-        <app-race-clock></app-race-clock>
+        <app-race-clock (stopRequested)="requestExit()"></app-race-clock>
 
         <!-- =====================================
        1. REPLAY READY MESSAGE (highest priority)
@@ -136,3 +142,9 @@
 </div>
 
 <app-loading-overlay></app-loading-overlay>
+<app-exit-confirmation-modal
+  [visible]="showExitModal"
+  (confirm)="confirmExit()"
+  (cancel)="cancelExit()"
+>
+</app-exit-confirmation-modal>

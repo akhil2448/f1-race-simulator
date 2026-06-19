@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { DriverMetaService } from '../../core/services/driver-meta.service';
 import { SimulationBootstrapService } from '../../core/services/simulation-bootstrap.service';
 import { RaceFinishService } from '../../core/services/race-finish.service';
@@ -21,6 +23,7 @@ import {
 import { RaceClockService } from '../../core/services/race-clock-service';
 import { RedFlagResumeComponent } from '../../simulation/components/red-flag-resume/red-flag-resume.component';
 import { LoadingOverlayComponent } from '../../simulation/components/loading-overlay/loading-overlay.component';
+import { ExitConfirmationModalComponent } from '../../simulation/components/exit-confirmation-modal/exit-confirmation-modal.component';
 
 @Component({
   selector: 'app-simulation',
@@ -39,6 +42,7 @@ import { LoadingOverlayComponent } from '../../simulation/components/loading-ove
     FinalClassificationComponent,
     RedFlagResumeComponent,
     LoadingOverlayComponent,
+    ExitConfirmationModalComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
@@ -57,18 +61,18 @@ export class SimulationComponent implements OnInit {
 
   private raceData: RaceApiResponse | null = null;
 
+  showExitModal = false;
+
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
     private raceFinish: RaceFinishService,
     private raceClock: RaceClockService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    // this.bootstrap.startRace({
-    //   year: this.currentYear,
-    //   round: this.currentRound,
-    // });
+    history.pushState(null, '', location.href);
 
     this.bootstrap.raceContext$.subscribe((context) => {
       this.raceContext = context;
@@ -143,5 +147,44 @@ export class SimulationComponent implements OnInit {
 
   onDriverCleared(slot: number): void {
     this.selectedDrivers[slot] = null;
+  }
+
+  requestExit(): void {
+    if (this.raceFinished) {
+      this.exitReplay();
+      return;
+    }
+
+    this.showExitModal = true;
+  }
+
+  confirmExit(): void {
+    this.showExitModal = false;
+
+    this.exitReplay();
+  }
+
+  cancelExit(): void {
+    this.showExitModal = false;
+  }
+
+  private exitReplay(): void {
+    this.raceClock.reset();
+
+    this.router.navigate(['/select-race']);
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onBrowserBack(event: PopStateEvent): void {
+    event.preventDefault();
+
+    if (this.raceFinished) {
+      this.exitReplay();
+      return;
+    }
+
+    history.pushState(null, '', location.href);
+
+    this.showExitModal = true;
   }
 }
