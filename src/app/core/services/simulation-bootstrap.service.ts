@@ -21,6 +21,11 @@ import { FastestLapService } from './fastest-lap.service';
 import { RaceControlService } from './race-control.service';
 import { RaceApiResponse } from '../models/race-data.model';
 
+interface RaceContext {
+  year: number;
+  round: number;
+}
+
 export interface BootstrapStep {
   id: string;
 
@@ -87,6 +92,10 @@ export class SimulationBootstrapService {
 
   private optionalFailuresDetected = false;
 
+  private raceContextSubject = new BehaviorSubject<RaceContext | null>(null);
+
+  raceContext$ = this.raceContextSubject.asObservable();
+
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
     this.optionalFailuresDetected = false;
@@ -100,6 +109,11 @@ export class SimulationBootstrapService {
     this.failedStepsSubject.next([]);
 
     const { year, round } = config;
+
+    this.raceContextSubject.next({
+      year: config.year,
+      round: config.round,
+    });
 
     this.loadRaceDataWithRetry(year, round);
   }

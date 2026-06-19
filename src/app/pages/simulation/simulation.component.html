@@ -28,8 +28,8 @@
             [selectedDriver]="selectedDrivers[0]"
             [availableDrivers]="getAvailableDriversForSlot(0)"
             [teamColor]="getDriverColor(selectedDrivers[0])"
-            [year]="currentYear"
-            [round]="currentRound"
+            [year]="raceContext?.year ?? 0"
+            [round]="raceContext?.round ?? 0"
             [highlightColor]="'#ffffff'"
             (driverSelected)="onDriverSelected(0, $event)"
             (clearDriver)="onDriverCleared(0)"
@@ -40,8 +40,8 @@
             [selectedDriver]="selectedDrivers[1]"
             [availableDrivers]="getAvailableDriversForSlot(1)"
             [teamColor]="getDriverColor(selectedDrivers[1])"
-            [year]="currentYear"
-            [round]="currentRound"
+            [year]="raceContext?.year ?? 0"
+            [round]="raceContext?.round ?? 0"
             [highlightColor]="'#ffe600'"
             (driverSelected)="onDriverSelected(1, $event)"
             (clearDriver)="onDriverCleared(1)"
@@ -92,8 +92,8 @@
 
           <ng-template #raceControlMessages>
             <app-race-control-messages
-              [year]="currentYear"
-              [round]="currentRound"
+              [year]="raceContext?.year ?? 0"
+              [round]="raceContext?.round ?? 0"
             >
             </app-race-control-messages>
           </ng-template>

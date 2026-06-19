@@ -47,9 +47,7 @@ export class SimulationComponent implements OnInit {
   availableDrivers: string[] = [];
   selectedDrivers: (string | null)[] = [null, null];
 
-  // Change these values to change the race
-  currentYear = 2020;
-  currentRound = 5;
+  raceContext: { year: number; round: number } | null = null;
 
   showReplayResumeMessage = false;
 
@@ -71,6 +69,10 @@ export class SimulationComponent implements OnInit {
     //   year: this.currentYear,
     //   round: this.currentRound,
     // });
+
+    this.bootstrap.raceContext$.subscribe((context) => {
+      this.raceContext = context;
+    });
 
     this.bootstrap.steps$.subscribe((steps) => {
       console.log('BOOTSTRAP STEPS');
