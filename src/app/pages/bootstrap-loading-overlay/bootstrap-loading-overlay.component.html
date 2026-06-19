@@ -18,6 +18,13 @@
 
         <div class="step-label">
           {{ step.label }}
+
+          <div
+            class="retry-text"
+            *ngIf="step.retryCount && step.status === 'loading'"
+          >
+            Retrying ({{ step.retryCount }}/3)
+          </div>
         </div>
       </div>
     </div>

@@ -33,6 +33,8 @@ export interface BootstrapStep {
 
 @Injectable({ providedIn: 'root' })
 export class SimulationBootstrapService {
+  private readonly MAX_RETRIES = 3;
+
   private availableDriversSubject = new BehaviorSubject<string[]>([]);
   availableDrivers$ = this.availableDriversSubject.asObservable();
 
@@ -158,47 +160,41 @@ export class SimulationBootstrapService {
 
         this.trackMap.load(year, round).subscribe({
           next: (data) => {
-            this.trackMapState.setTrackData(data);
-
-            this.updateStep('track-map', 'success');
-
-            const trackLength = data.trackInfo.trackLength;
-
-            if (!trackLength) {
-              throw new Error('Track length not available');
-            }
-
-            const timingLoopCount = data.trackInfo.timingLoopCount;
-
-            if (timingLoopCount !== null) {
-              this.timingProcessor.setTimingLoopCount(timingLoopCount);
-            }
-
-            this.liveTiming.initialize(raceData, trackLength);
-
-            this.updateStep('telemetry', 'loading');
-
-            this.telemetry.initialize(year, round, trackLength).subscribe({
-              next: () => {
-                this.updateStep('telemetry', 'success');
-
-                this.updateStep('engine', 'loading');
-
-                this.engine.initialize();
-
-                this.updateStep('engine', 'success');
-
-                this.bootstrapCompleteSubject.next(true);
-              },
-
-              error: () => {
-                this.updateStep('telemetry', 'error');
-              },
-            });
+            this.handleTrackMapSuccess(data, raceData, year, round);
           },
 
-          error: (err) => {
+          error: async (err) => {
             console.error('TRACK MAP REQUEST FAILED', err);
+
+            const trackMapStep = this.stepsSubject.value.find(
+              (s) => s.id === 'track-map',
+            );
+
+            const retries = trackMapStep?.retryCount ?? 0;
+
+            if (retries < this.MAX_RETRIES) {
+              this.incrementRetry('track-map');
+
+              console.log(
+                `Retrying track map (${retries + 1}/${this.MAX_RETRIES})`,
+              );
+
+              await this.retryDelay(1000);
+
+              this.updateStep('track-map', 'loading');
+
+              this.trackMap.load(year, round).subscribe({
+                next: (data) => {
+                  this.handleTrackMapSuccess(data, raceData, year, round);
+                },
+
+                error: () => {
+                  this.updateStep('track-map', 'error');
+                },
+              });
+
+              return;
+            }
 
             this.updateStep('track-map', 'error');
           },
@@ -209,6 +205,68 @@ export class SimulationBootstrapService {
         this.updateStep('race-data', 'error');
       },
     });
+  }
+
+  private handleTrackMapSuccess(
+    data: any,
+    raceData: RaceApiResponse,
+    year: number,
+    round: number,
+  ): void {
+    this.trackMapState.setTrackData(data);
+
+    this.updateStep('track-map', 'success');
+
+    const trackLength = data.trackInfo.trackLength;
+
+    if (!trackLength) {
+      throw new Error('Track length not available');
+    }
+
+    const timingLoopCount = data.trackInfo.timingLoopCount;
+
+    if (timingLoopCount !== null) {
+      this.timingProcessor.setTimingLoopCount(timingLoopCount);
+    }
+
+    this.liveTiming.initialize(raceData, trackLength);
+
+    this.updateStep('telemetry', 'loading');
+
+    this.telemetry.initialize(year, round, trackLength).subscribe({
+      next: () => {
+        this.updateStep('telemetry', 'success');
+
+        this.updateStep('engine', 'loading');
+
+        this.engine.initialize();
+
+        this.updateStep('engine', 'success');
+
+        this.bootstrapCompleteSubject.next(true);
+      },
+
+      error: () => {
+        this.updateStep('telemetry', 'error');
+      },
+    });
+  }
+
+  private retryDelay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private incrementRetry(id: string): void {
+    const updated = this.stepsSubject.value.map((step) =>
+      step.id === id
+        ? {
+            ...step,
+            retryCount: (step.retryCount ?? 0) + 1,
+          }
+        : step,
+    );
+
+    this.stepsSubject.next(updated);
   }
 
   private initializeSteps(): void {
