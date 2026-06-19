@@ -85,8 +85,12 @@ export class SimulationBootstrapService {
 
   failedSteps$ = this.failedStepsSubject.asObservable();
 
+  private optionalFailuresDetected = false;
+
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
+    this.optionalFailuresDetected = false;
+
     this.initializeSteps();
 
     this.bootstrapCompleteSubject.next(false);
@@ -119,11 +123,10 @@ export class SimulationBootstrapService {
 
     if (this.isMandatoryStep(stepId)) {
       this.failureTypeSubject.next('mandatory');
-
       return;
     }
 
-    this.failureTypeSubject.next('optional');
+    this.optionalFailuresDetected = true;
   }
 
   private handleTrackMapSuccess(
@@ -427,7 +430,13 @@ export class SimulationBootstrapService {
 
   private completeBootstrap(): void {
     setTimeout(() => {
+      if (this.optionalFailuresDetected) {
+        this.failureTypeSubject.next('optional');
+
+        return;
+      }
+
       this.bootstrapCompleteSubject.next(true);
-    }, 750);
+    }, 1000);
   }
 }

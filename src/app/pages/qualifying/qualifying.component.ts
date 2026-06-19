@@ -227,6 +227,25 @@ export class QualifyingComponent implements OnInit {
     });
   }
 
+  continueAnyway(): void {
+    this.router.navigate(['/simulation']);
+  }
+
+  goToRaceSelection(): void {
+    this.router.navigate(['/select-race'], {
+      queryParams: {
+        year: this.year,
+      },
+    });
+  }
+
+  retryBootstrap(): void {
+    this.bootstrap.startRace({
+      year: this.year,
+      round: this.round,
+    });
+  }
+
   goBack(): void {
     this.router.navigate(['/select-race']);
   }

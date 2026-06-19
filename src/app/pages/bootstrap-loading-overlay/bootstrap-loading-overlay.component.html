@@ -31,20 +31,48 @@
 
     <div class="footer-text">PREPARING REPLAY</div>
     <!-- MANDATORY FAILURE -->
-
     <div class="failure-panel mandatory" *ngIf="failureType === 'mandatory'">
       <div class="failure-title">Race Metadata Fetch Failed</div>
 
       <div class="failure-message">Unable to prepare this replay.</div>
+
+      <div class="failure-actions">
+        <app-button size="sm" (clicked)="retry.emit()"> Retry Race </app-button>
+
+        <app-button
+          variant="secondary"
+          size="sm"
+          (clicked)="tryAnotherRace.emit()"
+        >
+          Try Another Race
+        </app-button>
+      </div>
     </div>
 
     <!-- OPTIONAL FAILURE -->
-
     <div class="failure-panel optional" *ngIf="failureType === 'optional'">
       <div class="failure-title">Some Components Failed To Load</div>
 
       <div class="failure-message">
         The replay can still run, but some features may not work.
+      </div>
+
+      <div class="failure-actions">
+        <app-button size="sm" (clicked)="continueAnyway.emit()">
+          Continue To Replay
+        </app-button>
+
+        <app-button variant="secondary" size="sm" (clicked)="retry.emit()">
+          Retry Race
+        </app-button>
+
+        <app-button
+          variant="secondary"
+          size="sm"
+          (clicked)="tryAnotherRace.emit()"
+        >
+          Try Another Race
+        </app-button>
       </div>
     </div>
   </div>

@@ -234,6 +234,9 @@
     [raceName]="raceName + ' ' + year"
     [steps]="bootstrapSteps"
     [failureType]="failureType"
+    (retry)="retryBootstrap()"
+    (continueAnyway)="continueAnyway()"
+    (tryAnotherRace)="goToRaceSelection()"
   >
   </app-bootstrap-loading-overlay>
 </div>
