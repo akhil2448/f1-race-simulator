@@ -212,4 +212,20 @@ export class TrackStatusService {
   isNeutralizedSnapshot(): boolean {
     return this.neutralizedSubject.value;
   }
+
+  clear(): void {
+    this.statusTimeline = [];
+
+    this.statusSubject.next(null);
+
+    this.neutralizedSubject.next(false);
+
+    this.greenAtLap = null;
+
+    this.lastStatus = null;
+
+    this.transientStatusUntil = null;
+
+    this.previousRaceSecond = null;
+  }
 }

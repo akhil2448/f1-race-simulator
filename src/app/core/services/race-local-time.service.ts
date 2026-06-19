@@ -40,4 +40,10 @@ export class RaceLocalTimeService {
 
     return new Date(this.raceStartMs + raceSecond * 1000);
   }
+
+  reset(): void {
+    this.raceStartMs = null;
+
+    this.localTimeSubject.next(null);
+  }
 }

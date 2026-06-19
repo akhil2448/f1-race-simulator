@@ -94,4 +94,14 @@ export class RaceFinishService {
   isRaceFinished(): boolean {
     return this.raceFinishedSubject.value;
   }
+
+  reset(): void {
+    this.driverFinishTimes.clear();
+
+    this.finishedDriversSubject.next(new Set());
+
+    this.raceFinishedSubject.next(false);
+
+    this.raceFinalizationTime = 0;
+  }
 }

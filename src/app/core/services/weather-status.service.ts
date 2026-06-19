@@ -56,4 +56,10 @@ export class WeatherStatusService {
     }
     return latest;
   }
+
+  clear(): void {
+    this.weatherData = [];
+
+    this.currentWeatherSubject.next(null);
+  }
 }

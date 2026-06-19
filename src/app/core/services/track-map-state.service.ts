@@ -50,4 +50,10 @@ export class TrackMapStateService {
   get isMirrored(): boolean {
     return this.mirroredSubject.value;
   }
+
+  clear(): void {
+    this.trackDataSubject.next(null);
+
+    this.mirroredSubject.next(false);
+  }
 }

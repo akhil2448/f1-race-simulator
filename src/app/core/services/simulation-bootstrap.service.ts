@@ -98,11 +98,12 @@ export class SimulationBootstrapService {
 
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
+    // This line needs to be at Top!!!
+    this.bootstrapCompleteSubject.next(false);
+
     this.optionalFailuresDetected = false;
 
     this.initializeSteps();
-
-    this.bootstrapCompleteSubject.next(false);
 
     this.failureTypeSubject.next('none');
 
@@ -452,5 +453,43 @@ export class SimulationBootstrapService {
 
       this.bootstrapCompleteSubject.next(true);
     }, 1000);
+
+    console.log('BOOTSTRAP COMPLETE');
+  }
+
+  destroyRace(): void {
+    this.bootstrapCompleteSubject.next(false);
+
+    this.failureTypeSubject.next('none');
+
+    this.availableDriversSubject.next([]);
+
+    this.raceDataSubject.next(null);
+
+    this.failedStepsSubject.next([]);
+
+    this.stepsSubject.next([]);
+
+    this.engine.destroy();
+
+    this.telemetry.clear();
+
+    this.trackMapState.clear();
+
+    this.raceLocalTime.reset();
+
+    this.raceControl.clearCache();
+
+    this.weatherService.clear();
+
+    this.trackStatus.clear();
+
+    this.raceFinish.reset();
+
+    this.raceContextSubject.next(null);
+
+    this.optionalFailuresDetected = false;
+
+    console.log('DESTROY RACE');
   }
 }

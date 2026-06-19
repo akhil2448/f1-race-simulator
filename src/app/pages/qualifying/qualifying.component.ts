@@ -3,7 +3,7 @@ import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { firstValueFrom, filter } from 'rxjs';
+import { firstValueFrom, filter, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
@@ -70,15 +70,17 @@ export class QualifyingComponent implements OnInit {
   failureType: BootstrapFailureType = 'none';
 
   constructor() {
-    this.bootstrap.steps$.subscribe((steps) => {
-      console.log('OVERLAY STEPS', steps);
+    this.bootstrap.steps$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((steps) => {
+        this.bootstrapSteps = steps;
+      });
 
-      this.bootstrapSteps = steps;
-    });
-
-    this.bootstrap.failureType$.subscribe((type) => {
-      this.failureType = type;
-    });
+    this.bootstrap.failureType$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((type) => {
+        this.failureType = type;
+      });
   }
 
   async ngOnInit(): Promise<void> {
@@ -88,17 +90,6 @@ export class QualifyingComponent implements OnInit {
     this.round = Number(this.route.snapshot.paramMap.get('round'));
 
     await this.loadQualifying();
-
-    this.bootstrap.bootstrapComplete$
-      .pipe(
-        filter((done) => done),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        if (this.failureType === 'none') {
-          this.router.navigate(['/simulation']);
-        }
-      });
   }
 
   async loadQualifying(): Promise<void> {
@@ -225,6 +216,19 @@ export class QualifyingComponent implements OnInit {
       year: this.year,
       round: this.round,
     });
+
+    this.bootstrap.bootstrapComplete$
+      .pipe(
+        filter((done) => done),
+        take(1),
+      )
+      .subscribe(() => {
+        console.log('QUALIFYING RECEIVED BOOTSTRAP COMPLETE', this.failureType);
+
+        if (this.failureType === 'none') {
+          this.router.navigate(['/simulation']);
+        }
+      });
   }
 
   continueAnyway(): void {
