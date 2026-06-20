@@ -3,29 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { LeaderboardDisplayService } from '../../../core/services/leaderboard-display.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { SupportButtonComponent } from '../../../shared/components/support-button/support-button.component';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
 
 @Component({
   selector: 'app-race-controls',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, SupportButtonComponent],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './race-controls.component.html',
   styleUrl: './race-controls.component.scss',
 })
 export class RaceControlsComponent {
-  raceFinished = false;
-
-  constructor(
-    private leaderboardDisplay: LeaderboardDisplayService,
-    private raceFinish: RaceFinishService,
-  ) {}
-
-  ngOnInit(): void {
-    this.raceFinish.raceFinished$.subscribe((finished) => {
-      this.raceFinished = finished;
-    });
-  }
+  constructor(private leaderboardDisplay: LeaderboardDisplayService) {}
 
   showTyre(): void {
     this.leaderboardDisplay.showTemporaryMode('TYRE');

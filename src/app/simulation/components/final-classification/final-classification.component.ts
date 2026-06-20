@@ -12,13 +12,15 @@ import {
 import { TEAM_COLORS } from '../../../core/constants/team-data';
 
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
+import { SupportButtonComponent } from '../../../shared/components/support-button/support-button.component';
+import { RaceFinishService } from '../../../core/services/race-finish.service';
 
 @Component({
   selector: 'app-final-classification',
 
   standalone: true,
 
-  imports: [CommonModule],
+  imports: [CommonModule, SupportButtonComponent],
 
   templateUrl: './final-classification.component.html',
 
@@ -37,7 +39,12 @@ export class FinalClassificationComponent implements OnInit {
 
   expandedStandings: 'drivers' | 'constructors' | null = null;
 
-  constructor(private leaderboard: LeaderboardService) {}
+  raceFinished = false;
+
+  constructor(
+    private leaderboard: LeaderboardService,
+    private raceFinish: RaceFinishService,
+  ) {}
 
   ngOnInit(): void {
     this.classification = this.leaderboard.getOfficialClassification();
@@ -47,6 +54,10 @@ export class FinalClassificationComponent implements OnInit {
     this.constructorStandings = this.leaderboard.getConstructorStandings();
 
     this.fastestLap = this.leaderboard.getFastestLap();
+
+    this.raceFinish.raceFinished$.subscribe((finished) => {
+      this.raceFinished = finished;
+    });
   }
 
   getTeamLogo(team: string): string {

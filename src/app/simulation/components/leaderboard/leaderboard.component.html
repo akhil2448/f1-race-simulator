@@ -77,7 +77,7 @@
           [class.winner]="row.isOfficialClassification && row.position === 1"
           [ngClass]="{
             'toggle-mode': isTemporaryModeActive,
-            'in-pit': row.isInPit,
+            'in-pit': row.isInPit && row.status !== 'OUT',
           }"
           [style.color]="
             row.isInPit && row.status !== 'OUT'
@@ -90,7 +90,7 @@
 
         <div
           class="tyre"
-          *ngIf="!row.isOfficialClassification"
+          *ngIf="!row.isOfficialClassification && row.status !== 'OUT'"
           [ngClass]="row.compound.toLowerCase()"
         >
           {{ row.compound[0] }}

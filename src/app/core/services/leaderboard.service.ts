@@ -233,11 +233,14 @@ export class LeaderboardService {
       this.lastLiveEntries = entries.map((e) => ({ ...e }));
 
       /* leader lap stabilization */
-      const rawLeaderLap = orderedStates[0].currentLap;
-      const leaderLap =
-        rawLeaderLap && rawLeaderLap >= 1
-          ? rawLeaderLap
-          : this.lastStableLeaderLap;
+      const timingLeader = orderedTimingStates[0];
+
+      const candidateLap = timingLeader?.lap ?? this.lastStableLeaderLap;
+
+      /**
+       * Never allow lap counter to go backwards.
+       */
+      const leaderLap = Math.max(this.lastStableLeaderLap, candidateLap);
 
       this.lastStableLeaderLap = leaderLap;
 
