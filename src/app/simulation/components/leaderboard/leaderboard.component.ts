@@ -60,6 +60,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** 🔑 Broadcast anchors */
   private greenLap: number | null = null;
+  private restartType: 'SC' | 'VSC' | 'RED' | 'YELLOW' | null = null;
 
   @Input()
   highlightedDrivers: { driver: string | null; color: string }[] = [];
@@ -75,6 +76,16 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
       this.trackStatus = status;
+
+      if (
+        status === 'SC' ||
+        status === 'VSC' ||
+        status === 'VSC_ENDING' ||
+        status === 'RED' ||
+        status === 'YELLOW'
+      ) {
+        this.restartType = status === 'VSC_ENDING' ? 'VSC' : status;
+      }
     });
 
     // Fire on every GREEN (race start + restarts)
@@ -158,7 +169,19 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateBaseMode(): void {
-    if (this.greenLap === null || this.leaderLap <= this.greenLap + 1) {
+    if (this.greenLap === null) {
+      this.baseMode = 'INTERVAL';
+      return;
+    }
+
+    const inRestartWindow = this.leaderLap <= this.greenLap + 1;
+
+    const showLeaderGapAfterRestart =
+      this.restartType === 'SC' ||
+      this.restartType === 'VSC' ||
+      this.restartType === 'RED';
+
+    if (inRestartWindow && showLeaderGapAfterRestart) {
       this.baseMode = 'LEADER_GAP';
       return;
     }

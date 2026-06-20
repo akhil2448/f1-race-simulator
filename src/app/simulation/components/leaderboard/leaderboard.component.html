@@ -77,10 +77,11 @@
           [class.winner]="row.isOfficialClassification && row.position === 1"
           [ngClass]="{
             'toggle-mode': isTemporaryModeActive,
-            'in-pit': row.isInPit && row.status !== 'OUT',
+            'in-pit':
+              row.isInPit && row.status !== 'OUT' && !isTemporaryModeActive,
           }"
           [style.color]="
-            row.isInPit && row.status !== 'OUT'
+            row.isInPit && row.status !== 'OUT' && !isTemporaryModeActive
               ? getDriverColor(row.driver)
               : null
           "

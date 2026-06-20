@@ -24,6 +24,7 @@ import { RaceClockService } from '../../core/services/race-clock-service';
 import { RedFlagResumeComponent } from '../../simulation/components/red-flag-resume/red-flag-resume.component';
 import { LoadingOverlayComponent } from '../../simulation/components/loading-overlay/loading-overlay.component';
 import { ExitConfirmationModalComponent } from '../../simulation/components/exit-confirmation-modal/exit-confirmation-modal.component';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 @Component({
   selector: 'app-simulation',
@@ -43,6 +44,7 @@ import { ExitConfirmationModalComponent } from '../../simulation/components/exit
     RedFlagResumeComponent,
     LoadingOverlayComponent,
     ExitConfirmationModalComponent,
+    SupportButtonComponent,
   ],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',

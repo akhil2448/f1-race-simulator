@@ -12,7 +12,6 @@ import {
 import { TEAM_COLORS } from '../../../core/constants/team-data';
 
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
-import { SupportButtonComponent } from '../../../shared/components/support-button/support-button.component';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
 
 @Component({
@@ -20,7 +19,7 @@ import { RaceFinishService } from '../../../core/services/race-finish.service';
 
   standalone: true,
 
-  imports: [CommonModule, SupportButtonComponent],
+  imports: [CommonModule],
 
   templateUrl: './final-classification.component.html',
 
