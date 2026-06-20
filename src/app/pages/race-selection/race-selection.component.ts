@@ -10,6 +10,7 @@ import { LoadingOverlayService } from '../../core/services/loading-overlay.servi
 import { RaceSelectionStateService } from '../../core/services/race-selection-state.service';
 
 import { Router } from '@angular/router';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 export interface RaceSchedule {
   round: number;
@@ -41,7 +42,7 @@ interface YearScheduleResponse {
 @Component({
   selector: 'app-race-selection',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SupportButtonComponent],
   templateUrl: './race-selection.component.html',
   styleUrls: ['./race-selection.component.scss'],
 })

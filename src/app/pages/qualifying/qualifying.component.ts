@@ -20,11 +20,16 @@ import {
 } from '../../core/services/simulation-bootstrap.service';
 import { BootstrapLoadingOverlayComponent } from '../bootstrap-loading-overlay/bootstrap-loading-overlay.component';
 import { BootstrapFailureType } from '../../core/services/simulation-bootstrap.service';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 @Component({
   selector: 'app-qualifying',
   standalone: true,
-  imports: [CommonModule, BootstrapLoadingOverlayComponent],
+  imports: [
+    CommonModule,
+    BootstrapLoadingOverlayComponent,
+    SupportButtonComponent,
+  ],
   templateUrl: './qualifying.component.html',
   styleUrls: ['./qualifying.component.scss'],
 })

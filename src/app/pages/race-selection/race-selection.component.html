@@ -1,18 +1,40 @@
 <div class="race-selection-page">
   <div class="page-header">
-    <div class="page-title">F1 RACE REPLAY</div>
+    <div class="hero-track-outline">
+      <img src="assets/tracks/suzuka-outline.svg" alt="" />
+    </div>
 
-    <div class="page-subtitle">SELECT SEASON</div>
+    <div class="page-title">PITWALL</div>
 
-    <select
-      class="year-selector"
-      [(ngModel)]="selectedYear"
-      (change)="onYearChange()"
-    >
-      <option *ngFor="let year of years" [value]="year">
-        {{ year }}
-      </option>
-    </select>
+    <div class="title-accent"></div>
+
+    <div class="page-tagline">Replay Formula 1 Races</div>
+
+    <div class="header-toolbar">
+      <div class="toolbar-spacer"></div>
+
+      <div class="season-bar">
+        <span class="season-bar-label">SEASON</span>
+
+        <select
+          class="year-selector"
+          [(ngModel)]="selectedYear"
+          (change)="onYearChange()"
+        >
+          <option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+
+      <div class="support-me-button">
+        <app-support-button
+          text="Support PitWall"
+          buyMeCoffeeUrl="https://buymeacoffee.com/akhil2448"
+        >
+        </app-support-button>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="loading" class="loading-state">Loading schedule...</div>
