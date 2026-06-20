@@ -28,6 +28,9 @@ export interface RaceSchedule {
   raceSessionName: string;
   raceDate: string;
   raceDateUtc: string;
+
+  qualifyingLocalDisplay: string;
+  raceLocalDisplay: string;
 }
 
 interface YearScheduleResponse {

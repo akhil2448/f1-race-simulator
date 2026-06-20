@@ -4,45 +4,58 @@ import { RaceClockService } from './race-clock-service';
 
 @Injectable({ providedIn: 'root' })
 export class RaceLocalTimeService {
-  private raceStartMs: number | null = null;
+  private raceStartSeconds: number | null = null;
 
   private localTimeSubject = new BehaviorSubject<Date | null>(null);
   readonly time$ = this.localTimeSubject.asObservable();
 
   constructor(private raceClock: RaceClockService) {
     this.raceClock.raceTime$.subscribe((sec) => {
-      if (this.raceStartMs === null) return;
+      if (this.raceStartSeconds === null) {
+        return;
+      }
 
-      const t = new Date(this.raceStartMs + sec * 1000);
-      this.localTimeSubject.next(t);
+      const clockSeconds = this.raceStartSeconds + sec;
+
+      this.localTimeSubject.next(this.buildClockDate(clockSeconds));
     });
   }
 
   /** Call ONCE after race data load */
   initialize(localTimeAtRaceStart: string): void {
-    /**
-     * "15:03:38.698"
-     */
-    const [hms, ms = '0'] = localTimeAtRaceStart.split('.');
+    const [hms] = localTimeAtRaceStart.split('.');
+
     const [h, m, s] = hms.split(':').map(Number);
 
-    const base = new Date(0);
-    base.setUTCHours(h, m, s, Number(ms));
+    this.raceStartSeconds = h * 3600 + m * 60 + s;
 
-    this.raceStartMs = base.getTime();
-    this.localTimeSubject.next(base);
+    this.localTimeSubject.next(this.buildClockDate(this.raceStartSeconds));
   }
 
   getLocalTimeForRaceSecond(raceSecond: number): Date | null {
-    if (this.raceStartMs === null) {
+    if (this.raceStartSeconds === null) {
       return null;
     }
 
-    return new Date(this.raceStartMs + raceSecond * 1000);
+    return this.buildClockDate(this.raceStartSeconds + raceSecond);
+  }
+
+  private buildClockDate(totalSeconds: number): Date {
+    const normalized = ((totalSeconds % 86400) + 86400) % 86400;
+
+    const hours = Math.floor(normalized / 3600);
+    const minutes = Math.floor((normalized % 3600) / 60);
+    const seconds = normalized % 60;
+
+    const d = new Date(0);
+
+    d.setUTCHours(hours, minutes, seconds, 0);
+
+    return d;
   }
 
   reset(): void {
-    this.raceStartMs = null;
+    this.raceStartSeconds = null;
 
     this.localTimeSubject.next(null);
   }
