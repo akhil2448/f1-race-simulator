@@ -7,11 +7,12 @@ import { TrackMapStateService } from '../../../core/services/track-map-state.ser
 import { RaceLocalTimeService } from '../../../core/services/race-local-time.service';
 import { TrackInfo } from '../../../core/models/track-data.model';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
+import { SupportButtonComponent } from '../../../shared/components/support-button/support-button.component';
 
 @Component({
   selector: 'app-track-map-header',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, SupportButtonComponent],
   templateUrl: './track-map-header.component.html',
   styleUrl: './track-map-header.component.scss',
 })

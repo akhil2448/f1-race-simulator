@@ -117,6 +117,8 @@ export class FinalClassificationComponent implements OnInit {
 
     if (team === 'Haas F1 Team') return 'haas';
 
+    if (team === 'Haas') return 'haas';
+
     if (team === 'Audi') return 'audi';
 
     if (team === 'Cadillac') return 'cadillac';

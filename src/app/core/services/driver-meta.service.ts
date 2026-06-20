@@ -65,11 +65,13 @@ export class DriverMetaService {
       return 'alfaromeo';
     else if (teamName === 'Toro Rosso') return 'tororosso';
     else if (teamName === 'Haas F1 Team') return 'haas';
+    else if (teamName === 'Haas') return 'haas';
     else if (teamName === 'Renault') return 'renault';
     else if (teamName === 'Force India') return 'forceindia';
     else if (teamName === 'Racing Point') return 'racingpoint';
     else if (teamName === 'Ferrari') return 'ferrari';
     else if (teamName === 'Red Bull Racing') return 'redbull';
+    else if (teamName === 'Red Bull') return 'redbull';
     else if (teamName === 'Williams') return 'williams';
     else if (teamName === 'AlphaTauri') return 'alphatauri';
     else if (teamName === 'Alfa Romeo') return 'alfaromeo';

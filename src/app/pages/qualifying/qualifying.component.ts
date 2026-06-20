@@ -173,11 +173,13 @@ export class QualifyingComponent implements OnInit {
       logo = 'alfaromeo';
     else if (teamName === 'Toro Rosso') logo = 'tororosso';
     else if (teamName === 'Haas F1 Team') logo = 'haas';
+    else if (teamName === 'Haas') logo = 'haas';
     else if (teamName === 'Renault') logo = 'renault';
     else if (teamName === 'Force India') logo = 'forceindia';
     else if (teamName === 'Racing Point') logo = 'racingpoint';
     else if (teamName === 'Ferrari') logo = 'ferrari';
     else if (teamName === 'Red Bull Racing') logo = 'redbull';
+    else if (teamName === 'Red Bull') logo = 'redbull';
     else if (teamName === 'Williams') logo = 'williams';
     else if (teamName === 'AlphaTauri') logo = 'alphatauri';
     else if (teamName === 'Alfa Romeo') logo = 'alfaromeo';

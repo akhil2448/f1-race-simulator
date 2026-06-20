@@ -83,3 +83,19 @@
 
   margin: 2px 0 4px;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  justify-content: flex-end;
+}
+
+.support-button {
+  min-width: 120px;
+  height: 40px;
+
+  padding: 0 16px;
+}

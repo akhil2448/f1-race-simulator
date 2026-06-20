@@ -1,6 +1,7 @@
 export const TEAM_COLORS: Record<string, string> = {
   // Red Bull Racing – deep navy + strong blue
   'Red Bull Racing': '#FFC906',
+  'Red Bull': '#FFC906',
 
   // Mercedes – iconic PETRONAS teal
   Mercedes: '#00D2BE',
@@ -31,6 +32,7 @@ export const TEAM_COLORS: Record<string, string> = {
 
   // Haas
   'Haas F1 Team': '#F9F2F2',
+  Haas: '#F9F2F2',
 
   // Kick Sauber
   'Kick Sauber': '#01C00E',
