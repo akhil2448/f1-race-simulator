@@ -1,1 +1,59 @@
-<p>home works!</p>
+<div class="homepage">
+  <!-- HERO -->
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-title">PITWALL</div>
+
+      <div class="hero-accent"></div>
+
+      <div class="hero-subtitle">Replay Formula 1 Races</div>
+
+      <div class="hero-description">
+        Relive every lap with telemetry, track maps, race control, weather,
+        standings and more.
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+
+  <section
+    #featureSection
+    *ngFor="let feature of features; let i = index"
+    class="feature-section"
+    [attr.data-index]="i"
+  >
+    <div
+      class="feature-card"
+      [class.reverse]="i % 2 !== 0"
+      [class.visible]="visibleSections.has(i)"
+    >
+      <div class="feature-video">
+        <div class="video-placeholder">VIDEO PLACEHOLDER</div>
+      </div>
+
+      <div class="feature-content">
+        <div class="feature-number">
+          {{ (i + 1).toString().padStart(2, "0") }}
+        </div>
+
+        <h2 class="feature-title">
+          {{ feature.title }}
+        </h2>
+
+        <p class="feature-description">
+          {{ feature.description }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+
+  <section class="cta-section">
+    <div class="cta-title">Ready to replay Formula 1 history?</div>
+
+    <div class="cta-subtitle">Explore races from every season.</div>
+  </section>
+</div>
