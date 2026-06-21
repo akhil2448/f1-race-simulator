@@ -173,7 +173,7 @@ export class SimulationComponent implements OnInit {
   private exitReplay(): void {
     this.raceClock.reset();
 
-    this.router.navigate(['/select-race']);
+    window.location.href = '/select-race';
   }
 
   @HostListener('window:popstate', ['$event'])
