@@ -14,6 +14,7 @@ import { SupportButtonComponent } from '../../shared/components/support-button/s
 export interface Feature {
   title: string;
   description: string;
+  extraNote?: string;
 
   type: 'video' | 'image';
 
@@ -80,6 +81,8 @@ export class HomeComponent implements AfterViewInit {
       title: 'Race Clock',
       description:
         'Control playback speed and relive the race at your own pace',
+      extraNote:
+        '* At 4x speed, a 90-minute race completes in approximately 22 minutes',
       type: 'video',
       mediaUrl: 'assets/features/race-clock.mp4',
     },

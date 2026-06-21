@@ -295,6 +295,26 @@ video.feature-media {
   color: rgba(255, 255, 255, 0.75);
 }
 
+.feature-note {
+  margin-top: 12px;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  color: rgba(255, 255, 255, 0.45);
+
+  font-style: italic;
+
+  max-width: 420px;
+}
+
+.feature-card.reverse .feature-note {
+  margin-left: auto;
+
+  text-align: right;
+}
+
 /* CTA */
 
 .cta-section {

@@ -62,6 +62,10 @@
         <p class="feature-description">
           {{ feature.description }}
         </p>
+
+        <p *ngIf="feature.extraNote" class="feature-note">
+          {{ feature.extraNote }}
+        </p>
       </div>
     </div>
   </section>
