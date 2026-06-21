@@ -66,7 +66,7 @@ export class RaceSelectionComponent implements OnInit {
   private readonly overlay = inject(LoadingOverlayService);
   private readonly state = inject(RaceSelectionStateService);
 
-  private readonly router = inject(Router);
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.initializeYears();
@@ -171,5 +171,9 @@ export class RaceSelectionComponent implements OnInit {
     const code = countryCodeMap[country];
 
     return `assets/country-flags/${code}.svg`;
+  }
+
+  goHome(): void {
+    this.router.navigate(['/']);
   }
 }
