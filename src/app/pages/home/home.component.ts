@@ -6,11 +6,16 @@ import {
   ElementRef,
   QueryList,
   ViewChildren,
+  NgZone,
 } from '@angular/core';
 
-interface Feature {
+export interface Feature {
   title: string;
   description: string;
+
+  type: 'video' | 'image';
+
+  mediaUrl: string;
 }
 
 @Component({
@@ -21,36 +26,63 @@ interface Feature {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
+  constructor(private ngZone: NgZone) {}
+
   features: Feature[] = [
+    {
+      title: 'Qualifying Results',
+      description:
+        'View qualifying lap times and starting grid before the race',
+      type: 'image',
+      mediaUrl: 'assets/features/qualifying-results.png',
+    },
     {
       title: 'Live Leaderboard',
       description:
-        'Track every position change, interval and battle as the race unfolds.',
+        'Track every position change, interval and battle as the race unfolds',
+      type: 'video',
+      mediaUrl: 'assets/features/live-leaderboard.mp4',
+    },
+    {
+      title: 'Controls Area',
+      description:
+        'Check PitStop count, Tyre Age & Lapped Cars anytime on the go',
+      type: 'video',
+      mediaUrl: 'assets/features/controls-area.mp4',
     },
     {
       title: 'Interactive Track Map',
       description:
-        'Watch every driver navigate the circuit with real-time car positioning.',
+        'Watch every driver navigate the circuit with real-time car positioning',
+      type: 'video',
+      mediaUrl: 'assets/features/track-map.mp4',
     },
     {
       title: 'Race Control Messages',
       description:
-        'Follow official FIA race control events including flags, penalties and investigations.',
+        'Follow official FIA race control events including flags, penalties and investigations',
+      type: 'video',
+      mediaUrl: 'assets/features/race-control-messages.mp4',
     },
     {
       title: 'Weather Conditions',
       description:
-        'Monitor track temperature, air temperature, humidity, wind and rainfall.',
+        'Monitor track temperature, air temperature, humidity, wind and rainfall',
+      type: 'video',
+      mediaUrl: 'assets/features/weather.mp4',
     },
     {
       title: 'Race Clock',
       description:
-        'Control playback speed and relive the race at your own pace.',
+        'Control playback speed and relive the race at your own pace',
+      type: 'video',
+      mediaUrl: 'assets/features/race-clock.mp4',
     },
     {
       title: 'Driver Telemetry',
-      description:
-        'Dive deeper into speed, throttle, brake, RPM and gear data.',
+      description: 'Dive deeper into speed, throttle, brake, RPM and gear data',
+      type: 'video',
+      mediaUrl: 'assets/features/driver-telemetry.mp4',
     },
   ];
 
@@ -60,18 +92,47 @@ export class HomeComponent implements AfterViewInit {
   visibleSections = new Set<number>();
 
   ngAfterViewInit(): void {
+    window.addEventListener(
+      'wheel',
+      () => {
+        document.querySelectorAll('video').forEach((video) => {
+          const v = video as HTMLVideoElement;
+
+          v.muted = true;
+          v.play()
+            .then(() => v.pause())
+            .catch(() => {});
+        });
+      },
+      { once: true },
+    );
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const index = Number(entry.target.getAttribute('data-index'));
 
+          const video = entry.target.querySelector(
+            'video',
+          ) as HTMLVideoElement | null;
+
           if (entry.isIntersecting) {
             this.visibleSections.add(index);
+
+            if (video) {
+              // video.currentTime = 0;
+
+              video.play().catch(() => {});
+            }
+          } else {
+            if (video) {
+              video.pause();
+            }
           }
         });
       },
       {
-        threshold: 0.4,
+        threshold: 0.7,
       },
     );
 

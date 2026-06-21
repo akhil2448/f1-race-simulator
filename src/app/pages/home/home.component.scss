@@ -200,31 +200,54 @@
     transform 1s ease;
 }
 
-.video-placeholder {
-  width: 100%;
-  width: 700px;
+// .video-placeholder {
+//   width: 100%;
+//   width: 700px;
 
-  height: 420px;
+//   height: 420px;
+
+//   border-radius: 24px;
+
+//   background: linear-gradient(
+//     135deg,
+//     rgba(225, 6, 0, 0.12),
+//     rgba(255, 255, 255, 0.05)
+//   );
+
+//   border: 1px solid rgba(255, 255, 255, 0.1);
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   font-size: 20px;
+
+//   letter-spacing: 2px;
+
+//   color: rgba(255, 255, 255, 0.5);
+// }
+
+.feature-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  max-width: 700px;
 
   border-radius: 24px;
 
-  background: linear-gradient(
-    135deg,
-    rgba(225, 6, 0, 0.12),
-    rgba(255, 255, 255, 0.05)
-  );
-
   border: 1px solid rgba(255, 255, 255, 0.1);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 
-  font-size: 20px;
+  display: block;
+}
 
-  letter-spacing: 2px;
+.feature-media[type="video"],
+video.feature-media {
+  object-fit: contain;
 
-  color: rgba(255, 255, 255, 0.5);
+  background: #111;
 }
 
 .feature-number {

@@ -30,7 +30,24 @@
       [class.visible]="visibleSections.has(i)"
     >
       <div class="feature-video">
-        <div class="video-placeholder">VIDEO PLACEHOLDER</div>
+        <ng-container [ngSwitch]="feature.type">
+          <video
+            *ngSwitchCase="'video'"
+            class="feature-media"
+            [src]="feature.mediaUrl"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+          ></video>
+
+          <img
+            *ngSwitchCase="'image'"
+            class="feature-media"
+            [src]="feature.mediaUrl"
+            [alt]="feature.title"
+          />
+        </ng-container>
       </div>
 
       <div class="feature-content">
