@@ -55,9 +55,7 @@ export class RaceControlService {
     }
 
     const request$ = this.http
-      .get<RaceControlResponse>(
-        `http://localhost:8000/api/race-control/${year}/${round}`,
-      )
+      .get<RaceControlResponse>(`/api/race-control/${year}/${round}`)
       .pipe(shareReplay(1));
 
     request$.subscribe((data) => {
