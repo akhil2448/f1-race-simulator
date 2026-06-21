@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 import {
   AfterViewInit,
@@ -8,6 +9,7 @@ import {
   ViewChildren,
   NgZone,
 } from '@angular/core';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 export interface Feature {
   title: string;
@@ -21,12 +23,15 @@ export interface Feature {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SupportButtonComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
-  constructor(private ngZone: NgZone) {}
+  constructor(
+    private ngZone: NgZone,
+    private router: Router,
+  ) {}
 
   features: Feature[] = [
     {
@@ -139,5 +144,9 @@ export class HomeComponent implements AfterViewInit {
     this.featureSections.forEach((section) => {
       observer.observe(section.nativeElement);
     });
+  }
+
+  goToRaceSelection(): void {
+    this.router.navigate(['/select-race']);
   }
 }

@@ -15,6 +15,8 @@
 
   scroll-behavior: smooth;
 
+  // overscroll-behavior: contain;
+
   overflow-x: hidden;
 }
 
@@ -60,12 +62,18 @@
 
   box-shadow: 0 0 24px rgba(225, 6, 0, 0.4);
 
-  animation: accentGrow 0.8s ease 0.4s forwards;
+  opacity: 0;
 
   transform: scaleX(0);
+
+  animation: accentGrow 0.7s ease 0.7s forwards;
 }
 
 .hero-subtitle {
+  opacity: 0;
+
+  transform: translateY(25px);
+
   font-size: 28px;
 
   letter-spacing: 2px;
@@ -74,10 +82,14 @@
 
   color: rgba(255, 255, 255, 0.85);
 
-  animation: fadeUp 0.8s ease 0.6s forwards;
+  animation: fadeUp 0.8s ease 0.9s forwards;
 }
 
 .hero-description {
+  opacity: 0;
+
+  transform: translateY(25px);
+
   margin-top: 20px;
 
   font-size: 20px;
@@ -86,7 +98,7 @@
 
   color: rgba(255, 255, 255, 0.7);
 
-  animation: fadeUp 0.8s ease 0.8s forwards;
+  animation: fadeUp 0.8s ease 1.4s forwards;
 }
 
 /* FEATURES */
@@ -103,6 +115,12 @@
   justify-content: center;
 
   padding: 80px 80px;
+}
+
+.feature-section,
+.hero-section,
+.cta-section {
+  scroll-snap-stop: always;
 }
 
 .feature-card {
@@ -288,11 +306,24 @@ video.feature-media {
   flex-direction: column;
 
   align-items: center;
-  justify-content: center;
-
-  text-align: center;
 
   padding: 24px;
+}
+
+.cta-content {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.cta-support {
+  margin-bottom: 40px;
 }
 
 .cta-title {
@@ -307,6 +338,55 @@ video.feature-media {
   font-size: 24px;
 
   color: rgba(255, 255, 255, 0.7);
+}
+
+.cta-highlight {
+  color: #e10600;
+
+  font-family: "Formula1Bold", sans-serif;
+}
+
+.cta-button {
+  margin-top: 40px;
+
+  height: 58px;
+
+  padding: 0 36px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  background: #e30902e0;
+
+  color: white;
+
+  font-family: "Formula1Bold", sans-serif;
+
+  font-size: 14px;
+
+  letter-spacing: 2px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  box-shadow: 0 12px 30px rgba(225, 6, 0, 0.35);
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+
+  background: #ff1c15;
+
+  box-shadow: 0 16px 36px rgba(225, 6, 0, 0.45);
+}
+
+.cta-support {
+  margin-top: 24px;
 }
 
 /* MOBILE */
@@ -368,10 +448,12 @@ video.feature-media {
 
 @keyframes accentGrow {
   from {
+    opacity: 0;
     transform: scaleX(0);
   }
 
   to {
+    opacity: 1;
     transform: scaleX(1);
   }
 }

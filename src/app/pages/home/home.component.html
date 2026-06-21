@@ -69,8 +69,25 @@
   <!-- CTA -->
 
   <section class="cta-section">
-    <div class="cta-title">Ready to replay Formula 1 history?</div>
+    <div class="cta-content">
+      <div class="cta-title">Ready to replay Formula 1 history?</div>
 
-    <div class="cta-subtitle">Explore races from every season.</div>
+      <div class="cta-subtitle">
+        Explore races from every season
+        <span class="cta-highlight">from 2018</span>
+      </div>
+
+      <button class="cta-button" (click)="goToRaceSelection()">
+        REPLAY A GRAND PRIX
+      </button>
+    </div>
+
+    <div class="cta-support">
+      <app-support-button
+        text="Support PitWall"
+        buyMeCoffeeUrl="https://buymeacoffee.com/akhil2448"
+      >
+      </app-support-button>
+    </div>
   </section>
 </div>
