@@ -40,6 +40,20 @@ export class RaceLocalTimeService {
     return this.buildClockDate(this.raceStartSeconds + raceSecond);
   }
 
+  formatRaceSecond(raceSecond: number): string {
+    const date = this.getLocalTimeForRaceSecond(raceSecond);
+
+    if (!date) {
+      return '--:--:--';
+    }
+
+    return [
+      String(date.getUTCHours()).padStart(2, '0'),
+      String(date.getUTCMinutes()).padStart(2, '0'),
+      String(date.getUTCSeconds()).padStart(2, '0'),
+    ].join(':');
+  }
+
   private buildClockDate(totalSeconds: number): Date {
     const normalized = ((totalSeconds % 86400) + 86400) % 86400;
 

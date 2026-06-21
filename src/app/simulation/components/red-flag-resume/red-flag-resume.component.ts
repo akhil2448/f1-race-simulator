@@ -37,19 +37,8 @@ export class RedFlagResumeComponent {
   }
 
   get restartLocalTime(): string {
-    const date = this.raceLocalTime.getLocalTimeForRaceSecond(
+    return this.raceLocalTime.formatRaceSecond(
       this.redFlag.restart.resumeRaceSecond,
     );
-
-    if (!date) {
-      return '--:--:--';
-    }
-
-    return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
   }
 }

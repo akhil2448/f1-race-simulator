@@ -46,6 +46,8 @@ export class HomeComponent implements AfterViewInit {
       title: 'Live Leaderboard',
       description:
         'Track every position change, interval and battle as the race unfolds',
+      extraNote:
+        '* Position gaps and intervals are calculated using FIA TIMING-LOOP principles',
       type: 'video',
       mediaUrl: 'assets/features/live-leaderboard.mp4',
     },
