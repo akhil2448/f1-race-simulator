@@ -195,4 +195,12 @@ export class SimulationComponent implements OnInit {
 
     this.showExitModal = true;
   }
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (!this.raceFinished) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
 }
