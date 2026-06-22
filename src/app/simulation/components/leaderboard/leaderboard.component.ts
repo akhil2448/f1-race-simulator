@@ -90,15 +90,27 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Fire on every GREEN (race start + restarts)
     this.trackStatusService.greenEvent$.subscribe(() => {
-      this.greenLap = this.leaderLap || 1;
-      this.clearTemporaryMode();
-      this.updateBaseMode();
+      this.triggerRestartWindow();
     });
 
     this.leaderboardDisplay.temporaryMode$.subscribe((mode) => {
       this.activeTemporaryMode = mode;
     });
   }
+
+  private triggerRestartWindow(): void {
+    this.greenLap = this.leaderLap || 1;
+
+    this.clearTemporaryMode();
+
+    this.updateBaseMode();
+  }
+
+  private replaySeekHandler = (event: any) => {
+    if (event.detail?.restartType === 'RED') {
+      this.triggerRestartWindow();
+    }
+  };
 
   ngOnInit(): void {
     this.leaderboardService.leaderboard$.subscribe((state) => {
@@ -131,13 +143,17 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fastestLap.fastestDriver$.subscribe((driver) => {
       this.fastestLapDriver = driver;
     });
+
+    window.addEventListener('replay-seek-complete', this.replaySeekHandler);
   }
 
   ngAfterViewInit(): void {
     this.runFLIP();
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    window.removeEventListener('replay-seek-complete', this.replaySeekHandler);
+  }
 
   /* ===================================================== */
   /* 🔑 BROADCAST RULE GETTERS (CORRECTED)                 */

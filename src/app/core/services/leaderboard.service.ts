@@ -40,8 +40,19 @@ export class LeaderboardService {
 
   private raceData!: RaceApiResponse;
 
+  private reducedTotalLaps: number | null = null;
+
   initialize(raceData: RaceApiResponse): void {
     this.raceData = raceData;
+
+    this.reducedTotalLaps = null;
+
+    const sessionLaps = raceData.session.totalLaps;
+    const officialLaps = raceData.results.totalLaps;
+
+    if (officialLaps < sessionLaps) {
+      this.reducedTotalLaps = officialLaps;
+    }
   }
 
   /* ===============================
@@ -127,6 +138,8 @@ export class LeaderboardService {
     this.sectorVisual.visualState$.subscribe((states: LiveDriverState[]) => {
       if (!states.length) return;
 
+      const displayTotalLaps = this.getDisplayTotalLaps(this.timingClockTime);
+
       /**
        * 🔒 FINAL CLASSIFICATION MODE
        *
@@ -141,9 +154,8 @@ export class LeaderboardService {
         this.subject.next({
           entries: this.buildFinalClassificationEntries(),
 
-          leaderLap: this.subject.value.totalLaps,
-
-          totalLaps: this.subject.value.totalLaps,
+          leaderLap: displayTotalLaps,
+          totalLaps: displayTotalLaps,
 
           raceFinished: true,
         });
@@ -235,7 +247,10 @@ export class LeaderboardService {
       /* leader lap stabilization */
       const timingLeader = orderedTimingStates[0];
 
-      const candidateLap = timingLeader?.lap ?? this.lastStableLeaderLap;
+      const candidateLap = Math.min(
+        timingLeader?.lap ?? this.lastStableLeaderLap,
+        displayTotalLaps,
+      );
 
       /**
        * Never allow lap counter to go backwards.
@@ -247,7 +262,7 @@ export class LeaderboardService {
       this.subject.next({
         entries,
         leaderLap,
-        totalLaps: this.subject.value.totalLaps,
+        totalLaps: displayTotalLaps,
         raceFinished: this.raceFinished,
       });
     });
@@ -339,6 +354,30 @@ export class LeaderboardService {
         isOfficialClassification: true,
       };
     });
+  }
+
+  /* =====================================================
+     REDUCE TOTAL LAPS WHEN RACE IS SHORTENED
+     ===================================================== */
+
+  private getDisplayTotalLaps(currentRaceSecond: number): number {
+    const sessionLaps = this.raceData.session.totalLaps;
+
+    if (!this.reducedTotalLaps) {
+      return sessionLaps;
+    }
+
+    const redFlags = this.raceData.raceControl?.redFlags ?? [];
+
+    const restart = redFlags[0]?.restart;
+
+    if (!restart) {
+      return sessionLaps;
+    }
+
+    return currentRaceSecond >= restart.resumeRaceSecond
+      ? this.reducedTotalLaps
+      : sessionLaps;
   }
 
   getOfficialClassification() {
