@@ -29,13 +29,7 @@ export class RedFlagResumeComponent {
       this.redFlag.restart.resumeRaceSecond,
     );
 
-    window.dispatchEvent(
-      new CustomEvent('replay-seek-complete', {
-        detail: {
-          restartType: 'RED',
-        },
-      }),
-    );
+    window.dispatchEvent(new CustomEvent('replay-seek-complete'));
   }
 
   get restartLap(): number {

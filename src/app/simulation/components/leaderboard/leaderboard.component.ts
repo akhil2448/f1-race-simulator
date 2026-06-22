@@ -106,12 +106,6 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateBaseMode();
   }
 
-  private replaySeekHandler = (event: any) => {
-    if (event.detail?.restartType === 'RED') {
-      this.triggerRestartWindow();
-    }
-  };
-
   ngOnInit(): void {
     this.leaderboardService.leaderboard$.subscribe((state) => {
       this.leaderboard = state.entries;
@@ -143,17 +137,13 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fastestLap.fastestDriver$.subscribe((driver) => {
       this.fastestLapDriver = driver;
     });
-
-    window.addEventListener('replay-seek-complete', this.replaySeekHandler);
   }
 
   ngAfterViewInit(): void {
     this.runFLIP();
   }
 
-  ngOnDestroy(): void {
-    window.removeEventListener('replay-seek-complete', this.replaySeekHandler);
-  }
+  ngOnDestroy(): void {}
 
   /* ===================================================== */
   /* 🔑 BROADCAST RULE GETTERS (CORRECTED)                 */

@@ -340,7 +340,7 @@ app-track-map {
 
   right: 24px;
 
-  bottom: 88px;
+  bottom: 70px;
 
   overflow-y: auto;
 
@@ -390,6 +390,8 @@ app-track-map {
 
 .support-button {
   grid-column: 1 / -1;
-  margin-bottom: 25px;
+
   justify-self: center;
+
+  transform: translateY(-25px); // DON'T CHANGE
 }
