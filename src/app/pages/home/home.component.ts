@@ -94,6 +94,20 @@ export class HomeComponent implements AfterViewInit {
       type: 'video',
       mediaUrl: 'assets/features/driver-telemetry.mp4',
     },
+    {
+      title: 'Red Flag Seek',
+      description:
+        'Jump directly to the race restart point when a red flag interrupts the session',
+      type: 'image',
+      mediaUrl: 'assets/features/redflag-seek.png',
+    },
+    {
+      title: 'FIA Final Classification',
+      description:
+        'View the official FIA race classification, Fastest lap, and Championship standings at the chequered flag',
+      type: 'image',
+      mediaUrl: 'assets/features/final-classification.png',
+    },
   ];
 
   @ViewChildren('featureSection')

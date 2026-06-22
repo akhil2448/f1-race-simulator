@@ -31,8 +31,9 @@
       </span>
     </div>
 
-    <div class="weather-row">
-      <span class="icon">🌧️</span>
+    <div class="weather-row rain-row" [class.raining]="weather.Rainfall">
+      <span class="icon rain-indicator"></span>
+
       <span class="label">Rain:</span>
 
       <span
