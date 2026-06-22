@@ -25,6 +25,7 @@ import { RedFlagResumeComponent } from '../../simulation/components/red-flag-res
 import { LoadingOverlayComponent } from '../../simulation/components/loading-overlay/loading-overlay.component';
 import { ExitConfirmationModalComponent } from '../../simulation/components/exit-confirmation-modal/exit-confirmation-modal.component';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
+import { RaceContextService } from '../../core/services/race-context.service';
 
 @Component({
   selector: 'app-simulation',
@@ -71,6 +72,7 @@ export class SimulationComponent implements OnInit {
     private raceFinish: RaceFinishService,
     private raceClock: RaceClockService,
     private router: Router,
+    private routeAccess: RaceContextService,
   ) {}
 
   ngOnInit(): void {
@@ -173,7 +175,11 @@ export class SimulationComponent implements OnInit {
   private exitReplay(): void {
     this.raceClock.reset();
 
-    window.location.href = '/select-race';
+    this.routeAccess.reset();
+
+    this.routeAccess.navigationStep = 'race-selection';
+
+    this.router.navigate(['/select-race']);
   }
 
   @HostListener('window:popstate', ['$event'])

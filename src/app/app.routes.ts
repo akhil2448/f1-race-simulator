@@ -4,6 +4,11 @@ import { HomeComponent } from './pages/home/home.component';
 import { RaceSelectionComponent } from './pages/race-selection/race-selection.component';
 import { SimulationComponent } from './pages/simulation/simulation.component';
 import { QualifyingComponent } from './pages/qualifying/qualifying.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+
+import { selectRaceGuard } from './core/guards/select-race.guard';
+import { qualifyingGuard } from './core/guards/qualifying.guard';
+import { simulationGuard } from './core/guards/simulation.guard';
 
 export const routes: Routes = [
   {
@@ -11,12 +16,25 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: HomeComponent },
-      { path: 'select-race', component: RaceSelectionComponent },
+      {
+        path: 'select-race',
+        component: RaceSelectionComponent,
+        canActivate: [selectRaceGuard],
+      },
       {
         path: 'qualifying/:year/:round',
         component: QualifyingComponent,
+        canActivate: [qualifyingGuard],
       },
-      { path: 'simulation', component: SimulationComponent },
+      {
+        path: 'simulation',
+        component: SimulationComponent,
+        canActivate: [simulationGuard],
+      },
+      {
+        path: '**',
+        component: NotFoundComponent,
+      },
     ],
   },
 ];

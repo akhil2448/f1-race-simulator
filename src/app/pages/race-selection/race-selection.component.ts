@@ -11,6 +11,7 @@ import { RaceSelectionStateService } from '../../core/services/race-selection-st
 
 import { Router } from '@angular/router';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
+import { RaceContextService } from '../../core/services/race-context.service';
 
 export interface RaceSchedule {
   round: number;
@@ -65,6 +66,7 @@ export class RaceSelectionComponent implements OnInit {
 
   private readonly overlay = inject(LoadingOverlayService);
   private readonly state = inject(RaceSelectionStateService);
+  private readonly raceContext = inject(RaceContextService);
 
   constructor(private router: Router) {}
 
@@ -160,6 +162,12 @@ export class RaceSelectionComponent implements OnInit {
   }
 
   async jumpToQualifyingResults(race: RaceSchedule): Promise<void> {
+    this.raceContext.selectedYear = this.selectedYear;
+
+    this.raceContext.selectedRound = race.round;
+
+    this.raceContext.navigationStep = 'qualifying';
+
     this.overlay.show('Fetching qualifying results...');
 
     await this.delay(1500);

@@ -21,6 +21,7 @@ import {
 import { BootstrapLoadingOverlayComponent } from '../bootstrap-loading-overlay/bootstrap-loading-overlay.component';
 import { BootstrapFailureType } from '../../core/services/simulation-bootstrap.service';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
+import { RaceContextService } from '../../core/services/race-context.service';
 
 @Component({
   selector: 'app-qualifying',
@@ -43,6 +44,7 @@ export class QualifyingComponent implements OnInit {
 
   private readonly overlay = inject(LoadingOverlayService);
   private readonly bootstrap = inject(SimulationBootstrapService);
+  private readonly raceContext = inject(RaceContextService);
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -233,16 +235,22 @@ export class QualifyingComponent implements OnInit {
         console.log('QUALIFYING RECEIVED BOOTSTRAP COMPLETE', this.failureType);
 
         if (this.failureType === 'none') {
+          this.raceContext.navigationStep = 'simulation';
+
           this.router.navigate(['/simulation']);
         }
       });
   }
 
   continueAnyway(): void {
+    this.raceContext.navigationStep = 'simulation';
+
     this.router.navigate(['/simulation']);
   }
 
   goToRaceSelection(): void {
+    this.raceContext.navigationStep = 'race-selection';
+
     this.router.navigate(['/select-race'], {
       queryParams: {
         year: this.year,
@@ -258,6 +266,8 @@ export class QualifyingComponent implements OnInit {
   }
 
   goBack(): void {
+    this.raceContext.navigationStep = 'race-selection';
+
     this.router.navigate(['/select-race']);
   }
 }

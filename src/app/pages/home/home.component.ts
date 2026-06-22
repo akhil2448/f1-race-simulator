@@ -10,6 +10,7 @@ import {
   NgZone,
 } from '@angular/core';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
+import { RaceContextService } from '../../core/services/race-context.service';
 
 export interface Feature {
   title: string;
@@ -32,6 +33,7 @@ export class HomeComponent implements AfterViewInit {
   constructor(
     private ngZone: NgZone,
     private router: Router,
+    private raceContext: RaceContextService,
   ) {}
 
   features: Feature[] = [
@@ -102,7 +104,7 @@ export class HomeComponent implements AfterViewInit {
       mediaUrl: 'assets/features/redflag-seek.png',
     },
     {
-      title: 'FIA Final Classification',
+      title: 'FIA Official Classification',
       description:
         'View the official FIA race classification, Fastest lap, and Championship standings at the chequered flag',
       type: 'image',
@@ -166,6 +168,10 @@ export class HomeComponent implements AfterViewInit {
   }
 
   goToRaceSelection(): void {
+    this.raceContext.reset();
+
+    this.raceContext.navigationStep = 'race-selection';
+
     this.router.navigate(['/select-race']);
   }
 }
