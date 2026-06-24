@@ -1,0 +1,136 @@
+.comparison-page {
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 12px 20px;
+
+  background: #1d1b1b;
+  color: #e5e7eb;
+
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.comparison-header {
+  flex: 0 0 auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.f1-logo {
+  font-family: "Formula1";
+  font-size: 48px;
+}
+
+.title {
+  font-family: "Formula1";
+  font-size: 40px;
+}
+
+.header-right {
+  font-family: "Formula1";
+  font-size: 28px;
+}
+
+/* ==========================
+   TELEMETRY PANEL
+========================== */
+
+.telemetry-panel {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  overflow: hidden;
+}
+
+.graph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.speed-graph {
+  flex: 5;
+}
+
+.rpm-graph {
+  flex: 1.25;
+}
+
+.throttle-graph {
+  flex: 3.75;
+  border-bottom: none;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+.comparison-footer {
+  flex: 0 0 130px;
+
+  display: grid;
+
+  grid-template-columns:
+    420px
+    1fr
+    420px;
+
+  gap: 20px;
+
+  margin-top: 12px;
+}
+
+.driver-card,
+.track-map-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-map-card {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================
+   CONTROLS
+========================== */
+
+.controls-panel {
+  flex: 0 0 32px;
+
+  margin-top: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

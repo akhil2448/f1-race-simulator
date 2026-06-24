@@ -9,6 +9,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { selectRaceGuard } from './core/guards/select-race.guard';
 import { qualifyingGuard } from './core/guards/qualifying.guard';
 import { simulationGuard } from './core/guards/simulation.guard';
+import { QualifyingComparisonPageComponent } from './pages/qualifying-comparison-page/qualifying-comparison-page.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,10 @@ export const routes: Routes = [
         path: 'simulation',
         component: SimulationComponent,
         canActivate: [simulationGuard],
+      },
+      {
+        path: 'ultimate-pace',
+        component: QualifyingComparisonPageComponent,
       },
       {
         path: '**',
