@@ -1,0 +1,15 @@
+<svg
+  class="track-svg"
+  preserveAspectRatio="xMidYMid meet"
+  [attr.viewBox]="viewBox"
+>
+  <polyline class="track-line" [attr.points]="polylinePoints" />
+
+  <line
+    class="start-finish"
+    [attr.x1]="startFinishLine.x1"
+    [attr.y1]="startFinishLine.y1"
+    [attr.x2]="startFinishLine.x2"
+    [attr.y2]="startFinishLine.y2"
+  />
+</svg>

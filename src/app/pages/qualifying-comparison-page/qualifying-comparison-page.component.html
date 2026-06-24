@@ -6,7 +6,11 @@
       <span class="title">Qualifying Comparison</span>
     </div>
 
-    <div class="header-right">Styrian Grand Prix</div>
+    <div class="header-right">
+      @if (comparison) {
+        2021 Styrian Grand Prix
+      }
+    </div>
   </section>
 
   <!-- TELEMETRY PANEL -->
@@ -20,11 +24,59 @@
 
   <!-- BOTTOM SECTION -->
   <section class="comparison-footer">
-    <div class="driver-card">DRIVER A</div>
+    <div class="driver-card">
+      @if (comparison) {
+        <div>
+          <div>
+            {{ comparison.driverA.driver }}
+          </div>
 
-    <div class="track-map-card">TRACK MAP</div>
+          <div>
+            {{ comparison.driverA.teamName }}
+          </div>
 
-    <div class="driver-card">DRIVER B</div>
+          <div>
+            {{ comparison.driverA.lapTime }}
+          </div>
+
+          <div>S1 {{ comparison.driverA.sector1 }}</div>
+
+          <div>S2 {{ comparison.driverA.sector2 }}</div>
+
+          <div>S3 {{ comparison.driverA.sector3 }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="track-map-card">
+      @if (comparison) {
+        <app-comparison-track-map [trackMap]="comparison.trackMap" />
+      }
+    </div>
+
+    <div class="driver-card">
+      @if (comparison?.driverB) {
+        <div>
+          <div>
+            {{ comparison?.driverB?.driver }}
+          </div>
+
+          <div>
+            {{ comparison?.driverB?.teamName }}
+          </div>
+
+          <div>
+            {{ comparison?.driverB?.lapTime }}
+          </div>
+
+          <div>S1 {{ comparison?.driverB?.sector1 }}</div>
+
+          <div>S2 {{ comparison?.driverB?.sector2 }}</div>
+
+          <div>S3 {{ comparison?.driverB?.sector3 }}</div>
+        </div>
+      }
+    </div>
   </section>
 
   <!-- CONTROLS -->
