@@ -15,11 +15,17 @@
 
   <!-- TELEMETRY PANEL -->
   <section class="telemetry-panel">
-    <div class="graph speed-graph">SPEED GRAPH</div>
+    @if (comparison) {
+      <div class="speed-graph">
+        <app-telemetry-panel
+          [driverA]="comparison.driverA"
+          [driverB]="comparison.driverB"
+        />
+      </div>
+      <div class="graph rpm-graph">RPM GRAPH</div>
 
-    <div class="graph rpm-graph">RPM GRAPH</div>
-
-    <div class="graph throttle-graph">THROTTLE / BRAKE GRAPH</div>
+      <div class="graph throttle-graph">THROTTLE / BRAKE GRAPH</div>
+    }
   </section>
 
   <!-- BOTTOM SECTION -->
