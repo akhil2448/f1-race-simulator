@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { QualifyingComparisonService } from '../../core/services/qualifying-comparison.service';
 import { QualifyingComparisonResponse } from '../../core/models/qualifying-comparison.model';
-import { ComparisonTrackMapComponent } from '../../comparision/components/comparison-track-map/comparison-track-map.component';
-import { TelemetryPanelComponent } from '../../comparision/telemetry-panel/telemetry-panel.component';
+import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
+import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
