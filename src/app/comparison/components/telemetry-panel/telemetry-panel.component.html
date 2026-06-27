@@ -1,29 +1,4 @@
 <div class="panel">
-  <div class="speed-row">
-    <app-telemetry-graph
-      metric="speed"
-      [tickStep]="25"
-      [driverA]="driverA"
-      [driverB]="driverB"
-    />
-  </div>
-
-  <div class="rpm-row">
-    <app-telemetry-graph
-      metric="rpm"
-      [tickStep]="2000"
-      [driverA]="driverA"
-      [driverB]="driverB"
-    />
-  </div>
-
-  <div class="throttle-row">
-    <app-telemetry-graph
-      metric="throttle"
-      [tickStep]="20"
-      [maxY]="100"
-      [driverA]="driverA"
-      [driverB]="driverB"
-    />
-  </div>
+  <app-telemetry-canvas [driverA]="driverA" [driverB]="driverB">
+  </app-telemetry-canvas>
 </div>

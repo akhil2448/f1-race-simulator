@@ -58,32 +58,9 @@
   display: flex;
   flex-direction: column;
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  // border: 1px solid rgba(255, 255, 255, 0.15);
 
   overflow: hidden;
-}
-
-.graph {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: rgba(255, 255, 255, 0.5);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.speed-graph {
-  flex: 5;
-}
-
-.rpm-graph {
-  flex: 1.25;
-}
-
-.throttle-graph {
-  flex: 3.75;
-  border-bottom: none;
 }
 
 /* ==========================

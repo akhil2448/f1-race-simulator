@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { TelemetryGraphComponent } from '../telemetry-graph/telemetry-graph.component';
+import { TelemetryCanvasComponent } from '../telemetry-canvas/telemetry-canvas.component';
 
 @Component({
   selector: 'app-telemetry-panel',
   standalone: true,
-  imports: [TelemetryGraphComponent],
+  imports: [TelemetryCanvasComponent],
   templateUrl: './telemetry-panel.component.html',
   styleUrl: './telemetry-panel.component.scss',
 })
