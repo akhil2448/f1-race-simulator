@@ -84,6 +84,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     undefined
   >;
 
+  private playbackCursor!: d3.Selection<
+    SVGLineElement,
+    unknown,
+    null,
+    undefined
+  >;
+
   private xScale!: d3.ScaleLinear<number, number>;
   private speedYScale!: d3.ScaleLinear<number, number>;
   private rpmYScale!: d3.ScaleLinear<number, number>;
@@ -668,6 +675,22 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     }
 
     //
+    // Playback cursor
+    //
+
+    this.playbackCursor = root
+      .append('line')
+      .attr('class', 'playback-cursor')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', graphBottom)
+      .attr('stroke', '#d9d9d9')
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.75)
+      .style('pointer-events', 'none');
+
+    //
     // Shared bottom X axis
     //
 
@@ -691,6 +714,10 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     if (!frameA) {
       return;
     }
+
+    const cursorX = this.xScale(frameA.sample.d);
+
+    this.playbackCursor.attr('x1', cursorX).attr('x2', cursorX);
 
     this.speedMarkerA
       .attr('cx', this.xScale(frameA.sample.d))
