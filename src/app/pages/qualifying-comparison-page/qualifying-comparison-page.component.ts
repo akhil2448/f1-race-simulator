@@ -28,6 +28,12 @@ export class QualifyingComparisonPageComponent implements OnInit {
           console.log('Qualifying Comparison', response);
 
           this.comparison = response;
+
+          const referenceLapTime = Math.min(
+            response.driverA.lapTime,
+            response.driverB?.lapTime ?? response.driverA.lapTime,
+          );
+
           console.log('Driver A telemetry:', response.driverA.telemetry.length);
           console.log(
             'Driver B telemetry:',
@@ -36,7 +42,12 @@ export class QualifyingComparisonPageComponent implements OnInit {
           console.log('Track points:', response.trackMap.points.length);
 
           // initialize playback
-          this.playbackService.loadLap(response.driverA.telemetry);
+          this.playbackService.loadLap(
+            response.driverA.telemetry,
+            referenceLapTime,
+          );
+
+          // Temporary until we fix the start position issue.
           this.stepForward();
 
           this.loading = false;

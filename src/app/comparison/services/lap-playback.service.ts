@@ -42,17 +42,34 @@ export class LapPlaybackService {
   private animationFrameId: number | null = null;
 
   /**
-   * Progress added every animation frame.
+   * Timestamp of previous animation frame.
    */
-  private playbackSpeed = 0.0025;
+  private previousTimestamp = 0;
+
+  /**
+   * Playback rate.
+   * 1 = realtime
+   * 0.5 = half speed
+   * 2 = double speed
+   */
+  private playbackRate = 1;
+
+  /**
+   * Reference playback duration (seconds).
+   *
+   * This controls how long the comparison takes to play.
+   * It is independent of any individual driver's lap time.
+   */
+  private referenceLapTimeSeconds = 0;
 
   /**
    * Load telemetry.
    */
-  loadLap(telemetry: any[]): void {
+  loadLap(telemetry: any[], referenceLapTimeSeconds: number): void {
     this.pause();
 
     this.telemetry = telemetry ?? [];
+    this.referenceLapTimeSeconds = referenceLapTimeSeconds;
 
     console.log('Loaded telemetry samples:', this.telemetry.length);
 
@@ -75,14 +92,30 @@ export class LapPlaybackService {
     }
 
     this.playingSubject.next(true);
+    this.previousTimestamp = 0;
 
-    const animate = () => {
+    const animate = (timestamp: number) => {
       if (!this.playingSubject.value) {
         return;
       }
 
+      //
+      // First frame
+      //
+
+      if (this.previousTimestamp === 0) {
+        this.previousTimestamp = timestamp;
+      }
+
+      const deltaSeconds = (timestamp - this.previousTimestamp) / 1000;
+
+      this.previousTimestamp = timestamp;
+
+      const progressIncrement =
+        (deltaSeconds * this.playbackRate) / this.referenceLapTimeSeconds;
+
       const nextProgress =
-        this.currentProgressSubject.value + this.playbackSpeed;
+        this.currentProgressSubject.value + progressIncrement;
 
       if (nextProgress >= 1) {
         this.seekProgress(1);
@@ -103,6 +136,7 @@ export class LapPlaybackService {
    */
   pause(): void {
     this.playingSubject.next(false);
+    this.previousTimestamp = 0;
 
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
