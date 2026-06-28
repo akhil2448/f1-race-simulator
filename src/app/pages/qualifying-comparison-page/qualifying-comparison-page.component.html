@@ -51,7 +51,12 @@
 
     <div class="track-map-card">
       @if (comparison) {
-        <app-comparison-track-map [trackMap]="comparison.trackMap" />
+        <app-comparison-track-map
+          [trackMap]="comparison.trackMap"
+          [driverATelemetry]="comparison.driverA.telemetry"
+          [driverBTelemetry]="comparison.driverB?.telemetry ?? null"
+          [progress]="playbackService.currentProgress"
+        />
       }
     </div>
 

@@ -12,4 +12,24 @@
     [attr.x2]="startFinishLine.x2"
     [attr.y2]="startFinishLine.y2"
   />
+
+  @let positions = displayPositions;
+
+  @if (positions.driverA; as driverA) {
+    <circle
+      class="driver-a-dot"
+      [attr.cx]="driverA.x"
+      [attr.cy]="driverA.y"
+      r="120"
+    />
+  }
+
+  @if (positions.driverB; as driverB) {
+    <circle
+      class="driver-b-dot"
+      [attr.cx]="driverB.x"
+      [attr.cy]="driverB.y"
+      r="120"
+    />
+  }
 </svg>

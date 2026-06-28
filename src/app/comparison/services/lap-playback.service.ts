@@ -161,14 +161,14 @@ export class LapPlaybackService {
    *
    * Binary search.
    */
-  private findNextSampleIndex(progress: number): number {
+  private findNextSampleIndex(telemetry: any[], progress: number): number {
     let low = 0;
-    let high = this.telemetry.length - 1;
+    let high = telemetry.length - 1;
 
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
 
-      const rd = Number(this.telemetry[mid].rd);
+      const rd = Number(telemetry[mid].rd);
 
       if (rd < progress) {
         low = mid + 1;
@@ -177,37 +177,36 @@ export class LapPlaybackService {
       }
     }
 
-    return Math.min(low, this.telemetry.length - 1);
+    return Math.min(low, telemetry.length - 1);
   }
 
   /**
-   * Creates one interpolated playback frame.
+   * Interpolates telemetry for any driver at the given lap progress.
    */
-  private publishFrame(): void {
-    if (this.telemetry.length === 0) {
-      return;
+  public interpolateTelemetry(
+    telemetry: any[],
+    progress: number,
+  ): PlaybackFrame | null {
+    if (!telemetry?.length) {
+      return null;
     }
 
-    const progress = this.currentProgressSubject.value;
-
-    const nextIndex = this.findNextSampleIndex(progress);
+    const nextIndex = this.findNextSampleIndex(telemetry, progress);
 
     if (nextIndex <= 0) {
-      const sample = this.telemetry[0];
+      const sample = telemetry[0];
 
-      this.currentFrameSubject.next({
+      return {
         progress,
         previous: sample,
         next: sample,
         factor: 0,
         sample,
-      });
-
-      return;
+      };
     }
 
-    const previous = this.telemetry[nextIndex - 1];
-    const next = this.telemetry[nextIndex];
+    const previous = telemetry[nextIndex - 1];
+    const next = telemetry[nextIndex];
 
     const previousRd = Number(previous.rd);
     const nextRd = Number(next.rd);
@@ -217,11 +216,12 @@ export class LapPlaybackService {
         ? 0
         : (progress - previousRd) / (nextRd - previousRd);
 
-    this.currentFrameSubject.next({
+    return {
       progress,
       previous,
       next,
       factor,
+
       sample: {
         rd: progress,
 
@@ -242,7 +242,19 @@ export class LapPlaybackService {
 
         gear: factor < 0.5 ? previous.gear : next.gear,
       },
-    });
+    };
+  }
+
+  /**
+   * Creates one interpolated playback frame.
+   */
+  private publishFrame(): void {
+    this.currentFrameSubject.next(
+      this.interpolateTelemetry(
+        this.telemetry,
+        this.currentProgressSubject.value,
+      ),
+    );
   }
 
   /**
