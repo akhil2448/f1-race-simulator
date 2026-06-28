@@ -20,7 +20,7 @@ export class QualifyingComparisonPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.comparisonService
-      .getComparison(2021, 8, 'Q3', 'VER', 'HAM')
+      .getComparison(2020, 2, 'Q3', 'HAM', 'VER')
       .subscribe({
         next: (response) => {
           console.log('Qualifying Comparison', response);

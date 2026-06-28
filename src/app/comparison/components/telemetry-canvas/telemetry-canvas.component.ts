@@ -22,9 +22,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   @Input()
   driverB: any;
 
-  private readonly SPEED_HEIGHT_RATIO = 0.56;
-  private readonly RPM_HEIGHT_RATIO = 0.13;
-  private readonly THROTTLE_HEIGHT_RATIO = 0.19;
+  private readonly SPEED_HEIGHT_RATIO = 0.54;
+  private readonly RPM_HEIGHT_RATIO = 0.17;
+  private readonly THROTTLE_HEIGHT_RATIO = 0.17;
   private readonly BRAKE_HEIGHT_RATIO = 0.12;
 
   @ViewChild('chartSvg')
@@ -55,7 +55,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     svg.selectAll('*').remove();
 
     const SVG_WIDTH = 1400;
-    const SVG_HEIGHT = 500;
+    const SVG_HEIGHT = 580;
 
     const margin = {
       top: 15,
@@ -89,9 +89,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Bottom section layout
     //
 
+    const GRAPH_GAP = 8;
+
+    // const totalBottomHeight =
+    //   chartHeight * (this.THROTTLE_HEIGHT_RATIO + this.BRAKE_HEIGHT_RATIO);
+
     const throttleSectionHeight = chartHeight * this.THROTTLE_HEIGHT_RATIO;
 
     const brakeSectionHeight = chartHeight * this.BRAKE_HEIGHT_RATIO;
+
+    const graphBottom =
+      speedHeight +
+      rpmHeight +
+      throttleSectionHeight +
+      GRAPH_GAP +
+      brakeSectionHeight;
 
     //
     // Drawing groups
@@ -109,12 +121,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const throttlePlot = throttleGroup.append('g');
 
-    const brakePlot = root
-      .append('g')
-      .attr(
-        'transform',
-        `translate(0, ${speedHeight + rpmHeight + throttleSectionHeight})`,
-      );
+    const brakePlot = root.append('g').attr(
+      'transform',
+      `translate(
+      0,
+      ${speedHeight + rpmHeight + throttleSectionHeight + GRAPH_GAP}
+    )`,
+    );
 
     //
     // Speed plot background
@@ -151,6 +164,14 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'plot-background')
       .attr('width', chartWidth)
       .attr('height', brakeSectionHeight);
+
+    root
+      .append('rect')
+      .attr('class', 'plot-background')
+      .attr('x', 0)
+      .attr('y', speedHeight + rpmHeight + throttleSectionHeight)
+      .attr('width', chartWidth)
+      .attr('height', GRAPH_GAP);
     //
     // Shared X scale (distance in metres)
     //
@@ -277,6 +298,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       );
 
     //
+    // Brake Grid
+    //
+
+    brakePlot
+      .append('g')
+      .attr('class', 'grid')
+      .call(
+        d3
+          .axisLeft(brakeY)
+          .tickValues([0, 50, 100])
+          .tickSize(-chartWidth)
+          .tickFormat(() => ''),
+      );
+
+    //
     // RPM Axis
     //
 
@@ -293,6 +329,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'y-axis')
       .call(d3.axisLeft(throttleY).ticks(5));
+
+    //
+    // Brake Axis
+    //
+
+    brakePlot
+      .append('g')
+      .attr('class', 'y-axis')
+      .call(d3.axisLeft(brakeY).tickValues([0, 50, 100]));
 
     //
     // Speed line
@@ -335,7 +380,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
       .attr('stroke', driverAColor)
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.5)
       .attr('d', speedLine);
 
     if (this.driverB?.telemetry?.length) {
@@ -344,7 +389,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1.5)
         .attr('d', speedLine);
     }
 
@@ -357,15 +402,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
       .attr('stroke', driverAColor)
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.5)
       .attr('d', rpmLine);
 
-    throttleGroup
+    throttlePlot
       .append('path')
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
       .attr('stroke', driverAColor)
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.5)
       .attr('d', throttleLine);
 
     brakePlot
@@ -373,7 +418,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
       .attr('stroke', driverAColor)
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.5)
       .attr('d', brakeLine);
 
     //
@@ -386,17 +431,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1.5)
         .attr('d', rpmLine);
     }
 
     if (this.driverB?.telemetry?.length) {
-      throttleGroup
+      throttlePlot
         .append('path')
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1.5)
         .attr('d', throttleLine);
 
       brakePlot
@@ -404,7 +449,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1.5)
         .attr('d', brakeLine);
     }
 
@@ -415,7 +460,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     root
       .append('g')
       .attr('class', 'x-axis')
-      .attr('transform', `translate(0, ${chartHeight})`)
+      .attr('transform', `translate(0, ${graphBottom})`)
       .call(
         d3
           .axisBottom(x)
