@@ -134,9 +134,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const margin = {
       top: 15,
-      right: 60,
-      bottom: 35,
-      left: 55,
+      right: 40,
+      bottom: 20,
+      left: 50,
     };
 
     const chartWidth = SVG_WIDTH - margin.left - margin.right;
@@ -321,6 +321,10 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const maxRpm = Math.ceil(Math.max(maxRpmA, maxRpmB) / 1000) * 1000;
 
+    const rpmTick = 2000;
+
+    const rpmTicks = d3.range(minRpm, maxRpm + rpmTick, rpmTick);
+
     this.rpmYScale = d3
       .scaleLinear()
       .domain([minRpm, maxRpm])
@@ -383,7 +387,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .call(
         d3
           .axisLeft(this.rpmYScale)
-          .ticks(4)
+          .tickValues(rpmTicks)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
       );
@@ -425,7 +429,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     this.rpmGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisRight(this.rpmYScale).ticks(4));
+      .call(
+        d3
+          .axisRight(this.rpmYScale)
+          .tickValues(rpmTicks)
+          .tickFormat((d) => `${Number(d) / 1000}`),
+      );
 
     this.rpmGroup
       .select('.y-axis')
@@ -436,9 +445,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(90)')
       .attr('x', rpmHeight / 2)
-      .attr('y', -(chartWidth + 50))
+      .attr('y', -(chartWidth + 30))
       .attr('text-anchor', 'middle')
-      .text('RPM');
+      .text('RPM (×1000)');
 
     //
     // Throttle Axis
@@ -476,7 +485,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(90)')
       .attr('x', brakeSectionHeight / 2)
-      .attr('y', -(chartWidth + 50))
+      .attr('y', -(chartWidth + 30))
       .attr('text-anchor', 'middle')
       .text('Brake');
 
