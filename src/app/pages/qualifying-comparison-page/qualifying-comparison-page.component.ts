@@ -3,6 +3,7 @@ import { QualifyingComparisonService } from '../../core/services/qualifying-comp
 import { QualifyingComparisonResponse } from '../../core/models/qualifying-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
 import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
+import { LapPlaybackService } from '../../comparison/services/lap-playback.service';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -13,6 +14,7 @@ import { TelemetryPanelComponent } from '../../comparison/components/telemetry-p
 })
 export class QualifyingComparisonPageComponent implements OnInit {
   private comparisonService = inject(QualifyingComparisonService);
+  readonly playbackService = inject(LapPlaybackService);
 
   comparison: QualifyingComparisonResponse | null = null;
 
@@ -26,6 +28,16 @@ export class QualifyingComparisonPageComponent implements OnInit {
           console.log('Qualifying Comparison', response);
 
           this.comparison = response;
+          console.log('Driver A telemetry:', response.driverA.telemetry.length);
+          console.log(
+            'Driver B telemetry:',
+            response.driverB?.telemetry.length,
+          );
+          console.log('Track points:', response.trackMap.points.length);
+
+          // initialize playback
+          this.playbackService.loadLap(response.driverA.telemetry);
+          this.stepForward();
 
           this.loading = false;
         },
@@ -36,5 +48,25 @@ export class QualifyingComparisonPageComponent implements OnInit {
           this.loading = false;
         },
       });
+
+    this.playbackService.currentFrame$.subscribe((frame) => {
+      if (!frame) {
+        return;
+      }
+
+      console.log(frame);
+    });
+  }
+
+  stepForward(): void {
+    this.playbackService.stepForward();
+  }
+
+  stepBackward(): void {
+    this.playbackService.stepBackward();
+  }
+
+  togglePlay(): void {
+    this.playbackService.toggle();
   }
 }

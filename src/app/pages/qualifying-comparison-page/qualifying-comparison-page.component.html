@@ -81,5 +81,11 @@
   </section>
 
   <!-- CONTROLS -->
-  <section class="controls-panel">PLAYBACK CONTROLS</section>
+  <section class="controls-panel">
+    <button (click)="stepBackward()">◀</button>
+
+    <button (click)="togglePlay()">Play / Pause</button>
+
+    <button (click)="stepForward()">▶</button>
+  </section>
 </div>
