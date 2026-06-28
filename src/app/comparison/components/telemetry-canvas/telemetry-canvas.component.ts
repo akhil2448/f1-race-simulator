@@ -6,9 +6,12 @@ import {
   AfterViewInit,
   OnChanges,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 
 import * as d3 from 'd3';
+
+import { LapPlaybackService } from '../../services/lap-playback.service';
 
 @Component({
   selector: 'app-telemetry-canvas',
@@ -18,6 +21,8 @@ import * as d3 from 'd3';
   encapsulation: ViewEncapsulation.None,
 })
 export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
+  private playbackService = inject(LapPlaybackService);
+
   @Input({ required: true })
   driverA: any;
 
@@ -32,8 +37,69 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   @ViewChild('chartSvg')
   chartSvgRef!: ElementRef<SVGSVGElement>;
 
+  private speedGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+  private rpmGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+  private throttleGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+  private brakeGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+
+  private speedMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+  private speedMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private rpmMarkerA!: d3.Selection<SVGCircleElement, unknown, null, undefined>;
+  private rpmMarkerB?: d3.Selection<SVGCircleElement, unknown, null, undefined>;
+
+  private throttleMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+  private throttleMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private brakeMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+  private brakeMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private xScale!: d3.ScaleLinear<number, number>;
+  private speedYScale!: d3.ScaleLinear<number, number>;
+  private rpmYScale!: d3.ScaleLinear<number, number>;
+  private throttleYScale!: d3.ScaleLinear<number, number>;
+  private brakeYScale!: d3.ScaleLinear<number, number>;
+
   ngAfterViewInit(): void {
     this.render();
+
+    this.playbackService.currentFrame$.subscribe((frame) => {
+      if (!frame) {
+        return;
+      }
+
+      this.updateMarkers(frame.progress);
+    });
   }
 
   ngOnChanges(): void {
@@ -112,19 +178,19 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Drawing groups
     //
 
-    const speedGroup = root.append('g');
+    this.speedGroup = root.append('g');
 
-    const rpmGroup = root
+    this.rpmGroup = root
       .append('g')
       .attr('transform', `translate(0, ${speedHeight})`);
 
-    const throttleGroup = root
+    this.throttleGroup = root
       .append('g')
       .attr('transform', `translate(0, ${speedHeight + rpmHeight})`);
 
-    const throttlePlot = throttleGroup.append('g');
+    const throttlePlot = this.throttleGroup.append('g');
 
-    const brakePlot = root.append('g').attr(
+    this.brakeGroup = root.append('g').attr(
       'transform',
       `translate(
       0,
@@ -136,7 +202,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Speed plot background
     //
 
-    speedGroup
+    this.speedGroup
       .append('rect')
       .attr('class', 'plot-background')
       .attr('width', chartWidth)
@@ -146,7 +212,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // RPM plot background
     //
 
-    rpmGroup
+    this.rpmGroup
       .append('rect')
       .attr('class', 'plot-background')
       .attr('width', chartWidth)
@@ -162,7 +228,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('width', chartWidth)
       .attr('height', throttleSectionHeight);
 
-    brakePlot
+    this.brakeGroup
       .append('rect')
       .attr('class', 'plot-background')
       .attr('width', chartWidth)
@@ -187,10 +253,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const maxDistance = Math.max(maxDistanceA, maxDistanceB);
 
-    const x = d3.scaleLinear().domain([0, maxDistance]).range([0, chartWidth]);
+    this.xScale = d3
+      .scaleLinear()
+      .domain([0, maxDistance])
+      .range([0, chartWidth]);
 
     const xGrid = d3
-      .axisBottom(x)
+      .axisBottom(this.xScale)
       .tickValues(d3.range(0, maxDistance + 1, 500))
       .tickSize(chartHeight)
       .tickFormat(() => '');
@@ -219,7 +288,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const maxSpeed =
       Math.ceil(Math.max(maxSpeedA, maxSpeedB) / SPEED_TICK) * SPEED_TICK;
 
-    const y = d3
+    this.speedYScale = d3
       .scaleLinear()
       .domain([minSpeed, maxSpeed])
       .range([speedHeight - PLOT_PADDING, PLOT_PADDING]);
@@ -245,7 +314,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const maxRpm = Math.ceil(Math.max(maxRpmA, maxRpmB) / 1000) * 1000;
 
-    const rpmY = d3
+    this.rpmYScale = d3
       .scaleLinear()
       .domain([minRpm, maxRpm])
       .range([rpmHeight - PLOT_PADDING, PLOT_PADDING]);
@@ -254,12 +323,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle Y scale
     //
 
-    const throttleY = d3
+    this.throttleYScale = d3
       .scaleLinear()
       .domain([0, 100])
       .range([throttleSectionHeight - PLOT_PADDING, PLOT_PADDING]);
 
-    const brakeY = d3
+    this.brakeYScale = d3
       .scaleLinear()
       .domain([0, 100])
       .range([brakeSectionHeight - PLOT_PADDING, PLOT_PADDING]);
@@ -268,12 +337,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Grid
     //
 
-    speedGroup
+    this.speedGroup
       .append('g')
       .attr('class', 'grid')
       .call(
         d3
-          .axisLeft(y)
+          .axisLeft(this.speedYScale)
           .ticks(6)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -283,12 +352,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Y axis
     //
 
-    speedGroup
+    this.speedGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(y).ticks(6));
+      .call(d3.axisLeft(this.speedYScale).ticks(6));
 
-    speedGroup
+    this.speedGroup
       .append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(-90)')
@@ -301,12 +370,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // RPM Grid
     //
 
-    rpmGroup
+    this.rpmGroup
       .append('g')
       .attr('class', 'grid')
       .call(
         d3
-          .axisLeft(rpmY)
+          .axisLeft(this.rpmYScale)
           .ticks(4)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -316,12 +385,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle Grid
     //
 
-    throttleGroup
+    this.throttleGroup
       .append('g')
       .attr('class', 'grid')
       .call(
         d3
-          .axisLeft(throttleY)
+          .axisLeft(this.throttleYScale)
           .ticks(5)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -331,12 +400,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Brake Grid
     //
 
-    brakePlot
+    this.brakeGroup
       .append('g')
       .attr('class', 'grid')
       .call(
         d3
-          .axisLeft(brakeY)
+          .axisLeft(this.brakeYScale)
           .tickValues([0, 50, 100])
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -346,14 +415,16 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // RPM Axis
     //
 
-    rpmGroup
+    this.rpmGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisRight(rpmY).ticks(4));
+      .call(d3.axisRight(this.rpmYScale).ticks(4));
 
-    rpmGroup.select('.y-axis').attr('transform', `translate(${chartWidth},0)`);
+    this.rpmGroup
+      .select('.y-axis')
+      .attr('transform', `translate(${chartWidth},0)`);
 
-    rpmGroup
+    this.rpmGroup
       .append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(90)')
@@ -366,10 +437,10 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle Axis
     //
 
-    throttleGroup
+    this.throttleGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(throttleY).ticks(5));
+      .call(d3.axisLeft(this.throttleYScale).ticks(5));
 
     throttlePlot
       .append('text')
@@ -384,14 +455,16 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Brake Axis
     //
 
-    brakePlot
+    this.brakeGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisRight(brakeY).tickValues([0, 50, 100]));
+      .call(d3.axisRight(this.brakeYScale).tickValues([0, 50, 100]));
 
-    brakePlot.select('.y-axis').attr('transform', `translate(${chartWidth},0)`);
+    this.brakeGroup
+      .select('.y-axis')
+      .attr('transform', `translate(${chartWidth},0)`);
 
-    brakePlot
+    this.brakeGroup
       .append('text')
       .attr('class', 'axis-title')
       .attr('transform', 'rotate(90)')
@@ -409,8 +482,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const speedLine = d3
       .line<any>()
       .curve(d3.curveLinear)
-      .x((d) => x(Number(d.d)))
-      .y((d) => y(Number(d.speed)));
+      .x((d) => this.xScale(Number(d.d)))
+      .y((d) => this.speedYScale(Number(d.speed)));
 
     //
     // RPM line
@@ -419,8 +492,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const rpmLine = d3
       .line<any>()
       .curve(d3.curveLinear)
-      .x((d) => x(Number(d.d)))
-      .y((d) => rpmY(Number(d.rpm)));
+      .x((d) => this.xScale(Number(d.d)))
+      .y((d) => this.rpmYScale(Number(d.rpm)));
 
     //
     // Throttle line
@@ -429,16 +502,16 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const throttleLine = d3
       .line<any>()
       .curve(d3.curveLinear)
-      .x((d) => x(Number(d.d)))
-      .y((d) => throttleY(Number(d.throttle)));
+      .x((d) => this.xScale(Number(d.d)))
+      .y((d) => this.throttleYScale(Number(d.throttle)));
 
     const brakeLine = d3
       .line<any>()
       .curve(d3.curveLinear)
-      .x((d) => x(Number(d.d)))
-      .y((d) => brakeY(Number(d.brake)));
+      .x((d) => this.xScale(Number(d.d)))
+      .y((d) => this.brakeYScale(Number(d.brake)));
 
-    speedGroup
+    this.speedGroup
       .append('path')
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
@@ -446,27 +519,54 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', speedLine);
 
+    this.speedMarkerA = this.speedGroup
+      .append('circle')
+      .attr('r', 4)
+      .attr('fill', driverAColor)
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1.5)
+      .attr('cx', this.xScale(Number(this.driverA.telemetry[0].d)))
+      .attr('cy', this.speedYScale(Number(this.driverA.telemetry[0].speed)));
+
     if (this.driverB?.telemetry?.length) {
-      speedGroup
+      this.speedGroup
         .append('path')
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
         .attr('stroke-width', 1.5)
         .attr('d', speedLine);
+
+      this.speedMarkerB = this.speedGroup
+        .append('circle')
+        .attr('r', 4)
+        .attr('fill', driverBColor)
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1.5)
+        .attr('cx', this.xScale(Number(this.driverB.telemetry[0].d)))
+        .attr('cy', this.speedYScale(Number(this.driverB.telemetry[0].speed)));
     }
 
     //
     // RPM Driver A
     //
 
-    rpmGroup
+    this.rpmGroup
       .append('path')
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
       .attr('stroke', driverAColor)
       .attr('stroke-width', 1.5)
       .attr('d', rpmLine);
+
+    this.rpmMarkerA = this.rpmGroup
+      .append('circle')
+      .attr('r', 4)
+      .attr('fill', driverAColor)
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1.5)
+      .attr('cx', this.xScale(Number(this.driverA.telemetry[0].d)))
+      .attr('cy', this.rpmYScale(Number(this.driverA.telemetry[0].rpm)));
 
     throttlePlot
       .append('path')
@@ -476,7 +576,19 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', throttleLine);
 
-    brakePlot
+    this.throttleMarkerA = throttlePlot
+      .append('circle')
+      .attr('r', 4)
+      .attr('fill', driverAColor)
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1.5)
+      .attr('cx', this.xScale(Number(this.driverA.telemetry[0].d)))
+      .attr(
+        'cy',
+        this.throttleYScale(Number(this.driverA.telemetry[0].throttle)),
+      );
+
+    this.brakeGroup
       .append('path')
       .datum(this.driverA.telemetry)
       .attr('fill', 'none')
@@ -484,18 +596,36 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', brakeLine);
 
+    this.brakeMarkerA = this.brakeGroup
+      .append('circle')
+      .attr('r', 4)
+      .attr('fill', driverAColor)
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1.5)
+      .attr('cx', this.xScale(Number(this.driverA.telemetry[0].d)))
+      .attr('cy', this.brakeYScale(Number(this.driverA.telemetry[0].brake)));
+
     //
     // RPM Driver B
     //
 
     if (this.driverB?.telemetry?.length) {
-      rpmGroup
+      this.rpmGroup
         .append('path')
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
         .attr('stroke-width', 1.5)
         .attr('d', rpmLine);
+
+      this.rpmMarkerB = this.rpmGroup
+        .append('circle')
+        .attr('r', 4)
+        .attr('fill', driverBColor)
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1.5)
+        .attr('cx', this.xScale(Number(this.driverB.telemetry[0].d)))
+        .attr('cy', this.rpmYScale(Number(this.driverB.telemetry[0].rpm)));
     }
 
     if (this.driverB?.telemetry?.length) {
@@ -507,13 +637,34 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('stroke-width', 1.5)
         .attr('d', throttleLine);
 
-      brakePlot
+      this.throttleMarkerB = throttlePlot
+        .append('circle')
+        .attr('r', 4)
+        .attr('fill', driverBColor)
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1.5)
+        .attr('cx', this.xScale(Number(this.driverB.telemetry[0].d)))
+        .attr(
+          'cy',
+          this.throttleYScale(Number(this.driverB.telemetry[0].throttle)),
+        );
+
+      this.brakeGroup
         .append('path')
         .datum(this.driverB.telemetry)
         .attr('fill', 'none')
         .attr('stroke', driverBColor)
         .attr('stroke-width', 1.5)
         .attr('d', brakeLine);
+
+      this.brakeMarkerB = this.brakeGroup
+        .append('circle')
+        .attr('r', 4)
+        .attr('fill', driverBColor)
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1.5)
+        .attr('cx', this.xScale(Number(this.driverB.telemetry[0].d)))
+        .attr('cy', this.brakeYScale(Number(this.driverB.telemetry[0].brake)));
     }
 
     //
@@ -526,9 +677,60 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('transform', `translate(0, ${graphBottom})`)
       .call(
         d3
-          .axisBottom(x)
+          .axisBottom(this.xScale)
           .tickValues(d3.range(0, maxDistance + 1, 500))
           .tickFormat((d) => `${d}`),
       );
+  }
+  private updateMarkers(progress: number): void {
+    const frameA = this.playbackService.interpolateTelemetry(
+      this.driverA.telemetry,
+      progress,
+    );
+
+    if (!frameA) {
+      return;
+    }
+
+    this.speedMarkerA
+      .attr('cx', this.xScale(frameA.sample.d))
+      .attr('cy', this.speedYScale(frameA.sample.speed));
+
+    this.rpmMarkerA
+      .attr('cx', this.xScale(frameA.sample.d))
+      .attr('cy', this.rpmYScale(frameA.sample.rpm));
+
+    this.throttleMarkerA
+      .attr('cx', this.xScale(frameA.sample.d))
+      .attr('cy', this.throttleYScale(frameA.sample.throttle));
+
+    this.brakeMarkerA
+      .attr('cx', this.xScale(frameA.sample.d))
+      .attr('cy', this.brakeYScale(frameA.sample.brake));
+
+    if (this.driverB?.telemetry?.length && this.speedMarkerB) {
+      const frameB = this.playbackService.interpolateTelemetry(
+        this.driverB.telemetry,
+        progress,
+      );
+
+      if (frameB) {
+        this.speedMarkerB
+          .attr('cx', this.xScale(frameB.sample.d))
+          .attr('cy', this.speedYScale(frameB.sample.speed));
+
+        this.rpmMarkerB
+          ?.attr('cx', this.xScale(frameB.sample.d))
+          .attr('cy', this.rpmYScale(frameB.sample.rpm));
+
+        this.throttleMarkerB
+          ?.attr('cx', this.xScale(frameB.sample.d))
+          .attr('cy', this.throttleYScale(frameB.sample.throttle));
+
+        this.brakeMarkerB
+          ?.attr('cx', this.xScale(frameB.sample.d))
+          .attr('cy', this.brakeYScale(frameB.sample.brake));
+      }
+    }
   }
 }
