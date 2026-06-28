@@ -5,6 +5,7 @@ import {
   ViewChild,
   AfterViewInit,
   OnChanges,
+  ViewEncapsulation,
 } from '@angular/core';
 
 import * as d3 from 'd3';
@@ -14,6 +15,7 @@ import * as d3 from 'd3';
   standalone: true,
   templateUrl: './telemetry-canvas.component.html',
   styleUrl: './telemetry-canvas.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   @Input({ required: true })
@@ -23,8 +25,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   driverB: any;
 
   private readonly SPEED_HEIGHT_RATIO = 0.54;
-  private readonly RPM_HEIGHT_RATIO = 0.17;
-  private readonly THROTTLE_HEIGHT_RATIO = 0.17;
+  private readonly RPM_HEIGHT_RATIO = 0.15;
+  private readonly THROTTLE_HEIGHT_RATIO = 0.18;
   private readonly BRAKE_HEIGHT_RATIO = 0.12;
 
   @ViewChild('chartSvg')
@@ -59,7 +61,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const margin = {
       top: 15,
-      right: 20,
+      right: 60,
       bottom: 35,
       left: 55,
     };
@@ -89,7 +91,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Bottom section layout
     //
 
-    const GRAPH_GAP = 8;
+    const GRAPH_GAP = 4;
+    const PLOT_PADDING = 2;
 
     // const totalBottomHeight =
     //   chartHeight * (this.THROTTLE_HEIGHT_RATIO + this.BRAKE_HEIGHT_RATIO);
@@ -186,6 +189,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const x = d3.scaleLinear().domain([0, maxDistance]).range([0, chartWidth]);
 
+    const xGrid = d3
+      .axisBottom(x)
+      .tickValues(d3.range(0, maxDistance + 1, 500))
+      .tickSize(chartHeight)
+      .tickFormat(() => '');
+
     //
     // Speed Y scale
     //
@@ -213,7 +222,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const y = d3
       .scaleLinear()
       .domain([minSpeed, maxSpeed])
-      .range([speedHeight, 0]);
+      .range([speedHeight - PLOT_PADDING, PLOT_PADDING]);
 
     //
     // RPM Y scale
@@ -225,9 +234,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const maxRpmB =
       d3.max(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ?? 0;
 
+    const minRpmA =
+      d3.min(this.driverA.telemetry, (d: any) => Number(d.rpm)) ?? 0;
+
+    const minRpmB =
+      d3.min(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ??
+      minRpmA;
+
+    const minRpm = Math.floor(Math.min(minRpmA, minRpmB) / 1000) * 1000;
+
     const maxRpm = Math.ceil(Math.max(maxRpmA, maxRpmB) / 1000) * 1000;
 
-    const rpmY = d3.scaleLinear().domain([0, maxRpm]).range([rpmHeight, 0]);
+    const rpmY = d3
+      .scaleLinear()
+      .domain([minRpm, maxRpm])
+      .range([rpmHeight - PLOT_PADDING, PLOT_PADDING]);
 
     //
     // Throttle Y scale
@@ -236,12 +257,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const throttleY = d3
       .scaleLinear()
       .domain([0, 100])
-      .range([throttleSectionHeight, 0]);
+      .range([throttleSectionHeight - PLOT_PADDING, PLOT_PADDING]);
 
     const brakeY = d3
       .scaleLinear()
       .domain([0, 100])
-      .range([brakeSectionHeight, 0]);
+      .range([brakeSectionHeight - PLOT_PADDING, PLOT_PADDING]);
 
     //
     // Grid
@@ -266,6 +287,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'y-axis')
       .call(d3.axisLeft(y).ticks(6));
+
+    speedGroup
+      .append('text')
+      .attr('class', 'axis-title')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -speedHeight / 2)
+      .attr('y', -40)
+      .attr('text-anchor', 'middle')
+      .text('Speed (km/h)');
 
     //
     // RPM Grid
@@ -319,7 +349,18 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     rpmGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(rpmY).ticks(4));
+      .call(d3.axisRight(rpmY).ticks(4));
+
+    rpmGroup.select('.y-axis').attr('transform', `translate(${chartWidth},0)`);
+
+    rpmGroup
+      .append('text')
+      .attr('class', 'axis-title')
+      .attr('transform', 'rotate(90)')
+      .attr('x', rpmHeight / 2)
+      .attr('y', -(chartWidth + 50))
+      .attr('text-anchor', 'middle')
+      .text('RPM');
 
     //
     // Throttle Axis
@@ -330,6 +371,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'y-axis')
       .call(d3.axisLeft(throttleY).ticks(5));
 
+    throttlePlot
+      .append('text')
+      .attr('class', 'axis-title')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -throttleSectionHeight / 2)
+      .attr('y', -40)
+      .attr('text-anchor', 'middle')
+      .text('Throttle');
+
     //
     // Brake Axis
     //
@@ -337,7 +387,20 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     brakePlot
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(brakeY).tickValues([0, 50, 100]));
+      .call(d3.axisRight(brakeY).tickValues([0, 50, 100]));
+
+    brakePlot.select('.y-axis').attr('transform', `translate(${chartWidth},0)`);
+
+    brakePlot
+      .append('text')
+      .attr('class', 'axis-title')
+      .attr('transform', 'rotate(90)')
+      .attr('x', brakeSectionHeight / 2)
+      .attr('y', -(chartWidth + 50))
+      .attr('text-anchor', 'middle')
+      .text('Brake');
+
+    root.append('g').attr('class', 'vertical-grid').call(xGrid);
 
     //
     // Speed line

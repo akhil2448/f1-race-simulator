@@ -14,3 +14,34 @@ svg {
   //   fill: #090909;
   fill: #111111;
 }
+
+.grid line,
+.vertical-grid line {
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 1;
+}
+
+.grid path,
+.vertical-grid path {
+  display: none;
+}
+
+.x-axis line,
+.y-axis line,
+.x-axis path,
+.y-axis path {
+  stroke: rgba(255, 255, 255, 0.55);
+}
+
+.x-axis text,
+.y-axis text {
+  fill: #d7d7d7;
+  font-size: 12px;
+}
+
+.axis-title {
+  fill: #d7d7d7;
+  font-family: "Formula1", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
