@@ -174,7 +174,9 @@
 
   display: flex;
 
-  align-items: baseline;
+  justify-content: space-between;
+
+  align-items: flex-end;
 }
 
 .lap-time {
@@ -195,6 +197,78 @@
   color: #cfcfcf;
 
   opacity: 0.9;
+}
+
+.lap-left {
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 12px;
+}
+
+.tyre-info {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 6px;
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+}
+
+.tyre-label {
+  color: #8f8f8f;
+
+  font-size: 10px;
+
+  letter-spacing: 0.8px;
+}
+
+.compound {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+.separator {
+  color: #777;
+}
+
+.fresh {
+  color: #00d25a;
+
+  font-size: 12px;
+}
+
+.age {
+  color: #c6c6c6;
+
+  font-size: 12px;
+}
+
+/* TYRE COMPOUNDS */
+
+.compound.soft {
+  color: #ff2b2b;
+}
+
+.compound.medium {
+  color: #ffd400;
+}
+
+.compound.hard {
+  color: #dfdfdf;
+}
+
+.compound.intermediate {
+  color: #3cff00;
+}
+
+.compound.wet {
+  color: #0066ff;
 }
 
 .sectors {

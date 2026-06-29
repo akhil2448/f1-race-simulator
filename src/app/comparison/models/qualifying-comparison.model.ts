@@ -23,11 +23,20 @@ export interface TelemetryPoint {
 export interface DriverLap {
   driver: string;
 
+  driverNumber: string;
+
   teamName: string;
   teamColor: string;
+
   position: number;
 
   lapNumber: number;
+
+  compound: string | null;
+  tyreAge: number | null;
+  freshTyre: boolean | null;
+  stint: number | null;
+
   lapTime: number;
 
   sector1: number;

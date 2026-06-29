@@ -196,4 +196,62 @@ export class DriverCardComponent {
     img.src = 'assets/team-logos/plcholder.svg';
     img.className = 'plcholder';
   }
+
+  get compoundShort(): string {
+    switch (this.driver.compound?.toUpperCase()) {
+      case 'SOFT':
+        return 'S';
+
+      case 'MEDIUM':
+        return 'M';
+
+      case 'HARD':
+        return 'H';
+
+      case 'INTERMEDIATE':
+        return 'I';
+
+      case 'WET':
+        return 'W';
+
+      default:
+        return '-';
+    }
+  }
+
+  get compoundClass(): string {
+    switch (this.driver.compound?.toUpperCase()) {
+      case 'SOFT':
+        return 'soft';
+
+      case 'MEDIUM':
+        return 'medium';
+
+      case 'HARD':
+        return 'hard';
+
+      case 'INTERMEDIATE':
+        return 'intermediate';
+
+      case 'WET':
+        return 'wet';
+
+      default:
+        return '';
+    }
+  }
+
+  get freshTyreText(): string {
+    return this.driver.freshTyre ? 'NEW' : 'USED';
+  }
+
+  get tyreAgeText(): string {
+    if (this.driver.tyreAge == null) {
+      return '';
+    }
+
+    const laps = this.driver.tyreAge;
+
+    return `${laps} ${laps === 1 ? 'LAP' : 'LAPS'}`;
+  }
 }

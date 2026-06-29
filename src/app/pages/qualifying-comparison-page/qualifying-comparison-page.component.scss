@@ -81,13 +81,14 @@
   display: grid;
 
   grid-template-columns:
-    438px
-    502px
-    438px;
+    500px
+    388px
+    500px;
 
-  gap: 10px;
+  // gap: 5px;
 
   margin-top: 4px;
+  margin-left: 20px;
 
   overflow: hidden;
 }

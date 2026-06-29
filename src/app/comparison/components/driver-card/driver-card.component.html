@@ -16,14 +16,34 @@
   <div class="team-strip" [style.background]="teamColour"></div>
 
   <div class="lap-row">
-    <div class="lap-time">
-      {{ lapTimer }}
+    <div class="lap-left">
+      <div class="lap-time">
+        {{ lapTimer }}
+      </div>
 
       @if (gap !== null) {
-        <span class="gap">
+        <div class="gap">
           {{ formattedGap }}
-        </span>
+        </div>
       }
+    </div>
+
+    <div class="tyre-info">
+      <span class="tyre-label">TYRE</span>
+
+      <span class="compound" [ngClass]="compoundClass">
+        {{ compoundShort }}
+      </span>
+
+      <span class="separator">•</span>
+
+      <span class="fresh">
+        {{ freshTyreText }}
+      </span>
+
+      <span class="separator">•</span>
+
+      <span class="age"> AGE {{ driver.tyreAge }} </span>
     </div>
   </div>
 
