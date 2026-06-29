@@ -18,20 +18,20 @@
   <div class="lap-row">
     <div class="lap-time">
       {{ lapTimer }}
-    </div>
 
-    @if (gap !== null) {
-      <div class="gap">
-        {{ formattedGap }}
-      </div>
-    }
+      @if (gap !== null) {
+        <span class="gap">
+          {{ formattedGap }}
+        </span>
+      }
+    </div>
   </div>
 
   <div class="sectors">
     <div class="sector s1">
       <div class="sector-label">SECTOR 1</div>
 
-      <div class="sector-time">
+      <div class="sector-time" [style.color]="sector1.color">
         {{ sector1Display }}
       </div>
     </div>
@@ -39,7 +39,7 @@
     <div class="sector s2">
       <div class="sector-label">SECTOR 2</div>
 
-      <div class="sector-time">
+      <div class="sector-time" [style.color]="sector2.color">
         {{ sector2Display }}
       </div>
     </div>
@@ -47,7 +47,7 @@
     <div class="sector s3">
       <div class="sector-label">SECTOR 3</div>
 
-      <div class="sector-time">
+      <div class="sector-time" [style.color]="sector3.color">
         {{ sector3Display }}
       </div>
     </div>

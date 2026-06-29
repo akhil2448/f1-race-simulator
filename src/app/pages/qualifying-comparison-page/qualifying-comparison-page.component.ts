@@ -6,6 +6,7 @@ import { TelemetryPanelComponent } from '../../comparison/components/telemetry-p
 import { LapPlaybackService } from '../../comparison/services/lap-playback.service';
 import { PlaybackControlsComponent } from '../../comparison/components/playback-controls/playback-controls.component';
 import { DriverCardComponent } from '../../comparison/components/driver-card/driver-card.component';
+import { SectorDisplay } from '../../comparison/models/sector-display.model';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -81,175 +82,92 @@ export class QualifyingComparisonPageComponent implements OnInit {
     });
   }
 
-  get driverASector1Text(): string | null {
-    if (!this.comparison?.driverB) {
-      return null;
-    }
-
-    const progress = this.playbackService.currentProgress;
-
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
-
-    //
-    // Wait until BOTH drivers finish Sector 1.
-    //
-    if (
-      elapsedA < this.comparison.driverA.sector1 ||
-      elapsedB < this.comparison.driverB.sector1
-    ) {
-      return null;
-    }
-
-    if (this.comparison.driverA.sector1 <= this.comparison.driverB.sector1) {
-      return this.comparison.driverA.sector1.toFixed(3);
-    }
-
-    return `+${(
-      this.comparison.driverA.sector1 - this.comparison.driverB.sector1
-    ).toFixed(3)}`;
+  get driverASector1() {
+    return this.getSectorDisplay(1, 'A');
   }
 
-  get driverASector2Text(): string | null {
-    if (!this.comparison?.driverB) {
-      return null;
-    }
-
-    const progress = this.playbackService.currentProgress;
-
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
-
-    const sector2EndA =
-      this.comparison.driverA.sector1 + this.comparison.driverA.sector2;
-
-    const sector2EndB =
-      this.comparison.driverB.sector1 + this.comparison.driverB.sector2;
-
-    //
-    // Wait until BOTH drivers finish Sector 2.
-    //
-    if (elapsedA < sector2EndA || elapsedB < sector2EndB) {
-      return null;
-    }
-
-    if (this.comparison.driverA.sector2 <= this.comparison.driverB.sector2) {
-      return this.comparison.driverA.sector2.toFixed(3);
-    }
-
-    return `+${(
-      this.comparison.driverA.sector2 - this.comparison.driverB.sector2
-    ).toFixed(3)}`;
+  get driverASector2() {
+    return this.getSectorDisplay(2, 'A');
   }
 
-  get driverASector3Text(): string | null {
-    if (!this.comparison?.driverB) {
-      return null;
-    }
-
-    const progress = this.playbackService.currentProgress;
-
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
-
-    //
-    // Wait until BOTH drivers finish the lap.
-    //
-    if (
-      elapsedA < this.comparison.driverA.lapTime ||
-      elapsedB < this.comparison.driverB.lapTime
-    ) {
-      return null;
-    }
-
-    if (this.comparison.driverA.sector3 <= this.comparison.driverB.sector3) {
-      return this.comparison.driverA.sector3.toFixed(3);
-    }
-
-    return `+${(
-      this.comparison.driverA.sector3 - this.comparison.driverB.sector3
-    ).toFixed(3)}`;
+  get driverASector3() {
+    return this.getSectorDisplay(3, 'A');
   }
 
-  get driverBSector1Text(): string | null {
-    if (!this.comparison?.driverB) {
-      return null;
-    }
-
-    const progress = this.playbackService.currentProgress;
-
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
-
-    if (
-      elapsedA < this.comparison.driverA.sector1 ||
-      elapsedB < this.comparison.driverB.sector1
-    ) {
-      return null;
-    }
-
-    if (this.comparison.driverB.sector1 <= this.comparison.driverA.sector1) {
-      return this.comparison.driverB.sector1.toFixed(3);
-    }
-
-    return `+${(
-      this.comparison.driverB.sector1 - this.comparison.driverA.sector1
-    ).toFixed(3)}`;
+  get driverBSector1() {
+    return this.getSectorDisplay(1, 'B');
   }
 
-  get driverBSector2Text(): string | null {
-    if (!this.comparison?.driverB) {
-      return null;
-    }
-
-    const progress = this.playbackService.currentProgress;
-
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
-
-    const sector2EndA =
-      this.comparison.driverA.sector1 + this.comparison.driverA.sector2;
-
-    const sector2EndB =
-      this.comparison.driverB.sector1 + this.comparison.driverB.sector2;
-
-    if (elapsedA < sector2EndA || elapsedB < sector2EndB) {
-      return null;
-    }
-
-    if (this.comparison.driverB.sector2 <= this.comparison.driverA.sector2) {
-      return this.comparison.driverB.sector2.toFixed(3);
-    }
-
-    return `+${(
-      this.comparison.driverB.sector2 - this.comparison.driverA.sector2
-    ).toFixed(3)}`;
+  get driverBSector2() {
+    return this.getSectorDisplay(2, 'B');
   }
 
-  get driverBSector3Text(): string | null {
+  get driverBSector3() {
+    return this.getSectorDisplay(3, 'B');
+  }
+
+  private getSectorDisplay(
+    sector: 1 | 2 | 3,
+    driver: 'A' | 'B',
+  ): SectorDisplay {
     if (!this.comparison?.driverB) {
-      return null;
+      return {
+        text: null,
+        color: 'white',
+      };
     }
 
-    const progress = this.playbackService.currentProgress;
+    const driverA = this.comparison.driverA;
+    const driverB = this.comparison.driverB;
 
-    const elapsedA = progress * this.comparison.driverA.lapTime;
-    const elapsedB = progress * this.comparison.driverB.lapTime;
+    const elapsedA = this.playbackService.currentProgress * driverA.lapTime;
 
-    if (
-      elapsedA < this.comparison.driverA.lapTime ||
-      elapsedB < this.comparison.driverB.lapTime
-    ) {
-      return null;
+    const elapsedB = this.playbackService.currentProgress * driverB.lapTime;
+
+    const sectorEndA =
+      sector === 1
+        ? driverA.sector1
+        : sector === 2
+          ? driverA.sector1 + driverA.sector2
+          : driverA.lapTime;
+
+    const sectorEndB =
+      sector === 1
+        ? driverB.sector1
+        : sector === 2
+          ? driverB.sector1 + driverB.sector2
+          : driverB.lapTime;
+
+    if (elapsedA < sectorEndA || elapsedB < sectorEndB) {
+      return {
+        text: null,
+        color: 'white',
+      };
     }
 
-    if (this.comparison.driverB.sector3 <= this.comparison.driverA.sector3) {
-      return this.comparison.driverB.sector3.toFixed(3);
-    }
+    const timeA =
+      sector === 1
+        ? driverA.sector1
+        : sector === 2
+          ? driverA.sector2
+          : driverA.sector3;
 
-    return `+${(
-      this.comparison.driverB.sector3 - this.comparison.driverA.sector3
-    ).toFixed(3)}`;
+    const timeB =
+      sector === 1
+        ? driverB.sector1
+        : sector === 2
+          ? driverB.sector2
+          : driverB.sector3;
+
+    const myTime = driver === 'A' ? timeA : timeB;
+    const otherTime = driver === 'A' ? timeB : timeA;
+
+    const winner = myTime <= otherTime;
+
+    return {
+      text: winner ? myTime.toFixed(3) : `+${(myTime - otherTime).toFixed(3)}`,
+      color: winner ? '#00d25a' : '#ffd400',
+    };
   }
 
   stepForward(): void {

@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DriverLap } from '../../../core/models/qualifying-comparison.model';
+import { SectorDisplay } from '../../models/sector-display.model';
 
 @Component({
   selector: 'app-driver-card',
@@ -20,13 +21,13 @@ export class DriverCardComponent {
   gap: number | null = null;
 
   @Input()
-  sector1Text: string | null = null;
+  sector1!: SectorDisplay;
 
   @Input()
-  sector2Text: string | null = null;
+  sector2!: SectorDisplay;
 
   @Input()
-  sector3Text: string | null = null;
+  sector3!: SectorDisplay;
 
   get elapsedTime(): number {
     return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
@@ -49,8 +50,8 @@ export class DriverCardComponent {
   }
 
   get sector1Display(): string {
-    if (this.sector1Text !== null) {
-      return this.sector1Text;
+    if (this.sector1?.text !== null) {
+      return this.sector1.text!;
     }
 
     if (this.currentSector === 1) {
@@ -61,8 +62,8 @@ export class DriverCardComponent {
   }
 
   get sector2Display(): string {
-    if (this.sector2Text !== null) {
-      return this.sector2Text;
+    if (this.sector2?.text !== null) {
+      return this.sector2.text!;
     }
 
     if (this.currentSector === 1) {
@@ -77,8 +78,8 @@ export class DriverCardComponent {
   }
 
   get sector3Display(): string {
-    if (this.sector3Text !== null) {
-      return this.sector3Text;
+    if (this.sector3?.text !== null) {
+      return this.sector3.text!;
     }
 
     if (this.currentSector !== 3) {

@@ -174,21 +174,27 @@
 
   display: flex;
 
-  justify-content: space-between;
-
-  align-items: flex-end;
+  align-items: baseline;
 }
 
 .lap-time {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 10px;
+
   font-size: 32px;
 
   line-height: 1;
 }
 
 .gap {
-  font-size: 20px;
+  font-size: 16px;
 
-  color: #f5f0f0;
+  color: #cfcfcf;
+
+  opacity: 0.9;
 }
 
 .sectors {

@@ -1,5 +1,5 @@
 export interface SectorDisplay {
-  text: string;
+  text: string | null;
 
-  color: 'white' | 'green' | 'yellow';
+  color: string;
 }
