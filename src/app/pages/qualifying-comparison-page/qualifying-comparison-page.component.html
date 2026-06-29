@@ -27,25 +27,10 @@
   <section class="comparison-footer">
     <div class="driver-card">
       @if (comparison) {
-        <div>
-          <div>
-            {{ comparison.driverA.driver }}
-          </div>
-
-          <div>
-            {{ comparison.driverA.teamName }}
-          </div>
-
-          <div>
-            {{ comparison.driverA.lapTime }}
-          </div>
-
-          <div>S1 {{ comparison.driverA.sector1 }}</div>
-
-          <div>S2 {{ comparison.driverA.sector2 }}</div>
-
-          <div>S3 {{ comparison.driverA.sector3 }}</div>
-        </div>
+        <app-driver-card
+          [driver]="comparison.driverA"
+          [progress]="playbackService.currentProgress"
+        />
       }
     </div>
 
@@ -61,26 +46,11 @@
     </div>
 
     <div class="driver-card">
-      @if (comparison?.driverB) {
-        <div>
-          <div>
-            {{ comparison?.driverB?.driver }}
-          </div>
-
-          <div>
-            {{ comparison?.driverB?.teamName }}
-          </div>
-
-          <div>
-            {{ comparison?.driverB?.lapTime }}
-          </div>
-
-          <div>S1 {{ comparison?.driverB?.sector1 }}</div>
-
-          <div>S2 {{ comparison?.driverB?.sector2 }}</div>
-
-          <div>S3 {{ comparison?.driverB?.sector3 }}</div>
-        </div>
+      @if (comparison?.driverB; as driverB) {
+        <app-driver-card
+          [driver]="driverB"
+          [progress]="playbackService.currentProgress"
+        />
       }
     </div>
   </section>

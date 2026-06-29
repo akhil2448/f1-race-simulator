@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+
+  background: #111111;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px 14px;
+
+  box-sizing: border-box;
+
+  font-family: "Formula1";
+
+  color: #f3f3f3;
+}
+
+.header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.driver {
+  font-size: 34px;
+
+  line-height: 1;
+}
+
+// .team-logo {
+//   height: 34px;
+
+//   width: auto;
+
+//   object-fit: contain;
+// }
+
+.team-icon img {
+  width: 32px;
+
+  height: 32px;
+
+  //   object-fit: contain;
+}
+
+/* TEAM LOGO OVERRIDES */
+
+.team-icon img.redbull {
+  transform: translateX(-34px) scale(3);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.alfaromeo {
+  transform: scale(1.15);
+}
+
+.team-icon img.renault {
+  filter: brightness(0) invert(1);
+  transform: translateX(-1px) scale(1.05);
+}
+
+.team-icon img.mclaren {
+  padding-top: 2px;
+
+  transform: translateX(-10px) scale(1.5);
+}
+
+.team-icon img.ferrari {
+  transform: translateX(-8px) scale(1.25);
+}
+
+.team-icon img.mercedes {
+  transform: translateX(-8px) scale(1.15);
+}
+
+.team-icon img.forceindia {
+  transform: translateX(-8px) scale(1.5);
+}
+
+.team-icon img.haas {
+  transform: translateX(-8px) scale(1.25);
+}
+
+.team-icon img.tororosso {
+  width: 70px;
+
+  height: 35px;
+
+  transform: translateX(-4px);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.racingpoint {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-1px) scale(1.15);
+}
+
+.team-icon img.alphatauri {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-15px) scale(2.5);
+}
+
+.team-icon img.alpine {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-10px) scale(2.25);
+}
+
+.team-icon img.astonmartin {
+  padding-top: 3px;
+
+  transform: translateX(-35px) translateY(3px) scale(3.5);
+}
+
+.team-icon img.racingbulls {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-8px) scale(1.4);
+}
+
+.team-icon img.kicksauber {
+  transform: translateX(-6px) scale(1.4);
+}
+
+.team-icon img.cadillac {
+  width: 23px;
+
+  height: 9px;
+
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-22px) scale(3);
+}
+
+.team-icon img.audi {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-22px) scale(2.25);
+}
+
+.team-icon img.plcholder {
+  filter: brightness(0) invert(1);
+}
+
+.team-strip {
+  margin-top: 8px;
+
+  height: 5px;
+
+  border-radius: 999px;
+
+  width: 100%;
+}
+
+.lap-row {
+  margin-top: 12px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-end;
+}
+
+.lap-time {
+  font-size: 34px;
+
+  line-height: 1;
+}
+
+.gap {
+  font-size: 14px;
+
+  color: #d0d0d0;
+}
+
+.sectors {
+  margin-top: auto;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+}
+
+.sector {
+  text-align: center;
+}
+
+.sector-label {
+  font-size: 11px;
+
+  color: #bcbcbc;
+
+  margin-bottom: 5px;
+}
+
+.sector-time {
+  font-size: 13px;
+
+  color: white;
+}

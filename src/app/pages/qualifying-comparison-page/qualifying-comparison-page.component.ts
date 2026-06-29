@@ -5,6 +5,7 @@ import { ComparisonTrackMapComponent } from '../../comparison/components/compari
 import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
 import { LapPlaybackService } from '../../comparison/services/lap-playback.service';
 import { PlaybackControlsComponent } from '../../comparison/components/playback-controls/playback-controls.component';
+import { DriverCardComponent } from '../../comparison/components/driver-card/driver-card.component';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -13,6 +14,7 @@ import { PlaybackControlsComponent } from '../../comparison/components/playback-
     ComparisonTrackMapComponent,
     TelemetryPanelComponent,
     PlaybackControlsComponent,
+    DriverCardComponent,
   ],
   templateUrl: './qualifying-comparison-page.component.html',
   styleUrl: './qualifying-comparison-page.component.scss',
