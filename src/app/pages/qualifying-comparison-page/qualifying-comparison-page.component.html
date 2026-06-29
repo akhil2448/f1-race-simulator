@@ -87,10 +87,19 @@
 
   <!-- CONTROLS -->
   <section class="controls-panel">
-    <button (click)="stepBackward()">◀</button>
-
-    <button (click)="togglePlay()">Play / Pause</button>
-
-    <button (click)="stepForward()">▶</button>
+    @if (comparison) {
+      <app-playback-controls
+        [progress]="playbackService.currentProgress"
+        [playing]="playbackService.isPlaying"
+        [playbackRate]="playbackService.playbackRate"
+        [currentTime]="playbackService.currentTimeSeconds"
+        [totalTime]="playbackService.totalTimeSeconds"
+        (playPause)="togglePlay()"
+        (stepForward)="stepForward()"
+        (stepBackward)="stepBackward()"
+        (progressChanged)="playbackService.seek($event)"
+        (playbackRateChanged)="playbackService.setPlaybackRate($event)"
+      />
+    }
   </section>
 </div>

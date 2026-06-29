@@ -1,0 +1,42 @@
+<div class="controls-container">
+  <div class="buttons">
+    <button class="icon-button" (click)="stepBackward.emit()">
+      <span class="material-symbols-rounded"> skip_previous </span>
+    </button>
+
+    <button class="play-button" (click)="playPause.emit()">
+      <span class="material-symbols-rounded">
+        {{ playing ? "pause" : "play_arrow" }}
+      </span>
+    </button>
+
+    <button class="icon-button" (click)="stepForward.emit()">
+      <span class="material-symbols-rounded"> skip_next </span>
+    </button>
+  </div>
+
+  <input
+    class="scrubber"
+    type="range"
+    min="0"
+    max="1000"
+    [value]="progress * 1000"
+    (input)="onSliderInput($event)"
+  />
+
+  <div class="speed-buttons">
+    <button [class.active]="playbackRate === 0.5" (click)="setRate(0.5)">
+      0.5x
+    </button>
+
+    <button [class.active]="playbackRate === 1" (click)="setRate(1)">1x</button>
+
+    <button [class.active]="playbackRate === 2" (click)="setRate(2)">2x</button>
+  </div>
+
+  <div class="time">
+    {{ format(currentTime) }}
+    /
+    {{ format(totalTime) }}
+  </div>
+</div>

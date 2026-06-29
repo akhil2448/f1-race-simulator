@@ -52,7 +52,7 @@ export class LapPlaybackService {
    * 0.5 = half speed
    * 2 = double speed
    */
-  private playbackRate = 1;
+  private playbackRateValue = 1;
 
   /**
    * Reference playback duration (seconds).
@@ -112,7 +112,7 @@ export class LapPlaybackService {
       this.previousTimestamp = timestamp;
 
       const progressIncrement =
-        (deltaSeconds * this.playbackRate) / this.referenceLapTimeSeconds;
+        (deltaSeconds * this.playbackRateValue) / this.referenceLapTimeSeconds;
 
       const nextProgress =
         this.currentProgressSubject.value + progressIncrement;
@@ -171,6 +171,9 @@ export class LapPlaybackService {
    * Slider seek.
    */
   seek(progress: number): void {
+    // Pause playback while the user scrubs.
+    this.pause();
+
     this.seekProgress(progress);
   }
 
@@ -317,5 +320,40 @@ export class LapPlaybackService {
    */
   get currentFrame(): PlaybackFrame | null {
     return this.currentFrameSubject.value;
+  }
+
+  /**
+   * Is playback currently running.
+   */
+  get isPlaying(): boolean {
+    return this.playingSubject.value;
+  }
+
+  /**
+   * Current playback rate.
+   */
+  get playbackRate(): number {
+    return this.playbackRateValue;
+  }
+
+  /**
+   * Current playback time (seconds).
+   */
+  get currentTimeSeconds(): number {
+    return this.currentProgress * this.referenceLapTimeSeconds;
+  }
+
+  /**
+   * Total playback duration (seconds).
+   */
+  get totalTimeSeconds(): number {
+    return this.referenceLapTimeSeconds;
+  }
+
+  /**
+   * Change playback speed.
+   */
+  setPlaybackRate(rate: number): void {
+    this.playbackRateValue = rate;
   }
 }

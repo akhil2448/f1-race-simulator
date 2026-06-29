@@ -4,11 +4,16 @@ import { QualifyingComparisonResponse } from '../../core/models/qualifying-compa
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
 import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
 import { LapPlaybackService } from '../../comparison/services/lap-playback.service';
+import { PlaybackControlsComponent } from '../../comparison/components/playback-controls/playback-controls.component';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
   standalone: true,
-  imports: [ComparisonTrackMapComponent, TelemetryPanelComponent],
+  imports: [
+    ComparisonTrackMapComponent,
+    TelemetryPanelComponent,
+    PlaybackControlsComponent,
+  ],
   templateUrl: './qualifying-comparison-page.component.html',
   styleUrl: './qualifying-comparison-page.component.scss',
 })
