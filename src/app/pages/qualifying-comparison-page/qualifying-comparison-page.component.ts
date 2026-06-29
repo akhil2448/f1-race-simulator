@@ -81,12 +81,226 @@ export class QualifyingComparisonPageComponent implements OnInit {
     });
   }
 
+  get driverASector1Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    //
+    // Wait until BOTH drivers finish Sector 1.
+    //
+    if (
+      elapsedA < this.comparison.driverA.sector1 ||
+      elapsedB < this.comparison.driverB.sector1
+    ) {
+      return null;
+    }
+
+    if (this.comparison.driverA.sector1 <= this.comparison.driverB.sector1) {
+      return this.comparison.driverA.sector1.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverA.sector1 - this.comparison.driverB.sector1
+    ).toFixed(3)}`;
+  }
+
+  get driverASector2Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    const sector2EndA =
+      this.comparison.driverA.sector1 + this.comparison.driverA.sector2;
+
+    const sector2EndB =
+      this.comparison.driverB.sector1 + this.comparison.driverB.sector2;
+
+    //
+    // Wait until BOTH drivers finish Sector 2.
+    //
+    if (elapsedA < sector2EndA || elapsedB < sector2EndB) {
+      return null;
+    }
+
+    if (this.comparison.driverA.sector2 <= this.comparison.driverB.sector2) {
+      return this.comparison.driverA.sector2.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverA.sector2 - this.comparison.driverB.sector2
+    ).toFixed(3)}`;
+  }
+
+  get driverASector3Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    //
+    // Wait until BOTH drivers finish the lap.
+    //
+    if (
+      elapsedA < this.comparison.driverA.lapTime ||
+      elapsedB < this.comparison.driverB.lapTime
+    ) {
+      return null;
+    }
+
+    if (this.comparison.driverA.sector3 <= this.comparison.driverB.sector3) {
+      return this.comparison.driverA.sector3.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverA.sector3 - this.comparison.driverB.sector3
+    ).toFixed(3)}`;
+  }
+
+  get driverBSector1Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    if (
+      elapsedA < this.comparison.driverA.sector1 ||
+      elapsedB < this.comparison.driverB.sector1
+    ) {
+      return null;
+    }
+
+    if (this.comparison.driverB.sector1 <= this.comparison.driverA.sector1) {
+      return this.comparison.driverB.sector1.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverB.sector1 - this.comparison.driverA.sector1
+    ).toFixed(3)}`;
+  }
+
+  get driverBSector2Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    const sector2EndA =
+      this.comparison.driverA.sector1 + this.comparison.driverA.sector2;
+
+    const sector2EndB =
+      this.comparison.driverB.sector1 + this.comparison.driverB.sector2;
+
+    if (elapsedA < sector2EndA || elapsedB < sector2EndB) {
+      return null;
+    }
+
+    if (this.comparison.driverB.sector2 <= this.comparison.driverA.sector2) {
+      return this.comparison.driverB.sector2.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverB.sector2 - this.comparison.driverA.sector2
+    ).toFixed(3)}`;
+  }
+
+  get driverBSector3Text(): string | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const progress = this.playbackService.currentProgress;
+
+    const elapsedA = progress * this.comparison.driverA.lapTime;
+    const elapsedB = progress * this.comparison.driverB.lapTime;
+
+    if (
+      elapsedA < this.comparison.driverA.lapTime ||
+      elapsedB < this.comparison.driverB.lapTime
+    ) {
+      return null;
+    }
+
+    if (this.comparison.driverB.sector3 <= this.comparison.driverA.sector3) {
+      return this.comparison.driverB.sector3.toFixed(3);
+    }
+
+    return `+${(
+      this.comparison.driverB.sector3 - this.comparison.driverA.sector3
+    ).toFixed(3)}`;
+  }
+
   stepForward(): void {
     this.playbackService.stepForward();
   }
 
   stepBackward(): void {
     this.playbackService.stepBackward();
+  }
+
+  get driverAElapsedTime(): number {
+    if (!this.comparison) {
+      return 0;
+    }
+
+    return (
+      this.playbackService.currentProgress * this.comparison.driverA.lapTime
+    );
+  }
+
+  get driverBElapsedTime(): number {
+    if (!this.comparison?.driverB) {
+      return 0;
+    }
+
+    return (
+      this.playbackService.currentProgress * this.comparison.driverB.lapTime
+    );
+  }
+
+  get driverAGap(): number | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const gap = this.driverAElapsedTime - this.driverBElapsedTime;
+
+    //
+    // Leading driver shows no gap.
+    //
+    return gap > 0 ? gap : null;
+  }
+
+  get driverBGap(): number | null {
+    if (!this.comparison?.driverB) {
+      return null;
+    }
+
+    const gap = this.driverBElapsedTime - this.driverAElapsedTime;
+
+    return gap > 0 ? gap : null;
   }
 
   togglePlay(): void {

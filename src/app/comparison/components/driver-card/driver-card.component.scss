@@ -31,7 +31,7 @@
 }
 
 .driver {
-  font-size: 34px;
+  font-size: 32px;
 
   line-height: 1;
 }
@@ -180,15 +180,15 @@
 }
 
 .lap-time {
-  font-size: 34px;
+  font-size: 32px;
 
   line-height: 1;
 }
 
 .gap {
-  font-size: 14px;
+  font-size: 20px;
 
-  color: #d0d0d0;
+  color: #f5f0f0;
 }
 
 .sectors {
@@ -208,9 +208,19 @@
 .sector-label {
   font-size: 11px;
 
-  color: #bcbcbc;
-
   margin-bottom: 5px;
+}
+
+.sector.s1 .sector-label {
+  color: #ff2d2d;
+}
+
+.sector.s2 .sector-label {
+  color: #29a9ff;
+}
+
+.sector.s3 .sector-label {
+  color: #ffd400;
 }
 
 .sector-time {

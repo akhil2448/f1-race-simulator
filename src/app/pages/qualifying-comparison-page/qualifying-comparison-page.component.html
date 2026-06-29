@@ -30,6 +30,10 @@
         <app-driver-card
           [driver]="comparison.driverA"
           [progress]="playbackService.currentProgress"
+          [gap]="driverAGap"
+          [sector1Text]="driverASector1Text"
+          [sector2Text]="driverASector2Text"
+          [sector3Text]="driverASector3Text"
         />
       }
     </div>
@@ -50,6 +54,10 @@
         <app-driver-card
           [driver]="driverB"
           [progress]="playbackService.currentProgress"
+          [gap]="driverBGap"
+          [sector1Text]="driverBSector1Text"
+          [sector2Text]="driverBSector2Text"
+          [sector3Text]="driverBSector3Text"
         />
       }
     </div>

@@ -19,6 +19,15 @@ export class DriverCardComponent {
   @Input()
   gap: number | null = null;
 
+  @Input()
+  sector1Text: string | null = null;
+
+  @Input()
+  sector2Text: string | null = null;
+
+  @Input()
+  sector3Text: string | null = null;
+
   get elapsedTime(): number {
     return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
   }
@@ -27,16 +36,62 @@ export class DriverCardComponent {
     return this.formatTime(this.elapsedTime);
   }
 
-  get showSector1(): boolean {
-    return this.elapsedTime >= this.driver.sector1;
+  get currentSector(): 1 | 2 | 3 {
+    if (this.elapsedTime < this.driver.sector1) {
+      return 1;
+    }
+
+    if (this.elapsedTime < this.driver.sector1 + this.driver.sector2) {
+      return 2;
+    }
+
+    return 3;
   }
 
-  get showSector2(): boolean {
-    return this.elapsedTime >= this.driver.sector1 + this.driver.sector2;
+  get sector1Display(): string {
+    if (this.sector1Text !== null) {
+      return this.sector1Text;
+    }
+
+    if (this.currentSector === 1) {
+      return this.formatSector(this.elapsedTime);
+    }
+
+    return this.formatSector(this.driver.sector1);
   }
 
-  get showSector3(): boolean {
-    return this.elapsedTime >= this.driver.lapTime;
+  get sector2Display(): string {
+    if (this.sector2Text !== null) {
+      return this.sector2Text;
+    }
+
+    if (this.currentSector === 1) {
+      return '--.---';
+    }
+
+    if (this.currentSector === 2) {
+      return this.formatSector(this.elapsedTime - this.driver.sector1);
+    }
+
+    return this.formatSector(this.driver.sector2);
+  }
+
+  get sector3Display(): string {
+    if (this.sector3Text !== null) {
+      return this.sector3Text;
+    }
+
+    if (this.currentSector !== 3) {
+      return '--.---';
+    }
+
+    if (this.elapsedTime < this.driver.lapTime) {
+      return this.formatSector(
+        this.elapsedTime - this.driver.sector1 - this.driver.sector2,
+      );
+    }
+
+    return this.formatSector(this.driver.sector3);
   }
 
   get teamColour(): string {
