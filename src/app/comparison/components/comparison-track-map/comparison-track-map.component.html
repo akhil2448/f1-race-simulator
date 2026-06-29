@@ -25,18 +25,24 @@
 
   @if (positions.driverA; as driverA) {
     <circle
-      class="driver-a-dot"
+      class="driver-dot"
       [attr.cx]="driverA.x"
       [attr.cy]="driverA.y"
+      [attr.fill]="driverATheme.color"
+      stroke="white"
+      stroke-width="20"
       r="220"
     />
   }
 
   @if (positions.driverB; as driverB) {
     <circle
-      class="driver-b-dot"
+      class="driver-dot"
       [attr.cx]="driverB.x"
       [attr.cy]="driverB.y"
+      [attr.fill]="driverBTheme?.color"
+      stroke="black"
+      stroke-width="20"
       r="220"
     />
   }

@@ -1,6 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
-import { TrackMap } from '../../../core/models/qualifying-comparison.model';
+import { TrackMap } from '../../models/qualifying-comparison.model';
 import { LapPlaybackService } from '../../services/lap-playback.service';
+import { DriverTheme } from '../../models/comparison-theme.model';
 
 @Component({
   selector: 'app-comparison-track-map',
@@ -17,6 +18,12 @@ export class ComparisonTrackMapComponent {
 
   @Input()
   driverBTelemetry: any[] | null = null;
+
+  @Input({ required: true })
+  driverATheme!: DriverTheme;
+
+  @Input()
+  driverBTheme: DriverTheme | null = null;
 
   @Input({ required: true })
   progress = 0;

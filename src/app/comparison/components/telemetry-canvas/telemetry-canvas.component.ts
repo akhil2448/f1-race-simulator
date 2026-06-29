@@ -12,6 +12,7 @@ import {
 import * as d3 from 'd3';
 
 import { LapPlaybackService } from '../../services/lap-playback.service';
+import { DriverTheme } from '../../models/comparison-theme.model';
 
 @Component({
   selector: 'app-telemetry-canvas',
@@ -28,6 +29,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
   @Input()
   driverB: any;
+
+  @Input({ required: true })
+  driverATheme!: DriverTheme;
+
+  @Input()
+  driverBTheme: DriverTheme | null = null;
 
   private readonly SPEED_HEIGHT_RATIO = 0.54;
   private readonly RPM_HEIGHT_RATIO = 0.15;
@@ -120,8 +127,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    const driverAColor = '#00e5e5';
-    const driverBColor = '#ffffff';
+    const driverAColor = this.driverATheme.color;
+    const driverBColor = this.driverBTheme?.color ?? '#FFFFFF';
 
     const SPEED_TICK = 25;
 

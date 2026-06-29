@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TelemetryCanvasComponent } from '../telemetry-canvas/telemetry-canvas.component';
+import { DriverTheme } from '../../models/comparison-theme.model';
 
 @Component({
   selector: 'app-telemetry-panel',
@@ -14,4 +15,10 @@ export class TelemetryPanelComponent {
 
   @Input()
   driverB: any;
+
+  @Input({ required: true })
+  driverATheme!: DriverTheme;
+
+  @Input()
+  driverBTheme: DriverTheme | null = null;
 }

@@ -19,7 +19,10 @@
       <app-telemetry-panel
         [driverA]="comparison.driverA"
         [driverB]="comparison.driverB"
-      />
+        [driverATheme]="theme.driverA"
+        [driverBTheme]="theme.driverB"
+      >
+      </app-telemetry-panel>
     }
   </section>
 
@@ -28,6 +31,7 @@
     <div class="driver-card">
       @if (comparison) {
         <app-driver-card
+          [theme]="theme.driverA"
           [driver]="comparison.driverA"
           [progress]="playbackService.currentProgress"
           [gap]="driverAGap"
@@ -44,6 +48,8 @@
           [trackMap]="comparison.trackMap"
           [driverATelemetry]="comparison.driverA.telemetry"
           [driverBTelemetry]="comparison.driverB?.telemetry ?? null"
+          [driverATheme]="theme.driverA"
+          [driverBTheme]="theme.driverB"
           [progress]="playbackService.currentProgress"
         />
       }
@@ -52,6 +58,7 @@
     <div class="driver-card">
       @if (comparison?.driverB; as driverB) {
         <app-driver-card
+          [theme]="theme.driverB"
           [driver]="driverB"
           [progress]="playbackService.currentProgress"
           [gap]="driverBGap"

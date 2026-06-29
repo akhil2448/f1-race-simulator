@@ -1,12 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { QualifyingComparisonService } from '../../core/services/qualifying-comparison.service';
-import { QualifyingComparisonResponse } from '../../core/models/qualifying-comparison.model';
+import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
 import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
 import { LapPlaybackService } from '../../comparison/services/lap-playback.service';
 import { PlaybackControlsComponent } from '../../comparison/components/playback-controls/playback-controls.component';
 import { DriverCardComponent } from '../../comparison/components/driver-card/driver-card.component';
 import { SectorDisplay } from '../../comparison/models/sector-display.model';
+import { ComparisonThemeService } from '../../comparison/services/comparison-theme.service';
+import { ComparisonTheme } from '../../comparison/models/comparison-theme.model';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -23,19 +25,28 @@ import { SectorDisplay } from '../../comparison/models/sector-display.model';
 export class QualifyingComparisonPageComponent implements OnInit {
   private comparisonService = inject(QualifyingComparisonService);
   readonly playbackService = inject(LapPlaybackService);
+  private themeService = inject(ComparisonThemeService);
 
   comparison: QualifyingComparisonResponse | null = null;
+  theme!: ComparisonTheme;
 
   loading = true;
 
   ngOnInit(): void {
     this.comparisonService
-      .getComparison(2020, 2, 'Q3', 'HAM', 'VER')
+      .getComparison(2020, 2, 'Q3', 'NOR', 'SAI')
       .subscribe({
         next: (response) => {
           console.log('Qualifying Comparison', response);
 
           this.comparison = response;
+
+          this.theme = this.themeService.buildTheme(
+            response.driverA.teamColor,
+            response.driverB?.teamColor ?? response.driverA.teamColor,
+          );
+
+          console.log(this.theme);
 
           const referenceLapTime = Math.min(
             response.driverA.lapTime,

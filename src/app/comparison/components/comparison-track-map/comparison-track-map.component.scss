@@ -57,16 +57,8 @@
   stroke-linecap: round;
 }
 
-.driver-a-dot {
-  fill: #00e5e5;
-  stroke: white;
-  stroke-width: 20;
-}
-
-.driver-b-dot {
-  fill: white;
-  stroke: black;
-  stroke-width: 20;
+.driver-dot {
+  transition: fill 0.2s linear;
 }
 
 .corner-circle {

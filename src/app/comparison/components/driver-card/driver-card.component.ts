@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DriverLap } from '../../../core/models/qualifying-comparison.model';
+import { DriverLap } from '../../models/qualifying-comparison.model';
 import { SectorDisplay } from '../../models/sector-display.model';
+import { DriverTheme } from '../../models/comparison-theme.model';
 
 @Component({
   selector: 'app-driver-card',
@@ -19,6 +20,9 @@ export class DriverCardComponent {
 
   @Input()
   gap: number | null = null;
+
+  @Input({ required: true })
+  theme!: DriverTheme;
 
   @Input()
   sector1!: SectorDisplay;
@@ -96,7 +100,7 @@ export class DriverCardComponent {
   }
 
   get teamColour(): string {
-    return `#${this.driver.teamColor}`;
+    return this.theme.color;
   }
 
   get teamLogo(): string {
