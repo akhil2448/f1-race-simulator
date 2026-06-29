@@ -85,6 +85,86 @@ export class ComparisonTrackMapComponent {
     };
   }
 
+  get cornerLabels() {
+    const OFFSET = 470;
+
+    return this.trackMap.corners.map((corner) => {
+      //
+      // Find the closest point on the track.
+      //
+
+      let closestIndex = 0;
+      let closestDistance = Number.MAX_VALUE;
+
+      this.trackMap.sector1
+        .concat(this.trackMap.sector2)
+        .concat(this.trackMap.sector3)
+        .forEach((p, index) => {
+          const dx = p.x - corner.x;
+          const dy = p.y - corner.y;
+
+          const distance = dx * dx + dy * dy;
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+          }
+        });
+
+      const track = this.trackMap.sector1
+        .concat(this.trackMap.sector2)
+        .concat(this.trackMap.sector3);
+
+      const previous = track[Math.max(0, closestIndex - 1)];
+      const next = track[Math.min(track.length - 1, closestIndex + 1)];
+
+      //
+      // Tangent of the track.
+      //
+
+      const tx = next.x - previous.x;
+      const ty = next.y - previous.y;
+
+      const length = Math.sqrt(tx * tx + ty * ty);
+
+      const ux = tx / length;
+      const uy = ty / length;
+
+      //
+      // Normal vector.
+      //
+
+      let nx = -uy;
+      let ny = ux;
+
+      //
+      // Make the normal point away from the centre.
+      //
+
+      const centerX =
+        (this.trackMap.bounds.minX + this.trackMap.bounds.maxX) / 2;
+
+      const centerY =
+        (this.trackMap.bounds.minY + this.trackMap.bounds.maxY) / 2;
+
+      const vx = corner.x - centerX;
+      const vy = corner.y - centerY;
+
+      if (vx * nx + vy * ny < 0) {
+        nx *= -1;
+        ny *= -1;
+      }
+
+      return {
+        number: corner.number,
+
+        x: corner.x + nx * OFFSET,
+
+        y: corner.y + ny * OFFSET,
+      };
+    });
+  }
+
   get displayPositions(): {
     driverA: { x: number; y: number } | null;
     driverB: { x: number; y: number } | null;

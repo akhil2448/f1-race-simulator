@@ -40,4 +40,19 @@
       r="220"
     />
   }
+
+  @for (corner of cornerLabels; track corner.number) {
+    <g class="corner-marker">
+      <circle
+        class="corner-circle"
+        [attr.cx]="corner.x"
+        [attr.cy]="corner.y"
+        r="320"
+      />
+
+      <text class="corner-number" [attr.x]="corner.x" [attr.y]="corner.y">
+        {{ corner.number }}
+      </text>
+    </g>
+  }
 </svg>

@@ -57,12 +57,25 @@ export interface TrackPoint {
   y: number;
 }
 
+export interface TrackCorner {
+  number: number;
+
+  x: number;
+  y: number;
+
+  angle: number;
+
+  distance: number;
+}
+
 export interface TrackMap {
   sector1: TrackPoint[];
 
   sector2: TrackPoint[];
 
   sector3: TrackPoint[];
+
+  corners: TrackCorner[];
 
   bounds: {
     minX: number;

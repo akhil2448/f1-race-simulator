@@ -68,3 +68,29 @@
   stroke: black;
   stroke-width: 20;
 }
+
+.corner-circle {
+  fill: #1b1b1b;
+
+  stroke: white;
+
+  stroke-width: 24;
+}
+
+.corner-number {
+  fill: white;
+
+  font-family: "Formula1";
+
+  font-size: 450px;
+
+  font-weight: 600;
+
+  text-anchor: middle;
+
+  dominant-baseline: middle;
+
+  user-select: none;
+
+  pointer-events: none;
+}
