@@ -18,34 +18,87 @@
 ========================== */
 
 .comparison-header {
-  flex: 0 0 auto;
+  flex: 0 0 38px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 2px;
+  padding: 0 10px;
+
+  // margin-bottom: 2px;
+
+  background: #222020;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
 }
 
 .header-left {
   display: flex;
+
   align-items: center;
-  gap: 20px;
+
+  gap: 12px;
+}
+
+.back-button {
+  border: none;
+
+  background: transparent;
+
+  padding: 0;
+
+  width: 24px;
+
+  height: 24px;
+
+  color: #d8d8d8;
+
+  font-family: "Formula1";
+
+  font-size: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: color 0.15s ease;
+}
+
+.back-button:hover {
+  color: white;
 }
 
 .f1-logo {
-  font-family: "Formula1";
-  font-size: 24px;
+  height: 18px;
+
+  width: auto;
+
+  display: block;
+
+  transform: translateY(-1px);
 }
 
 .title {
   font-family: "Formula1";
-  font-size: 24px;
+
+  font-size: 20px;
+
+  letter-spacing: 0.3px;
+  color: #f3f3f3;
 }
 
 .header-right {
   font-family: "Formula1";
-  font-size: 24px;
+
+  font-size: 18px;
+
+  color: #bdbdbd;
 }
 
 /* ==========================
@@ -98,7 +151,7 @@
   min-height: 0;
   height: 100%;
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  // border: 1px solid rgba(255, 255, 255, 0.15);
 
   display: flex;
   align-items: center;

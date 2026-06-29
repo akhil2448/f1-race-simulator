@@ -110,6 +110,10 @@ export interface TrackMap {
 }
 
 export interface QualifyingComparisonResponse {
+  year: number;
+
+  grandPrix: string;
+
   sessionPart: string;
 
   trackMap: TrackMap;

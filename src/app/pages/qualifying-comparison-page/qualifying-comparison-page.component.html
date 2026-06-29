@@ -2,13 +2,18 @@
   <!-- HEADER -->
   <section class="comparison-header">
     <div class="header-left">
-      <span class="f1-logo">F1</span>
-      <span class="title">Qualifying Comparison</span>
+      <button class="back-button" type="button">&lt;</button>
+
+      <img class="f1-logo" src="assets/icons/f1-logo-bw.svg" alt="Formula 1" />
+
+      <span class="title"> Ultimate Pace </span>
     </div>
 
     <div class="header-right">
       @if (comparison) {
-        2021 Styrian Grand Prix
+        {{ comparison.year }}
+        {{ comparison.grandPrix }}
+        • {{ comparison.sessionPart }}
       }
     </div>
   </section>
