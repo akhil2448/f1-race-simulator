@@ -3,7 +3,15 @@
   preserveAspectRatio="xMidYMid meet"
   [attr.viewBox]="viewBox"
 >
-  <polyline class="track-line" [attr.points]="polylinePoints" />
+  <!-- Black outline -->
+  <polyline class="track-outline" [attr.points]="sector1Polyline" />
+  <polyline class="track-outline" [attr.points]="sector2Polyline" />
+  <polyline class="track-outline" [attr.points]="sector3Polyline" />
+
+  <!-- Colored sectors -->
+  <polyline class="track sector1" [attr.points]="sector1Polyline" />
+  <polyline class="track sector2" [attr.points]="sector2Polyline" />
+  <polyline class="track sector3" [attr.points]="sector3Polyline" />
 
   <line
     class="start-finish"

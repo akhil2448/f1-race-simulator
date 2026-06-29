@@ -43,8 +43,16 @@ export class ComparisonTrackMapComponent {
   `;
   }
 
-  get polylinePoints(): string {
-    return this.trackMap.points.map((p) => `${p.x},${p.y}`).join(' ');
+  get sector1Polyline(): string {
+    return this.trackMap.sector1.map((p) => `${p.x},${p.y}`).join(' ');
+  }
+
+  get sector2Polyline(): string {
+    return this.trackMap.sector2.map((p) => `${p.x},${p.y}`).join(' ');
+  }
+
+  get sector3Polyline(): string {
+    return this.trackMap.sector3.map((p) => `${p.x},${p.y}`).join(' ');
   }
 
   get startFinishMarkerX(): number {

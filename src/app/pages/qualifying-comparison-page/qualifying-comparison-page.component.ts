@@ -44,7 +44,12 @@ export class QualifyingComparisonPageComponent implements OnInit {
             'Driver B telemetry:',
             response.driverB?.telemetry.length,
           );
-          console.log('Track points:', response.trackMap.points.length);
+          console.log(
+            'Track sectors:',
+            response.trackMap.sector1.length,
+            response.trackMap.sector2.length,
+            response.trackMap.sector3.length,
+          );
 
           // initialize playback
           this.playbackService.loadLap(

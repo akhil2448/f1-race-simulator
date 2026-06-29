@@ -17,14 +17,36 @@
   overflow: hidden;
 }
 
-.track-line {
+.track-outline {
   fill: none;
 
-  stroke: rgba(228, 228, 228, 0.804);
+  stroke: #1b1b1b;
+
+  stroke-width: 145;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track {
+  fill: none;
+
   stroke-width: 100;
 
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.sector1 {
+  stroke: #ff2d2d;
+}
+
+.sector2 {
+  stroke: #29a9ff;
+}
+
+.sector3 {
+  stroke: #ffd400;
 }
 
 .start-finish {

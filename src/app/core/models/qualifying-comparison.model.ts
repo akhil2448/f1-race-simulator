@@ -52,11 +52,17 @@ export interface DriverLap {
   telemetry: TelemetryPoint[];
 }
 
+export interface TrackPoint {
+  x: number;
+  y: number;
+}
+
 export interface TrackMap {
-  points: {
-    x: number;
-    y: number;
-  }[];
+  sector1: TrackPoint[];
+
+  sector2: TrackPoint[];
+
+  sector3: TrackPoint[];
 
   bounds: {
     minX: number;
@@ -76,6 +82,9 @@ export interface TrackMap {
     x2: number;
     y2: number;
   };
+
+  width: number;
+  height: number;
 }
 
 export interface QualifyingComparisonResponse {
