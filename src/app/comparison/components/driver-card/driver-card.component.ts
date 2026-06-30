@@ -175,7 +175,7 @@ export class DriverCardComponent {
 
     if (team === 'Kick Sauber') return 'kicksauber';
 
-    if (team === 'Sauber') return 'sauber';
+    if (team === 'Sauber') return 'alfaromeo';
 
     if (team === 'Renault') return 'renault';
 

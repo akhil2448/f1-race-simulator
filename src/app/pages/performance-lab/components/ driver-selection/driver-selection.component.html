@@ -1,0 +1,47 @@
+<div class="driver-selection">
+  <div class="session-row">
+    <div class="section-title">Session</div>
+
+    <div class="session-selector">
+      @for (session of sessions; track session) {
+        <button
+          class="session-button"
+          [class.active]="selectedSession === session"
+          (click)="selectSession(session)"
+        >
+          {{ session }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="section-title drivers-title">Select Drivers</div>
+
+  <div class="driver-grid">
+    @for (driver of drivers; track driver.code) {
+      <div
+        class="driver-card"
+        (click)="selectDriver(driver)"
+        [style.background]="isSelected(driver) ? driver.teamColor : '#242424'"
+        [style.color]="
+          isSelected(driver) ? getTextColor(driver.teamColor) : '#F3F3F3'
+        "
+      >
+        <div class="team-strip" [style.background]="driver.teamColor"></div>
+
+        <div class="driver-name">
+          {{ driver.lastName }}
+        </div>
+
+        <div class="team-icon">
+          <img
+            [src]="getTeamLogo(driver.team)"
+            [class]="getTeamLogoClass(driver.team)"
+            [class.selected]="isSelected(driver)"
+            (error)="onTeamLogoError($event)"
+          />
+        </div>
+      </div>
+    }
+  </div>
+</div>

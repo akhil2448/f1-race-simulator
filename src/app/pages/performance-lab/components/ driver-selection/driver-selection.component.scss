@@ -1,0 +1,277 @@
+:host {
+  display: block;
+}
+
+.driver-selection {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.section-title {
+  width: 135px;
+
+  flex-shrink: 0;
+
+  font-family: "Formula1";
+
+  font-size: 14px;
+
+  color: #9f9f9f;
+
+  text-transform: uppercase;
+}
+
+.session-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+}
+
+.session-selector {
+  display: flex;
+
+  gap: 10px;
+}
+
+.session-button {
+  width: 82px;
+
+  height: 40px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #292929;
+
+  color: #bdbdbd;
+
+  font-family: "Formula1";
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.session-button:hover {
+  background: #353535;
+}
+
+.session-button.active {
+  background: #ff2d2d;
+
+  color: white;
+}
+
+.drivers-title {
+  margin-top: 10px;
+}
+
+.driver-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 14px;
+}
+
+.driver-card {
+  height: 58px;
+
+  background: #252525;
+
+  border-radius: 12px;
+
+  display: grid;
+
+  grid-template-columns: 5px 1fr 44px 28px;
+
+  align-items: center;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+
+  border: 1px solid transparent;
+}
+
+.driver-card:hover {
+  background: #303030;
+}
+
+.team-strip {
+  height: 100%;
+}
+
+.driver-name {
+  padding-left: 14px;
+
+  font-family: "Formula1";
+
+  font-size: 20px;
+}
+
+.team-icon img {
+  width: 28px;
+
+  height: 28px;
+
+  //   object-fit: contain;
+}
+
+/* TEAM LOGO OVERRIDES */
+
+.team-icon img.redbull {
+  transform: scale(3);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.alfaromeo {
+  transform: translateX(5px) translateY(2px) scale(1.35);
+}
+
+.team-icon img.renault {
+  filter: brightness(0) invert(1);
+  transform: translateX(5px) translateY(3px) scale(1.25);
+}
+
+.team-icon img.renault.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.mclaren {
+  padding-top: 2px;
+
+  transform: scale(1.5);
+}
+
+.team-icon img.mclaren.selected {
+  filter: brightness(0) invert(1) !important;
+}
+
+.team-icon img.ferrari {
+  transform: translateX(2px) scale(1.45);
+}
+
+.team-icon img.mercedes {
+  transform: scale(1.15);
+}
+
+.team-icon img.mercedes.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.forceindia {
+  transform: translateX(4px) scale(1.75);
+}
+
+.team-icon img.haas {
+  transform: translateX(3px) scale(1.5);
+}
+
+.team-icon img.williams {
+  transform: translateX(5px) translateY(3px) scale(1.15);
+}
+
+.team-icon img.williams.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.tororosso {
+  width: 70px;
+
+  height: 35px;
+
+  transform: translateX(-20px);
+
+  transform-origin: center;
+
+  image-rendering: auto;
+}
+
+.team-icon img.tororosso.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.racingpoint {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(5px) translateY(2px) scale(1.15);
+}
+
+.team-icon img.racingpoint.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.alphatauri {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(4px) translateY(2px) scale(2.75);
+}
+
+.team-icon img.alpine {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(-5px) scale(2.5);
+}
+
+.team-icon img.alpine.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.astonmartin {
+  transform: translateX(-2px) translateY(10px) scale(3.5);
+}
+
+.team-icon img.racingbulls {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(8px) translateY(2px) scale(1.4);
+}
+
+.team-icon img.racingbulls.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.kicksauber {
+  transform: translateX(8px) translateY(2px) scale(1.4);
+}
+
+.team-icon img.kicksauber.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.cadillac {
+  width: 23px;
+
+  height: 9px;
+
+  filter: brightness(0) invert(1);
+
+  transform: translateX(8px) scale(2.75);
+}
+
+.team-icon img.cadillac.selected {
+  filter: brightness(0) !important;
+}
+
+.team-icon img.audi {
+  filter: brightness(0) invert(1);
+
+  transform: translateX(3px) translateY(2px) scale(2.25);
+}
+
+.team-icon img.plcholder {
+  filter: brightness(0) invert(1);
+  transform: translateX(3px) translateY(2px);
+}

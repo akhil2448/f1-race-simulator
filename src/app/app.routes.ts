@@ -10,6 +10,7 @@ import { selectRaceGuard } from './core/guards/select-race.guard';
 import { qualifyingGuard } from './core/guards/qualifying.guard';
 import { simulationGuard } from './core/guards/simulation.guard';
 import { QualifyingComparisonPageComponent } from './pages/qualifying-comparison-page/qualifying-comparison-page.component';
+import { PerformanceLabComponent } from './pages/performance-lab/performance-lab.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,7 @@ export const routes: Routes = [
         path: 'ultimate-pace',
         component: QualifyingComparisonPageComponent,
       },
+      { path: 'performance-hub', component: PerformanceLabComponent },
       {
         path: '**',
         component: NotFoundComponent,

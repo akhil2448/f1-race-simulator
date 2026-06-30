@@ -1,0 +1,81 @@
+<div class="page">
+  <!-- HEADER -->
+
+  <div class="header">
+    <div class="back-button">&lt; BACK</div>
+
+    <div class="title-block">
+      <div class="title">Performance Lab</div>
+
+      <div class="subtitle">
+        Explore telemetry, driving technique and race strategy.
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE SELECTOR -->
+
+  <div class="mode-card">
+    <div class="mode-tabs">
+      <button
+        class="mode-button"
+        [class.active]="mode === 'ultimate'"
+        (click)="toggleMode('ultimate')"
+      >
+        Ultimate Pace
+      </button>
+
+      <button
+        class="mode-button"
+        [class.active]="mode === 'race'"
+        (click)="toggleMode('race')"
+      >
+        Race Management
+      </button>
+
+      <div class="slider" [class.right]="mode === 'race'"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+
+  <div class="content">
+    <div class="content-card">
+      @if (mode === "ultimate") {
+        <div class="mode-title">Driving Style Analysis</div>
+
+        <div class="mode-description">
+          Compare qualifying laps with synchronized speed, braking, throttle,
+          RPM and racing line.
+        </div>
+      }
+
+      @if (mode === "race") {
+        <div class="mode-title">Race Strategy Analysis</div>
+
+        <div class="mode-description">
+          Replay race laps to compare tyre usage, stint evolution and race
+          management.
+        </div>
+      }
+
+      <div class="selected-event">
+        {{ selectedYear }}
+
+        <span class="dot">•</span>
+
+        {{ selectedRace }}
+      </div>
+    </div>
+
+    @if (mode === "ultimate") {
+      <div class="selection-card">
+        <app-driver-selection></app-driver-selection>
+      </div>
+    }
+
+    @if (mode === "race") {
+      <div class="placeholder-card">Race Management controls go here.</div>
+    }
+  </div>
+</div>

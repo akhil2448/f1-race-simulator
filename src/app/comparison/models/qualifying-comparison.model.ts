@@ -22,6 +22,7 @@ export interface TelemetryPoint {
 
 export interface DriverLap {
   driver: string;
+  driverName: string;
 
   driverNumber: string;
 

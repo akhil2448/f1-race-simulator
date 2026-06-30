@@ -20,6 +20,8 @@
   font-family: "Formula1";
 
   color: #f3f3f3;
+  border-radius: 3%;
+  border: 2px solid rgba(255, 255, 255, 0.141);
 }
 
 .header {
@@ -31,7 +33,7 @@
 }
 
 .driver {
-  font-size: 32px;
+  font-size: 28px;
 
   line-height: 1;
 }
