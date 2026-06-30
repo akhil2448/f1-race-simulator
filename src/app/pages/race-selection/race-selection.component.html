@@ -81,9 +81,15 @@
         </div>
       </div>
 
-      <button class="jump-button" (click)="jumpToQualifyingResults(race)">
-        JUMP TO QUALIFYING RESULTS
-      </button>
+      <div class="race-actions">
+        <button class="jump-button" (click)="jumpToQualifyingResults(race)">
+          QUALIFYING
+        </button>
+
+        <button class="performance-button" (click)="openPerformanceLab(race)">
+          PERFORMANCE LAB
+        </button>
+      </div>
     </div>
   </div>
 </div>

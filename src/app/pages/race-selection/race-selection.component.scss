@@ -377,6 +377,22 @@
   font-size: 14px;
 }
 
+.race-actions {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.race-actions button {
+  flex: 1;
+}
+
+.performance-button {
+  @extend .jump-button;
+}
+
 .jump-button {
   margin-top: auto;
 

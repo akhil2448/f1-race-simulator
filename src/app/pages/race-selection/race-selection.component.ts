@@ -12,6 +12,7 @@ import { RaceSelectionStateService } from '../../core/services/race-selection-st
 import { Router } from '@angular/router';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 import { RaceContextService } from '../../core/services/race-context.service';
+import { DriverSelectionResponse } from '../performance-lab/models/performance-lab.model';
 
 export interface RaceSchedule {
   round: number;
@@ -67,6 +68,8 @@ export class RaceSelectionComponent implements OnInit {
   private readonly overlay = inject(LoadingOverlayService);
   private readonly state = inject(RaceSelectionStateService);
   private readonly raceContext = inject(RaceContextService);
+
+  private readonly MIN_PERFORMANCE_LOADING_MS = 1500;
 
   constructor(private router: Router) {}
 
@@ -146,6 +149,36 @@ export class RaceSelectionComponent implements OnInit {
     throw new Error();
   }
 
+  private async fetchPerformanceLabDataWithRetry(
+    round: number,
+  ): Promise<DriverSelectionResponse> {
+    let attempt = 0;
+
+    while (attempt < this.MAX_RETRIES) {
+      try {
+        return await firstValueFrom(
+          this.http.get<DriverSelectionResponse>(
+            `/api/ultimate-pace/${this.selectedYear}/${round}`,
+          ),
+        );
+      } catch {
+        attempt++;
+
+        if (attempt >= this.MAX_RETRIES) {
+          throw new Error();
+        }
+
+        this.overlay.show(
+          `Connection issue. Retrying (${attempt}/${this.MAX_RETRIES})...`,
+        );
+
+        await this.delay(1000);
+      }
+    }
+
+    throw new Error();
+  }
+
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
@@ -183,5 +216,35 @@ export class RaceSelectionComponent implements OnInit {
 
   goHome(): void {
     this.router.navigate(['/']);
+  }
+
+  async openPerformanceLab(race: RaceSchedule): Promise<void> {
+    this.raceContext.selectedYear = this.selectedYear;
+
+    this.raceContext.selectedRound = race.round;
+
+    this.raceContext.selectedRace = race.raceName;
+
+    this.overlay.show('Loading Performance Lab...');
+
+    const startTime = Date.now();
+
+    try {
+      const response = await this.fetchPerformanceLabDataWithRetry(race.round);
+
+      this.raceContext.driverSelection = response;
+
+      const elapsed = Date.now() - startTime;
+
+      const remaining = Math.max(0, this.MIN_PERFORMANCE_LOADING_MS - elapsed);
+
+      await this.delay(remaining);
+
+      this.router.navigate(['/performance-lab']);
+    } catch {
+      this.error = 'Unable to load Performance Lab. Please try again.';
+    } finally {
+      this.overlay.hide();
+    }
   }
 }
