@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DriverSelectionResponse } from '../../pages/performance-lab/models/performance-lab.model';
+import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,8 @@ export class RaceContextService {
   selectedRace: string | null = null;
 
   driverSelection: DriverSelectionResponse | null = null;
+
+  comparison: QualifyingComparisonResponse | null = null;
 
   navigationStep:
     | 'home'

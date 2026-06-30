@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 
+
 @Injectable({
   providedIn: 'root',
 })

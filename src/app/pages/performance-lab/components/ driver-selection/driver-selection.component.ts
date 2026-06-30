@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-
-interface DriverSelection {
-  code: string;
-  lastName: string;
-  team: string;
-  teamColor: string;
-}
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { inject } from '@angular/core';
+import { RaceContextService } from '../../../../core/services/race-context.service';
+import { DriverSelectionDriver } from '../../models/performance-lab.model';
+import { QualifyingComparisonService } from '../../../../core/services/qualifying-comparison.service';
+import { LoadingOverlayService } from '../../../../core/services/loading-overlay.service';
 
 @Component({
   selector: 'app-driver-selection',
@@ -16,138 +16,146 @@ interface DriverSelection {
   styleUrl: './driver-selection.component.scss',
 })
 export class DriverSelectionComponent {
+  private readonly raceContext = inject(RaceContextService);
+  private readonly comparisonService = inject(QualifyingComparisonService);
+  private readonly overlay = inject(LoadingOverlayService);
+  private readonly router = inject(Router);
+
+  private readonly MIN_LOADING_MS = 2000;
+  private readonly MAX_RETRIES = 3;
+
   readonly sessions: ('Q1' | 'Q2' | 'Q3')[] = ['Q3', 'Q2', 'Q1'];
 
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
-  selectedYear = 2020;
+  readonly selectedYear = this.raceContext.selectedYear!;
 
-  selectedRace = 'Styrian Grand Prix';
+  readonly selectedRace = this.raceContext.selectedRace!;
 
-  selectedDrivers: DriverSelection[] = [];
+  selectedDrivers: DriverSelectionDriver[] = [];
 
-  drivers: DriverSelection[] = [
-    {
-      code: 'HAM',
-      lastName: 'Hamilton',
-      team: 'Mercedes',
-      teamColor: '#00D2BE',
-    },
-    {
-      code: 'GIO',
-      lastName: 'Giovinazzi',
-      team: 'Alfa Romeo',
-      teamColor: '#9b0000',
-    },
-    {
-      code: 'VER',
-      lastName: 'Verstappen',
-      team: 'Red Bull',
-      teamColor: '#1E41FF',
-    },
-    {
-      code: 'KVY',
-      lastName: 'Kvyat',
-      team: 'Toro Rosso',
-      teamColor: '#469bff',
-    },
-    {
-      code: 'NOR',
-      lastName: 'Norris',
-      team: 'McLaren',
-      teamColor: '#FF8700',
-    },
-    {
-      code: 'OCO',
-      lastName: 'Ocon',
-      team: 'Alpine',
-      teamColor: '#2293d1',
-    },
-    {
-      code: 'LEC',
-      lastName: 'Leclerc',
-      team: 'Ferrari',
-      teamColor: '#DC0000',
-    },
-    {
-      code: 'GAS',
-      lastName: 'Gasly',
-      team: 'AlphaTauri',
-      teamColor: '#4e7c9b',
-    },
-    {
-      code: 'RIC',
-      lastName: 'Ricciardo',
-      team: 'Renault',
-      teamColor: '#FFF500',
-    },
-    {
-      code: 'LAT',
-      lastName: 'Latifi',
-      team: 'Williams',
-      teamColor: '#37bedd',
-    },
-    {
-      code: 'VET',
-      lastName: 'Vettel',
-      team: 'Aston Martin',
-      teamColor: '#2d826d',
-    },
-    {
-      code: 'HUL',
-      lastName: 'Hulkenberg',
-      team: 'Audi',
-      teamColor: '#F50537',
-    },
-    {
-      code: 'BOT',
-      lastName: 'Bottas',
-      team: 'Cadillac',
-      teamColor: '#909090',
-    },
-    {
-      code: 'PER',
-      lastName: 'Perez',
-      team: 'Force India',
-      teamColor: '#F596C8',
-    },
-    {
-      code: 'ZHO',
-      lastName: 'Zhou',
-      team: 'Kick Sauber',
-      teamColor: '#52e252',
-    },
-    {
-      code: 'ERI',
-      lastName: 'Ericsson',
-      team: 'Sauber',
-      teamColor: '#9B0000',
-    },
-    {
-      code: 'MAG',
-      lastName: 'Magnussen',
-      team: 'Haas',
-      teamColor: '#828282',
-    },
-    {
-      code: 'LAW',
-      lastName: 'Lawson',
-      team: 'Racing Bulls',
-      teamColor: '#6C98FF',
-    },
-    {
-      code: 'STR',
-      lastName: 'Stroll',
-      team: 'Racing Point',
-      teamColor: '#f596c8',
-    },
-    {
-      code: 'SPO',
-      lastName: 'Spool',
-      team: 'Fake team',
-      teamColor: '#f596c8',
-    },
-  ];
+  // drivers: DriverSelection[] = [
+  //   {
+  //     code: 'HAM',
+  //     lastName: 'Hamilton',
+  //     team: 'Mercedes',
+  //     teamColor: '#00D2BE',
+  //   },
+  //   {
+  //     code: 'GIO',
+  //     lastName: 'Giovinazzi',
+  //     team: 'Alfa Romeo',
+  //     teamColor: '#9b0000',
+  //   },
+  //   {
+  //     code: 'VER',
+  //     lastName: 'Verstappen',
+  //     team: 'Red Bull',
+  //     teamColor: '#1E41FF',
+  //   },
+  //   {
+  //     code: 'KVY',
+  //     lastName: 'Kvyat',
+  //     team: 'Toro Rosso',
+  //     teamColor: '#469bff',
+  //   },
+  //   {
+  //     code: 'NOR',
+  //     lastName: 'Norris',
+  //     team: 'McLaren',
+  //     teamColor: '#FF8700',
+  //   },
+  //   {
+  //     code: 'OCO',
+  //     lastName: 'Ocon',
+  //     team: 'Alpine',
+  //     teamColor: '#2293d1',
+  //   },
+  //   {
+  //     code: 'LEC',
+  //     lastName: 'Leclerc',
+  //     team: 'Ferrari',
+  //     teamColor: '#DC0000',
+  //   },
+  //   {
+  //     code: 'GAS',
+  //     lastName: 'Gasly',
+  //     team: 'AlphaTauri',
+  //     teamColor: '#4e7c9b',
+  //   },
+  //   {
+  //     code: 'RIC',
+  //     lastName: 'Ricciardo',
+  //     team: 'Renault',
+  //     teamColor: '#FFF500',
+  //   },
+  //   {
+  //     code: 'LAT',
+  //     lastName: 'Latifi',
+  //     team: 'Williams',
+  //     teamColor: '#37bedd',
+  //   },
+  //   {
+  //     code: 'VET',
+  //     lastName: 'Vettel',
+  //     team: 'Aston Martin',
+  //     teamColor: '#2d826d',
+  //   },
+  //   {
+  //     code: 'HUL',
+  //     lastName: 'Hulkenberg',
+  //     team: 'Audi',
+  //     teamColor: '#F50537',
+  //   },
+  //   {
+  //     code: 'BOT',
+  //     lastName: 'Bottas',
+  //     team: 'Cadillac',
+  //     teamColor: '#909090',
+  //   },
+  //   {
+  //     code: 'PER',
+  //     lastName: 'Perez',
+  //     team: 'Force India',
+  //     teamColor: '#F596C8',
+  //   },
+  //   {
+  //     code: 'ZHO',
+  //     lastName: 'Zhou',
+  //     team: 'Kick Sauber',
+  //     teamColor: '#52e252',
+  //   },
+  //   {
+  //     code: 'ERI',
+  //     lastName: 'Ericsson',
+  //     team: 'Sauber',
+  //     teamColor: '#9B0000',
+  //   },
+  //   {
+  //     code: 'MAG',
+  //     lastName: 'Magnussen',
+  //     team: 'Haas',
+  //     teamColor: '#828282',
+  //   },
+  //   {
+  //     code: 'LAW',
+  //     lastName: 'Lawson',
+  //     team: 'Racing Bulls',
+  //     teamColor: '#6C98FF',
+  //   },
+  //   {
+  //     code: 'STR',
+  //     lastName: 'Stroll',
+  //     team: 'Racing Point',
+  //     teamColor: '#f596c8',
+  //   },
+  //   {
+  //     code: 'SPO',
+  //     lastName: 'Spool',
+  //     team: 'Fake team',
+  //     teamColor: '#f596c8',
+  //   },
+  // ];
 
   selectSession(session: 'Q1' | 'Q2' | 'Q3') {
     this.selectedSession = session;
@@ -155,11 +163,32 @@ export class DriverSelectionComponent {
     // Later we'll request backend for drivers in this session.
   }
 
-  selectDriver(driver: DriverSelection): void {
+  get drivers(): DriverSelectionDriver[] {
+    const response = this.raceContext.driverSelection;
+
+    if (!response) {
+      return [];
+    }
+
+    switch (this.selectedSession) {
+      case 'Q1':
+        return response.sessions.Q1;
+
+      case 'Q2':
+        return response.sessions.Q2;
+
+      case 'Q3':
+        return response.sessions.Q3;
+    }
+  }
+
+  selectDriver(driver: DriverSelectionDriver): void {
     //
     // Already selected -> remove it.
     //
-    const index = this.selectedDrivers.findIndex((d) => d.code === driver.code);
+    const index = this.selectedDrivers.findIndex(
+      (d) => d.driverCode === driver.driverCode,
+    );
 
     if (index >= 0) {
       this.selectedDrivers.splice(index, 1);
@@ -189,8 +218,8 @@ export class DriverSelectionComponent {
     this.selectedDrivers[1] = driver;
   }
 
-  isSelected(driver: DriverSelection): boolean {
-    return this.selectedDrivers.some((d) => d.code === driver.code);
+  isSelected(driver: DriverSelectionDriver): boolean {
+    return this.selectedDrivers.some((d) => d.driverCode === driver.driverCode);
   }
 
   getTextColor(background: string): string {
@@ -203,6 +232,10 @@ export class DriverSelectionComponent {
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
     return brightness > 120 ? '#111111' : '#FFFFFF';
+  }
+
+  normalizeColor(color: string): string {
+    return color.startsWith('#') ? color : `#${color}`;
   }
 
   getTeamLogo(team: string): string {
@@ -266,5 +299,77 @@ export class DriverSelectionComponent {
     img.className = 'plcholder';
   }
 
-  continueToTelemetry() {}
+  private async fetchComparisonWithRetry() {
+    const driverA = this.selectedDrivers[0]?.driverCode;
+
+    const driverB = this.selectedDrivers[1]?.driverCode;
+
+    let attempt = 0;
+
+    while (attempt < this.MAX_RETRIES) {
+      try {
+        return await firstValueFrom(
+          this.comparisonService.getComparison(
+            this.selectedYear,
+            this.raceContext.selectedRound!,
+            this.selectedSession,
+            driverA!,
+            driverB ?? '',
+          ),
+        );
+      } catch {
+        attempt++;
+
+        if (attempt >= this.MAX_RETRIES) {
+          throw new Error();
+        }
+
+        this.overlay.show(
+          `Connection issue. Retrying (${attempt}/${this.MAX_RETRIES})...`,
+        );
+
+        await this.delay(1000);
+      }
+    }
+
+    throw new Error();
+  }
+
+  async continueToTelemetry(): Promise<void> {
+    const driverA = this.selectedDrivers[0]?.driverCode;
+
+    const driverB = this.selectedDrivers[1]?.driverCode;
+
+    if (!driverA) {
+      return;
+    }
+
+    this.overlay.show('Loading telemetry comparison...');
+
+    const startTime = Date.now();
+
+    try {
+      const response = await this.fetchComparisonWithRetry();
+      this.raceContext.comparison = response;
+      await this.router.navigate(['/ultimate-pace']);
+
+      const elapsed = Date.now() - startTime;
+
+      const remaining = Math.max(0, this.MIN_LOADING_MS - elapsed);
+
+      await this.delay(remaining);
+
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.overlay.hide();
+    }
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
 }

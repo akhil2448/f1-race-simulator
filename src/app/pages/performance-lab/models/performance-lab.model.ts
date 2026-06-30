@@ -1,17 +1,13 @@
 export interface DriverSelectionDriver {
-  code: string;
+  driverCode: string;
 
-  lastName: string;
+  driverLastName: string;
 
   teamName: string;
 
   teamColor: string;
 
   position: number;
-}
-
-export interface DriverSelectionSession {
-  drivers: DriverSelectionDriver[];
 }
 
 export interface DriverSelectionResponse {
@@ -21,9 +17,11 @@ export interface DriverSelectionResponse {
 
   raceName: string;
 
-  q1: DriverSelectionSession;
+  sessions: {
+    Q1: DriverSelectionDriver[];
 
-  q2: DriverSelectionSession;
+    Q2: DriverSelectionDriver[];
 
-  q3: DriverSelectionSession;
+    Q3: DriverSelectionDriver[];
+  };
 }

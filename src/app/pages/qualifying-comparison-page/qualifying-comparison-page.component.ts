@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { QualifyingComparisonService } from '../../core/services/qualifying-comparison.service';
+import { RaceContextService } from '../../core/services/race-context.service';
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
 import { TelemetryPanelComponent } from '../../comparison/components/telemetry-panel/telemetry-panel.component';
@@ -23,8 +23,8 @@ import { ComparisonTheme } from '../../comparison/models/comparison-theme.model'
   styleUrl: './qualifying-comparison-page.component.scss',
 })
 export class QualifyingComparisonPageComponent implements OnInit {
-  private comparisonService = inject(QualifyingComparisonService);
   readonly playbackService = inject(LapPlaybackService);
+  private readonly raceContext = inject(RaceContextService);
   private themeService = inject(ComparisonThemeService);
 
   comparison: QualifyingComparisonResponse | null = null;
@@ -33,56 +33,33 @@ export class QualifyingComparisonPageComponent implements OnInit {
   loading = true;
 
   ngOnInit(): void {
-    this.comparisonService
-      .getComparison(2020, 2, 'Q3', 'NOR', 'SAI')
-      .subscribe({
-        next: (response) => {
-          console.log('Qualifying Comparison', response);
+    const response = this.raceContext.comparison;
 
-          this.comparison = response;
+    if (!response) {
+      console.error('Comparison data not found.');
 
-          this.theme = this.themeService.buildTheme(
-            response.driverA.teamColor,
-            response.driverB?.teamColor ?? response.driverA.teamColor,
-          );
+      this.loading = false;
 
-          console.log(this.theme);
+      return;
+    }
 
-          const referenceLapTime = Math.min(
-            response.driverA.lapTime,
-            response.driverB?.lapTime ?? response.driverA.lapTime,
-          );
+    this.comparison = response;
 
-          console.log('Driver A telemetry:', response.driverA.telemetry.length);
-          console.log(
-            'Driver B telemetry:',
-            response.driverB?.telemetry.length,
-          );
-          console.log(
-            'Track sectors:',
-            response.trackMap.sector1.length,
-            response.trackMap.sector2.length,
-            response.trackMap.sector3.length,
-          );
+    this.theme = this.themeService.buildTheme(
+      response.driverA.teamColor,
+      response.driverB?.teamColor ?? response.driverA.teamColor,
+    );
 
-          // initialize playback
-          this.playbackService.loadLap(
-            response.driverA.telemetry,
-            referenceLapTime,
-          );
+    const referenceLapTime = Math.min(
+      response.driverA.lapTime,
+      response.driverB?.lapTime ?? response.driverA.lapTime,
+    );
 
-          // Temporary until we fix the start position issue.
-          this.stepForward();
+    this.playbackService.loadLap(response.driverA.telemetry, referenceLapTime);
 
-          this.loading = false;
-        },
+    this.stepForward();
 
-        error: (error) => {
-          console.error(error);
-
-          this.loading = false;
-        },
-      });
+    this.loading = false;
 
     this.playbackService.currentFrame$.subscribe((frame) => {
       if (!frame) {

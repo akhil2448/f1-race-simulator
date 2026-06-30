@@ -240,11 +240,19 @@ export class RaceSelectionComponent implements OnInit {
 
       await this.delay(remaining);
 
+      this.overlay.hide();
+
       this.router.navigate(['/performance-lab']);
     } catch {
-      this.error = 'Unable to load Performance Lab. Please try again.';
-    } finally {
       this.overlay.hide();
+
+      this.error = 'Unable to load Performance Lab. Please try another race.';
+
+      await this.delay(3000);
+
+      this.loadSchedule();
+
+      return;
     }
   }
 }
