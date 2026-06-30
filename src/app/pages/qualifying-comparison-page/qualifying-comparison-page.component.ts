@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { RaceContextService } from '../../core/services/race-context.service';
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
@@ -9,6 +9,9 @@ import { DriverCardComponent } from '../../comparison/components/driver-card/dri
 import { SectorDisplay } from '../../comparison/models/sector-display.model';
 import { ComparisonThemeService } from '../../comparison/services/comparison-theme.service';
 import { ComparisonTheme } from '../../comparison/models/comparison-theme.model';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { Router } from '@angular/router';
+import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -18,6 +21,7 @@ import { ComparisonTheme } from '../../comparison/models/comparison-theme.model'
     TelemetryPanelComponent,
     PlaybackControlsComponent,
     DriverCardComponent,
+    ConfirmationDialogComponent,
   ],
   templateUrl: './qualifying-comparison-page.component.html',
   styleUrl: './qualifying-comparison-page.component.scss',
@@ -25,21 +29,22 @@ import { ComparisonTheme } from '../../comparison/models/comparison-theme.model'
 export class QualifyingComparisonPageComponent implements OnInit {
   readonly playbackService = inject(LapPlaybackService);
   private readonly raceContext = inject(RaceContextService);
+  private readonly overlay = inject(LoadingOverlayService);
+  private readonly router = inject(Router);
   private themeService = inject(ComparisonThemeService);
 
   comparison: QualifyingComparisonResponse | null = null;
   theme!: ComparisonTheme;
 
+  private readonly MIN_BACK_LOADING_MS = 1000;
   loading = true;
+  showExitDialog = false;
 
   ngOnInit(): void {
     const response = this.raceContext.comparison;
 
     if (!response) {
-      console.error('Comparison data not found.');
-
-      this.loading = false;
-
+      this.redirectToPerformanceLab();
       return;
     }
 
@@ -211,5 +216,55 @@ export class QualifyingComparisonPageComponent implements OnInit {
 
   togglePlay(): void {
     this.playbackService.toggle();
+  }
+
+  onBackClicked(): void {
+    this.showExitDialog = true;
+  }
+
+  cancelExit(): void {
+    this.showExitDialog = false;
+  }
+
+  async confirmExit(): Promise<void> {
+    this.showExitDialog = false;
+
+    this.overlay.show('Returning to Performance Lab...');
+
+    const startTime = Date.now();
+
+    try {
+      const elapsed = Date.now() - startTime;
+
+      const remaining = Math.max(0, this.MIN_BACK_LOADING_MS - elapsed);
+
+      await this.delay(remaining);
+
+      await this.router.navigate(['/performance-lab']);
+    } finally {
+      this.overlay.hide();
+    }
+  }
+
+  private async redirectToPerformanceLab(): Promise<void> {
+    this.overlay.show('Returning to Performance Lab...');
+
+    await this.delay(800);
+
+    this.overlay.hide();
+
+    await this.router.navigate(['/performance-lab']);
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent): void {
+    event.preventDefault();
+    event.returnValue = '';
   }
 }

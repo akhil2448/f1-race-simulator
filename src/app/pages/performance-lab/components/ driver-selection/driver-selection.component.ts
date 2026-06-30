@@ -7,11 +7,12 @@ import { RaceContextService } from '../../../../core/services/race-context.servi
 import { DriverSelectionDriver } from '../../models/performance-lab.model';
 import { QualifyingComparisonService } from '../../../../core/services/qualifying-comparison.service';
 import { LoadingOverlayService } from '../../../../core/services/loading-overlay.service';
+import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-driver-selection',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmationDialogComponent],
   templateUrl: './driver-selection.component.html',
   styleUrl: './driver-selection.component.scss',
 })
@@ -26,13 +27,23 @@ export class DriverSelectionComponent {
 
   readonly sessions: ('Q1' | 'Q2' | 'Q3')[] = ['Q3', 'Q2', 'Q1'];
 
-  selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
+  get selectedSession(): 'Q1' | 'Q2' | 'Q3' {
+    return this.raceContext.selectedSession;
+  }
+
+  set selectedSession(value: 'Q1' | 'Q2' | 'Q3') {
+    this.raceContext.selectedSession = value;
+  }
 
   readonly selectedYear = this.raceContext.selectedYear!;
 
   readonly selectedRace = this.raceContext.selectedRace!;
 
-  selectedDrivers: DriverSelectionDriver[] = [];
+  get selectedDrivers(): DriverSelectionDriver[] {
+    return this.raceContext.selectedDrivers;
+  }
+
+  showSingleDriverDialog = false;
 
   // drivers: DriverSelection[] = [
   //   {
@@ -160,7 +171,7 @@ export class DriverSelectionComponent {
   selectSession(session: 'Q1' | 'Q2' | 'Q3') {
     this.selectedSession = session;
 
-    // Later we'll request backend for drivers in this session.
+    this.raceContext.save();
   }
 
   get drivers(): DriverSelectionDriver[] {
@@ -192,6 +203,8 @@ export class DriverSelectionComponent {
 
     if (index >= 0) {
       this.selectedDrivers.splice(index, 1);
+      this.raceContext.save();
+
       return;
     }
 
@@ -200,6 +213,8 @@ export class DriverSelectionComponent {
     //
     if (this.selectedDrivers.length === 0) {
       this.selectedDrivers.push(driver);
+      this.raceContext.save();
+
       return;
     }
 
@@ -208,6 +223,8 @@ export class DriverSelectionComponent {
     //
     if (this.selectedDrivers.length === 1) {
       this.selectedDrivers.push(driver);
+      this.raceContext.save();
+
       return;
     }
 
@@ -216,6 +233,8 @@ export class DriverSelectionComponent {
     // Replace only the second one.
     //
     this.selectedDrivers[1] = driver;
+
+    this.raceContext.save();
   }
 
   isSelected(driver: DriverSelectionDriver): boolean {
@@ -338,11 +357,20 @@ export class DriverSelectionComponent {
   async continueToTelemetry(): Promise<void> {
     const driverA = this.selectedDrivers[0]?.driverCode;
 
-    const driverB = this.selectedDrivers[1]?.driverCode;
-
     if (!driverA) {
       return;
     }
+
+    if (this.selectedDrivers.length === 1) {
+      this.showSingleDriverDialog = true;
+      return;
+    }
+
+    await this.startTelemetryComparison();
+  }
+
+  async startTelemetryComparison(): Promise<void> {
+    this.showSingleDriverDialog = false;
 
     this.overlay.show('Loading telemetry comparison...');
 
@@ -350,7 +378,11 @@ export class DriverSelectionComponent {
 
     try {
       const response = await this.fetchComparisonWithRetry();
+
       this.raceContext.comparison = response;
+
+      this.raceContext.save();
+
       await this.router.navigate(['/ultimate-pace']);
 
       const elapsed = Date.now() - startTime;
@@ -358,8 +390,6 @@ export class DriverSelectionComponent {
       const remaining = Math.max(0, this.MIN_LOADING_MS - elapsed);
 
       await this.delay(remaining);
-
-      console.log(response);
     } catch (error) {
       console.error(error);
     } finally {

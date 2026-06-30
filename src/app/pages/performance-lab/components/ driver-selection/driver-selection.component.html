@@ -71,4 +71,15 @@
         : "ANALYZE DRIVING STYLE"
     }}
   </button>
+
+  <app-confirmation-dialog
+    [visible]="showSingleDriverDialog"
+    title="Only one driver selected"
+    message="You can compare up to two drivers. Continue with a single driver?"
+    confirmText="Continue"
+    cancelText="Pick Second Driver"
+    (confirmed)="startTelemetryComparison()"
+    (cancelled)="showSingleDriverDialog = false"
+  >
+  </app-confirmation-dialog>
 </div>

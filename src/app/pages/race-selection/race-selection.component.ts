@@ -234,6 +234,14 @@ export class RaceSelectionComponent implements OnInit {
 
       this.raceContext.driverSelection = response;
 
+      this.raceContext.selectedSession = 'Q3';
+
+      this.raceContext.selectedDrivers = [];
+
+      this.raceContext.navigationStep = 'performance-lab';
+
+      this.raceContext.save();
+
       const elapsed = Date.now() - startTime;
 
       const remaining = Math.max(0, this.MIN_PERFORMANCE_LOADING_MS - elapsed);

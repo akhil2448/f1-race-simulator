@@ -1,0 +1,23 @@
+@if (visible) {
+  <div class="dialog-backdrop">
+    <div class="dialog">
+      <div class="dialog-title">
+        {{ title }}
+      </div>
+
+      <div class="dialog-message">
+        {{ message }}
+      </div>
+
+      <div class="dialog-actions">
+        <app-button variant="secondary" (clicked)="cancelled.emit()">
+          {{ cancelText }}
+        </app-button>
+
+        <app-button (clicked)="confirmed.emit()">
+          {{ confirmText }}
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

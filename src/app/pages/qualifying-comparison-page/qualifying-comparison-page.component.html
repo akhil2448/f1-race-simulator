@@ -2,7 +2,9 @@
   <!-- HEADER -->
   <section class="comparison-header">
     <div class="header-left">
-      <button class="back-button" type="button">&lt;</button>
+      <button class="back-button" type="button" (click)="onBackClicked()">
+        &lt;
+      </button>
 
       <img class="f1-logo" src="assets/icons/f1-logo-bw.svg" alt="Formula 1" />
 
@@ -92,4 +94,15 @@
       />
     }
   </section>
+
+  <app-confirmation-dialog
+    [visible]="showExitDialog"
+    title="Leave Ultimate Pace?"
+    message="Your current playback progress will be lost."
+    confirmText="Leave"
+    cancelText="Stay"
+    (confirmed)="confirmExit()"
+    (cancelled)="cancelExit()"
+  >
+  </app-confirmation-dialog>
 </div>

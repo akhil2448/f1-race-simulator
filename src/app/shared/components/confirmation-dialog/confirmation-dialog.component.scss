@@ -1,0 +1,54 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.72);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 10000;
+
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  width: 460px;
+  max-width: calc(100vw - 40px);
+
+  background: #242424;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 12px;
+
+  padding: 26px 28px;
+}
+
+.dialog-title {
+  font-family: "Formula1";
+  font-size: 20px;
+
+  color: white;
+}
+
+.dialog-message {
+  margin-top: 14px;
+
+  color: #cfcfcf;
+
+  font-size: 15px;
+
+  line-height: 1.55;
+}
+
+.dialog-actions {
+  margin-top: 28px;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+}
