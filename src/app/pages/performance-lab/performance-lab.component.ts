@@ -14,10 +14,6 @@ type AnalysisMode = 'ultimate' | 'race';
 export class PerformanceLabComponent {
   mode: AnalysisMode = 'ultimate';
 
-  selectedYear = 2020;
-
-  selectedRace = 'Styrian Grand Prix';
-
   toggleMode(mode: AnalysisMode): void {
     this.mode = mode;
   }

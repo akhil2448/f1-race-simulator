@@ -32,6 +32,26 @@
   gap: 18px;
 }
 
+.selected-event {
+  margin-left: auto;
+
+  font-family: "Formula1";
+
+  font-size: 24px;
+
+  color: #d4d4d4;
+
+  white-space: nowrap;
+}
+
+.dot {
+  margin: 0 8px;
+
+  opacity: 0.6;
+
+  color: #ec0c0c;
+}
+
 .session-selector {
   display: flex;
 
@@ -179,6 +199,10 @@
   transform: translateX(3px) scale(1.5);
 }
 
+.team-icon img.haas.selected {
+  filter: brightness(0) !important;
+}
+
 .team-icon img.williams {
   transform: translateX(5px) translateY(3px) scale(1.15);
 }
@@ -274,4 +298,48 @@
 .team-icon img.plcholder {
   filter: brightness(0) invert(1);
   transform: translateX(3px) translateY(2px);
+}
+
+.action-row {
+  margin-top: 22px;
+}
+
+.continue-button {
+  width: 100%;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-family: "Formula1";
+
+  font-size: 14px;
+
+  letter-spacing: 0.6px;
+
+  transition: all 0.18s ease;
+
+  cursor: pointer;
+}
+
+.continue-button:not(:disabled) {
+  background: #d61d2a;
+
+  color: white;
+}
+
+.continue-button:not(:disabled):hover {
+  background: #ef2535;
+
+  transform: translateY(-1px);
+}
+
+.continue-button:disabled {
+  background: #3b3b3b;
+
+  color: #8a8a8a;
+
+  cursor: not-allowed;
 }

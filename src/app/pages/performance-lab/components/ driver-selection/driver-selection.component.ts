@@ -20,6 +20,10 @@ export class DriverSelectionComponent {
 
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
+  selectedYear = 2020;
+
+  selectedRace = 'Styrian Grand Prix';
+
   selectedDrivers: DriverSelection[] = [];
 
   drivers: DriverSelection[] = [
@@ -261,4 +265,6 @@ export class DriverSelectionComponent {
     img.src = 'assets/team-logos/plcholder.svg';
     img.className = 'plcholder';
   }
+
+  continueToTelemetry() {}
 }

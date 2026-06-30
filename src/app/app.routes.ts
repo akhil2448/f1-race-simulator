@@ -37,7 +37,7 @@ export const routes: Routes = [
         path: 'ultimate-pace',
         component: QualifyingComparisonPageComponent,
       },
-      { path: 'performance-hub', component: PerformanceLabComponent },
+      { path: 'performance-lab', component: PerformanceLabComponent },
       {
         path: '**',
         component: NotFoundComponent,

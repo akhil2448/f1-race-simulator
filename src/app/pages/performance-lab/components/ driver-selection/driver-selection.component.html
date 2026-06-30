@@ -13,6 +13,12 @@
         </button>
       }
     </div>
+
+    <div class="selected-event">
+      {{ selectedYear }}
+      <span class="dot">•</span>
+      {{ selectedRace }}
+    </div>
   </div>
 
   <div class="section-title drivers-title">Select Drivers</div>
@@ -44,4 +50,18 @@
       </div>
     }
   </div>
+</div>
+
+<div class="action-row">
+  <button
+    class="continue-button"
+    [disabled]="selectedDrivers.length === 0"
+    (click)="continueToTelemetry()"
+  >
+    {{
+      selectedDrivers.length === 0
+        ? "SELECT AT LEAST ONE DRIVER"
+        : "ANALYZE DRIVING STYLE"
+    }}
+  </button>
 </div>
