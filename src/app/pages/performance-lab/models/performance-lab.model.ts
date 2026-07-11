@@ -25,3 +25,53 @@ export interface DriverSelectionResponse {
     Q3: DriverSelectionDriver[];
   };
 }
+
+export interface RaceManagementDriversResponse {
+  year: number;
+
+  round: number;
+
+  totalRaceLaps: number;
+
+  drivers: RaceManagementDriver[];
+}
+
+export interface RaceManagementDriver {
+  driverNumber: string;
+
+  driverCode: string;
+
+  firstName: string;
+
+  lastName: string;
+
+  fullName: string;
+
+  team: string;
+
+  teamColor: string;
+
+  gridPosition: number;
+
+  finishPosition: number;
+
+  status: string;
+
+  lapsCompleted: number;
+
+  stints: RaceManagementStint[];
+}
+
+export interface RaceManagementStint {
+  stint: number;
+
+  compound: string;
+
+  freshTyre: boolean;
+
+  startLap: number;
+
+  endLap: number;
+
+  lapCount: number;
+}

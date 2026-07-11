@@ -176,7 +176,8 @@
 }
 
 .team-icon img.mclaren.selected {
-  filter: brightness(0) invert(1) !important;
+  // filter: brightness(0) invert(1) !important;
+  filter: brightness(0) !important;
 }
 
 .team-icon img.ferrari {

@@ -59,7 +59,7 @@ MODE CARD
 .mode-card {
   width: 520px;
 
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 .mode-tabs {
@@ -131,7 +131,7 @@ CONTENT
 
   flex-direction: column;
 
-  gap: 16px;
+  // gap: 16px;
 }
 
 .content-card {
@@ -147,7 +147,7 @@ CONTENT
 .mode-title {
   font-size: 26px;
 
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .mode-description {
@@ -155,7 +155,7 @@ CONTENT
 
   line-height: 1.5;
 
-  max-width: 800px;
+  max-width: 1250px;
 
   font-size: 16px;
 }

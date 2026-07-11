@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   DriverSelectionDriver,
   DriverSelectionResponse,
+  RaceManagementDriversResponse,
 } from '../../pages/performance-lab/models/performance-lab.model';
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 
@@ -25,6 +26,8 @@ export class RaceContextService {
 
   comparison: QualifyingComparisonResponse | null = null;
 
+  raceManagementDrivers: RaceManagementDriversResponse | null = null;
+
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
   selectedDrivers: DriverSelectionDriver[] = [];
@@ -45,6 +48,7 @@ export class RaceContextService {
         selectedRace: this.selectedRace,
         driverSelection: this.driverSelection,
         comparison: this.comparison,
+        raceManagementDrivers: this.raceManagementDrivers,
         selectedSession: this.selectedSession,
         selectedDrivers: this.selectedDrivers,
         navigationStep: this.navigationStep,
@@ -66,6 +70,7 @@ export class RaceContextService {
     this.selectedRace = data.selectedRace;
     this.driverSelection = data.driverSelection;
     this.comparison = data.comparison;
+    this.raceManagementDrivers = data.raceManagementDrivers;
     this.selectedSession = data.selectedSession ?? 'Q3';
     this.selectedDrivers = data.selectedDrivers ?? [];
     this.navigationStep = data.navigationStep;
@@ -73,19 +78,28 @@ export class RaceContextService {
 
   reset(): void {
     this.selectedYear = null;
-
     this.selectedRound = null;
-
     this.selectedRace = null;
+    this.driverSelection = null;
+    this.comparison = null;
+    this.raceManagementDrivers = null;
+    this.selectedSession = 'Q3';
+    this.selectedDrivers = [];
+    this.navigationStep = 'home';
+    sessionStorage.removeItem(this.STORAGE_KEY);
+  }
 
+  clearPerformanceLab(): void {
     this.driverSelection = null;
 
-    this.selectedSession = 'Q3';
+    this.comparison = null;
+
+    this.raceManagementDrivers = null;
 
     this.selectedDrivers = [];
 
-    this.navigationStep = 'home';
+    this.selectedSession = 'Q3';
 
-    sessionStorage.removeItem(this.STORAGE_KEY);
+    this.save();
   }
 }

@@ -4,13 +4,14 @@ import { Router } from '@angular/router';
 import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
 import { DriverSelectionComponent } from './components/ driver-selection/driver-selection.component';
 import { RaceContextService } from '../../core/services/race-context.service';
+import { RaceManagementComponent } from './components/race-management/race-management.component';
 
 type AnalysisMode = 'ultimate' | 'race';
 
 @Component({
   selector: 'app-performance-lab',
   standalone: true,
-  imports: [CommonModule, DriverSelectionComponent],
+  imports: [CommonModule, DriverSelectionComponent, RaceManagementComponent],
   templateUrl: './performance-lab.component.html',
   styleUrl: './performance-lab.component.scss',
 })

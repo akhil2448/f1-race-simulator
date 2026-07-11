@@ -1,0 +1,140 @@
+:host {
+  display: block;
+}
+
+.driver-row {
+  display: grid;
+
+  grid-template-columns:
+    100px
+    1fr
+    36px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  cursor: pointer;
+
+  padding: 3px 0;
+
+  transition: opacity 0.15s;
+}
+
+.driver-row:hover {
+  opacity: 0.85;
+}
+
+.driver-name {
+  font-family: Formula1;
+
+  font-size: 18px;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.strategy {
+  display: flex;
+
+  align-items: center;
+
+  height: 10px;
+}
+
+.stint {
+  position: relative;
+
+  height: 10px;
+}
+
+.stint.soft {
+  background: #ff2b2b;
+}
+
+.stint.medium {
+  background: #ffd400;
+}
+
+.stint.hard {
+  background: #dfdfdf;
+}
+
+.stint.intermediate {
+  background: #3cff00;
+}
+
+.stint.wet {
+  background: #0066ff;
+}
+
+.stint.soft.used {
+  color: #ff2b2b;
+}
+
+.stint.medium.used {
+  color: #ffd400;
+}
+
+.stint.hard.used {
+  color: #dfdfdf;
+}
+
+.stint.intermediate.used {
+  color: #3cff00;
+}
+
+.stint.wet.used {
+  color: #0066ff;
+}
+
+.stint.used {
+  background: repeating-linear-gradient(
+    -45deg,
+    currentColor 0px,
+    currentColor 2px,
+    #2a2a2a 2px,
+    #2a2a2a 4px
+  );
+}
+
+.pit-marker {
+  position: absolute;
+
+  right: -11px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 22px;
+
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #111;
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 9px;
+
+  font-family: Formula1;
+
+  z-index: 10;
+}
+
+.laps {
+  font-family: Formula1;
+
+  font-size: 16px;
+
+  text-align: right;
+}

@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.race-management {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  font-family: Formula1;
+
+  color: #d6d6d6;
+}
+
+.header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.title {
+  font-family: Formula1;
+
+  font-size: 18px;
+
+  color: #d7d7d7;
+}
+
+.legend {
+  display: flex;
+
+  align-items: center;
+
+  gap: 22px;
+}
+
+.legend-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.legend-item span {
+  font-family: Formula1;
+
+  font-size: 11px;
+
+  color: #cfcfcf;
+
+  letter-spacing: 1px;
+}
+
+.legend-box {
+  width: 62px;
+
+  height: 8px;
+}
+
+.legend-box.new {
+  background: #cfcfcf;
+}
+
+.legend-box.used {
+  color: #cfcfcf;
+
+  background: repeating-linear-gradient(
+    -45deg,
+    currentColor 0px,
+    currentColor 2px,
+    #2a2a2a 2px,
+    #2a2a2a 4px
+  );
+}
+
+.dot {
+  margin: 0 8px;
+
+  color: #ff2d2d;
+}
+
+.drivers {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.driver-placeholder {
+  background: #252525;
+
+  border-radius: 12px;
+
+  padding: 18px;
+
+  color: white;
+}
+
+.loading,
+.error {
+  padding: 32px;
+
+  text-align: center;
+
+  color: #9d9d9d;
+}

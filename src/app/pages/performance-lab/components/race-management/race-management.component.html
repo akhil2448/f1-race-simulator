@@ -1,0 +1,37 @@
+@if (loading) {
+  <div class="loading">Loading race management...</div>
+}
+
+@if (error) {
+  <div class="error">Failed to load race data.</div>
+}
+
+@if (!loading && !error && response) {
+  <div class="race-management">
+    <div class="header">
+      <div class="title">Select atleast one driver</div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-box new"></div>
+          <span>NEW</span>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-box used"></div>
+          <span>USED</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drivers">
+      @for (driver of response.drivers; track driver.driverNumber) {
+        <app-race-management-driver-row
+          [driver]="driver"
+          [totalRaceLaps]="response.totalRaceLaps"
+          (driverSelected)="selectDriver($event)"
+        />
+      }
+    </div>
+  </div>
+}

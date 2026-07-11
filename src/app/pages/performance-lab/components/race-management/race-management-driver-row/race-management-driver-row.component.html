@@ -1,0 +1,36 @@
+<div class="driver-row" (click)="selectDriver()">
+  <!-- DRIVER NAME -->
+
+  <div class="driver-name">
+    {{ driver.driverCode }}
+  </div>
+
+  <!-- STINTS -->
+
+  <div class="strategy">
+    @for (stint of driver.stints; track stint.stint; let last = $last) {
+      <div
+        class="stint"
+        [class.soft]="tyreClass(stint.compound) === 'soft'"
+        [class.medium]="tyreClass(stint.compound) === 'medium'"
+        [class.hard]="tyreClass(stint.compound) === 'hard'"
+        [class.intermediate]="tyreClass(stint.compound) === 'intermediate'"
+        [class.wet]="tyreClass(stint.compound) === 'wet'"
+        [class.used]="!stint.freshTyre"
+        [style.width.%]="stintWidth(stint.lapCount)"
+      >
+        @if (!last) {
+          <div class="pit-marker">
+            {{ stint.endLap }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- TOTAL LAPS -->
+
+  <div class="laps">
+    {{ driver.lapsCompleted }}
+  </div>
+</div>
