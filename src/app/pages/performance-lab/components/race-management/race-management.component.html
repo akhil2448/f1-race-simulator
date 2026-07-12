@@ -24,30 +24,18 @@
 
         <div class="legend-divider"></div>
 
-        <div class="legend-item">
-          <div class="compound-bar soft"></div>
-          <span class="soft">SOFT</span>
-        </div>
+        @for (compound of response.tyreCompounds; track compound) {
+          <div class="legend-item">
+            <div
+              class="compound-bar"
+              [class]="'compound-bar ' + tyreClass(compound)"
+            ></div>
 
-        <div class="legend-item">
-          <div class="compound-bar medium"></div>
-          <span class="medium">MEDIUM</span>
-        </div>
-
-        <div class="legend-item">
-          <div class="compound-bar hard"></div>
-          <span class="hard">HARD</span>
-        </div>
-
-        <div class="legend-item">
-          <div class="compound-bar intermediate"></div>
-          <span class="intermediate">INTER</span>
-        </div>
-
-        <div class="legend-item">
-          <div class="compound-bar wet"></div>
-          <span class="wet">WET</span>
-        </div>
+            <span [class]="tyreClass(compound)">
+              {{ compoundLabel(compound) }}
+            </span>
+          </div>
+        }
       </div>
     </div>
 

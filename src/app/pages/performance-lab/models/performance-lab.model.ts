@@ -33,6 +33,8 @@ export interface RaceManagementDriversResponse {
 
   totalRaceLaps: number;
 
+  tyreCompounds: string[];
+
   drivers: RaceManagementDriver[];
 }
 

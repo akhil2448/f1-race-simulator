@@ -2,7 +2,44 @@
   <!-- HEADER -->
 
   <div class="header">
-    <div class="back-button" (click)="goBack()">&lt; BACK</div>
+    <!-- LEFT COLUMN -->
+
+    <div class="header-left">
+      <div class="back-button" (click)="goBack()">&lt; BACK</div>
+
+      <div class="selected-event">
+        <div class="header-accent"></div>
+        {{ selectedYear }}
+        <span class="dot">•</span>
+        {{ selectedRace }}
+      </div>
+
+      <!-- MODE SELECTOR -->
+
+      <div class="mode-card">
+        <div class="mode-tabs">
+          <button
+            class="mode-button"
+            [class.active]="mode === 'ultimate'"
+            (click)="toggleMode('ultimate')"
+          >
+            Ultimate Pace
+          </button>
+
+          <button
+            class="mode-button"
+            [class.active]="mode === 'race'"
+            (click)="toggleMode('race')"
+          >
+            Race Management
+          </button>
+
+          <div class="slider" [class.right]="mode === 'race'"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
 
     <div class="title-block">
       <div class="title">Performance Lab</div>
@@ -10,30 +47,6 @@
       <div class="subtitle">
         Explore telemetry, driving technique and race strategy.
       </div>
-    </div>
-  </div>
-
-  <!-- MODE SELECTOR -->
-
-  <div class="mode-card">
-    <div class="mode-tabs">
-      <button
-        class="mode-button"
-        [class.active]="mode === 'ultimate'"
-        (click)="toggleMode('ultimate')"
-      >
-        Ultimate Pace
-      </button>
-
-      <button
-        class="mode-button"
-        [class.active]="mode === 'race'"
-        (click)="toggleMode('race')"
-      >
-        Race Management
-      </button>
-
-      <div class="slider" [class.right]="mode === 'race'"></div>
     </div>
   </div>
 

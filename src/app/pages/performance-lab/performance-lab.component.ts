@@ -25,6 +25,9 @@ export class PerformanceLabComponent {
 
   private readonly MIN_BACK_LOADING_MS = 1000;
 
+  readonly selectedYear = this.raceContext.selectedYear!;
+  readonly selectedRace = this.raceContext.selectedRace!;
+
   toggleMode(mode: AnalysisMode): void {
     this.mode = mode;
   }

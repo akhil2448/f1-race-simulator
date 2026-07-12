@@ -21,7 +21,21 @@ HEADER
 
   align-items: flex-start;
 
-  margin-bottom: 32px;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 22px;
+
+  width: 520px;
+}
+
+.title-block {
+  text-align: left;
 }
 
 .back-button {
@@ -34,6 +48,36 @@ HEADER
 
 .back-button:hover {
   color: white;
+}
+
+.header-accent {
+  width: 4px;
+
+  height: 30px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border-radius: 999px;
+}
+
+.selected-event {
+  font-family: Formula1;
+
+  font-size: 28px;
+
+  color: #d7d7d7;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.dot {
+  color: #ff2d2d;
+
+  font-size: 24px;
 }
 
 .title {
@@ -59,7 +103,7 @@ MODE CARD
 .mode-card {
   width: 520px;
 
-  margin-bottom: 24px;
+  margin: 0;
 }
 
 .mode-tabs {
@@ -131,7 +175,7 @@ CONTENT
 
   flex-direction: column;
 
-  // gap: 16px;
+  gap: 0;
 }
 
 .content-card {
@@ -158,26 +202,6 @@ CONTENT
   max-width: 1250px;
 
   font-size: 16px;
-}
-
-.selected-event {
-  margin-top: 16px;
-
-  color: #d7d7d7;
-
-  font-size: 18px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-}
-
-.dot {
-  color: #ff2d2d;
-
-  font-size: 14px;
 }
 
 .selection-card {

@@ -72,6 +72,20 @@ export class RaceManagementComponent implements OnInit {
     }
   }
 
+  tyreClass(compound: string): string {
+    return compound.toLowerCase();
+  }
+
+  compoundLabel(compound: string): string {
+    switch (compound) {
+      case 'INTERMEDIATE':
+        return 'INTER';
+
+      default:
+        return compound;
+    }
+  }
+
   ////////////////////////////////////////////////////////////
 
   selectDriver(driver: RaceManagementDriver): void {
