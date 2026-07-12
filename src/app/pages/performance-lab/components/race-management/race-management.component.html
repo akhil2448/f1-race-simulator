@@ -21,6 +21,33 @@
           <div class="legend-box used"></div>
           <span>USED</span>
         </div>
+
+        <div class="legend-divider"></div>
+
+        <div class="legend-item">
+          <div class="compound-bar soft"></div>
+          <span class="soft">SOFT</span>
+        </div>
+
+        <div class="legend-item">
+          <div class="compound-bar medium"></div>
+          <span class="medium">MEDIUM</span>
+        </div>
+
+        <div class="legend-item">
+          <div class="compound-bar hard"></div>
+          <span class="hard">HARD</span>
+        </div>
+
+        <div class="legend-item">
+          <div class="compound-bar intermediate"></div>
+          <span class="intermediate">INTER</span>
+        </div>
+
+        <div class="legend-item">
+          <div class="compound-bar wet"></div>
+          <span class="wet">WET</span>
+        </div>
       </div>
     </div>
 
@@ -29,6 +56,7 @@
         <app-race-management-driver-row
           [driver]="driver"
           [totalRaceLaps]="response.totalRaceLaps"
+          [selected]="isSelected(driver)"
           (driverSelected)="selectDriver($event)"
         />
       }

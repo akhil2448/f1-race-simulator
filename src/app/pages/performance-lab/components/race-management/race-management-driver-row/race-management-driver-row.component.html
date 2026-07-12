@@ -1,8 +1,38 @@
-<div class="driver-row" (click)="selectDriver()">
+<div
+  class="driver-row"
+  [style.border]="
+    selected
+      ? '2px solid ' + normalizeColor(driver.teamColor)
+      : '2px solid transparent'
+  "
+  (click)="selectDriver()"
+>
   <!-- DRIVER NAME -->
 
-  <div class="driver-name">
-    {{ driver.driverCode }}
+  <div
+    class="driver-info"
+    [style.background]="selected ? normalizeColor(driver.teamColor) : '#1f1f1f'"
+    [style.color]="
+      selected ? getTextColor(normalizeColor(driver.teamColor)) : '#F3F3F3'
+    "
+  >
+    <div
+      class="team-strip"
+      [style.background]="normalizeColor(driver.teamColor)"
+    ></div>
+
+    <div class="driver-name">
+      {{ driver.driverCode }}
+    </div>
+
+    <div class="team-icon">
+      <img
+        [src]="getTeamLogo(driver.team)"
+        [class]="getTeamLogoClass(driver.team)"
+        [class.selected]="selected"
+        (error)="onTeamLogoError($event)"
+      />
+    </div>
   </div>
 
   <!-- STINTS -->

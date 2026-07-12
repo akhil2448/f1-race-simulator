@@ -59,7 +59,6 @@ export class RaceManagementComponent implements OnInit {
       );
 
       this.response = response;
-      console.log(this.response.drivers[2].stints);
 
       this.raceContext.raceManagementDrivers = response;
 
@@ -76,6 +75,55 @@ export class RaceManagementComponent implements OnInit {
   ////////////////////////////////////////////////////////////
 
   selectDriver(driver: RaceManagementDriver): void {
-    console.log(driver);
+    const selected = this.raceContext.raceManagementSelectedDriverCodes;
+
+    //
+    // Already selected -> remove it.
+    //
+    const index = selected.indexOf(driver.driverCode);
+
+    if (index >= 0) {
+      selected.splice(index, 1);
+
+      this.raceContext.save();
+
+      return;
+    }
+
+    //
+    // First driver.
+    //
+    if (selected.length === 0) {
+      selected.push(driver.driverCode);
+
+      this.raceContext.save();
+
+      return;
+    }
+
+    //
+    // Second driver.
+    //
+    if (selected.length === 1) {
+      selected.push(driver.driverCode);
+
+      this.raceContext.save();
+
+      return;
+    }
+
+    //
+    // Already two drivers.
+    // Replace only the second one.
+    //
+    selected[1] = driver.driverCode;
+
+    this.raceContext.save();
+  }
+
+  isSelected(driver: RaceManagementDriver): boolean {
+    return this.raceContext.raceManagementSelectedDriverCodes.includes(
+      driver.driverCode,
+    );
   }
 }

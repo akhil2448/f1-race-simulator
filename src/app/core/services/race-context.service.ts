@@ -31,6 +31,7 @@ export class RaceContextService {
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
   selectedDrivers: DriverSelectionDriver[] = [];
+  raceManagementSelectedDriverCodes: string[] = [];
 
   navigationStep:
     | 'home'
@@ -51,6 +52,8 @@ export class RaceContextService {
         raceManagementDrivers: this.raceManagementDrivers,
         selectedSession: this.selectedSession,
         selectedDrivers: this.selectedDrivers,
+        raceManagementSelectedDriverCodes:
+          this.raceManagementSelectedDriverCodes,
         navigationStep: this.navigationStep,
       }),
     );
@@ -73,6 +76,8 @@ export class RaceContextService {
     this.raceManagementDrivers = data.raceManagementDrivers;
     this.selectedSession = data.selectedSession ?? 'Q3';
     this.selectedDrivers = data.selectedDrivers ?? [];
+    this.raceManagementSelectedDriverCodes =
+      data.raceManagementSelectedDriverCodes ?? [];
     this.navigationStep = data.navigationStep;
   }
 
@@ -85,21 +90,18 @@ export class RaceContextService {
     this.raceManagementDrivers = null;
     this.selectedSession = 'Q3';
     this.selectedDrivers = [];
+    this.raceManagementSelectedDriverCodes = [];
     this.navigationStep = 'home';
     sessionStorage.removeItem(this.STORAGE_KEY);
   }
 
   clearPerformanceLab(): void {
     this.driverSelection = null;
-
     this.comparison = null;
-
     this.raceManagementDrivers = null;
-
     this.selectedDrivers = [];
-
+    this.raceManagementSelectedDriverCodes = [];
     this.selectedSession = 'Q3';
-
     this.save();
   }
 }

@@ -20,14 +20,6 @@
   font-family: Formula1;
 
   color: #d6d6d6;
-}
-
-.header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
 
   margin-bottom: 18px;
 }
@@ -45,7 +37,7 @@
 
   align-items: center;
 
-  gap: 22px;
+  gap: 16px;
 }
 
 .legend-item {
@@ -53,7 +45,7 @@
 
   align-items: center;
 
-  gap: 8px;
+  gap: 6px;
 }
 
 .legend-item span {
@@ -64,6 +56,66 @@
   color: #cfcfcf;
 
   letter-spacing: 1px;
+}
+
+.legend-divider {
+  width: 1px;
+
+  height: 18px;
+
+  background: #555;
+
+  margin: 0 6px;
+}
+
+.compound-bar {
+  width: 5px;
+
+  height: 18px;
+
+  border-radius: 999px;
+
+  flex-shrink: 0;
+}
+
+.compound-bar.soft {
+  background: #ff2b2b;
+}
+
+.compound-bar.medium {
+  background: #ffd400;
+}
+
+.compound-bar.hard {
+  background: #dfdfdf;
+}
+
+.compound-bar.intermediate {
+  background: #3cff00;
+}
+
+.compound-bar.wet {
+  background: #0066ff;
+}
+
+.legend-item span.soft {
+  color: #ff2b2b;
+}
+
+.legend-item span.medium {
+  color: #ffd400;
+}
+
+.legend-item span.hard {
+  color: #dfdfdf;
+}
+
+.legend-item span.intermediate {
+  color: #3cff00;
+}
+
+.legend-item span.wet {
+  color: #0066ff;
 }
 
 .legend-box {
@@ -99,7 +151,7 @@
 
   flex-direction: column;
 
-  gap: 10px;
+  gap: 3px;
 }
 
 .driver-placeholder {
