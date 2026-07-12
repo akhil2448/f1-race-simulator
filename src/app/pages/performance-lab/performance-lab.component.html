@@ -5,7 +5,11 @@
     <!-- LEFT COLUMN -->
 
     <div class="header-left">
-      <div class="back-button" (click)="goBack()">&lt; BACK</div>
+      <div class="back-button" (click)="goBack()">
+        <span class="back-chevron">‹</span>
+
+        <span class="back-text"> Select Another Race </span>
+      </div>
 
       <div class="selected-event">
         <div class="header-accent"></div>
@@ -71,6 +75,11 @@
           race management model evaluates tyre wear, traffic, wake effects,
           clean air, DRS usage and stint progression to identify the most
           comparable race laps.
+        </div>
+
+        <div class="mode-note">
+          * You can select up to two drivers. PitWall's race management model
+          generates recommendations based on the driver combination you choose.
         </div>
       }
     </div>

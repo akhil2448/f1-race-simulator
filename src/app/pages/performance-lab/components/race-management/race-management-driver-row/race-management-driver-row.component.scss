@@ -24,12 +24,11 @@
 
   transition:
     border-color 0.15s,
-    background 0.15s,
-    opacity 0.15s;
+    background 0.15s;
 }
 
-.driver-row:hover {
-  opacity: 0.85;
+.driver-row:hover:not(.selected) {
+  border-color: #777;
 }
 
 .driver-info {

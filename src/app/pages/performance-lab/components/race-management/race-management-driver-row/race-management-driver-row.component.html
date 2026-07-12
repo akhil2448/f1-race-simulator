@@ -1,10 +1,7 @@
 <div
   class="driver-row"
-  [style.border]="
-    selected
-      ? '2px solid ' + normalizeColor(driver.teamColor)
-      : '2px solid transparent'
-  "
+  [style.borderColor]="selected ? normalizeColor(driver.teamColor) : null"
+  [class.selected]="selected"
   (click)="selectDriver()"
 >
   <!-- DRIVER NAME -->

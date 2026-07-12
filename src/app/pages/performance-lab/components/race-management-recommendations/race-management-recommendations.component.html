@@ -1,0 +1,33 @@
+<div class="recommendations">
+  <div class="header">Model Recommendations</div>
+
+  @for (recommendation of recommendations; track recommendation.driverCode) {
+    <div class="recommendation-card">
+      <div class="card-header">
+        <div class="driver">
+          {{ recommendation.driverCode }}
+        </div>
+
+        <div class="confidence">{{ recommendation.confidence }}%</div>
+      </div>
+
+      <div class="summary">
+        Recommended Lap
+        <span>{{ recommendation.lap }}</span>
+
+        <div class="divider"></div>
+
+        Tyre
+        <span>{{ recommendation.tyre }}</span>
+      </div>
+
+      <div class="reason-title">Why this lap?</div>
+
+      <ul>
+        @for (reason of recommendation.reasons; track reason) {
+          <li>{{ reason }}</li>
+        }
+      </ul>
+    </div>
+  }
+</div>

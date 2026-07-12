@@ -39,15 +39,37 @@ HEADER
 }
 
 .back-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
   cursor: pointer;
 
   color: #cfcfcf;
 
-  font-size: 18px;
+  font-size: 16px;
+
+  transition: color 0.15s;
 }
 
 .back-button:hover {
   color: white;
+}
+
+.back-button:hover .back-text {
+  text-decoration: underline;
+
+  text-underline-offset: 4px;
+}
+
+.back-chevron {
+  font-size: 24px;
+
+  line-height: 1;
+
+  transform: translateY(-1px);
 }
 
 .header-accent {
@@ -202,6 +224,18 @@ CONTENT
   max-width: 1250px;
 
   font-size: 16px;
+}
+
+.mode-note {
+  margin-top: 14px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  color: #9f9f9f;
+
+  font-family: Formula1;
 }
 
 .selection-card {

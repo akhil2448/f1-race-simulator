@@ -9,7 +9,30 @@
 @if (!loading && !error && response) {
   <div class="race-management">
     <div class="header">
-      <div class="title">Select atleast one driver</div>
+      <div class="selected-drivers">
+        <span class="selected-label">Selected Drivers:</span>
+
+        @if (selectedDriverCodes.length === 0) {
+          <span class="none-selected">None</span>
+        }
+
+        @for (driver of selectedDriverCodes; track driver) {
+          <div class="selected-driver">
+            <div
+              class="selected-driver-bar"
+              [style.background]="getTeamColor(driver)"
+            ></div>
+
+            <span>{{ driver }}</span>
+          </div>
+        }
+
+        @if (showRecommendations) {
+          <button class="change-selection-button" (click)="changeSelection()">
+            CHOOSE DIFFERENT DRIVERS
+          </button>
+        }
+      </div>
 
       <div class="legend">
         <div class="legend-item">
@@ -40,7 +63,7 @@
     </div>
 
     <div class="drivers">
-      @for (driver of response.drivers; track driver.driverNumber) {
+      @for (driver of displayedDrivers; track driver.driverNumber) {
         <app-race-management-driver-row
           [driver]="driver"
           [totalRaceLaps]="response.totalRaceLaps"
@@ -49,5 +72,33 @@
         />
       }
     </div>
+
+    @if (!showRecommendations) {
+      <button
+        class="analyze-button"
+        [disabled]="!hasSelectedDrivers"
+        (click)="generateRecommendations()"
+      >
+        @if (!hasSelectedDrivers) {
+          SELECT AT LEAST ONE DRIVER
+        }
+
+        @if (selectedDriverCodes.length === 1) {
+          GENERATE RECOMMENDATIONS FOR
+          <strong>{{ primaryDriver }}</strong>
+        }
+
+        @if (selectedDriverCodes.length === 2) {
+          GENERATE RECOMMENDATIONS FOR
+          <strong>{{ primaryDriver }}</strong>
+          &
+          <strong>{{ secondaryDriver }}</strong>
+        }
+      </button>
+    }
+
+    @if (showRecommendations) {
+      <app-race-management-recommendations />
+    }
   </div>
 }

@@ -24,12 +24,46 @@
   margin-bottom: 18px;
 }
 
-.title {
-  font-family: Formula1;
+.selected-drivers {
+  display: flex;
 
+  align-items: center;
+
+  gap: 14px;
+
+  flex-wrap: wrap;
+}
+
+.selected-label {
   font-size: 18px;
 
-  color: #d7d7d7;
+  color: #d6d6d6;
+}
+
+.none-selected {
+  color: #8b8b8b;
+
+  font-size: 15px;
+}
+
+.selected-driver {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 17px;
+
+  color: white;
+}
+
+.selected-driver-bar {
+  width: 4px;
+
+  height: 20px;
+
+  border-radius: 999px;
 }
 
 .legend {
@@ -171,4 +205,82 @@
   text-align: center;
 
   color: #9d9d9d;
+}
+
+.analyze-button {
+  margin-top: 18px;
+
+  width: 100%;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  font-family: Formula1;
+
+  font-size: 14px;
+
+  letter-spacing: 0.5px;
+
+  transition: all 0.18s ease;
+
+  cursor: pointer;
+}
+
+.analyze-button:disabled {
+  background: #3b3b3b;
+
+  color: #8a8a8a;
+
+  cursor: not-allowed;
+}
+
+.analyze-button:not(:disabled) {
+  background: #d61d2a;
+
+  color: white;
+}
+
+.analyze-button:not(:disabled):hover {
+  background: #ef2535;
+}
+
+.analyze-button strong {
+  font-family: Formula1Bold;
+
+  font-weight: normal;
+}
+
+.change-selection-button {
+  margin-left: 14px;
+
+  height: 34px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #d61d2a;
+
+  color: white;
+
+  font-family: Formula1;
+
+  font-size: 11px;
+
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+.change-selection-button:hover {
+  background: #ef2535;
+
+  transform: translateY(-1px);
 }

@@ -10,11 +10,16 @@ import {
 } from '../../models/performance-lab.model';
 import { RaceManagementService } from '../../services/race-management.service';
 import { RaceManagementDriverRowComponent } from './race-management-driver-row/race-management-driver-row.component';
+import { RaceManagementRecommendationsComponent } from '../race-management-recommendations/race-management-recommendations.component';
 
 @Component({
   selector: 'app-race-management',
   standalone: true,
-  imports: [CommonModule, RaceManagementDriverRowComponent],
+  imports: [
+    CommonModule,
+    RaceManagementDriverRowComponent,
+    RaceManagementRecommendationsComponent,
+  ],
   templateUrl: './race-management.component.html',
   styleUrl: './race-management.component.scss',
 })
@@ -26,6 +31,8 @@ export class RaceManagementComponent implements OnInit {
   loading = true;
 
   error = false;
+
+  showRecommendations = false;
 
   response: RaceManagementDriversResponse | null = null;
 
@@ -139,5 +146,58 @@ export class RaceManagementComponent implements OnInit {
     return this.raceContext.raceManagementSelectedDriverCodes.includes(
       driver.driverCode,
     );
+  }
+
+  get selectedDriverCodes(): string[] {
+    return this.raceContext.raceManagementSelectedDriverCodes;
+  }
+
+  get hasSelectedDrivers(): boolean {
+    return this.selectedDriverCodes.length > 0;
+  }
+
+  get primaryDriver(): string {
+    return this.selectedDriverCodes[0] ?? '';
+  }
+
+  get secondaryDriver(): string {
+    return this.selectedDriverCodes[1] ?? '';
+  }
+
+  getTeamColor(driverCode: string): string {
+    return (
+      '#' +
+      this.response!.drivers.find((d) => d.driverCode === driverCode)!.teamColor
+    );
+  }
+
+  get displayedDrivers(): RaceManagementDriver[] {
+    if (!this.response) {
+      return [];
+    }
+
+    if (!this.showRecommendations) {
+      return this.response.drivers;
+    }
+
+    return this.response.drivers.filter((driver) =>
+      this.selectedDriverCodes.includes(driver.driverCode),
+    );
+  }
+
+  generateRecommendations(): void {
+    if (this.selectedDriverCodes.length === 0) {
+      return;
+    }
+
+    this.showRecommendations = true;
+  }
+
+  changeSelection(): void {
+    this.showRecommendations = false;
+
+    this.raceContext.raceManagementSelectedDriverCodes = [];
+
+    this.raceContext.save();
   }
 }
