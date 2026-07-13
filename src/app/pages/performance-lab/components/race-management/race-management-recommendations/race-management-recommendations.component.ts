@@ -4,13 +4,13 @@ import {
   DualDriverRecommendationResponse,
   SingleDriverRecommendationResponse,
 } from '../../../models/race-management-recommendation.model';
-import { RecommendationCardComponent } from './recommendation-card/recommendation-card.component';
+import { SingleRecommendationCardComponent } from './single-recommendation-card/single-recommendation-card.component';
 import { TeamUiService } from '../../../services/team-ui.service';
 
 @Component({
   selector: 'app-race-management-recommendations',
   standalone: true,
-  imports: [CommonModule, RecommendationCardComponent],
+  imports: [CommonModule, SingleRecommendationCardComponent],
   templateUrl: './race-management-recommendations.component.html',
   styleUrl: './race-management-recommendations.component.scss',
 })

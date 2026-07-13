@@ -41,14 +41,14 @@
       } @else {
         @for (lap of recommendationLaps; track lap.lapNumber) {
           <div class="carousel-card">
-            <app-recommendation-card
+            <app-single-recommendation-card
               [driverCode]="singleRecommendation!.driver.driverCode"
               [teamColor]="
                 normalizeColor(singleRecommendation!.driver.teamColor)
               "
               [lap]="lap"
             >
-            </app-recommendation-card>
+            </app-single-recommendation-card>
           </div>
         }
       }

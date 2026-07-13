@@ -3,13 +3,13 @@ import { Component, Input } from '@angular/core';
 import { SingleDriverRecommendation } from '../../../../models/race-management-recommendation.model';
 
 @Component({
-  selector: 'app-recommendation-card',
+  selector: 'app-single-recommendation-card',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './recommendation-card.component.html',
-  styleUrl: './recommendation-card.component.scss',
+  templateUrl: './single-recommendation-card.component.html',
+  styleUrl: './single-recommendation-card.component.scss',
 })
-export class RecommendationCardComponent {
+export class SingleRecommendationCardComponent {
   @Input({ required: true })
   driverCode!: string;
 
