@@ -164,3 +164,45 @@
 
   background: #ff2d2d;
 }
+
+.empty-stint {
+  width: 100%;
+
+  min-height: 320px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  border-radius: 18px;
+
+  background: #252525;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  text-align: center;
+}
+
+.empty-title {
+  font-family: Formula1;
+
+  font-size: 20px;
+
+  color: white;
+}
+
+.empty-subtitle {
+  margin-top: 14px;
+
+  max-width: 460px;
+
+  color: #9c9c9c;
+
+  font-size: 15px;
+
+  line-height: 1.6;
+}

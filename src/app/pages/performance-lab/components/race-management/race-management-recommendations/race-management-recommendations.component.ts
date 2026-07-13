@@ -1,16 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, inject } from '@angular/core';
 import {
   DualDriverRecommendationResponse,
   SingleDriverRecommendationResponse,
 } from '../../../models/race-management-recommendation.model';
 import { RecommendationCardComponent } from './recommendation-card/recommendation-card.component';
+import { TeamUiService } from '../../../services/team-ui.service';
 
 @Component({
   selector: 'app-race-management-recommendations',
@@ -19,7 +14,8 @@ import { RecommendationCardComponent } from './recommendation-card/recommendatio
   templateUrl: './race-management-recommendations.component.html',
   styleUrl: './race-management-recommendations.component.scss',
 })
-export class RaceManagementRecommendationsComponent implements AfterViewInit {
+export class RaceManagementRecommendationsComponent {
+  private readonly teamUi = inject(TeamUiService);
   @Input()
   singleRecommendation: SingleDriverRecommendationResponse | null = null;
 
@@ -35,23 +31,19 @@ export class RaceManagementRecommendationsComponent implements AfterViewInit {
   currentCard = 0;
   selectedStintIndex = 0;
 
-  ngAfterViewInit(): void {
-    const container = this.cardsContainer.nativeElement;
-
-    container.addEventListener('scroll', () => {
-      const width = container.clientWidth;
-
-      this.currentCard = Math.round(container.scrollLeft / (width + 20));
-    });
-  }
-
   scrollToCard(index: number): void {
     const container = this.cardsContainer.nativeElement;
 
     container.scrollTo({
-      left: index * (container.clientWidth + 20),
+      left: index * container.clientWidth,
       behavior: 'smooth',
     });
+  }
+
+  onScroll(): void {
+    const container = this.cardsContainer.nativeElement;
+
+    this.currentCard = Math.round(container.scrollLeft / container.clientWidth);
   }
 
   get currentStint() {
@@ -73,5 +65,9 @@ export class RaceManagementRecommendationsComponent implements AfterViewInit {
         behavior: 'smooth',
       });
     }
+  }
+
+  normalizeColor(color: string): string {
+    return this.teamUi.normalizeColor(color);
   }
 }

@@ -28,16 +28,29 @@
       </div>
     }
 
-    <div class="cards-container" #cardsContainer>
-      @for (lap of recommendationLaps; track lap.lapNumber) {
-        <div class="carousel-card">
-          <app-recommendation-card
-            [driverCode]="singleRecommendation!.driver.driverCode"
-            [teamColor]="singleRecommendation!.driver.teamColor"
-            [lap]="lap"
-          >
-          </app-recommendation-card>
+    <div class="cards-container" #cardsContainer (scroll)="onScroll()">
+      @if (recommendationLaps.length === 0) {
+        <div class="empty-stint">
+          <div class="empty-title">No clean laps in this stint.</div>
+
+          <div class="empty-subtitle">
+            PitWall couldn't find any representative laps that met the quality
+            threshold.
+          </div>
         </div>
+      } @else {
+        @for (lap of recommendationLaps; track lap.lapNumber) {
+          <div class="carousel-card">
+            <app-recommendation-card
+              [driverCode]="singleRecommendation!.driver.driverCode"
+              [teamColor]="
+                normalizeColor(singleRecommendation!.driver.teamColor)
+              "
+              [lap]="lap"
+            >
+            </app-recommendation-card>
+          </div>
+        }
       }
     </div>
 
