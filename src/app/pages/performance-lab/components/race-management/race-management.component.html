@@ -28,7 +28,11 @@
         }
 
         @if (showRecommendations) {
-          <button class="change-selection-button" (click)="changeSelection()">
+          <button
+            class="change-selection-button"
+            [disabled]="loadingRecommendations"
+            (click)="changeSelection()"
+          >
             CHOOSE DIFFERENT DRIVERS
           </button>
         }
@@ -68,6 +72,7 @@
           [driver]="driver"
           [totalRaceLaps]="response.totalRaceLaps"
           [selected]="isSelected(driver)"
+          [interactive]="!showRecommendations"
           (driverSelected)="selectDriver($event)"
         />
       }
@@ -129,6 +134,7 @@
 
     @if (showRecommendations) {
       <app-race-management-recommendations
+        [loading]="loadingRecommendations"
         [singleRecommendation]="raceContext.singleDriverRecommendation"
         [dualRecommendation]="raceContext.dualDriverRecommendation"
       />

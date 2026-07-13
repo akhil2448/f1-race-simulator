@@ -26,6 +26,9 @@ export class RaceManagementRecommendationsComponent implements AfterViewInit {
   @Input()
   dualRecommendation: DualDriverRecommendationResponse | null = null;
 
+  @Input()
+  loading = false;
+
   @ViewChild('cardsContainer')
   cardsContainer!: ElementRef<HTMLDivElement>;
 

@@ -22,10 +22,17 @@ export class RaceManagementDriverRowComponent {
   @Input()
   selected = false;
 
+  @Input()
+  interactive = true;
+
   @Output()
   driverSelected = new EventEmitter<RaceManagementDriver>();
 
   selectDriver(): void {
+    if (!this.interactive) {
+      return;
+    }
+
     this.driverSelected.emit(this.driver);
   }
 

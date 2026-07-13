@@ -27,7 +27,11 @@
     background 0.15s;
 }
 
-.driver-row:hover:not(.selected) {
+.driver-row.non-interactive {
+  cursor: default;
+}
+
+.driver-row:not(.non-interactive):hover:not(.selected) {
   border-color: #777;
 }
 

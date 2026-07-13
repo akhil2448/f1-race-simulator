@@ -140,6 +140,10 @@ export class RaceManagementComponent implements OnInit {
   ////////////////////////////////////////////////////////////
 
   selectDriver(driver: RaceManagementDriver): void {
+    if (this.showRecommendations) {
+      return;
+    }
+
     const selected = this.raceContext.raceManagementSelectedDriverCodes;
 
     //
@@ -234,6 +238,7 @@ export class RaceManagementComponent implements OnInit {
       return;
     }
 
+    this.showRecommendations = true;
     this.loadingRecommendations = true;
 
     try {
@@ -263,8 +268,6 @@ export class RaceManagementComponent implements OnInit {
       }
 
       this.raceContext.save();
-
-      this.showRecommendations = true;
     } catch (e) {
       console.error(e);
     } finally {

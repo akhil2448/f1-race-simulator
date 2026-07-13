@@ -1,5 +1,6 @@
 <div
   class="driver-row"
+  [class.non-interactive]="!interactive"
   [style.borderColor]="selected ? normalizeColor(driver.teamColor) : null"
   [class.selected]="selected"
   (click)="selectDriver()"
