@@ -5,6 +5,10 @@ import {
   RaceManagementDriversResponse,
 } from '../../pages/performance-lab/models/performance-lab.model';
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
+import {
+  DualDriverRecommendationResponse,
+  SingleDriverRecommendationResponse,
+} from '../../pages/performance-lab/models/race-management-recommendation.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +31,10 @@ export class RaceContextService {
   comparison: QualifyingComparisonResponse | null = null;
 
   raceManagementDrivers: RaceManagementDriversResponse | null = null;
+
+  singleDriverRecommendation: SingleDriverRecommendationResponse | null = null;
+
+  dualDriverRecommendation: DualDriverRecommendationResponse | null = null;
 
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
@@ -54,6 +62,9 @@ export class RaceContextService {
         selectedDrivers: this.selectedDrivers,
         raceManagementSelectedDriverCodes:
           this.raceManagementSelectedDriverCodes,
+        singleDriverRecommendation: this.singleDriverRecommendation,
+        dualDriverRecommendation: this.dualDriverRecommendation,
+
         navigationStep: this.navigationStep,
       }),
     );
@@ -78,6 +89,9 @@ export class RaceContextService {
     this.selectedDrivers = data.selectedDrivers ?? [];
     this.raceManagementSelectedDriverCodes =
       data.raceManagementSelectedDriverCodes ?? [];
+    this.singleDriverRecommendation = data.singleDriverRecommendation ?? null;
+    this.dualDriverRecommendation = data.dualDriverRecommendation ?? null;
+
     this.navigationStep = data.navigationStep;
   }
 
@@ -88,6 +102,8 @@ export class RaceContextService {
     this.driverSelection = null;
     this.comparison = null;
     this.raceManagementDrivers = null;
+    this.singleDriverRecommendation = null;
+    this.dualDriverRecommendation = null;
     this.selectedSession = 'Q3';
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
@@ -99,6 +115,8 @@ export class RaceContextService {
     this.driverSelection = null;
     this.comparison = null;
     this.raceManagementDrivers = null;
+    this.singleDriverRecommendation = null;
+    this.dualDriverRecommendation = null;
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
     this.selectedSession = 'Q3';

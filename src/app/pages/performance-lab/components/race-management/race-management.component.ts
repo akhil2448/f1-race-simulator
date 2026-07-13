@@ -12,6 +12,7 @@ import { RaceManagementService } from '../../services/race-management.service';
 import { RaceManagementDriverRowComponent } from './race-management-driver-row/race-management-driver-row.component';
 import { RaceManagementRecommendationsComponent } from './race-management-recommendations/race-management-recommendations.component';
 import { TeamUiService } from '../../services/team-ui.service';
+import { RaceManagementRecommendationService } from '../../services/race-management-recommendation.service';
 
 @Component({
   selector: 'app-race-management',
@@ -25,14 +26,18 @@ import { TeamUiService } from '../../services/team-ui.service';
   styleUrl: './race-management.component.scss',
 })
 export class RaceManagementComponent implements OnInit {
-  private readonly raceContext = inject(RaceContextService);
+  protected readonly raceContext = inject(RaceContextService);
 
   private readonly raceManagementService = inject(RaceManagementService);
   private readonly teamUi = inject(TeamUiService);
+  private readonly recommendationService = inject(
+    RaceManagementRecommendationService,
+  );
 
   loading = true;
 
   error = false;
+  loadingRecommendations = false;
 
   showRecommendations = false;
 
@@ -224,18 +229,56 @@ export class RaceManagementComponent implements OnInit {
     );
   }
 
-  generateRecommendations(): void {
+  async generateRecommendations(): Promise<void> {
     if (this.selectedDriverCodes.length === 0) {
       return;
     }
 
-    this.showRecommendations = true;
+    this.loadingRecommendations = true;
+
+    try {
+      if (this.selectedDriverCodes.length === 1) {
+        const response = await firstValueFrom(
+          this.recommendationService.getSingleDriverRecommendation(
+            this.raceContext.selectedYear!,
+            this.raceContext.selectedRound!,
+            this.selectedDriverCodes[0],
+          ),
+        );
+
+        this.raceContext.singleDriverRecommendation = response;
+        this.raceContext.dualDriverRecommendation = null;
+      } else {
+        const response = await firstValueFrom(
+          this.recommendationService.getDualDriverRecommendation(
+            this.raceContext.selectedYear!,
+            this.raceContext.selectedRound!,
+            this.selectedDriverCodes[0],
+            this.selectedDriverCodes[1],
+          ),
+        );
+
+        this.raceContext.dualDriverRecommendation = response;
+        this.raceContext.singleDriverRecommendation = null;
+      }
+
+      this.raceContext.save();
+
+      this.showRecommendations = true;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingRecommendations = false;
+    }
   }
 
   changeSelection(): void {
     this.showRecommendations = false;
 
     this.raceContext.raceManagementSelectedDriverCodes = [];
+
+    this.raceContext.singleDriverRecommendation = null;
+    this.raceContext.dualDriverRecommendation = null;
 
     this.raceContext.save();
   }

@@ -108,19 +108,17 @@
     @if (!showRecommendations) {
       <button
         class="analyze-button"
-        [disabled]="!hasSelectedDrivers"
+        [disabled]="!hasSelectedDrivers || loadingRecommendations"
         (click)="generateRecommendations()"
       >
-        @if (!hasSelectedDrivers) {
+        @if (loadingRecommendations) {
+          GENERATING RECOMMENDATIONS...
+        } @else if (!hasSelectedDrivers) {
           SELECT AT LEAST ONE DRIVER
-        }
-
-        @if (selectedDriverCodes.length === 1) {
+        } @else if (selectedDriverCodes.length === 1) {
           GENERATE RECOMMENDATIONS FOR
           <strong>{{ primaryDriver }}</strong>
-        }
-
-        @if (selectedDriverCodes.length === 2) {
+        } @else {
           GENERATE RECOMMENDATIONS FOR
           <strong>{{ primaryDriver }}</strong>
           &
@@ -130,7 +128,10 @@
     }
 
     @if (showRecommendations) {
-      <app-race-management-recommendations />
+      <app-race-management-recommendations
+        [singleRecommendation]="raceContext.singleDriverRecommendation"
+        [dualRecommendation]="raceContext.dualDriverRecommendation"
+      />
     }
   </div>
 }
