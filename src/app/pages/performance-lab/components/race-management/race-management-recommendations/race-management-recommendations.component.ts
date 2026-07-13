@@ -10,11 +10,12 @@ import {
   DualDriverRecommendationResponse,
   SingleDriverRecommendationResponse,
 } from '../../../models/race-management-recommendation.model';
+import { RecommendationCardComponent } from './recommendation-card/recommendation-card.component';
 
 @Component({
   selector: 'app-race-management-recommendations',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RecommendationCardComponent],
   templateUrl: './race-management-recommendations.component.html',
   styleUrl: './race-management-recommendations.component.scss',
 })

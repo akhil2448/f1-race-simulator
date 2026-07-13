@@ -1,0 +1,172 @@
+<div class="card">
+  <div class="card-header">
+    <div class="driver-title">
+      <div class="driver-accent" [style.background]="teamColor"></div>
+
+      <div class="title">
+        {{ driverCode }}
+      </div>
+    </div>
+
+    <div class="confidence">
+      <span class="label">RATING</span>
+      <span class="value">{{ lap.representative.score }}</span>
+    </div>
+  </div>
+
+  <div class="hero-row">
+    <div class="hero-item">
+      <div class="hero-label">LAP</div>
+
+      <div class="hero-value">
+        {{ lap.lapNumber }}
+      </div>
+    </div>
+
+    <div class="hero-item">
+      <div class="hero-label">LAP TIME</div>
+
+      <div class="hero-value">
+        {{ lap.lapTimeSeconds }}
+      </div>
+    </div>
+
+    <div class="hero-item">
+      <div class="hero-label">TYRE</div>
+
+      <div class="hero-value tyre">{{ lap.compound }} • {{ lap.tyreAge }}</div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metrics-header">
+      <span>METRICS</span>
+    </div>
+
+    <div class="analysis-grid">
+      <!-- PERFORMANCE -->
+      <div class="analysis-section">
+        <div class="section-title">PERFORMANCE</div>
+
+        <div class="row">
+          <span>Lap Time</span>
+          <span>{{ lap.representative.lapTime.score }}</span>
+        </div>
+
+        <div class="row">
+          <span>Sectors</span>
+          <span>{{ lap.representative.sector.score }}</span>
+        </div>
+
+        <div class="row">
+          <span>Position</span>
+          <span>{{ lap.representative.position.score }}</span>
+        </div>
+
+        <div class="row">
+          <span>Traffic</span>
+          <span>{{ lap.representative.traffic.score }}</span>
+        </div>
+      </div>
+
+      <!-- SECTOR DELTAS -->
+      <div class="analysis-section">
+        <div class="section-title">SECTOR DELTAS</div>
+
+        <div class="row">
+          <span>S1</span>
+          <span>{{ lap.representative.sector.sector1Delta }}</span>
+        </div>
+
+        <div class="row">
+          <span>S2</span>
+          <span>{{ lap.representative.sector.sector2Delta }}</span>
+        </div>
+
+        <div class="row">
+          <span>S3</span>
+          <span>{{ lap.representative.sector.sector3Delta }}</span>
+        </div>
+
+        <div class="row">
+          <span>Position Δ</span>
+          <span>{{ lap.representative.position.deltaPosition }}</span>
+        </div>
+      </div>
+
+      <!-- TRAFFIC -->
+      <div class="analysis-section traffic">
+        <div class="section-title">TRAFFIC</div>
+
+        <div class="traffic-grid">
+          <div class="traffic-row">
+            <span>Clean Air</span>
+            <span>{{ lap.traffic.cleanAirPercentage }}%</span>
+          </div>
+
+          <div class="traffic-row">
+            <span>Dirty Air</span>
+            <span>{{ lap.traffic.timeInDirtyAir }}%</span>
+          </div>
+
+          <div class="traffic-row">
+            <span>Avg Wake</span>
+            <span>{{ lap.traffic.averageWakePercentage }}%</span>
+          </div>
+
+          <div class="traffic-row">
+            <span>Max Wake</span>
+            <span>{{ lap.traffic.maximumWakePercentage }}%</span>
+          </div>
+
+          <div class="traffic-row">
+            <span>Avg Gap</span>
+            <span>{{ lap.traffic.averageFollowingGapDistance }}m</span>
+          </div>
+
+          <div class="traffic-row">
+            <span>Closest Gap</span>
+            <span>{{ lap.traffic.closestFollowingGapDistance }}m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRS -->
+      <div class="analysis-section">
+        <div class="section-title">DRS</div>
+
+        <div class="row">
+          <span>Nearest Car</span>
+          <span>{{ lap.drs.nearestCarAhead }}</span>
+        </div>
+
+        <div class="row">
+          <span>Usage</span>
+          <span>{{ lap.drs.drsUsagePercentage }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Following</span>
+          <span>{{ lap.drs.drsWhileFollowingPercentage }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reasons">
+      <div class="section-title">WHY PITWALL RECOMMENDED THIS LAP</div>
+
+      <div class="reasons-footer">
+        <div class="reason-list">
+          @for (reason of lap.reasons; track reason) {
+            <div class="reason">
+              <span class="bullet">✓</span>
+              {{ reason }}
+            </div>
+          }
+        </div>
+
+        <button class="analyze-button">ANALYZE LAP</button>
+      </div>
+    </div>
+  </div>
+</div>

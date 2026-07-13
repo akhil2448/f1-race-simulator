@@ -1,7 +1,9 @@
 <div class="recommendations">
   <div class="cards-container" #cardsContainer>
     @for (card of cards; track card) {
-      <div class="card">Card {{ card }}</div>
+      <div class="carousel-card">
+        <app-recommendation-card />
+      </div>
     }
   </div>
 
