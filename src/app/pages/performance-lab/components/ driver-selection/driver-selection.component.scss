@@ -103,7 +103,7 @@
 .driver-card {
   height: 58px;
 
-  background: #252525;
+  background: #242424;
 
   border-radius: 12px;
 
@@ -117,12 +117,12 @@
 
   cursor: pointer;
 
-  transition: 0.2s;
+  transition: background-color 0.18s ease;
 
   border: 1px solid transparent;
 }
 
-.driver-card:hover {
+.driver-card:hover:not(.selected) {
   background: #303030;
 }
 

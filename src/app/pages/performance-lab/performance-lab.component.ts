@@ -44,9 +44,11 @@ export class PerformanceLabComponent {
 
       await this.delay(remaining);
 
+      this.raceContext.clearPerformanceLab();
+
       this.raceContext.navigationStep = 'race-selection';
 
-      this.router.navigate(['/select-race']);
+      await this.router.navigate(['/select-race']);
     } finally {
       this.overlay.hide();
     }

@@ -28,8 +28,9 @@
       <div
         class="driver-card"
         (click)="selectDriver(driver)"
-        [style.background]="
-          isSelected(driver) ? normalizeColor(driver.teamColor) : '#242424'
+        [class.selected]="isSelected(driver)"
+        [style.backgroundColor]="
+          isSelected(driver) ? normalizeColor(driver.teamColor) : null
         "
         [style.color]="
           isSelected(driver)

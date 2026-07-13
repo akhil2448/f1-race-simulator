@@ -10,7 +10,8 @@ import {
 } from '../../models/performance-lab.model';
 import { RaceManagementService } from '../../services/race-management.service';
 import { RaceManagementDriverRowComponent } from './race-management-driver-row/race-management-driver-row.component';
-import { RaceManagementRecommendationsComponent } from '../race-management-recommendations/race-management-recommendations.component';
+import { RaceManagementRecommendationsComponent } from './race-management-recommendations/race-management-recommendations.component';
+import { TeamUiService } from '../../services/team-ui.service';
 
 @Component({
   selector: 'app-race-management',
@@ -27,6 +28,7 @@ export class RaceManagementComponent implements OnInit {
   private readonly raceContext = inject(RaceContextService);
 
   private readonly raceManagementService = inject(RaceManagementService);
+  private readonly teamUi = inject(TeamUiService);
 
   loading = true;
 
@@ -40,8 +42,14 @@ export class RaceManagementComponent implements OnInit {
     //
     // Already cached
     //
-    if (this.raceContext.raceManagementDrivers) {
-      this.response = this.raceContext.raceManagementDrivers;
+    const cached = this.raceContext.raceManagementDrivers;
+
+    if (
+      cached &&
+      cached.year === this.raceContext.selectedYear &&
+      cached.round === this.raceContext.selectedRound
+    ) {
+      this.response = cached;
       this.loading = false;
 
       return;
@@ -91,6 +99,37 @@ export class RaceManagementComponent implements OnInit {
       default:
         return compound;
     }
+  }
+
+  get activeDrivers(): RaceManagementDriver[] {
+    return this.displayedDrivers.filter((driver) => driver.lapsCompleted > 0);
+  }
+
+  get nonStarters(): RaceManagementDriver[] {
+    return (
+      this.response?.drivers.filter((driver) => driver.lapsCompleted === 0) ??
+      []
+    );
+  }
+
+  getTeamLogo(team: string): string {
+    return this.teamUi.getTeamLogo(team);
+  }
+
+  getTeamLogoClass(team: string): string {
+    return this.teamUi.getTeamLogoClass(team);
+  }
+
+  normalizeColor(color: string): string {
+    return this.teamUi.normalizeColor(color);
+  }
+
+  getTextColor(background: string): string {
+    return this.teamUi.getTextColor(background);
+  }
+
+  onTeamLogoError(event: Event): void {
+    this.teamUi.onTeamLogoError(event);
   }
 
   ////////////////////////////////////////////////////////////

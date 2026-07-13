@@ -8,6 +8,7 @@ import { DriverSelectionDriver } from '../../models/performance-lab.model';
 import { QualifyingComparisonService } from '../../../../core/services/qualifying-comparison.service';
 import { LoadingOverlayService } from '../../../../core/services/loading-overlay.service';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { TeamUiService } from '../../services/team-ui.service';
 
 @Component({
   selector: 'app-driver-selection',
@@ -21,6 +22,7 @@ export class DriverSelectionComponent {
   private readonly comparisonService = inject(QualifyingComparisonService);
   private readonly overlay = inject(LoadingOverlayService);
   private readonly router = inject(Router);
+  private readonly teamUi = inject(TeamUiService);
 
   private readonly MIN_LOADING_MS = 2000;
   private readonly MAX_RETRIES = 3;
@@ -242,61 +244,23 @@ export class DriverSelectionComponent {
   }
 
   getTextColor(background: string): string {
-    const hex = background.replace('#', '');
-
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-    return brightness > 120 ? '#111111' : '#FFFFFF';
+    return this.teamUi.getTextColor(background);
   }
 
   normalizeColor(color: string): string {
-    return color.startsWith('#') ? color : `#${color}`;
+    return this.teamUi.normalizeColor(color);
   }
 
   getTeamLogo(team: string): string {
-    return 'assets/team-logos/' + this.normalizeTeamName(team) + '.svg';
+    return this.teamUi.getTeamLogo(team);
   }
 
   getTeamLogoClass(team: string): string {
-    return this.normalizeTeamName(team);
-  }
-
-  private normalizeTeamName(team: string): string {
-    if (team === 'Red Bull Racing') return 'redbull';
-    if (team === 'Red Bull') return 'redbull';
-    if (team === 'Mercedes') return 'mercedes';
-    if (team === 'Ferrari') return 'ferrari';
-    if (team === 'McLaren') return 'mclaren';
-    if (team === 'Toro Rosso') return 'tororosso';
-    if (team === 'AlphaTauri') return 'alphatauri';
-    if (team === 'Alfa Romeo' || team === 'Alfa Romeo Racing')
-      return 'alfaromeo';
-    if (team === 'Alpine' || team === 'Alpine F1 Team') return 'alpine';
-    if (team === 'Aston Martin') return 'astonmartin';
-    if (team === 'Force India') return 'forceindia';
-    if (team === 'Racing Point') return 'racingpoint';
-    if (team === 'Williams') return 'williams';
-    if (team === 'RB' || team === 'Racing Bulls') return 'racingbulls';
-    if (team === 'Kick Sauber') return 'kicksauber';
-    if (team === 'Sauber') return 'alfaromeo';
-    if (team === 'Renault') return 'renault';
-    if (team === 'Haas F1 Team') return 'haas';
-    if (team === 'Haas') return 'haas';
-    if (team === 'Audi') return 'audi';
-    if (team === 'Cadillac') return 'cadillac';
-
-    return 'plcholder';
+    return this.teamUi.getTeamLogoClass(team);
   }
 
   onTeamLogoError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-
-    img.src = 'assets/team-logos/plcholder.svg';
-    img.className = 'plcholder';
+    this.teamUi.onTeamLogoError(event);
   }
 
   private async fetchComparisonWithRetry() {

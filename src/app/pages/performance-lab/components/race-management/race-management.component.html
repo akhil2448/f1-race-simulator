@@ -63,7 +63,7 @@
     </div>
 
     <div class="drivers">
-      @for (driver of displayedDrivers; track driver.driverNumber) {
+      @for (driver of activeDrivers; track driver.driverNumber) {
         <app-race-management-driver-row
           [driver]="driver"
           [totalRaceLaps]="response.totalRaceLaps"
@@ -72,6 +72,38 @@
         />
       }
     </div>
+
+    @if (nonStarters.length > 0 && !showRecommendations) {
+      <div class="non-starters">
+        <div class="non-starters-title">DNS / Retired on Lap 1:</div>
+
+        <div class="non-starters-list">
+          @for (driver of nonStarters; track driver.driverNumber) {
+            <div class="non-starter-card">
+              <div
+                class="team-strip"
+                [style.background]="'#' + driver.teamColor"
+              ></div>
+
+              <div class="driver-name">
+                {{ driver.driverCode }}
+              </div>
+
+              <div class="team-icon">
+                <img
+                  [src]="
+                    'assets/team-logos/' +
+                    getTeamLogoClass(driver.team) +
+                    '.svg'
+                  "
+                  [class]="getTeamLogoClass(driver.team)"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
 
     @if (!showRecommendations) {
       <button
