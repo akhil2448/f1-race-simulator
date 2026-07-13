@@ -2,6 +2,52 @@
   margin-top: 28px;
 }
 
+.stint-selector {
+  display: flex;
+
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.stint-button {
+  height: 36px;
+
+  padding: 0 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 999px;
+
+  background: #2b2b2b;
+
+  color: #bdbdbd;
+
+  font-family: Formula1;
+
+  font-size: 11px;
+
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+.stint-button:hover {
+  border-color: #666;
+
+  color: white;
+}
+
+.stint-button.active {
+  background: #d61d2a;
+
+  border-color: #d61d2a;
+
+  color: white;
+}
+
 .cards-container {
   display: flex;
   overflow-x: auto;

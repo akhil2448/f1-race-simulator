@@ -30,6 +30,7 @@ export class RaceManagementRecommendationsComponent implements AfterViewInit {
   cardsContainer!: ElementRef<HTMLDivElement>;
 
   currentCard = 0;
+  selectedStintIndex = 0;
 
   ngAfterViewInit(): void {
     const container = this.cardsContainer.nativeElement;
@@ -50,7 +51,24 @@ export class RaceManagementRecommendationsComponent implements AfterViewInit {
     });
   }
 
-  get cards(): number[] {
-    return [1, 2, 3, 4];
+  get currentStint() {
+    return this.singleRecommendation?.stints[this.selectedStintIndex] ?? null;
+  }
+
+  get recommendationLaps() {
+    return this.currentStint?.laps ?? [];
+  }
+
+  selectStint(index: number): void {
+    this.selectedStintIndex = index;
+
+    this.currentCard = 0;
+
+    if (this.cardsContainer) {
+      this.cardsContainer.nativeElement.scrollTo({
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
   }
 }

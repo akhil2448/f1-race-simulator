@@ -1,19 +1,44 @@
 <div class="recommendations">
+  @if (singleRecommendation && singleRecommendation.stints.length > 1) {
+    <div class="stint-selector">
+      @for (
+        stint of singleRecommendation.stints;
+        track stint.stint;
+        let i = $index
+      ) {
+        <button
+          class="stint-button"
+          [class.active]="i === selectedStintIndex"
+          (click)="selectStint(i)"
+        >
+          STINT {{ stint.stint }}
+        </button>
+      }
+    </div>
+  }
+
   <div class="cards-container" #cardsContainer>
-    @for (card of cards; track card) {
+    @for (lap of recommendationLaps; track lap.lapNumber) {
       <div class="carousel-card">
-        <app-recommendation-card />
+        <app-recommendation-card
+          [driverCode]="singleRecommendation!.driver.driverCode"
+          [teamColor]="singleRecommendation!.driver.teamColor"
+          [lap]="lap"
+        >
+        </app-recommendation-card>
       </div>
     }
   </div>
 
-  <div class="dots">
-    @for (card of cards; track card; let i = $index) {
-      <button
-        class="dot"
-        [class.active]="i === currentCard"
-        (click)="scrollToCard(i)"
-      ></button>
-    }
-  </div>
+  @if (recommendationLaps.length > 1) {
+    <div class="dots">
+      @for (lap of recommendationLaps; track lap.lapNumber; let i = $index) {
+        <button
+          class="dot"
+          [class.active]="i === currentCard"
+          (click)="scrollToCard(i)"
+        ></button>
+      }
+    </div>
+  }
 </div>

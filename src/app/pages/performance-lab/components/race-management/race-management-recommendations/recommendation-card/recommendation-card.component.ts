@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { SingleDriverRecommendation } from '../../../../models/race-management-recommendation.model';
 
 @Component({
   selector: 'app-recommendation-card',
@@ -9,76 +10,20 @@ import { Component } from '@angular/core';
   styleUrl: './recommendation-card.component.scss',
 })
 export class RecommendationCardComponent {
-  driverCode = 'HAM';
-  teamColor = '#00d2be';
+  @Input({ required: true })
+  driverCode!: string;
 
-  lap = {
-    lapNumber: 17,
-    lapTimeSeconds: '1:11.614',
-    compound: 'MEDIUM',
-    tyreAge: 17,
-    position: 5,
+  @Input({ required: true })
+  teamColor!: string;
 
-    representative: {
-      score: 98,
+  @Input({ required: true })
+  lap!: SingleDriverRecommendation;
 
-      lapTime: {
-        score: 100,
-      },
+  formatLapTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
 
-      sector: {
-        score: 100,
+    const remaining = (seconds % 60).toFixed(3).padStart(6, '0');
 
-        sector1Delta: 0.0,
-
-        sector2Delta: -0.019,
-
-        sector3Delta: 0.0,
-      },
-
-      position: {
-        score: 100,
-
-        deltaPosition: 0,
-      },
-
-      traffic: {
-        score: 90,
-      },
-    },
-
-    traffic: {
-      score: 90,
-
-      cleanAirPercentage: 33.3,
-
-      timeInDirtyAir: 66.7,
-
-      weightedDirtyAir: 14.3,
-
-      averageWakePercentage: 14.2,
-
-      maximumWakePercentage: 59.4,
-
-      averageFollowingGapDistance: 115.5,
-
-      closestFollowingGapDistance: 35.9,
-    },
-
-    drs: {
-      nearestCarAhead: 'SAI',
-
-      drsUsagePercentage: 0,
-
-      drsWhileFollowingPercentage: 0,
-    },
-
-    reasons: [
-      'Lap time matched the stint median',
-      'All three sectors were consistent',
-      'Position remained stable',
-      'MEDIUM tyres with 17 laps of wear',
-      'Moderate traffic with noticeable wake (14%)',
-    ],
-  };
+    return `${minutes}:${remaining}`;
+  }
 }

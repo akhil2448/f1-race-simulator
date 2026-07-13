@@ -17,10 +17,6 @@ export interface RaceRecommendationTraffic {
 
   weightedDirtyAir: number;
 
-  drsUsagePercentage: number;
-
-  drsWhileFollowingPercentage: number;
-
   averageWakePercentage: number;
 
   maximumWakePercentage: number;
@@ -28,12 +24,17 @@ export interface RaceRecommendationTraffic {
   averageFollowingGapDistance: number | null;
 
   closestFollowingGapDistance: number | null;
+}
 
+export interface RaceRecommendationDrs {
   nearestCarAhead: string | null;
+
+  drsUsagePercentage: number;
+
+  drsWhileFollowingPercentage: number;
 }
 
 export interface RepresentativeScore {
-
   score: number;
 
   representative: boolean;
@@ -48,14 +49,12 @@ export interface RepresentativeScore {
 }
 
 export interface LapTimeScore {
-
   score: number;
 
   deltaSeconds: number;
 }
 
 export interface SectorScore {
-
   score: number;
 
   sector1Delta: number;
@@ -66,19 +65,16 @@ export interface SectorScore {
 }
 
 export interface PositionScore {
-
   score: number;
 
   deltaPosition: number;
 }
 
 export interface TrafficScore {
-
   score: number;
 }
 
 export interface RecommendationLap {
-
   lapNumber: number;
 
   position: number;
@@ -92,10 +88,11 @@ export interface RecommendationLap {
   representative: RepresentativeScore;
 
   traffic: RaceRecommendationTraffic;
+
+  drs: RaceRecommendationDrs;
 }
 
 export interface SingleDriverRecommendationResponse {
-
   year: number;
 
   round: number;
@@ -106,7 +103,6 @@ export interface SingleDriverRecommendationResponse {
 }
 
 export interface SingleDriverStint {
-
   stint: number;
 
   compound: string;
@@ -117,7 +113,6 @@ export interface SingleDriverStint {
 }
 
 export interface SingleDriverRecommendation {
-
   lapNumber: number;
 
   position: number;
@@ -132,11 +127,12 @@ export interface SingleDriverRecommendation {
 
   traffic: RaceRecommendationTraffic;
 
+  drs: RaceRecommendationDrs;
+
   reasons: string[];
 }
 
 export interface DualDriverRecommendationResponse {
-
   year: number;
 
   round: number;
@@ -149,7 +145,6 @@ export interface DualDriverRecommendationResponse {
 }
 
 export interface StintComparison {
-
   driverAStint: number;
 
   driverBStint: number;
@@ -162,14 +157,12 @@ export interface StintComparison {
 }
 
 export interface RecommendationGroup {
-
   secondaryLap: number;
 
   recommendations: RecommendationPair[];
 }
 
 export interface RecommendationPair {
-
   compatibilityScore: number;
 
   lapA: RecommendationLap;
@@ -178,4 +171,3 @@ export interface RecommendationPair {
 
   reasons: string[];
 }
-

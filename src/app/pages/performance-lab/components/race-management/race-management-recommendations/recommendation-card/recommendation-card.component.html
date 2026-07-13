@@ -27,7 +27,7 @@
       <div class="hero-label">LAP TIME</div>
 
       <div class="hero-value">
-        {{ lap.lapTimeSeconds }}
+        {{ formatLapTime(lap.lapTimeSeconds) }}
       </div>
     </div>
 
@@ -106,7 +106,7 @@
 
           <div class="traffic-row">
             <span>Dirty Air</span>
-            <span>{{ lap.traffic.timeInDirtyAir }}%</span>
+            <span>{{ lap.traffic.timeInDirtyAir }}s</span>
           </div>
 
           <div class="traffic-row">
