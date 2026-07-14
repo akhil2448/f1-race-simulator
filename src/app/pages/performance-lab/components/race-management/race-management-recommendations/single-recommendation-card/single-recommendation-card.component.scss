@@ -123,10 +123,14 @@
   color: white;
 }
 
-.hero-value.tyre {
+.tyre {
   font-size: 22px;
+}
 
-  color: #ffd400;
+.tyre-age {
+  font-size: 18px;
+
+  opacity: 0.9;
 }
 
 .metrics-header {
@@ -196,7 +200,7 @@
 .section-title {
   margin-bottom: 14px;
 
-  color: #a8a8a8;
+  color: #e88b09;
 
   font-size: 10px;
 
@@ -270,6 +274,26 @@
   padding-top: 14px;
 }
 
+.tyre.soft {
+  color: #ff2b2b;
+}
+
+.tyre.medium {
+  color: #ffd400;
+}
+
+.tyre.hard {
+  color: #dfdfdf;
+}
+
+.tyre.intermediate {
+  color: #3cff00;
+}
+
+.tyre.wet {
+  color: #0066ff;
+}
+
 .reasons {
   width: 100%;
 
@@ -288,6 +312,13 @@
 
   line-height: 1.45;
 }
+
+.bullet {
+  color: #8dd96b;
+
+  flex-shrink: 0;
+}
+
 .reasons-footer {
   display: flex;
 

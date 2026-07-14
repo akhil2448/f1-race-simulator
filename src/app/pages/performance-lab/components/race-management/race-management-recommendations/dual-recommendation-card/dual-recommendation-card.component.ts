@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import {
+  DualRecommendationCard,
+  RaceRecommendationDriver,
+  RecommendationPair,
+} from '../../../../models/race-management-recommendation.model';
+import { TeamUiService } from '../../../../services/team-ui.service';
 
 @Component({
   selector: 'app-dual-recommendation-card',
@@ -9,90 +15,42 @@ import { Component } from '@angular/core';
   styleUrl: './dual-recommendation-card.component.scss',
 })
 export class DualRecommendationCardComponent {
-  compatibilityScore = 99;
+  private readonly teamUi = inject(TeamUiService);
 
-  driverA = {
-    driverCode: 'HAM',
-    teamColor: '#27F4D2',
+  @Input({ required: true })
+  card!: DualRecommendationCard;
 
-    availableLaps: [17],
-    selectedLap: 17,
+  @Input({ required: true })
+  driverInfoA!: RaceRecommendationDriver;
 
-    lapNumber: 17,
-    lapTimeSeconds: 71.614,
+  @Input({ required: true })
+  driverInfoB!: RaceRecommendationDriver;
 
-    compound: 'MEDIUM',
-    tyreAge: 17,
-    position: 5,
+  selectedRecommendationIndex = 0;
 
-    representative: {
-      score: 98,
-      lapTime: 100,
-      sector: 100,
-      position: 100,
-      traffic: 90,
-    },
+  get recommendation(): RecommendationPair {
+    return this.card.recommendations[this.selectedRecommendationIndex];
+  }
 
-    traffic: {
-      cleanAir: 33.3,
-      dirtyAir: 66.7,
-      wake: 14.2,
-      maxWake: 59.4,
-      avgGap: 115.5,
-      closestGap: 35.9,
-    },
+  get compatibilityScore(): number {
+    return this.recommendation.compatibilityScore;
+  }
 
-    drs: {
-      nearest: 'SAI',
-      usage: 0,
-      following: 0,
-    },
-  };
+  get driverA() {
+    return this.recommendation.lapA;
+  }
 
-  driverB = {
-    driverCode: 'VER',
-    teamColor: '#3671C6',
+  get driverB() {
+    return this.recommendation.lapB;
+  }
 
-    availableLaps: [17, 18, 19],
-    selectedLap: 17,
+  get reasons() {
+    return this.recommendation.reasons;
+  }
 
-    lapNumber: 17,
-    lapTimeSeconds: 70.921,
-
-    compound: 'MEDIUM',
-    tyreAge: 17,
-    position: 1,
-
-    representative: {
-      score: 100,
-      lapTime: 100,
-      sector: 99,
-      position: 100,
-      traffic: 100,
-    },
-
-    traffic: {
-      cleanAir: 100,
-      dirtyAir: 0,
-      wake: 0,
-      maxWake: 0,
-      avgGap: null,
-      closestGap: null,
-    },
-
-    drs: {
-      nearest: null,
-      usage: 0,
-      following: 0,
-    },
-  };
-
-  reasons = [
-    'Both laps were completed on Medium tyres.',
-    'Race pace closely matched over the stint.',
-    'Both drivers maintained stable positions.',
-    'Sector consistency was excellent.',
-  ];
+  normalizeColor(color: string): string {
+    return this.teamUi.normalizeColor(color);
+  }
 
   formatLapTime(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
@@ -108,5 +66,33 @@ export class DualRecommendationCardComponent {
     }
 
     return `+${(current - other).toFixed(3)}`;
+  }
+
+  get availableDriverALaps(): number[] {
+    return [...new Set(this.card.recommendations.map((r) => r.lapA.lapNumber))];
+  }
+
+  get availableDriverBLaps(): number[] {
+    return [...new Set(this.card.recommendations.map((r) => r.lapB.lapNumber))];
+  }
+
+  selectDriverALap(lapNumber: number): void {
+    const index = this.card.recommendations.findIndex(
+      (r) => r.lapA.lapNumber === lapNumber,
+    );
+
+    if (index >= 0) {
+      this.selectedRecommendationIndex = index;
+    }
+  }
+
+  selectDriverBLap(lapNumber: number): void {
+    const index = this.card.recommendations.findIndex(
+      (r) => r.lapB.lapNumber === lapNumber,
+    );
+
+    if (index >= 0) {
+      this.selectedRecommendationIndex = index;
+    }
   }
 }

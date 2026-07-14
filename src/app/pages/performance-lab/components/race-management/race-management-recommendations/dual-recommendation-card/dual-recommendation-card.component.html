@@ -13,22 +13,26 @@
     <div class="driver-column">
       <div class="driver-header">
         <div class="driver-left">
-          <div class="team-strip" [style.background]="driverA.teamColor"></div>
+          <div
+            class="team-strip"
+            [style.background]="normalizeColor(driverInfoA.teamColor)"
+          ></div>
 
           <div class="driver-code">
-            {{ driverA.driverCode }}
+            {{ driverInfoA.driverCode }}
           </div>
         </div>
 
-        @if (driverA.availableLaps.length > 1) {
+        @if (availableDriverALaps.length > 1) {
           <div class="lap-selector">
             <span class="lap-selector-label"> SIMILAR LAPS </span>
 
             <div class="lap-buttons">
-              @for (lap of driverA.availableLaps; track lap) {
+              @for (lap of availableDriverALaps; track lap) {
                 <button
                   class="lap-button"
-                  [class.active]="lap === driverA.selectedLap"
+                  [class.active]="lap === driverA.lapNumber"
+                  (click)="selectDriverALap(lap)"
                 >
                   {{ lap }}
                 </button>
@@ -99,22 +103,22 @@
 
         <div class="row">
           <span>Lap Time</span>
-          <span>{{ driverA.representative.lapTime }}</span>
+          <span>{{ driverA.representative.lapTime.score }}</span>
         </div>
 
         <div class="row">
           <span>Sectors</span>
-          <span>{{ driverA.representative.sector }}</span>
+          <span>{{ driverA.representative.sector.score }}</span>
         </div>
 
         <div class="row">
           <span>Position</span>
-          <span>{{ driverA.representative.position }}</span>
+          <span>{{ driverA.representative.position.score }}</span>
         </div>
 
         <div class="row">
           <span>Traffic</span>
-          <span>{{ driverA.representative.traffic }}</span>
+          <span>{{ driverA.representative.traffic.score }}</span>
         </div>
       </div>
 
@@ -123,22 +127,28 @@
 
         <div class="row">
           <span>Clean Air</span>
-          <span>{{ driverA.traffic.cleanAir }}%</span>
+          <span>{{ driverA.traffic.cleanAirPercentage }}%</span>
         </div>
 
         <div class="row">
           <span>Dirty Air</span>
-          <span>{{ driverA.traffic.dirtyAir }}%</span>
+          <span>{{ driverA.traffic.timeInDirtyAir }}%</span>
         </div>
 
         <div class="row">
-          <span>Wake</span>
-          <span>{{ driverA.traffic.wake }}%</span>
+          <span>Avg. Wake</span>
+          <span>{{ driverA.traffic.averageWakePercentage }}%</span>
         </div>
 
         <div class="row">
-          <span>Gap</span>
-          <span>{{ driverA.traffic.avgGap }}m</span>
+          <span>Avg. Gap</span>
+          <span>
+            @if (driverA.traffic.averageFollowingGapDistance !== null) {
+              {{ driverA.traffic.averageFollowingGapDistance }}m
+            } @else {
+              -
+            }
+          </span>
         </div>
       </div>
 
@@ -147,17 +157,17 @@
 
         <div class="row">
           <span>Car Ahead</span>
-          <span>{{ driverA.drs.nearest ?? "-" }}</span>
+          <span>{{ driverA.drs.nearestCarAhead ?? "-" }}</span>
         </div>
 
         <div class="row">
           <span>Usage</span>
-          <span>{{ driverA.drs.usage }}%</span>
+          <span>{{ driverA.drs.drsUsagePercentage }}%</span>
         </div>
 
         <div class="row">
           <span>Following</span>
-          <span>{{ driverA.drs.following }}%</span>
+          <span>{{ driverA.drs.drsWhileFollowingPercentage }}%</span>
         </div>
       </div>
     </div>
@@ -167,22 +177,26 @@
     <div class="driver-column">
       <div class="driver-header">
         <div class="driver-left">
-          <div class="team-strip" [style.background]="driverB.teamColor"></div>
+          <div
+            class="team-strip"
+            [style.background]="normalizeColor(driverInfoB.teamColor)"
+          ></div>
 
           <div class="driver-code">
-            {{ driverB.driverCode }}
+            {{ driverInfoB.driverCode }}
           </div>
         </div>
 
-        @if (driverB.availableLaps.length > 1) {
+        @if (availableDriverBLaps.length > 1) {
           <div class="lap-selector">
             <span class="lap-selector-label"> SIMILAR LAPS </span>
 
             <div class="lap-buttons">
-              @for (lap of driverB.availableLaps; track lap) {
+              @for (lap of availableDriverBLaps; track lap) {
                 <button
                   class="lap-button"
-                  [class.active]="lap === driverB.selectedLap"
+                  [class.active]="lap === driverB.lapNumber"
+                  (click)="selectDriverBLap(lap)"
                 >
                   {{ lap }}
                 </button>
@@ -210,7 +224,7 @@
               {{ formatLapTime(driverB.lapTimeSeconds) }}
 
               @if (
-                lapDifference(driverB.lapTimeSeconds, driverB.lapTimeSeconds);
+                lapDifference(driverB.lapTimeSeconds, driverA.lapTimeSeconds);
                 as delta
               ) {
                 <span class="lap-delta">{{ delta }}</span>
@@ -236,7 +250,7 @@
                 class="tyre tyre-age"
                 [ngClass]="driverB.compound.toLowerCase()"
               >
-                • {{ driverA.tyreAge }} LAPS
+                • {{ driverB.tyreAge }} LAPS
               </span>
             </div>
           </div>
@@ -253,22 +267,22 @@
 
         <div class="row">
           <span>Lap Time</span>
-          <span>{{ driverB.representative.lapTime }}</span>
+          <span>{{ driverB.representative.lapTime.score }}</span>
         </div>
 
         <div class="row">
           <span>Sectors</span>
-          <span>{{ driverB.representative.sector }}</span>
+          <span>{{ driverB.representative.sector.score }}</span>
         </div>
 
         <div class="row">
           <span>Position</span>
-          <span>{{ driverB.representative.position }}</span>
+          <span>{{ driverB.representative.position.score }}</span>
         </div>
 
         <div class="row">
           <span>Traffic</span>
-          <span>{{ driverB.representative.traffic }}</span>
+          <span>{{ driverB.representative.traffic.score }}</span>
         </div>
       </div>
 
@@ -277,22 +291,22 @@
 
         <div class="row">
           <span>Clean Air</span>
-          <span>{{ driverB.traffic.cleanAir }}%</span>
+          <span>{{ driverB.traffic.cleanAirPercentage }}%</span>
         </div>
 
         <div class="row">
           <span>Dirty Air</span>
-          <span>{{ driverB.traffic.dirtyAir }}%</span>
+          <span>{{ driverB.traffic.timeInDirtyAir }}%</span>
         </div>
 
         <div class="row">
-          <span>Wake</span>
-          <span>{{ driverB.traffic.wake }}%</span>
+          <span>Avg. Wake</span>
+          <span>{{ driverB.traffic.averageWakePercentage }}%</span>
         </div>
 
         <div class="row">
-          <span>Gap</span>
-          <span>{{ driverB.traffic.avgGap ?? "-" }}</span>
+          <span>Avg. Gap</span>
+          <span>{{ driverB.traffic.averageFollowingGapDistance ?? "-" }}m</span>
         </div>
       </div>
 
@@ -301,17 +315,17 @@
 
         <div class="row">
           <span>Car Ahead</span>
-          <span>{{ driverB.drs.nearest ?? "-" }}</span>
+          <span>{{ driverB.drs.nearestCarAhead ?? "-" }}</span>
         </div>
 
         <div class="row">
           <span>Usage</span>
-          <span>{{ driverB.drs.usage }}%</span>
+          <span>{{ driverB.drs.drsUsagePercentage }}%</span>
         </div>
 
         <div class="row">
           <span>Following</span>
-          <span>{{ driverB.drs.following }}%</span>
+          <span>{{ driverB.drs.drsWhileFollowingPercentage }}%</span>
         </div>
       </div>
     </div>

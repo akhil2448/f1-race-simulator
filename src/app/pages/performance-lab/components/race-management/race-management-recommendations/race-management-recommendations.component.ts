@@ -1,7 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, ElementRef, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  ElementRef,
+  ViewChild,
+  inject,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import {
   DualDriverRecommendationResponse,
+  DualRecommendationCard,
+  DualRecommendationStint,
+  RecommendationPair,
   SingleDriverRecommendationResponse,
 } from '../../../models/race-management-recommendation.model';
 import { SingleRecommendationCardComponent } from './single-recommendation-card/single-recommendation-card.component';
@@ -19,7 +30,7 @@ import { DualRecommendationCardComponent } from './dual-recommendation-card/dual
   templateUrl: './race-management-recommendations.component.html',
   styleUrl: './race-management-recommendations.component.scss',
 })
-export class RaceManagementRecommendationsComponent {
+export class RaceManagementRecommendationsComponent implements OnChanges {
   private readonly teamUi = inject(TeamUiService);
   @Input()
   singleRecommendation: SingleDriverRecommendationResponse | null = null;
@@ -35,6 +46,14 @@ export class RaceManagementRecommendationsComponent {
 
   currentCard = 0;
   selectedStintIndex = 0;
+
+  dualStints: DualRecommendationStint[] = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dualRecommendation']) {
+      this.buildDualRecommendationModel();
+    }
+  }
 
   scrollToCard(index: number): void {
     const container = this.cardsContainer.nativeElement;
@@ -59,6 +78,10 @@ export class RaceManagementRecommendationsComponent {
     return this.currentStint?.laps ?? [];
   }
 
+  get currentDualStint() {
+    return this.dualStints[this.selectedStintIndex] ?? null;
+  }
+
   selectStint(index: number): void {
     this.selectedStintIndex = index;
 
@@ -70,6 +93,46 @@ export class RaceManagementRecommendationsComponent {
         behavior: 'smooth',
       });
     }
+  }
+
+  private buildDualRecommendationModel(): void {
+    if (!this.dualRecommendation) {
+      this.dualStints = [];
+      return;
+    }
+
+    this.dualStints = this.dualRecommendation.stintComparisons.map((stint) => {
+      const cards: DualRecommendationCard[] = [];
+
+      console.log(
+        stint.recommendationGroups.map((g) => ({
+          secondaryLap: g.secondaryLap,
+          laps: g.recommendations.map(
+            (r) => `${r.lapA.lapNumber}-${r.lapB.lapNumber}`,
+          ),
+        })),
+      );
+
+      for (const group of stint.recommendationGroups) {
+        if (group.recommendations.length === 0) {
+          continue;
+        }
+
+        cards.push({
+          recommendations: group.recommendations,
+        });
+      }
+
+      return {
+        driverAStint: stint.driverAStint,
+        driverBStint: stint.driverBStint,
+
+        cards,
+      };
+    });
+
+    console.log(this.dualStints);
+    console.log(this.dualStints[0].cards.length);
   }
 
   normalizeColor(color: string): string {

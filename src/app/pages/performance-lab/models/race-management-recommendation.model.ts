@@ -171,3 +171,15 @@ export interface RecommendationPair {
 
   reasons: string[];
 }
+
+export interface DualRecommendationCard {
+  recommendations: RecommendationPair[];
+}
+
+export interface DualRecommendationStint {
+  driverAStint: number;
+
+  driverBStint: number;
+
+  cards: DualRecommendationCard[];
+}

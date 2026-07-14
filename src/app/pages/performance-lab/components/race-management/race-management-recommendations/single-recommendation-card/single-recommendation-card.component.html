@@ -34,7 +34,15 @@
     <div class="hero-item">
       <div class="hero-label">TYRE & AGE</div>
 
-      <div class="hero-value tyre">{{ lap.compound }} • {{ lap.tyreAge }}</div>
+      <div class="hero-value">
+        <span class="tyre" [ngClass]="lap.compound.toLowerCase()">
+          {{ lap.compound }}
+        </span>
+
+        <span class="tyre tyre-age" [ngClass]="lap.compound.toLowerCase()">
+          • {{ lap.tyreAge }}
+        </span>
+      </div>
     </div>
   </div>
 

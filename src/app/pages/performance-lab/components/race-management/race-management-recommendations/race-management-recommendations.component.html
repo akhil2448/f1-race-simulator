@@ -10,11 +10,16 @@
   </div>
 } @else {
   <div class="recommendations">
-    @if (singleRecommendation && singleRecommendation.stints.length > 1) {
+    @if (
+      (singleRecommendation && singleRecommendation.stints.length > 1) ||
+      (dualRecommendation && dualRecommendation.stintComparisons.length > 1)
+    ) {
       <div class="stint-selector">
         @for (
-          stint of singleRecommendation.stints;
-          track stint.stint;
+          stint of singleRecommendation
+            ? singleRecommendation.stints
+            : dualRecommendation!.stintComparisons;
+          track $index;
           let i = $index
         ) {
           <button
@@ -22,17 +27,26 @@
             [class.active]="i === selectedStintIndex"
             (click)="selectStint(i)"
           >
-            STINT {{ stint.stint }}
+            @if (singleRecommendation) {
+              STINT {{ $any(stint).stint }}
+            } @else {
+              STINT {{ $any(stint).driverAStint }} /
+              {{ $any(stint).driverBStint }}
+            }
           </button>
         }
       </div>
     }
 
     <div class="cards-container" #cardsContainer (scroll)="onScroll()">
-      @if (isDualRecommendation) {
-        @for (card of [1, 2, 3, 4]; track card) {
+      @if (isDualRecommendation && currentDualStint) {
+        @for (card of currentDualStint.cards; track $index) {
           <div class="carousel-card">
-            <app-dual-recommendation-card />
+            <app-dual-recommendation-card
+              [card]="card"
+              [driverInfoA]="dualRecommendation!.driverA"
+              [driverInfoB]="dualRecommendation!.driverB"
+            />
           </div>
         }
       } @else {
@@ -62,9 +76,9 @@
       }
     </div>
 
-    @if (isDualRecommendation) {
+    @if (isDualRecommendation && currentDualStint) {
       <div class="dots">
-        @for (card of [1, 2, 3, 4]; track card; let i = $index) {
+        @for (card of currentDualStint.cards; track $index; let i = $index) {
           <button
             class="dot"
             [class.active]="i === currentCard"
