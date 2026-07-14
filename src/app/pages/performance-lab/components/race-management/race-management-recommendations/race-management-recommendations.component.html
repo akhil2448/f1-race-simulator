@@ -29,32 +29,50 @@
     }
 
     <div class="cards-container" #cardsContainer (scroll)="onScroll()">
-      @if (recommendationLaps.length === 0) {
-        <div class="empty-stint">
-          <div class="empty-title">No clean laps in this stint.</div>
-
-          <div class="empty-subtitle">
-            PitWall couldn't find any representative laps that met the quality
-            threshold.
-          </div>
-        </div>
-      } @else {
-        @for (lap of recommendationLaps; track lap.lapNumber) {
+      @if (isDualRecommendation) {
+        @for (card of [1, 2, 3, 4]; track card) {
           <div class="carousel-card">
-            <app-single-recommendation-card
-              [driverCode]="singleRecommendation!.driver.driverCode"
-              [teamColor]="
-                normalizeColor(singleRecommendation!.driver.teamColor)
-              "
-              [lap]="lap"
-            >
-            </app-single-recommendation-card>
+            <app-dual-recommendation-card />
           </div>
+        }
+      } @else {
+        @if (recommendationLaps.length === 0) {
+          <div class="empty-stint">
+            <div class="empty-title">No clean laps in this stint.</div>
+
+            <div class="empty-subtitle">
+              PitWall couldn't find any representative laps that met the quality
+              threshold.
+            </div>
+          </div>
+        } @else {
+          @for (lap of recommendationLaps; track lap.lapNumber) {
+            <div class="carousel-card">
+              <app-single-recommendation-card
+                [driverCode]="singleRecommendation!.driver.driverCode"
+                [teamColor]="
+                  normalizeColor(singleRecommendation!.driver.teamColor)
+                "
+                [lap]="lap"
+              >
+              </app-single-recommendation-card>
+            </div>
+          }
         }
       }
     </div>
 
-    @if (recommendationLaps.length > 1) {
+    @if (isDualRecommendation) {
+      <div class="dots">
+        @for (card of [1, 2, 3, 4]; track card; let i = $index) {
+          <button
+            class="dot"
+            [class.active]="i === currentCard"
+            (click)="scrollToCard(i)"
+          ></button>
+        }
+      </div>
+    } @else if (recommendationLaps.length > 1) {
       <div class="dots">
         @for (lap of recommendationLaps; track lap.lapNumber; let i = $index) {
           <button

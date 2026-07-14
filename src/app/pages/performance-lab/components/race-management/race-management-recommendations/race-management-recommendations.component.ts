@@ -6,11 +6,16 @@ import {
 } from '../../../models/race-management-recommendation.model';
 import { SingleRecommendationCardComponent } from './single-recommendation-card/single-recommendation-card.component';
 import { TeamUiService } from '../../../services/team-ui.service';
+import { DualRecommendationCardComponent } from './dual-recommendation-card/dual-recommendation-card.component';
 
 @Component({
   selector: 'app-race-management-recommendations',
   standalone: true,
-  imports: [CommonModule, SingleRecommendationCardComponent],
+  imports: [
+    CommonModule,
+    SingleRecommendationCardComponent,
+    DualRecommendationCardComponent,
+  ],
   templateUrl: './race-management-recommendations.component.html',
   styleUrl: './race-management-recommendations.component.scss',
 })
@@ -69,5 +74,9 @@ export class RaceManagementRecommendationsComponent {
 
   normalizeColor(color: string): string {
     return this.teamUi.normalizeColor(color);
+  }
+
+  get isDualRecommendation(): boolean {
+    return this.dualRecommendation !== null;
   }
 }

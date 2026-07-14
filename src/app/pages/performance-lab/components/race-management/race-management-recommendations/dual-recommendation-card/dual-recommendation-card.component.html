@@ -1,0 +1,336 @@
+<div class="card">
+  <div class="card-header">
+    <div class="compatibility-title">COMPATIBILITY SCORE</div>
+
+    <div class="compatibility-score">
+      {{ compatibilityScore }}
+    </div>
+  </div>
+
+  <div class="drivers-grid">
+    <!-- DRIVER A -->
+
+    <div class="driver-column">
+      <div class="driver-header">
+        <div class="driver-left">
+          <div class="team-strip" [style.background]="driverA.teamColor"></div>
+
+          <div class="driver-code">
+            {{ driverA.driverCode }}
+          </div>
+        </div>
+
+        @if (driverA.availableLaps.length > 1) {
+          <div class="lap-selector">
+            <span class="lap-selector-label"> SIMILAR LAPS </span>
+
+            <div class="lap-buttons">
+              @for (lap of driverA.availableLaps; track lap) {
+                <button
+                  class="lap-button"
+                  [class.active]="lap === driverA.selectedLap"
+                >
+                  {{ lap }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="section hero-section">
+        <!-- <div class="section-title">BASIC</div> -->
+
+        <div class="hero-grid">
+          <div class="hero-item">
+            <div class="hero-label">LAP</div>
+            <div class="hero-value">
+              {{ driverA.lapNumber }}
+            </div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">LAP TIME</div>
+
+            <div class="hero-value">
+              {{ formatLapTime(driverA.lapTimeSeconds) }}
+
+              @if (
+                lapDifference(driverA.lapTimeSeconds, driverB.lapTimeSeconds);
+                as delta
+              ) {
+                <span class="lap-delta">{{ delta }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">POSITION</div>
+
+            <div class="hero-value">P{{ driverA.position }}</div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">TYRE & AGE</div>
+
+            <div class="hero-value">
+              <span class="tyre" [ngClass]="driverA.compound.toLowerCase()">
+                {{ driverA.compound }}
+              </span>
+
+              <span
+                class="tyre tyre-age"
+                [ngClass]="driverA.compound.toLowerCase()"
+              >
+                • {{ driverA.tyreAge }} LAPS
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">REPRESENTATIVE</div>
+
+        <div class="row">
+          <span>Overall</span>
+          <span>{{ driverA.representative.score }}</span>
+        </div>
+
+        <div class="row">
+          <span>Lap Time</span>
+          <span>{{ driverA.representative.lapTime }}</span>
+        </div>
+
+        <div class="row">
+          <span>Sectors</span>
+          <span>{{ driverA.representative.sector }}</span>
+        </div>
+
+        <div class="row">
+          <span>Position</span>
+          <span>{{ driverA.representative.position }}</span>
+        </div>
+
+        <div class="row">
+          <span>Traffic</span>
+          <span>{{ driverA.representative.traffic }}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">TRAFFIC</div>
+
+        <div class="row">
+          <span>Clean Air</span>
+          <span>{{ driverA.traffic.cleanAir }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Dirty Air</span>
+          <span>{{ driverA.traffic.dirtyAir }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Wake</span>
+          <span>{{ driverA.traffic.wake }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Gap</span>
+          <span>{{ driverA.traffic.avgGap }}m</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">DRS</div>
+
+        <div class="row">
+          <span>Car Ahead</span>
+          <span>{{ driverA.drs.nearest ?? "-" }}</span>
+        </div>
+
+        <div class="row">
+          <span>Usage</span>
+          <span>{{ driverA.drs.usage }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Following</span>
+          <span>{{ driverA.drs.following }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRIVER B -->
+
+    <div class="driver-column">
+      <div class="driver-header">
+        <div class="driver-left">
+          <div class="team-strip" [style.background]="driverB.teamColor"></div>
+
+          <div class="driver-code">
+            {{ driverB.driverCode }}
+          </div>
+        </div>
+
+        @if (driverB.availableLaps.length > 1) {
+          <div class="lap-selector">
+            <span class="lap-selector-label"> SIMILAR LAPS </span>
+
+            <div class="lap-buttons">
+              @for (lap of driverB.availableLaps; track lap) {
+                <button
+                  class="lap-button"
+                  [class.active]="lap === driverB.selectedLap"
+                >
+                  {{ lap }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="section hero-section">
+        <!-- <div class="section-title">BASIC</div> -->
+
+        <div class="hero-grid">
+          <div class="hero-item">
+            <div class="hero-label">LAP</div>
+            <div class="hero-value">
+              {{ driverB.lapNumber }}
+            </div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">LAP TIME</div>
+
+            <div class="hero-value">
+              {{ formatLapTime(driverB.lapTimeSeconds) }}
+
+              @if (
+                lapDifference(driverB.lapTimeSeconds, driverB.lapTimeSeconds);
+                as delta
+              ) {
+                <span class="lap-delta">{{ delta }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">POSITION</div>
+
+            <div class="hero-value">P{{ driverB.position }}</div>
+          </div>
+
+          <div class="hero-item">
+            <div class="hero-label">TYRE & AGE</div>
+
+            <div class="hero-value">
+              <span class="tyre" [ngClass]="driverB.compound.toLowerCase()">
+                {{ driverB.compound }}
+              </span>
+
+              <span
+                class="tyre tyre-age"
+                [ngClass]="driverB.compound.toLowerCase()"
+              >
+                • {{ driverA.tyreAge }} LAPS
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">REPRESENTATIVE</div>
+
+        <div class="row">
+          <span>Overall</span>
+          <span>{{ driverB.representative.score }}</span>
+        </div>
+
+        <div class="row">
+          <span>Lap Time</span>
+          <span>{{ driverB.representative.lapTime }}</span>
+        </div>
+
+        <div class="row">
+          <span>Sectors</span>
+          <span>{{ driverB.representative.sector }}</span>
+        </div>
+
+        <div class="row">
+          <span>Position</span>
+          <span>{{ driverB.representative.position }}</span>
+        </div>
+
+        <div class="row">
+          <span>Traffic</span>
+          <span>{{ driverB.representative.traffic }}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">TRAFFIC</div>
+
+        <div class="row">
+          <span>Clean Air</span>
+          <span>{{ driverB.traffic.cleanAir }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Dirty Air</span>
+          <span>{{ driverB.traffic.dirtyAir }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Wake</span>
+          <span>{{ driverB.traffic.wake }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Gap</span>
+          <span>{{ driverB.traffic.avgGap ?? "-" }}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">DRS</div>
+
+        <div class="row">
+          <span>Car Ahead</span>
+          <span>{{ driverB.drs.nearest ?? "-" }}</span>
+        </div>
+
+        <div class="row">
+          <span>Usage</span>
+          <span>{{ driverB.drs.usage }}%</span>
+        </div>
+
+        <div class="row">
+          <span>Following</span>
+          <span>{{ driverB.drs.following }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reasons">
+    <div class="section-title">WHY PITWALL RECOMMENDED THIS PAIR</div>
+
+    <div class="reasons-footer">
+      <div class="reason-list">
+        @for (reason of reasons; track reason) {
+          <div class="reason">
+            <span class="bullet">✓</span>
+            {{ reason }}
+          </div>
+        }
+      </div>
+
+      <button class="analyze-button">ANALYZE</button>
+    </div>
+  </div>
+</div>

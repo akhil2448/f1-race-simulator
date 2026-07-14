@@ -1,0 +1,364 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 22px;
+  gap: 18px;
+
+  border-radius: 22px;
+
+  background: #252525;
+}
+
+.card-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: right;
+
+  gap: 18px;
+
+  margin-bottom: 6px;
+}
+
+.compatibility-title {
+  font-family: Formula1Bold;
+
+  color: #d5d5d5;
+
+  font-size: 14px;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+}
+
+.compatibility-score {
+  width: 54px;
+
+  height: 54px;
+
+  border-radius: 50%;
+
+  background: #d61d2a;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-family: Formula1;
+
+  font-size: 22px;
+
+  color: white;
+}
+.drivers-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 26px;
+}
+
+.driver-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.driver-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.driver-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.lap-selector {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  flex: 1;
+}
+
+.lap-selector-label {
+  font-family: Formula1Bold;
+
+  font-size: 10px;
+
+  letter-spacing: 1.5px;
+
+  color: #8b8b8b;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.lap-buttons {
+  display: flex;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+}
+
+.lap-button {
+  min-width: 42px;
+
+  height: 34px;
+
+  padding: 0 12px;
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: #323232;
+
+  color: #d8d8d8;
+
+  font-family: Formula1;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.18s;
+}
+
+.lap-button.active {
+  background: #d61d2a;
+
+  border-color: #d61d2a;
+
+  color: white;
+}
+
+.team-strip {
+  width: 5px;
+  height: 34px;
+  border-radius: 999px;
+}
+
+.driver-code {
+  font-family: Formula1;
+  font-size: 24px;
+  color: white;
+}
+
+.hero-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+}
+
+.hero-item {
+  background: rgba(255, 255, 255, 0.035);
+
+  border-radius: 10px;
+
+  padding: 10px 12px;
+}
+
+.hero-label {
+  font-size: 10px;
+
+  letter-spacing: 1.5px;
+
+  color: #9b9b9b;
+
+  font-family: Formula1Bold;
+
+  margin-bottom: 6px;
+}
+
+.hero-value {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  font-family: Formula1;
+
+  font-size: 22px;
+
+  color: white;
+}
+
+.tyre-age {
+  font-size: 13px;
+
+  opacity: 0.9;
+}
+
+.section {
+  padding: 12px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.section-title {
+  margin-bottom: 8px;
+
+  font-family: Formula1Bold;
+
+  font-size: 12px;
+
+  letter-spacing: 2px;
+
+  color: #e88b09;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 24px;
+}
+
+.row span:first-child {
+  font-size: 13px;
+  color: #b0b0b0;
+}
+
+.row span:last-child {
+  color: white;
+  font-family: Formula1;
+  font-size: 15px;
+}
+
+.lap-delta {
+  margin-left: 6px;
+
+  color: #f7f5f5;
+
+  font-size: 13px;
+
+  font-family: Formula1;
+}
+
+.tyre.soft {
+  color: #ff2b2b;
+}
+
+.tyre.medium {
+  color: #ffd400;
+}
+
+.tyre.hard {
+  color: #dfdfdf;
+}
+
+.tyre.intermediate {
+  color: #3cff00;
+}
+
+.tyre.wet {
+  color: #0066ff;
+}
+
+.reasons {
+  width: 100%;
+
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reasons-footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-end;
+
+  gap: 32px;
+}
+
+.reason-list {
+  flex: 1;
+}
+
+.reason {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 8px;
+
+  margin-top: 6px;
+
+  color: #bfbfbf;
+
+  font-size: 14px;
+
+  line-height: 1.45;
+}
+
+.bullet {
+  color: #8dd96b;
+
+  flex-shrink: 0;
+}
+
+.analyze-button {
+  align-self: flex-end;
+
+  height: 38px;
+
+  padding: 0 20px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #d61d2a;
+
+  color: white;
+
+  font-family: Formula1;
+
+  font-size: 11px;
+
+  letter-spacing: 0.6px;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+.analyze-button:hover {
+  background: #ef2535;
+
+  transform: translateY(-1px);
+}
