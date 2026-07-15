@@ -142,4 +142,24 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
   get isDualRecommendation(): boolean {
     return this.dualRecommendation !== null;
   }
+
+  previousCard(): void {
+    if (this.currentCard > 0) {
+      this.scrollToCard(this.currentCard - 1);
+    }
+  }
+
+  nextCard(): void {
+    if (this.currentCard < this.maxCardIndex) {
+      this.scrollToCard(this.currentCard + 1);
+    }
+  }
+
+  get maxCardIndex(): number {
+    if (this.isDualRecommendation) {
+      return Math.max(0, (this.currentDualStint?.cards.length ?? 1) - 1);
+    }
+
+    return Math.max(0, this.recommendationLaps.length - 1);
+  }
 }

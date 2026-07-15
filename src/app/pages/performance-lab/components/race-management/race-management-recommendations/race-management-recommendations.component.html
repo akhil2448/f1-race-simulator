@@ -38,42 +38,59 @@
       </div>
     }
 
-    <div class="cards-container" #cardsContainer (scroll)="onScroll()">
-      @if (isDualRecommendation && currentDualStint) {
-        @for (card of currentDualStint.cards; track $index) {
-          <div class="carousel-card">
-            <app-dual-recommendation-card
-              [card]="card"
-              [driverInfoA]="dualRecommendation!.driverA"
-              [driverInfoB]="dualRecommendation!.driverB"
-            />
-          </div>
-        }
-      } @else {
-        @if (recommendationLaps.length === 0) {
-          <div class="empty-stint">
-            <div class="empty-title">No clean laps in this stint.</div>
-
-            <div class="empty-subtitle">
-              PitWall couldn't find any representative laps that met the quality
-              threshold.
-            </div>
-          </div>
-        } @else {
-          @for (lap of recommendationLaps; track lap.lapNumber) {
+    <div class="carousel-wrapper">
+      <button
+        class="carousel-arrow left"
+        (click)="previousCard()"
+        [disabled]="currentCard === 0"
+      >
+        <span class="material-symbols-rounded">chevron_left</span>
+      </button>
+      <div class="cards-container" #cardsContainer (scroll)="onScroll()">
+        @if (isDualRecommendation && currentDualStint) {
+          @for (card of currentDualStint.cards; track $index) {
             <div class="carousel-card">
-              <app-single-recommendation-card
-                [driverCode]="singleRecommendation!.driver.driverCode"
-                [teamColor]="
-                  normalizeColor(singleRecommendation!.driver.teamColor)
-                "
-                [lap]="lap"
-              >
-              </app-single-recommendation-card>
+              <app-dual-recommendation-card
+                [card]="card"
+                [driverInfoA]="dualRecommendation!.driverA"
+                [driverInfoB]="dualRecommendation!.driverB"
+              />
             </div>
           }
+        } @else {
+          @if (recommendationLaps.length === 0) {
+            <div class="empty-stint">
+              <div class="empty-title">No clean laps in this stint.</div>
+
+              <div class="empty-subtitle">
+                PitWall couldn't find any representative laps that met the
+                quality threshold.
+              </div>
+            </div>
+          } @else {
+            @for (lap of recommendationLaps; track lap.lapNumber) {
+              <div class="carousel-card">
+                <app-single-recommendation-card
+                  [driverCode]="singleRecommendation!.driver.driverCode"
+                  [teamColor]="
+                    normalizeColor(singleRecommendation!.driver.teamColor)
+                  "
+                  [lap]="lap"
+                >
+                </app-single-recommendation-card>
+              </div>
+            }
+          }
         }
-      }
+      </div>
+
+      <button
+        class="carousel-arrow right"
+        (click)="nextCard()"
+        [disabled]="currentCard === maxCardIndex"
+      >
+        <span class="material-symbols-rounded">chevron_right</span>
+      </button>
     </div>
 
     @if (isDualRecommendation && currentDualStint) {
