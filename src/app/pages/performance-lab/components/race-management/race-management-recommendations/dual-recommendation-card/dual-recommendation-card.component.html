@@ -28,7 +28,7 @@
             <span class="lap-selector-label"> SIMILAR LAPS </span>
 
             <div class="lap-buttons">
-              @for (lap of availableDriverALaps; track lap) {
+              @for (lap of availableDriverALaps; track $index) {
                 <button
                   class="lap-button"
                   [class.active]="lap === driverA.lapNumber"
@@ -192,7 +192,7 @@
             <span class="lap-selector-label"> SIMILAR LAPS </span>
 
             <div class="lap-buttons">
-              @for (lap of availableDriverBLaps; track lap) {
+              @for (lap of availableDriverBLaps; track $index) {
                 <button
                   class="lap-button"
                   [class.active]="lap === driverB.lapNumber"
@@ -336,7 +336,7 @@
 
     <div class="reasons-footer">
       <div class="reason-list">
-        @for (reason of reasons; track reason) {
+        @for (reason of reasons; track $index) {
           <div class="reason">
             <span class="bullet">✓</span>
             {{ reason }}

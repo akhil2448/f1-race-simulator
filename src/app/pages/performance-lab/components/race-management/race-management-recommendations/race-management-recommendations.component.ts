@@ -104,14 +104,14 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
     this.dualStints = this.dualRecommendation.stintComparisons.map((stint) => {
       const cards: DualRecommendationCard[] = [];
 
-      console.log(
-        stint.recommendationGroups.map((g) => ({
-          secondaryLap: g.secondaryLap,
-          laps: g.recommendations.map(
-            (r) => `${r.lapA.lapNumber}-${r.lapB.lapNumber}`,
-          ),
-        })),
-      );
+      // console.log(
+      //   stint.recommendationGroups.map((g) => ({
+      //     secondaryLap: g.secondaryLap,
+      //     laps: g.recommendations.map(
+      //       (r) => `${r.lapA.lapNumber}-${r.lapB.lapNumber}`,
+      //     ),
+      //   })),
+      // );
 
       for (const group of stint.recommendationGroups) {
         if (group.recommendations.length === 0) {
@@ -131,8 +131,8 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
       };
     });
 
-    console.log(this.dualStints);
-    console.log(this.dualStints[0].cards.length);
+    // console.log(this.dualStints);
+    // console.log(this.dualStints[0].cards.length);
   }
 
   normalizeColor(color: string): string {
