@@ -13,6 +13,12 @@ import * as d3 from 'd3';
 
 import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
+import { SectorMarker } from '../../models/qualifying-comparison.model';
+
+interface DeltaPoint {
+  d: number;
+  delta: number;
+}
 
 @Component({
   selector: 'app-telemetry-canvas',
@@ -36,8 +42,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   @Input()
   driverBTheme: DriverTheme | null = null;
 
-  private readonly SPEED_HEIGHT_RATIO = 0.54;
-  private readonly RPM_HEIGHT_RATIO = 0.15;
+  @Input({ required: true })
+  sectorMarkers: SectorMarker[] = [];
+
+  private readonly SPEED_HEIGHT_RATIO = 0.44;
+  private readonly DELTA_HEIGHT_RATIO = 0.1;
+  private readonly RPM_HEIGHT_RATIO = 0.14;
   private readonly THROTTLE_HEIGHT_RATIO = 0.18;
   private readonly BRAKE_HEIGHT_RATIO = 0.12;
 
@@ -48,6 +58,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   private rpmGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
   private throttleGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
   private brakeGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+  private deltaGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
 
   private speedMarkerA!: d3.Selection<
     SVGCircleElement,
@@ -100,6 +111,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
   private xScale!: d3.ScaleLinear<number, number>;
   private speedYScale!: d3.ScaleLinear<number, number>;
+  private deltaYScale!: d3.ScaleLinear<number, number>;
   private rpmYScale!: d3.ScaleLinear<number, number>;
   private throttleYScale!: d3.ScaleLinear<number, number>;
   private brakeYScale!: d3.ScaleLinear<number, number>;
@@ -129,6 +141,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const driverAColor = this.driverATheme.color;
     const driverBColor = this.driverBTheme?.color ?? '#FFFFFF';
+
+    const deltaSeries = this.buildDeltaSeries();
+    console.log(deltaSeries);
 
     const SPEED_TICK = 25;
 
@@ -164,6 +179,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     const speedHeight = chartHeight * this.SPEED_HEIGHT_RATIO;
+    const deltaHeight = chartHeight * this.DELTA_HEIGHT_RATIO;
     const rpmHeight = chartHeight * this.RPM_HEIGHT_RATIO;
     const throttleHeight = chartHeight * this.THROTTLE_HEIGHT_RATIO;
 
@@ -183,24 +199,31 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const graphBottom =
       speedHeight +
+      deltaHeight +
       rpmHeight +
       throttleSectionHeight +
       GRAPH_GAP +
       brakeSectionHeight;
-
     //
     // Drawing groups
     //
 
     this.speedGroup = root.append('g');
 
-    this.rpmGroup = root
+    this.deltaGroup = root
       .append('g')
       .attr('transform', `translate(0, ${speedHeight})`);
 
+    this.rpmGroup = root
+      .append('g')
+      .attr('transform', `translate(0, ${speedHeight + deltaHeight})`);
+
     this.throttleGroup = root
       .append('g')
-      .attr('transform', `translate(0, ${speedHeight + rpmHeight})`);
+      .attr(
+        'transform',
+        `translate(0, ${speedHeight + deltaHeight + rpmHeight})`,
+      );
 
     const throttlePlot = this.throttleGroup.append('g');
 
@@ -208,7 +231,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       'transform',
       `translate(
       0,
-      ${speedHeight + rpmHeight + throttleSectionHeight + GRAPH_GAP}
+      ${speedHeight + deltaHeight + rpmHeight + throttleSectionHeight + GRAPH_GAP}
     )`,
     );
 
@@ -221,6 +244,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'plot-background')
       .attr('width', chartWidth)
       .attr('height', speedHeight);
+
+    //
+    // Delta plot background
+    //
+    this.deltaGroup
+      .append('rect')
+      .attr('class', 'plot-background')
+      .attr('width', chartWidth)
+      .attr('height', deltaHeight);
 
     //
     // RPM plot background
@@ -302,10 +334,24 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const maxSpeed =
       Math.ceil(Math.max(maxSpeedA, maxSpeedB) / SPEED_TICK) * SPEED_TICK;
 
+    //
+    // Speed Y scale
+    //
     this.speedYScale = d3
       .scaleLinear()
       .domain([minSpeed, maxSpeed])
       .range([speedHeight - PLOT_PADDING, PLOT_PADDING]);
+
+    //
+    // Delta Y scale
+    //
+
+    const maxAbsDelta = d3.max(deltaSeries, (d) => Math.abs(d.delta)) ?? 0.01;
+
+    this.deltaYScale = d3
+      .scaleLinear()
+      .domain([-maxAbsDelta, maxAbsDelta])
+      .range([deltaHeight - PLOT_PADDING, PLOT_PADDING]);
 
     //
     // RPM Y scale
@@ -384,6 +430,27 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('text-anchor', 'middle')
       .text('Speed (km/h)');
 
+    const deltaAxis = this.deltaGroup
+      .append('g')
+      .attr('class', 'y-axis')
+      .call(
+        d3
+          .axisRight(this.deltaYScale)
+          .tickValues([-maxAbsDelta, 0, maxAbsDelta])
+          .tickFormat((d) => Number(d).toFixed(3)),
+      );
+
+    deltaAxis.attr('transform', `translate(${chartWidth},0)`);
+
+    this.deltaGroup
+      .append('text')
+      .attr('class', 'axis-title')
+      .attr('transform', 'rotate(90)')
+      .attr('x', deltaHeight / 2)
+      .attr('y', -(chartWidth + 50))
+      .attr('text-anchor', 'middle')
+      .text('Delta (s)');
+
     //
     // RPM Grid
     //
@@ -429,6 +496,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           .tickFormat(() => ''),
       );
 
+    this.deltaGroup
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', chartWidth)
+      .attr('y1', this.deltaYScale(0))
+      .attr('y2', this.deltaYScale(0))
+      .attr('stroke', '#00e5d4')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4 4')
+      .attr('opacity', 0.8);
+
     //
     // RPM Axis
     //
@@ -438,21 +516,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'y-axis')
       .call(
         d3
-          .axisRight(this.rpmYScale)
+          .axisLeft(this.rpmYScale)
           .tickValues(rpmTicks)
           .tickFormat((d) => `${Number(d) / 1000}`),
       );
 
     this.rpmGroup
-      .select('.y-axis')
-      .attr('transform', `translate(${chartWidth},0)`);
-
-    this.rpmGroup
       .append('text')
       .attr('class', 'axis-title')
-      .attr('transform', 'rotate(90)')
-      .attr('x', rpmHeight / 2)
-      .attr('y', -(chartWidth + 30))
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -rpmHeight / 2)
+      .attr('y', -40)
       .attr('text-anchor', 'middle')
       .text('RPM (×1000)');
 
@@ -460,20 +534,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle Axis
     //
 
-    this.throttleGroup
+    const throttleAxis = this.throttleGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(this.throttleYScale).ticks(5));
+      .call(d3.axisRight(this.throttleYScale).ticks(5));
 
-    throttlePlot
+    throttleAxis.attr('transform', `translate(${chartWidth},0)`);
+
+    this.throttleGroup
       .append('text')
       .attr('class', 'axis-title')
-      .attr('transform', 'rotate(-90)')
-      .attr('x', -throttleSectionHeight / 2)
-      .attr('y', -40)
+      .attr('transform', 'rotate(90)')
+      .attr('x', throttleSectionHeight / 2)
+      .attr('y', -(chartWidth + 50))
       .attr('text-anchor', 'middle')
       .text('Throttle');
-
     //
     // Brake Axis
     //
@@ -481,22 +556,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     this.brakeGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisRight(this.brakeYScale).tickValues([0, 50, 100]));
-
-    this.brakeGroup
-      .select('.y-axis')
-      .attr('transform', `translate(${chartWidth},0)`);
+      .call(d3.axisLeft(this.brakeYScale).tickValues([0, 50, 100]));
 
     this.brakeGroup
       .append('text')
       .attr('class', 'axis-title')
-      .attr('transform', 'rotate(90)')
-      .attr('x', brakeSectionHeight / 2)
-      .attr('y', -(chartWidth + 30))
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -brakeSectionHeight / 2)
+      .attr('y', -40)
       .attr('text-anchor', 'middle')
       .text('Brake');
 
     root.append('g').attr('class', 'vertical-grid').call(xGrid);
+
+    // SECTOR MARKINGS
+    this.drawSectorMarkers(root, graphBottom);
 
     //
     // Speed line
@@ -507,6 +581,25 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .curve(d3.curveLinear)
       .x((d) => this.xScale(Number(d.d)))
       .y((d) => this.speedYScale(Number(d.speed)));
+
+    //
+    // Delta line
+    //
+
+    const deltaLine = d3
+      .line<{ d: number; delta: number }>()
+      .defined((d) => d.delta != null)
+      .x((d) => this.xScale(d.d))
+      .y((d) => this.deltaYScale(d.delta))
+      .curve(d3.curveLinear);
+
+    const deltaArea = d3
+      .area<{ d: number; delta: number }>()
+      .defined((d) => d.delta != null)
+      .x((d) => this.xScale(d.d))
+      .y0(() => this.deltaYScale(0))
+      .y1((d) => this.deltaYScale(d.delta))
+      .curve(d3.curveLinear);
 
     //
     // RPM line
@@ -569,6 +662,85 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('cx', this.xScale(Number(this.driverB.telemetry[0].d)))
         .attr('cy', this.speedYScale(Number(this.driverB.telemetry[0].speed)));
     }
+
+    //
+    // Delta legend
+    //
+
+    const legend = this.deltaGroup
+      .append('g')
+      .attr('transform', `translate(-70, ${deltaHeight * 0.5 - 22})`);
+
+    // legend
+    //   .append('rect')
+    //   .attr('width', 70)
+    //   .attr('height', 42)
+    //   .attr('rx', 6)
+    //   .attr('fill', '#000000')
+    //   .attr('stroke', '#5c5c5c')
+    //   .attr('stroke-width', 0.6)
+    //   .attr('opacity', 0.75);
+
+    legend
+      .append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -21) // vertical center of the box
+      .attr('y', 20) // distance from the box
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#bdbdbd')
+      .attr('font-size', 10)
+      .attr('font-weight', 600)
+      .attr('font-family', 'Formula1Bold')
+      .text('Ahead');
+
+    this.deltaGroup
+      .append('line')
+      .attr('x1', -45)
+      .attr('x2', chartWidth)
+      .attr('y1', this.deltaYScale(0))
+      .attr('y2', this.deltaYScale(0))
+      .attr('stroke', '#00e5d4')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4 4')
+      .attr('opacity', 0.8);
+
+    legend
+      .append('text')
+      .attr('x', 24)
+      .attr('y', 16)
+      .attr('fill', this.driverATheme.color)
+      .attr('font-size', 13)
+      .attr('font-family', 'Formula1Bold')
+      .text(`▲  ${this.driverA.driver}`);
+
+    legend
+      .append('text')
+      .attr('x', 24)
+      .attr('y', 35)
+      .attr('fill', this.driverBTheme?.color ?? '#fff')
+      .attr('font-size', 13)
+      .attr('font-family', 'Formula1Bold')
+      .text(`▼  ${this.driverB?.driver ?? ''}`);
+
+    //
+    // Delta graph
+    //
+
+    this.deltaGroup
+      .append('path')
+      .datum(deltaSeries)
+      .attr('fill', '#00e5d4')
+      .attr('fill-opacity', 0.25)
+      .attr('stroke', 'none')
+      .attr('d', deltaArea);
+
+    this.deltaGroup
+      .append('path')
+      .datum(deltaSeries)
+      .attr('fill', 'none')
+      .attr('stroke', '#00e5d4')
+      .attr('stroke-width', 2)
+      .attr('d', deltaLine);
 
     //
     // RPM Driver A
@@ -721,6 +893,56 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           .tickFormat((d) => `${d}`),
       );
   }
+
+  private buildDeltaSeries(): { d: number; delta: number }[] {
+    if (!this.driverB?.telemetry?.length) {
+      return [];
+    }
+
+    const telemetryA = this.driverA.telemetry;
+    const telemetryB = this.driverB.telemetry;
+
+    const result: { d: number; delta: number }[] = [];
+
+    let bIndex = 0;
+
+    for (const pointA of telemetryA) {
+      //
+      // Advance until B is just before A's distance.
+      //
+      while (
+        bIndex < telemetryB.length - 2 &&
+        telemetryB[bIndex + 1].d < pointA.d
+      ) {
+        bIndex++;
+      }
+
+      const before = telemetryB[bIndex];
+      const after = telemetryB[bIndex + 1];
+
+      if (!before || !after) {
+        continue;
+      }
+
+      const distanceSpan = after.d - before.d;
+
+      let interpolatedTime = before.t;
+
+      if (distanceSpan > 0) {
+        const ratio = (pointA.d - before.d) / distanceSpan;
+
+        interpolatedTime = before.t + ratio * (after.t - before.t);
+      }
+
+      result.push({
+        d: pointA.d,
+        delta: interpolatedTime - pointA.t,
+      });
+    }
+
+    return result;
+  }
+
   private updateMarkers(progress: number): void {
     const frameA = this.playbackService.interpolateTelemetry(
       this.driverA.telemetry,
@@ -774,6 +996,60 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           ?.attr('cx', this.xScale(frameB.sample.d))
           .attr('cy', this.brakeYScale(frameB.sample.brake));
       }
+    }
+  }
+
+  private drawSectorMarkers(
+    root: d3.Selection<SVGGElement, unknown, null, undefined>,
+    chartHeight: number,
+  ): void {
+    const boundaries = [
+      0,
+      ...this.sectorMarkers.map(
+        (marker) => marker.rd * this.driverA.maxDistance,
+      ),
+      this.driverA.maxDistance,
+    ];
+
+    const labels = ['S1', 'S2', 'S3'];
+
+    //
+    // Vertical divider lines
+    //
+    boundaries.slice(1, -1).forEach((distance) => {
+      const x = this.xScale(distance);
+
+      root
+        .append('line')
+        .attr('x1', x)
+        .attr('x2', x)
+        .attr('y1', 0)
+        .attr('y2', chartHeight)
+        .attr('stroke', '#7b7b7b')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '6 4')
+        .attr('opacity', 0.65);
+    });
+
+    //
+    // Sector labels
+    //
+    for (let i = 0; i < 3; i++) {
+      const start = this.xScale(boundaries[i]);
+      const end = this.xScale(boundaries[i + 1]);
+
+      const center = (start + end) / 2;
+
+      root
+        .append('text')
+        .attr('x', center)
+        .attr('y', 16)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#bdbdbd')
+        .attr('font-size', 13)
+        .attr('font-family', 'Formula1')
+        .attr('font-weight', 600)
+        .text(labels[i]);
     }
   }
 }
