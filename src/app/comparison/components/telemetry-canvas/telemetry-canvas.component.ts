@@ -59,6 +59,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   tooltipVisible = false;
 
   tooltipX = 0;
+  tooltipOnLeft = false;
 
   tooltip = {
     distance: 0,
@@ -305,7 +306,29 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .on('mousemove', (event: MouseEvent) => {
         const [mouseX, mouseY] = d3.pointer(event);
 
-        const distance = this.xScale.invert(mouseX - 50);
+        const chartX = mouseX - margin.left;
+
+        if (chartX < 0 || chartX > chartWidth) {
+          this.tooltipVisible = false;
+
+          this.hoverCursor.attr('opacity', 0);
+
+          this.hoverSpeedMarkerA.attr('opacity', 0);
+          this.hoverDeltaMarkerA.attr('opacity', 0);
+          this.hoverRpmMarkerA.attr('opacity', 0);
+          this.hoverThrottleMarkerA.attr('opacity', 0);
+          this.hoverBrakeMarkerA.attr('opacity', 0);
+
+          this.hoverSpeedMarkerB?.attr('opacity', 0);
+          this.hoverDeltaMarkerB?.attr('opacity', 0);
+          this.hoverRpmMarkerB?.attr('opacity', 0);
+          this.hoverThrottleMarkerB?.attr('opacity', 0);
+          this.hoverBrakeMarkerB?.attr('opacity', 0);
+
+          return;
+        }
+
+        const distance = this.xScale.invert(chartX);
         const hoverX = this.xScale(distance);
 
         this.hoverCursor
@@ -379,7 +402,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         this.tooltipVisible = true;
 
         const TOOLTIP_OFFSET = 26;
-        this.tooltipX = mouseX + TOOLTIP_OFFSET;
+        const TOOLTIP_WIDTH = 165; // approximate width of the metrics box
+
+        this.tooltipOnLeft =
+          mouseX + TOOLTIP_OFFSET + TOOLTIP_WIDTH >
+          this.chartSvgRef.nativeElement.clientWidth;
+
+        const EXTRA_GAP = 18;
+
+        this.tooltipX = this.tooltipOnLeft
+          ? mouseX - TOOLTIP_WIDTH - TOOLTIP_OFFSET - EXTRA_GAP
+          : mouseX + TOOLTIP_OFFSET + EXTRA_GAP;
 
         this.tooltip.distance = Math.round(sampleA.d);
 

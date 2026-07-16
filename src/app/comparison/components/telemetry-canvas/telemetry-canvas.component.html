@@ -6,6 +6,8 @@
       class="telemetry-tooltip speed"
       *ngIf="tooltipVisible"
       [style.left.px]="tooltipX"
+      [class.left-side]="tooltipOnLeft"
+      [class.visible]="tooltipVisible"
     >
       <div class="distance">{{ tooltip.distance }} m</div>
 
@@ -34,6 +36,8 @@
       class="telemetry-tooltip delta"
       *ngIf="tooltipVisible"
       [style.left.px]="tooltipX"
+      [class.left-side]="tooltipOnLeft"
+      [class.visible]="tooltipVisible"
     >
       <div class="distance">{{ tooltip.distance }} m</div>
 
@@ -65,6 +69,8 @@
       class="telemetry-tooltip rpm"
       *ngIf="tooltipVisible"
       [style.left.px]="tooltipX"
+      [class.left-side]="tooltipOnLeft"
+      [class.visible]="tooltipVisible"
     >
       <div class="distance">{{ tooltip.distance }} m</div>
 
@@ -89,6 +95,8 @@
       class="telemetry-tooltip throttle"
       *ngIf="tooltipVisible"
       [style.left.px]="tooltipX"
+      [class.left-side]="tooltipOnLeft"
+      [class.visible]="tooltipVisible"
     >
       <div class="distance">{{ tooltip.distance }} m</div>
 
@@ -117,6 +125,8 @@
       class="telemetry-tooltip brake"
       *ngIf="tooltipVisible"
       [style.left.px]="tooltipX"
+      [class.left-side]="tooltipOnLeft"
+      [class.visible]="tooltipVisible"
     >
       <div class="distance">{{ tooltip.distance }} m</div>
 
