@@ -384,10 +384,9 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
     // Driver A
     //
 
-    const frameA = this.playbackService.interpolateTelemetry(
-      this.driverATelemetry,
-      this.progress,
-    );
+    const playbackFrame = this.playbackService.currentFrame;
+
+    const frameA = playbackFrame?.driverA ?? null;
 
     const driverA = frameA
       ? {
@@ -402,18 +401,13 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
 
     let driverB: { x: number; y: number } | null = null;
 
-    if (this.driverBTelemetry?.length) {
-      const frameB = this.playbackService.interpolateTelemetry(
-        this.driverBTelemetry,
-        this.progress,
-      );
+    const frameB = playbackFrame?.driverB ?? null;
 
-      if (frameB) {
-        driverB = {
-          x: frameB.sample.x,
-          y: frameB.sample.y,
-        };
-      }
+    if (frameB) {
+      driverB = {
+        x: frameB.sample.x,
+        y: frameB.sample.y,
+      };
     }
 
     //

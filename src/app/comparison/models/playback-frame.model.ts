@@ -1,3 +1,28 @@
+export interface PlaybackSample {
+  rd: number;
+
+  t: number;
+
+  d: number;
+
+  x: number;
+  y: number;
+
+  speed: number;
+  rpm: number;
+
+  throttle: number;
+  brake: number;
+
+  gear: number;
+}
+
+export interface PlaybackDriverFrame {
+  sample: PlaybackSample;
+
+  elapsedTime: number;
+}
+
 export interface PlaybackFrame {
   /**
    * Normalized lap progress (0 -> 1)
@@ -6,36 +31,39 @@ export interface PlaybackFrame {
 
   /**
    * Previous telemetry sample.
+   *
+   * (Kept temporarily for backwards compatibility.)
    */
   previous: any;
 
   /**
    * Next telemetry sample.
+   *
+   * (Kept temporarily for backwards compatibility.)
    */
   next: any;
 
   /**
-   * Interpolation factor (0 -> 1)
+   * Interpolation factor.
+   *
+   * (Kept temporarily for backwards compatibility.)
    */
   factor: number;
 
   /**
-   * Interpolated telemetry values.
+   * Driver A playback frame.
    */
-  sample: {
-    rd: number;
+  driverA?: PlaybackDriverFrame;
 
-    d: number;
+  /**
+   * Driver B playback frame.
+   */
+  driverB?: PlaybackDriverFrame | null;
 
-    x: number;
-    y: number;
-
-    speed: number;
-    rpm: number;
-
-    throttle: number;
-    brake: number;
-
-    gear: number;
-  };
+  /**
+   * Legacy sample.
+   *
+   * This stays until every component has been migrated.
+   */
+  sample: PlaybackSample;
 }

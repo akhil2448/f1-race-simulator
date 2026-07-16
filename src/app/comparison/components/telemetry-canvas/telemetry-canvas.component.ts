@@ -338,16 +338,27 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           .attr('x2', hoverX)
           .attr('opacity', 1);
 
-        const sampleA = this.findClosestSample(
+        const frameA = this.playbackService.interpolateTelemetryByDistance(
           this.driverA.telemetry,
           distance,
         );
 
-        this.hoverService.setHoverProgress(sampleA.rd);
+        if (!frameA) {
+          return;
+        }
 
-        const sampleB = this.driverB
-          ? this.findClosestSample(this.driverB.telemetry, distance)
+        const sampleA = frameA.sample;
+
+        const frameB = this.driverB
+          ? this.playbackService.interpolateTelemetryByDistance(
+              this.driverB.telemetry,
+              distance,
+            )
           : null;
+
+        const sampleB = frameB?.sample ?? null;
+
+        this.hoverService.setHoverProgress(sampleA.rd);
 
         const deltaPoint = this.interpolateDelta(distance);
 
@@ -425,20 +436,24 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         this.tooltip.speed.a = Math.round(sampleA.speed);
         this.tooltip.rpm.a = Math.round(sampleA.rpm);
         this.tooltip.throttle.a = Math.round(sampleA.throttle);
-        this.tooltip.brake.a = sampleA.brake;
+        this.tooltip.brake.a = sampleA.brake > 0;
 
         if (sampleB) {
           this.tooltip.speed.b = Math.round(sampleB.speed);
           this.tooltip.rpm.b = Math.round(sampleB.rpm);
           this.tooltip.throttle.b = Math.round(sampleB.throttle);
-          this.tooltip.brake.b = sampleB.brake;
+          this.tooltip.brake.b = sampleB.brake > 0;
 
-          const delta = sampleB.t - sampleA.t;
+          const delta = deltaPoint.delta;
 
-          this.tooltip.delta.value = Math.abs(delta);
+          this.tooltip.delta.value = delta;
 
           this.tooltip.delta.leader =
-            delta >= 0 ? this.driverA.driver : this.driverB.driver;
+            delta > 0
+              ? this.driverA.driver
+              : delta < 0
+                ? this.driverB.driver
+                : '';
         }
       })
       .on('mouseleave', () => {
@@ -568,7 +583,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('rect')
       .attr('class', 'plot-background')
       .attr('x', 0)
-      .attr('y', speedHeight + rpmHeight + throttleSectionHeight)
+      .attr('y', speedHeight + deltaHeight + rpmHeight + throttleSectionHeight)
       .attr('width', chartWidth)
       .attr('height', GRAPH_GAP);
     //
@@ -1280,35 +1295,35 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Bring markers above playback/hover cursors
     //
 
-    this.speedMarkerA.raise();
-    this.speedMarkerB?.raise();
+    // this.speedMarkerA.raise();
+    // this.speedMarkerB?.raise();
 
-    this.deltaMarkerA.raise();
-    this.deltaMarkerB?.raise();
+    // this.deltaMarkerA.raise();
+    // this.deltaMarkerB?.raise();
 
-    this.rpmMarkerA.raise();
-    this.rpmMarkerB?.raise();
+    // this.rpmMarkerA.raise();
+    // this.rpmMarkerB?.raise();
 
-    this.throttleMarkerA.raise();
-    this.throttleMarkerB?.raise();
+    // this.throttleMarkerA.raise();
+    // this.throttleMarkerB?.raise();
 
-    this.brakeMarkerA.raise();
-    this.brakeMarkerB?.raise();
+    // this.brakeMarkerA.raise();
+    // this.brakeMarkerB?.raise();
 
-    this.hoverSpeedMarkerA.raise();
-    this.hoverSpeedMarkerB?.raise();
+    // this.hoverSpeedMarkerA.raise();
+    // this.hoverSpeedMarkerB?.raise();
 
-    this.hoverDeltaMarkerA.raise();
-    this.hoverDeltaMarkerB?.raise();
+    // this.hoverDeltaMarkerA.raise();
+    // this.hoverDeltaMarkerB?.raise();
 
-    this.hoverRpmMarkerA.raise();
-    this.hoverRpmMarkerB?.raise();
+    // this.hoverRpmMarkerA.raise();
+    // this.hoverRpmMarkerB?.raise();
 
-    this.hoverThrottleMarkerA.raise();
-    this.hoverThrottleMarkerB?.raise();
+    // this.hoverThrottleMarkerA.raise();
+    // this.hoverThrottleMarkerB?.raise();
 
-    this.hoverBrakeMarkerA.raise();
-    this.hoverBrakeMarkerB?.raise();
+    // this.hoverBrakeMarkerA.raise();
+    // this.hoverBrakeMarkerB?.raise();
 
     //
     // Shared bottom X axis
@@ -1326,49 +1341,26 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       );
   }
 
-  private buildDeltaSeries(): { d: number; delta: number }[] {
+  private buildDeltaSeries(): DeltaPoint[] {
     if (!this.driverB?.telemetry?.length) {
       return [];
     }
 
-    const telemetryA = this.driverA.telemetry;
-    const telemetryB = this.driverB.telemetry;
+    const result: DeltaPoint[] = [];
 
-    const result: { d: number; delta: number }[] = [];
+    for (const pointA of this.driverA.telemetry) {
+      const frameB = this.playbackService.interpolateTelemetryByDistance(
+        this.driverB.telemetry,
+        pointA.d,
+      );
 
-    let bIndex = 0;
-
-    for (const pointA of telemetryA) {
-      //
-      // Advance until B is just before A's distance.
-      //
-      while (
-        bIndex < telemetryB.length - 2 &&
-        telemetryB[bIndex + 1].d < pointA.d
-      ) {
-        bIndex++;
-      }
-
-      const before = telemetryB[bIndex];
-      const after = telemetryB[bIndex + 1];
-
-      if (!before || !after) {
+      if (!frameB) {
         continue;
-      }
-
-      const distanceSpan = after.d - before.d;
-
-      let interpolatedTime = before.t;
-
-      if (distanceSpan > 0) {
-        const ratio = (pointA.d - before.d) / distanceSpan;
-
-        interpolatedTime = before.t + ratio * (after.t - before.t);
       }
 
       result.push({
         d: pointA.d,
-        delta: interpolatedTime - pointA.t,
+        delta: frameB.sample.t - pointA.t,
       });
     }
 
@@ -1376,21 +1368,19 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   }
 
   private updateMarkers(progress: number): void {
-    const frameA = this.playbackService.interpolateTelemetry(
-      this.driverA.telemetry,
-      progress,
-    );
+    const playbackFrame = this.playbackService.currentFrame;
+
+    if (!playbackFrame) {
+      return;
+    }
+
+    const frameA = playbackFrame.driverA;
 
     if (!frameA) {
       return;
     }
 
-    const frameB = this.driverB?.telemetry?.length
-      ? this.playbackService.interpolateTelemetry(
-          this.driverB.telemetry,
-          progress,
-        )
-      : null;
+    const frameB = playbackFrame.driverB;
 
     const cursorX = this.xScale(frameA.sample.d);
 

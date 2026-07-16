@@ -10,7 +10,8 @@ export class LapPlaybackService {
   /**
    * Complete telemetry for the lap.
    */
-  private telemetry: any[] = [];
+  private driverATelemetry: any[] = [];
+  private driverBTelemetry: any[] = [];
 
   /**
    * Current lap progress (0 -> 1).
@@ -65,15 +66,24 @@ export class LapPlaybackService {
   /**
    * Load telemetry.
    */
-  loadLap(telemetry: any[], referenceLapTimeSeconds: number): void {
+  loadLap(
+    driverATelemetry: any[],
+    driverBTelemetry: any[] | null,
+    referenceLapTimeSeconds: number,
+  ): void {
     this.pause();
 
-    this.telemetry = telemetry ?? [];
+    this.driverATelemetry = driverATelemetry ?? [];
+    this.driverBTelemetry = driverBTelemetry ?? [];
     this.referenceLapTimeSeconds = referenceLapTimeSeconds;
 
-    console.log('Loaded telemetry samples:', this.telemetry.length);
+    console.log(
+      'Loaded telemetry:',
+      this.driverATelemetry.length,
+      this.driverBTelemetry.length,
+    );
 
-    if (this.telemetry.length === 0) {
+    if (this.driverATelemetry.length === 0) {
       this.currentProgressSubject.next(0);
       this.currentFrameSubject.next(null);
       return;
@@ -87,7 +97,7 @@ export class LapPlaybackService {
    * Play.
    */
   play(): void {
-    if (this.playingSubject.value || this.telemetry.length === 0) {
+    if (this.playingSubject.value || this.driverATelemetry.length === 0) {
       return;
     }
 
@@ -181,7 +191,7 @@ export class LapPlaybackService {
    * Seek using normalized lap progress.
    */
   seekProgress(progress: number): void {
-    if (this.telemetry.length === 0) {
+    if (this.driverATelemetry.length === 0) {
       return;
     }
 
@@ -215,6 +225,48 @@ export class LapPlaybackService {
     }
 
     return Math.min(low, telemetry.length - 1);
+  }
+
+  /**
+   * Builds an interpolated playback frame from two telemetry samples.
+   */
+  private buildInterpolatedFrame(
+    previous: any,
+    next: any,
+    factor: number,
+    progress: number,
+    distance: number,
+  ): PlaybackFrame {
+    return {
+      progress,
+
+      previous,
+      next,
+      factor,
+
+      sample: {
+        rd: progress,
+
+        t: previous.t + (next.t - previous.t) * factor,
+
+        d: distance,
+
+        x: previous.x + (next.x - previous.x) * factor,
+
+        y: previous.y + (next.y - previous.y) * factor,
+
+        speed: previous.speed + (next.speed - previous.speed) * factor,
+
+        rpm: previous.rpm + (next.rpm - previous.rpm) * factor,
+
+        throttle:
+          previous.throttle + (next.throttle - previous.throttle) * factor,
+
+        brake: previous.brake + (next.brake - previous.brake) * factor,
+
+        gear: factor < 0.5 ? previous.gear : next.gear,
+      },
+    };
   }
 
   /**
@@ -253,45 +305,138 @@ export class LapPlaybackService {
         ? 0
         : (progress - previousRd) / (nextRd - previousRd);
 
-    return {
-      progress,
+    const distance = previous.d + (next.d - previous.d) * factor;
+
+    return this.buildInterpolatedFrame(
       previous,
       next,
       factor,
+      progress,
+      distance,
+    );
+  }
 
-      sample: {
-        rd: progress,
+  /**
+   * Returns the index of the first telemetry sample
+   * whose distance >= requested distance.
+   *
+   * Binary search.
+   */
+  private findNextDistanceSampleIndex(
+    telemetry: any[],
+    distance: number,
+  ): number {
+    let low = 0;
+    let high = telemetry.length - 1;
 
-        d: previous.d + (next.d - previous.d) * factor,
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
 
-        x: previous.x + (next.x - previous.x) * factor,
+      const d = Number(telemetry[mid].d);
 
-        y: previous.y + (next.y - previous.y) * factor,
+      if (d < distance) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
 
-        speed: previous.speed + (next.speed - previous.speed) * factor,
+    return Math.min(low, telemetry.length - 1);
+  }
 
-        rpm: previous.rpm + (next.rpm - previous.rpm) * factor,
+  /**
+   * Interpolates telemetry at a given track distance.
+   */
+  public interpolateTelemetryByDistance(
+    telemetry: any[],
+    distance: number,
+  ): PlaybackFrame | null {
+    if (!telemetry?.length) {
+      return null;
+    }
 
-        throttle:
-          previous.throttle + (next.throttle - previous.throttle) * factor,
+    const nextIndex = this.findNextDistanceSampleIndex(telemetry, distance);
 
-        brake: previous.brake + (next.brake - previous.brake) * factor,
+    if (nextIndex <= 0) {
+      const sample = telemetry[0];
 
-        gear: factor < 0.5 ? previous.gear : next.gear,
-      },
-    };
+      return {
+        progress: sample.rd,
+        previous: sample,
+        next: sample,
+        factor: 0,
+        sample,
+      };
+    }
+
+    const previous = telemetry[nextIndex - 1];
+    const next = telemetry[nextIndex];
+
+    const previousDistance = Number(previous.d);
+    const nextDistance = Number(next.d);
+
+    const factor =
+      nextDistance === previousDistance
+        ? 0
+        : (distance - previousDistance) / (nextDistance - previousDistance);
+
+    const progress = previous.rd + (next.rd - previous.rd) * factor;
+
+    return this.buildInterpolatedFrame(
+      previous,
+      next,
+      factor,
+      progress,
+      distance,
+    );
   }
 
   /**
    * Creates one interpolated playback frame.
    */
   private publishFrame(): void {
-    this.currentFrameSubject.next(
-      this.interpolateTelemetry(
-        this.telemetry,
-        this.currentProgressSubject.value,
-      ),
-    );
+    const progress = this.currentProgressSubject.value;
+
+    //
+    // Driver A
+    //
+
+    const driverA = this.interpolateTelemetry(this.driverATelemetry, progress);
+
+    if (!driverA) {
+      this.currentFrameSubject.next(null);
+      return;
+    }
+
+    //
+    // Driver B
+    //
+
+    const driverB = this.driverBTelemetry.length
+      ? this.interpolateTelemetry(this.driverBTelemetry, progress)
+      : null;
+
+    this.currentFrameSubject.next({
+      progress,
+
+      previous: driverA.previous,
+      next: driverA.next,
+      factor: driverA.factor,
+
+      sample: driverA.sample,
+
+      driverA: {
+        sample: driverA.sample,
+        elapsedTime: driverA.sample.t,
+      },
+
+      driverB: driverB
+        ? {
+            sample: driverB.sample,
+            elapsedTime: driverB.sample.t,
+          }
+        : null,
+    });
   }
 
   /**
@@ -305,7 +450,7 @@ export class LapPlaybackService {
    * Sample count.
    */
   get sampleCount(): number {
-    return this.telemetry.length;
+    return this.driverATelemetry.length;
   }
 
   /**

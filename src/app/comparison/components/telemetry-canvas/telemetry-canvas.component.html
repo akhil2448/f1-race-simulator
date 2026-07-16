@@ -60,7 +60,8 @@
               : driverBTheme?.color
           "
         >
-          +{{ tooltip.delta.value | number: "1.3-3" }} sec
+          {{ tooltip.delta.value > 0 ? "+" : ""
+          }}{{ tooltip.delta.value | number: "1.3-3" }} s sec
         </span>
       </div>
     </div>

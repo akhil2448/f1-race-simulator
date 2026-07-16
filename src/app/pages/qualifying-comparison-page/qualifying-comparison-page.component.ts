@@ -60,7 +60,11 @@ export class QualifyingComparisonPageComponent implements OnInit {
       response.driverB?.lapTime ?? response.driverA.lapTime,
     );
 
-    this.playbackService.loadLap(response.driverA.telemetry, referenceLapTime);
+    this.playbackService.loadLap(
+      response.driverA.telemetry,
+      response.driverB?.telemetry ?? null,
+      referenceLapTime,
+    );
 
     this.stepForward();
 
@@ -113,9 +117,9 @@ export class QualifyingComparisonPageComponent implements OnInit {
     const driverA = this.comparison.driverA;
     const driverB = this.comparison.driverB;
 
-    const elapsedA = this.playbackService.currentProgress * driverA.lapTime;
+    const elapsedA = this.driverAElapsedTime;
 
-    const elapsedB = this.playbackService.currentProgress * driverB.lapTime;
+    const elapsedB = this.driverBElapsedTime;
 
     const sectorEndA =
       sector === 1
@@ -172,23 +176,11 @@ export class QualifyingComparisonPageComponent implements OnInit {
   }
 
   get driverAElapsedTime(): number {
-    if (!this.comparison) {
-      return 0;
-    }
-
-    return (
-      this.playbackService.currentProgress * this.comparison.driverA.lapTime
-    );
+    return this.playbackService.currentFrame?.driverA?.elapsedTime ?? 0;
   }
 
   get driverBElapsedTime(): number {
-    if (!this.comparison?.driverB) {
-      return 0;
-    }
-
-    return (
-      this.playbackService.currentProgress * this.comparison.driverB.lapTime
-    );
+    return this.playbackService.currentFrame?.driverB?.elapsedTime ?? 0;
   }
 
   get driverAGap(): number | null {
