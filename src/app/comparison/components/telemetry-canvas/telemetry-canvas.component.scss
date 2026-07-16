@@ -61,29 +61,27 @@ svg {
 .telemetry-tooltip {
   position: absolute;
 
-  pointer-events: none;
+  width: 110px;
+
+  padding: 8px 10px;
 
   background: #181818;
 
   border: 2px solid #00e5d4;
   border-radius: 8px;
 
-  padding: 6px 8px;
-
-  width: 102px;
-
   color: white;
 
   font-family: "Formula1";
-
   font-size: 8px;
 
+  pointer-events: none;
   z-index: 50;
 }
 
 .distance {
-  font-size: 10px;
-  margin-bottom: 5px;
+  font-size: 12px;
+  margin-bottom: 7px;
 }
 
 .row {
@@ -91,22 +89,19 @@ svg {
 
   justify-content: space-between;
 
-  gap: 5px;
+  align-items: center;
 
-  margin-bottom: 2px;
+  gap: 10px;
 
-  font-size: 8px;
+  margin-bottom: 4px;
 
-  line-height: 1.15;
+  line-height: 1.2;
+
+  font-size: 12px;
 }
 
 .driver {
-  font-family: "Formula1Bold";
-}
-
-.telemetry-tooltip {
-  position: absolute;
-  width: 115px;
+  font-family: "Formula1";
 }
 
 .telemetry-tooltip.speed {
@@ -114,17 +109,17 @@ svg {
 }
 
 .telemetry-tooltip.delta {
-  top: 225px;
+  top: 180px;
 }
 
 .telemetry-tooltip.rpm {
-  top: 300px;
+  top: 280px;
 }
 
 .telemetry-tooltip.throttle {
-  top: 385px;
+  top: 365px;
 }
 
 .telemetry-tooltip.brake {
-  top: 480px;
+  top: 455px;
 }
