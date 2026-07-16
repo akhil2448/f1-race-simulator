@@ -1,13 +1,17 @@
 import {
   Component,
+  DestroyRef,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   inject,
 } from '@angular/core';
 import { TrackMap } from '../../models/qualifying-comparison.model';
 import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
+import { TelemetryHoverService } from '../../services/telemetry-hover.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-comparison-track-map',
@@ -15,7 +19,7 @@ import { DriverTheme } from '../../models/comparison-theme.model';
   templateUrl: './comparison-track-map.component.html',
   styleUrl: './comparison-track-map.component.scss',
 })
-export class ComparisonTrackMapComponent implements OnChanges {
+export class ComparisonTrackMapComponent implements OnChanges, OnInit {
   @Input({ required: true })
   trackMap!: TrackMap;
 
@@ -37,6 +41,8 @@ export class ComparisonTrackMapComponent implements OnChanges {
   private readonly STACK_DISTANCE = 120;
 
   private playbackService = inject(LapPlaybackService);
+  private hoverService = inject(TelemetryHoverService);
+  private destroyRef = inject(DestroyRef);
 
   private cachedDominanceMap:
     | {
@@ -47,6 +53,31 @@ export class ComparisonTrackMapComponent implements OnChanges {
         winner: 'A' | 'B' | 'N';
       }[]
     | null = null;
+
+  hoverPosition: { x: number; y: number } | null = null;
+
+  ngOnInit(): void {
+    this.hoverService.hoverProgress$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((progress) => {
+        if (progress == null || !this.driverATelemetry?.length) {
+          this.hoverPosition = null;
+          return;
+        }
+
+        const frame = this.playbackService.interpolateTelemetry(
+          this.driverATelemetry,
+          progress,
+        );
+
+        this.hoverPosition = frame
+          ? {
+              x: frame.sample.x,
+              y: frame.sample.y,
+            }
+          : null;
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['driverATelemetry'] || changes['driverBTelemetry']) {

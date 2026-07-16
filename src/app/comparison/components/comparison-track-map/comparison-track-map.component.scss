@@ -68,6 +68,37 @@
 
 .driver-dot {
   transition: fill 0.2s linear;
+
+  stroke: #111;
+  stroke-width: 10;
+}
+
+.driver-dot-halo {
+  fill: white;
+}
+
+.hover-ring {
+  fill: none;
+
+  stroke: white;
+
+  stroke-width: 80;
+
+  opacity: 0.35;
+
+  transform-box: fill-box;
+
+  transform-origin: center;
+
+  animation: hoverPulse 1s ease-in-out infinite;
+}
+
+.hover-dot {
+  fill: white;
+
+  stroke: #111;
+
+  stroke-width: 20;
 }
 
 .corner-circle {
@@ -94,4 +125,21 @@
   user-select: none;
 
   pointer-events: none;
+}
+
+@keyframes hoverPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: scale(1.25);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
 }

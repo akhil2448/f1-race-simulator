@@ -33,29 +33,56 @@
     [attr.y2]="startFinishLine.y2"
   />
 
+  @if (hoverPosition; as hover) {
+    <!-- Pulse ring -->
+    <circle
+      class="hover-ring"
+      [attr.cx]="hover.x"
+      [attr.cy]="hover.y"
+      r="320"
+    />
+
+    <!-- Solid center -->
+    <circle class="hover-dot" [attr.cx]="hover.x" [attr.cy]="hover.y" r="220" />
+  }
+
   @let positions = displayPositions;
 
   @if (positions.driverA; as driverA) {
+    <!-- White halo -->
+    <circle
+      class="driver-dot-halo"
+      [attr.cx]="driverA.x"
+      [attr.cy]="driverA.y"
+      r="250"
+    />
+
+    <!-- Driver -->
     <circle
       class="driver-dot"
       [attr.cx]="driverA.x"
       [attr.cy]="driverA.y"
       [attr.fill]="driverATheme.color"
-      stroke="white"
-      stroke-width="20"
-      r="220"
+      r="185"
     />
   }
 
   @if (positions.driverB; as driverB) {
+    <!-- White halo -->
+    <circle
+      class="driver-dot-halo"
+      [attr.cx]="driverB.x"
+      [attr.cy]="driverB.y"
+      r="300"
+    />
+
+    <!-- Driver -->
     <circle
       class="driver-dot"
       [attr.cx]="driverB.x"
       [attr.cy]="driverB.y"
       [attr.fill]="driverBTheme?.color"
-      stroke="black"
-      stroke-width="20"
-      r="220"
+      r="170"
     />
   }
 

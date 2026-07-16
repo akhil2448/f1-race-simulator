@@ -15,6 +15,7 @@ import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
 import { SectorMarker } from '../../models/qualifying-comparison.model';
 import { CommonModule } from '@angular/common';
+import { TelemetryHoverService } from '../../services/telemetry-hover.service';
 
 interface DeltaPoint {
   d: number;
@@ -31,6 +32,7 @@ interface DeltaPoint {
 })
 export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   private playbackService = inject(LapPlaybackService);
+  private hoverService = inject(TelemetryHoverService);
 
   @Input({ required: true })
   driverA: any;
@@ -341,6 +343,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           distance,
         );
 
+        this.hoverService.setHoverProgress(sampleA.rd);
+
         const sampleB = this.driverB
           ? this.findClosestSample(this.driverB.telemetry, distance)
           : null;
@@ -439,6 +443,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       })
       .on('mouseleave', () => {
         this.tooltipVisible = false;
+        this.hoverService.setHoverProgress(null);
         this.hoverCursor.attr('opacity', 0);
         this.hoverSpeedMarkerA.attr('opacity', 0);
         this.hoverDeltaMarkerA.attr('opacity', 0);
