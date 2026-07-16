@@ -13,6 +13,18 @@
   <polyline class="track sector2" [attr.points]="sector2Polyline" />
   <polyline class="track sector3" [attr.points]="sector3Polyline" />
 
+  <path
+    class="track-dominance"
+    [attr.d]="driverADominancePath"
+    [attr.stroke]="driverATheme.color"
+  />
+
+  <path
+    class="track-dominance"
+    [attr.d]="driverBDominancePath"
+    [attr.stroke]="driverBTheme?.color"
+  />
+
   <line
     class="start-finish"
     [attr.x1]="startFinishLine.x1"

@@ -953,7 +953,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     legend
       .append('text')
       .attr('x', 24)
-      .attr('y', 16)
+      .attr('y', 14)
       .attr('fill', this.driverATheme.color)
       .attr('font-size', 13)
       .attr('font-family', 'Formula1Bold')
@@ -962,7 +962,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     legend
       .append('text')
       .attr('x', 24)
-      .attr('y', 35)
+      .attr('y', 39)
       .attr('fill', this.driverBTheme?.color ?? '#fff')
       .attr('font-size', 13)
       .attr('font-family', 'Formula1Bold')

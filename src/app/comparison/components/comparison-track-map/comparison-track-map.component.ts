@@ -1,4 +1,10 @@
-import { Component, Input, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { TrackMap } from '../../models/qualifying-comparison.model';
 import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
@@ -9,7 +15,7 @@ import { DriverTheme } from '../../models/comparison-theme.model';
   templateUrl: './comparison-track-map.component.html',
   styleUrl: './comparison-track-map.component.scss',
 })
-export class ComparisonTrackMapComponent {
+export class ComparisonTrackMapComponent implements OnChanges {
   @Input({ required: true })
   trackMap!: TrackMap;
 
@@ -31,6 +37,22 @@ export class ComparisonTrackMapComponent {
   private readonly STACK_DISTANCE = 120;
 
   private playbackService = inject(LapPlaybackService);
+
+  private cachedDominanceMap:
+    | {
+        x: number;
+        y: number;
+        delta: number;
+        gain: number;
+        winner: 'A' | 'B' | 'N';
+      }[]
+    | null = null;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['driverATelemetry'] || changes['driverBTelemetry']) {
+      this.cachedDominanceMap = null;
+    }
+  }
 
   get viewBox(): string {
     const b = this.trackMap.bounds;
@@ -60,6 +82,157 @@ export class ComparisonTrackMapComponent {
 
   get sector3Polyline(): string {
     return this.trackMap.sector3.map((p) => `${p.x},${p.y}`).join(' ');
+  }
+
+  private buildDominanceMap(): {
+    x: number;
+    y: number;
+    delta: number;
+    gain: number;
+    winner: 'A' | 'B' | 'N';
+  }[] {
+    if (!this.driverBTelemetry?.length) {
+      return [];
+    }
+
+    const telemetryA = this.driverATelemetry;
+    const telemetryB = this.driverBTelemetry;
+
+    const result: {
+      x: number;
+      y: number;
+      delta: number;
+      gain: number;
+      winner: 'A' | 'B' | 'N';
+    }[] = [];
+
+    let bIndex = 0;
+
+    //
+    // Build exactly like your delta graph
+    //
+    for (const pointA of telemetryA) {
+      while (
+        bIndex < telemetryB.length - 2 &&
+        telemetryB[bIndex + 1].d < pointA.d
+      ) {
+        bIndex++;
+      }
+
+      const before = telemetryB[bIndex];
+      const after = telemetryB[bIndex + 1];
+
+      if (!before || !after) {
+        continue;
+      }
+
+      const span = after.d - before.d;
+
+      let interpolatedTime = before.t;
+
+      if (span > 0) {
+        const ratio = (pointA.d - before.d) / span;
+
+        interpolatedTime = before.t + ratio * (after.t - before.t);
+      }
+
+      result.push({
+        x: pointA.x,
+        y: pointA.y,
+        delta: interpolatedTime - pointA.t,
+        gain: 0,
+        winner: 'N',
+      });
+    }
+
+    //
+    // Compute gain from neighbouring delta points
+    //
+    const LOOKAHEAD_METERS = 20;
+
+    const EPSILON = 0.0015;
+
+    for (let i = 0; i < result.length; i++) {
+      let lookAheadIndex = i;
+
+      while (
+        lookAheadIndex < result.length - 1 &&
+        this.driverATelemetry[lookAheadIndex].d <
+          this.driverATelemetry[i].d + LOOKAHEAD_METERS
+      ) {
+        lookAheadIndex++;
+      }
+
+      const gain = result[lookAheadIndex].delta - result[i].delta;
+
+      result[i].gain = gain;
+
+      result[i].winner = gain > EPSILON ? 'A' : gain < -EPSILON ? 'B' : 'N';
+    }
+
+    let previous: 'A' | 'B' = 'A';
+
+    for (const point of result) {
+      if (point.winner === 'N') {
+        point.winner = previous;
+      } else {
+        previous = point.winner;
+      }
+    }
+
+    return result;
+  }
+
+  private get dominanceMap() {
+    if (!this.cachedDominanceMap) {
+      this.cachedDominanceMap = this.buildDominanceMap();
+    }
+
+    return this.cachedDominanceMap;
+  }
+
+  get driverADominancePath(): string {
+    const commands: string[] = [];
+
+    let drawing = false;
+
+    for (const p of this.dominanceMap) {
+      if (p.winner === 'A') {
+        commands.push(`${drawing ? 'L' : 'M'} ${p.x} ${p.y}`);
+
+        drawing = true;
+      } else {
+        if (drawing) {
+          commands.push(`L ${p.x} ${p.y}`);
+        }
+
+        drawing = false;
+      }
+    }
+
+    return commands.join(' ');
+  }
+
+  get driverBDominancePath(): string {
+    const commands: string[] = [];
+
+    let drawing = false;
+
+    for (const p of this.dominanceMap) {
+      if (p.winner === 'B') {
+        commands.push(`${drawing ? 'L' : 'M'} ${p.x} ${p.y}`);
+
+        drawing = true;
+      } else {
+        if (drawing) {
+          commands.push(`L ${p.x} ${p.y}`);
+        }
+
+        drawing = false;
+      }
+    }
+
+    return commands.join(' ');
   }
 
   get startFinishMarkerX(): number {
