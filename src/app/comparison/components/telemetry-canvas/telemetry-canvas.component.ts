@@ -14,6 +14,7 @@ import * as d3 from 'd3';
 import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
 import { SectorMarker } from '../../models/qualifying-comparison.model';
+import { CommonModule } from '@angular/common';
 
 interface DeltaPoint {
   d: number;
@@ -23,6 +24,7 @@ interface DeltaPoint {
 @Component({
   selector: 'app-telemetry-canvas',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './telemetry-canvas.component.html',
   styleUrl: './telemetry-canvas.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -54,6 +56,39 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   @ViewChild('chartSvg')
   chartSvgRef!: ElementRef<SVGSVGElement>;
 
+  tooltipVisible = false;
+
+  tooltipX = 0;
+
+  tooltip = {
+    distance: 0,
+
+    speed: {
+      a: 0,
+      b: 0,
+    },
+
+    delta: {
+      value: 0,
+      leader: '',
+    },
+
+    rpm: {
+      a: 0,
+      b: 0,
+    },
+
+    throttle: {
+      a: 0,
+      b: 0,
+    },
+
+    brake: {
+      a: false,
+      b: false,
+    },
+  };
+
   private speedGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
   private rpmGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
   private throttleGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
@@ -67,6 +102,20 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     undefined
   >;
   private speedMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private deltaMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private deltaMarkerB?: d3.Selection<
     SVGCircleElement,
     unknown,
     null,
@@ -109,12 +158,86 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     undefined
   >;
 
+  private hoverCursor!: d3.Selection<SVGLineElement, unknown, null, undefined>;
+
+  private hoverSpeedMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverSpeedMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverDeltaMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverDeltaMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverRpmMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverRpmMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverThrottleMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverThrottleMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverBrakeMarkerA!: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
+  private hoverBrakeMarkerB?: d3.Selection<
+    SVGCircleElement,
+    unknown,
+    null,
+    undefined
+  >;
+
   private xScale!: d3.ScaleLinear<number, number>;
   private speedYScale!: d3.ScaleLinear<number, number>;
   private deltaYScale!: d3.ScaleLinear<number, number>;
   private rpmYScale!: d3.ScaleLinear<number, number>;
   private throttleYScale!: d3.ScaleLinear<number, number>;
   private brakeYScale!: d3.ScaleLinear<number, number>;
+
+  private deltaSeries: DeltaPoint[] = [];
 
   ngAfterViewInit(): void {
     this.render();
@@ -142,8 +265,10 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const driverAColor = this.driverATheme.color;
     const driverBColor = this.driverBTheme?.color ?? '#FFFFFF';
 
-    const deltaSeries = this.buildDeltaSeries();
-    console.log(deltaSeries);
+    this.deltaSeries = this.buildDeltaSeries();
+
+    const deltaSeries = this.deltaSeries;
+    // console.log(deltaSeries);
 
     const SPEED_TICK = 25;
 
@@ -173,6 +298,127 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const root = svg
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const cursorLayer = root.append('g');
+
+    svg
+      .on('mousemove', (event: MouseEvent) => {
+        const [mouseX, mouseY] = d3.pointer(event);
+
+        const distance = this.xScale.invert(mouseX - 50);
+        const hoverX = this.xScale(distance);
+
+        this.hoverCursor
+          .attr('x1', hoverX)
+          .attr('x2', hoverX)
+          .attr('opacity', 1);
+
+        const sampleA = this.findClosestSample(
+          this.driverA.telemetry,
+          distance,
+        );
+
+        const sampleB = this.driverB
+          ? this.findClosestSample(this.driverB.telemetry, distance)
+          : null;
+
+        const deltaPoint = this.interpolateDelta(distance);
+
+        this.hoverSpeedMarkerA
+          .attr('cx', this.xScale(sampleA.d))
+          .attr('cy', this.speedYScale(sampleA.speed))
+          .attr('opacity', 1);
+
+        this.hoverRpmMarkerA
+          .attr('cx', this.xScale(sampleA.d))
+          .attr('cy', this.rpmYScale(sampleA.rpm))
+          .attr('opacity', 1);
+
+        this.hoverThrottleMarkerA
+          .attr('cx', this.xScale(sampleA.d))
+          .attr('cy', this.throttleYScale(sampleA.throttle))
+          .attr('opacity', 1);
+
+        this.hoverBrakeMarkerA
+          .attr('cx', this.xScale(sampleA.d))
+          .attr('cy', this.brakeYScale(sampleA.brake))
+          .attr('opacity', 1);
+
+        this.hoverDeltaMarkerA
+          .attr('cx', this.xScale(deltaPoint.d))
+          .attr('cy', this.deltaYScale(deltaPoint.delta))
+          .attr('opacity', 1);
+
+        if (sampleB) {
+          this.hoverSpeedMarkerB
+            ?.attr('cx', this.xScale(sampleB.d))
+            .attr('cy', this.speedYScale(sampleB.speed))
+            .attr('opacity', 1);
+
+          this.hoverRpmMarkerB
+            ?.attr('cx', this.xScale(sampleB.d))
+            .attr('cy', this.rpmYScale(sampleB.rpm))
+            .attr('opacity', 1);
+
+          this.hoverThrottleMarkerB
+            ?.attr('cx', this.xScale(sampleB.d))
+            .attr('cy', this.throttleYScale(sampleB.throttle))
+            .attr('opacity', 1);
+
+          this.hoverBrakeMarkerB
+            ?.attr('cx', this.xScale(sampleB.d))
+            .attr('cy', this.brakeYScale(sampleB.brake))
+            .attr('opacity', 1);
+
+          this.hoverDeltaMarkerB
+            ?.attr('cx', this.xScale(deltaPoint.d))
+            .attr('cy', this.deltaYScale(0))
+            .attr('opacity', 1);
+        }
+
+        this.tooltipVisible = true;
+
+        const TOOLTIP_OFFSET = 26;
+        this.tooltipX = mouseX + TOOLTIP_OFFSET;
+
+        this.tooltip.distance = Math.round(sampleA.d);
+
+        this.tooltip.distance = Math.round(sampleA.d);
+
+        this.tooltip.speed.a = Math.round(sampleA.speed);
+        this.tooltip.rpm.a = Math.round(sampleA.rpm);
+        this.tooltip.throttle.a = Math.round(sampleA.throttle);
+        this.tooltip.brake.a = sampleA.brake;
+
+        if (sampleB) {
+          this.tooltip.speed.b = Math.round(sampleB.speed);
+          this.tooltip.rpm.b = Math.round(sampleB.rpm);
+          this.tooltip.throttle.b = Math.round(sampleB.throttle);
+          this.tooltip.brake.b = sampleB.brake;
+
+          const delta = sampleB.t - sampleA.t;
+
+          this.tooltip.delta.value = Math.abs(delta);
+
+          this.tooltip.delta.leader =
+            delta >= 0 ? this.driverA.driver : this.driverB.driver;
+        }
+      })
+      .on('mouseleave', () => {
+        this.tooltipVisible = false;
+        this.hoverCursor.attr('opacity', 0);
+        this.hoverSpeedMarkerA.attr('opacity', 0);
+        this.hoverDeltaMarkerA.attr('opacity', 0);
+        this.hoverRpmMarkerA.attr('opacity', 0);
+        this.hoverThrottleMarkerA.attr('opacity', 0);
+        this.hoverBrakeMarkerA.attr('opacity', 0);
+
+        this.hoverSpeedMarkerB?.attr('opacity', 0);
+        this.hoverDeltaMarkerB?.attr('opacity', 0);
+        this.hoverRpmMarkerB?.attr('opacity', 0);
+        this.hoverThrottleMarkerB?.attr('opacity', 0);
+        this.hoverBrakeMarkerB?.attr('opacity', 0);
+      });
 
     //
     // Section heights
@@ -743,6 +989,26 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('d', deltaLine);
 
     //
+    // Delta playback markers
+    //
+
+    this.deltaMarkerA = this.deltaGroup
+      .append('circle')
+      .attr('r', 4)
+      .attr('fill', this.driverATheme.color)
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1.5);
+
+    if (this.driverB?.telemetry?.length) {
+      this.deltaMarkerB = this.deltaGroup
+        .append('circle')
+        .attr('r', 4)
+        .attr('fill', this.driverBTheme?.color ?? '#fff')
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1.5);
+    }
+
+    //
     // RPM Driver A
     //
 
@@ -879,6 +1145,134 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .style('pointer-events', 'none');
 
     //
+    // Hover cursor
+    //
+
+    this.hoverCursor = root
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', graphBottom)
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 1)
+      .attr('opacity', 0)
+      .style('pointer-events', 'none');
+
+    this.hoverSpeedMarkerA = this.speedGroup
+      .append('circle')
+      .attr('r', 5)
+      .attr('fill', driverAColor)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2)
+      .attr('opacity', 0);
+
+    if (this.driverB?.telemetry?.length) {
+      this.hoverSpeedMarkerB = this.speedGroup
+        .append('circle')
+        .attr('r', 5)
+        .attr('fill', driverBColor)
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2)
+        .attr('opacity', 0);
+    }
+
+    //
+    // Hover Delta markers
+    //
+
+    this.hoverDeltaMarkerA = this.createHoverMarker(
+      this.deltaGroup,
+      this.driverATheme.color,
+    );
+
+    if (this.driverB?.telemetry?.length) {
+      this.hoverDeltaMarkerB = this.createHoverMarker(
+        this.deltaGroup,
+        this.driverBTheme?.color ?? '#fff',
+      );
+    }
+
+    //
+    // Hover RPM markers
+    //
+
+    this.hoverRpmMarkerA = this.createHoverMarker(this.rpmGroup, driverAColor);
+
+    if (this.driverB?.telemetry?.length) {
+      this.hoverRpmMarkerB = this.createHoverMarker(
+        this.rpmGroup,
+        driverBColor,
+      );
+    }
+
+    //
+    // Hover Throttle markers
+    //
+
+    this.hoverThrottleMarkerA = this.createHoverMarker(
+      throttlePlot,
+      driverAColor,
+    );
+
+    if (this.driverB?.telemetry?.length) {
+      this.hoverThrottleMarkerB = this.createHoverMarker(
+        throttlePlot,
+        driverBColor,
+      );
+    }
+
+    //
+    // Hover Brake markers
+    //
+
+    this.hoverBrakeMarkerA = this.createHoverMarker(
+      this.brakeGroup,
+      driverAColor,
+    );
+
+    if (this.driverB?.telemetry?.length) {
+      this.hoverBrakeMarkerB = this.createHoverMarker(
+        this.brakeGroup,
+        driverBColor,
+      );
+    }
+
+    //
+    // Bring markers above playback/hover cursors
+    //
+
+    this.speedMarkerA.raise();
+    this.speedMarkerB?.raise();
+
+    this.deltaMarkerA.raise();
+    this.deltaMarkerB?.raise();
+
+    this.rpmMarkerA.raise();
+    this.rpmMarkerB?.raise();
+
+    this.throttleMarkerA.raise();
+    this.throttleMarkerB?.raise();
+
+    this.brakeMarkerA.raise();
+    this.brakeMarkerB?.raise();
+
+    this.hoverSpeedMarkerA.raise();
+    this.hoverSpeedMarkerB?.raise();
+
+    this.hoverDeltaMarkerA.raise();
+    this.hoverDeltaMarkerB?.raise();
+
+    this.hoverRpmMarkerA.raise();
+    this.hoverRpmMarkerB?.raise();
+
+    this.hoverThrottleMarkerA.raise();
+    this.hoverThrottleMarkerB?.raise();
+
+    this.hoverBrakeMarkerA.raise();
+    this.hoverBrakeMarkerB?.raise();
+
+    //
     // Shared bottom X axis
     //
 
@@ -953,6 +1347,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       return;
     }
 
+    const frameB = this.driverB?.telemetry?.length
+      ? this.playbackService.interpolateTelemetry(
+          this.driverB.telemetry,
+          progress,
+        )
+      : null;
+
     const cursorX = this.xScale(frameA.sample.d);
 
     this.playbackCursor.attr('x1', cursorX).attr('x2', cursorX);
@@ -973,12 +1374,21 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('cx', this.xScale(frameA.sample.d))
       .attr('cy', this.brakeYScale(frameA.sample.brake));
 
-    if (this.driverB?.telemetry?.length && this.speedMarkerB) {
-      const frameB = this.playbackService.interpolateTelemetry(
-        this.driverB.telemetry,
-        progress,
-      );
+    //
+    // Delta playback marker
+    //
 
+    const deltaPoint = this.interpolateDelta(frameA.sample.d);
+
+    this.deltaMarkerA
+      .attr('cx', this.xScale(deltaPoint.d))
+      .attr('cy', this.deltaYScale(deltaPoint.delta));
+
+    this.deltaMarkerB
+      ?.attr('cx', this.xScale(deltaPoint.d))
+      .attr('cy', this.deltaYScale(0));
+
+    if (this.driverB?.telemetry?.length && this.speedMarkerB) {
       if (frameB) {
         this.speedMarkerB
           .attr('cx', this.xScale(frameB.sample.d))
@@ -1051,5 +1461,66 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('font-weight', 600)
         .text(labels[i]);
     }
+  }
+
+  private findClosestSample(data: any[], distance: number) {
+    let best = data[0];
+
+    let bestDiff = Math.abs(best.d - distance);
+
+    for (const sample of data) {
+      const diff = Math.abs(sample.d - distance);
+
+      if (diff < bestDiff) {
+        best = sample;
+
+        bestDiff = diff;
+      }
+    }
+
+    return best;
+  }
+
+  private interpolateDelta(distance: number): DeltaPoint {
+    const data = this.deltaSeries;
+
+    let index = 0;
+
+    while (index < data.length - 2 && data[index + 1].d < distance) {
+      index++;
+    }
+
+    const before = data[index];
+    const after = data[index + 1];
+
+    if (!before || !after) {
+      return before ?? data[data.length - 1];
+    }
+
+    const span = after.d - before.d;
+
+    if (span <= 0) {
+      return before;
+    }
+
+    const ratio = (distance - before.d) / span;
+
+    return {
+      d: distance,
+      delta: before.delta + ratio * (after.delta - before.delta),
+    };
+  }
+
+  private createHoverMarker(
+    group: d3.Selection<SVGGElement, unknown, null, undefined>,
+    color: string,
+  ) {
+    return group
+      .append('circle')
+      .attr('r', 5)
+      .attr('fill', color)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2)
+      .attr('opacity', 0);
   }
 }

@@ -1,1 +1,127 @@
-<svg #chartSvg></svg>
+<div class="telemetry-wrapper">
+  <svg #chartSvg></svg>
+
+  @if (tooltipVisible) {
+    <div
+      class="telemetry-tooltip speed"
+      *ngIf="tooltipVisible"
+      [style.left.px]="tooltipX"
+    >
+      <div>{{ tooltip.distance }} m</div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverATheme.color">
+          {{ driverA.driver }}
+        </span>
+
+        <span [style.color]="driverATheme.color"
+          >{{ tooltip.speed.a }} km/h</span
+        >
+      </div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverBTheme?.color">
+          {{ driverB.driver }}
+        </span>
+
+        <span [style.color]="driverBTheme?.color"
+          >{{ tooltip.speed.b }} km/h</span
+        >
+      </div>
+    </div>
+
+    <div
+      class="telemetry-tooltip delta"
+      *ngIf="tooltipVisible"
+      [style.left.px]="tooltipX"
+    >
+      <div>{{ tooltip.distance }} m</div>
+
+      <div>
+        {{ tooltip.delta.leader }}
+        ahead :
+        {{ tooltip.delta.value | number: "1.3-3" }} s
+      </div>
+    </div>
+
+    <div
+      class="telemetry-tooltip rpm"
+      *ngIf="tooltipVisible"
+      [style.left.px]="tooltipX"
+    >
+      <div>{{ tooltip.distance }} m</div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverATheme.color">
+          {{ driverA.driver }}
+        </span>
+
+        <span [style.color]="driverATheme.color">{{ tooltip.rpm.a }}</span>
+      </div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverBTheme?.color">
+          {{ driverB.driver }}
+        </span>
+
+        <span [style.color]="driverBTheme?.color">{{ tooltip.rpm.b }}</span>
+      </div>
+    </div>
+
+    <div
+      class="telemetry-tooltip throttle"
+      *ngIf="tooltipVisible"
+      [style.left.px]="tooltipX"
+    >
+      <div>{{ tooltip.distance }} m</div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverATheme.color">
+          {{ driverA.driver }}
+        </span>
+
+        <span [style.color]="driverATheme.color"
+          >{{ tooltip.throttle.a }}%</span
+        >
+      </div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverBTheme?.color">
+          {{ driverB.driver }}
+        </span>
+
+        <span [style.color]="driverBTheme?.color"
+          >{{ tooltip.throttle.b }}%</span
+        >
+      </div>
+    </div>
+
+    <div
+      class="telemetry-tooltip brake"
+      *ngIf="tooltipVisible"
+      [style.left.px]="tooltipX"
+    >
+      <div>{{ tooltip.distance }} m</div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverATheme.color">
+          {{ driverA.driver }}
+        </span>
+
+        <span [style.color]="driverATheme.color">{{
+          tooltip.brake.a ? "ON" : "OFF"
+        }}</span>
+      </div>
+
+      <div class="row">
+        <span class="driver" [style.color]="driverBTheme?.color">
+          {{ driverA.driver }}
+        </span>
+
+        <span [style.color]="driverBTheme?.color">
+          {{ tooltip.brake.b ? "ON" : "OFF" }}</span
+        >
+      </div>
+    </div>
+  }
+</div>
