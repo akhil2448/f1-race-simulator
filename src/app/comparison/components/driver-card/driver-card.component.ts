@@ -42,6 +42,17 @@ export class DriverCardComponent {
   }
 
   get currentSector(): 1 | 2 | 3 {
+    if (
+      this.elapsedTime > this.driver.sector1 - 0.05 &&
+      this.elapsedTime < this.driver.sector1 + 0.05
+    ) {
+      // console.log({
+      //   elapsedTime: this.elapsedTime,
+      //   sector1: this.driver.sector1,
+      //   progress: this.progress,
+      // });
+    }
+
     if (this.elapsedTime < this.driver.sector1) {
       return 1;
     }
@@ -54,6 +65,24 @@ export class DriverCardComponent {
   }
 
   get sector1Display(): string {
+    if (Math.abs(this.elapsedTime - this.driver.sector1) < 0.1) {
+      // console.log({
+      //   elapsedTime: this.elapsedTime,
+      //   sector1: this.driver.sector1,
+      //   currentSector: this.currentSector,
+      //   sector1Display:
+      //     this.currentSector === 1
+      //       ? this.formatSector(this.elapsedTime)
+      //       : this.formatSector(this.driver.sector1),
+      //   sector2Display:
+      //     this.currentSector === 1
+      //       ? '--.---'
+      //       : this.currentSector === 2
+      //         ? this.formatSector(this.elapsedTime - this.driver.sector1)
+      //         : this.formatSector(this.driver.sector2),
+      // });
+    }
+
     if (this.sector1?.text !== null) {
       return this.sector1.text!;
     }
@@ -64,6 +93,18 @@ export class DriverCardComponent {
 
     return this.formatSector(this.driver.sector1);
   }
+
+  // get sector1Display(): string {
+  //   if (this.sector1?.text !== null) {
+  //     return this.sector1.text!;
+  //   }
+
+  //   if (this.currentSector === 1) {
+  //     return this.formatSector(this.elapsedTime);
+  //   }
+
+  //   return this.formatSector(this.driver.sector1);
+  // }
 
   get sector2Display(): string {
     if (this.sector2?.text !== null) {

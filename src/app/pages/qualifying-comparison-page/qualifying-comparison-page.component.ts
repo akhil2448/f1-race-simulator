@@ -75,7 +75,7 @@ export class QualifyingComparisonPageComponent implements OnInit {
         return;
       }
 
-      console.log(frame);
+      // console.log(frame);
     });
   }
 

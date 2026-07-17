@@ -77,11 +77,16 @@ export class LapPlaybackService {
     this.driverBTelemetry = driverBTelemetry ?? [];
     this.referenceLapTimeSeconds = referenceLapTimeSeconds;
 
-    console.log(
-      'Loaded telemetry:',
-      this.driverATelemetry.length,
-      this.driverBTelemetry.length,
-    );
+    if (this.driverATelemetry.length > 0) {
+      const last = this.driverATelemetry[this.driverATelemetry.length - 1];
+
+      console.log({
+        referenceLapTime: this.referenceLapTimeSeconds,
+        telemetryLastTime: last.t,
+        telemetryLastRd: last.rd,
+        telemetryLastDistance: last.d,
+      });
+    }
 
     if (this.driverATelemetry.length === 0) {
       this.currentProgressSubject.next(0);
@@ -297,6 +302,25 @@ export class LapPlaybackService {
     const previous = telemetry[nextIndex - 1];
     const next = telemetry[nextIndex];
 
+    const elapsedTime = progress * this.referenceLapTimeSeconds;
+
+    if (elapsedTime > 16.2 && elapsedTime < 16.3) {
+      // console.log('--------------------------------');
+      // console.log({
+      //   elapsedTime,
+      //   progress,
+      //   previous: {
+      //     t: previous.t,
+      //     d: previous.d,
+      //     rd: previous.rd,
+      //   },
+      //   next: {
+      //     t: next.t,
+      //     d: next.d,
+      //     rd: next.rd,
+      //   },
+      // });
+    }
     const previousRd = Number(previous.rd);
     const nextRd = Number(next.rd);
 
@@ -306,6 +330,18 @@ export class LapPlaybackService {
         : (progress - previousRd) / (nextRd - previousRd);
 
     const distance = previous.d + (next.d - previous.d) * factor;
+
+    if (elapsedTime > 16.2 && elapsedTime < 16.3) {
+      console.log({
+        factor,
+
+        interpolated: {
+          t: previous.t + (next.t - previous.t) * factor,
+          d: distance,
+          rd: progress,
+        },
+      });
+    }
 
     return this.buildInterpolatedFrame(
       previous,

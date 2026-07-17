@@ -984,7 +984,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -21) // vertical center of the box
-      .attr('y', 20) // distance from the box
+      .attr('y', 10) // distance from the box
       .attr('text-anchor', 'middle')
       .attr('fill', '#bdbdbd')
       .attr('font-size', 10)
@@ -1005,7 +1005,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     legend
       .append('text')
-      .attr('x', 24)
+      .attr('x', 18)
       .attr('y', 14)
       .attr('fill', this.driverATheme.color)
       .attr('font-size', 13)
@@ -1014,7 +1014,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     legend
       .append('text')
-      .attr('x', 24)
+      .attr('x', 18)
       .attr('y', 39)
       .attr('fill', this.driverBTheme?.color ?? '#fff')
       .attr('font-size', 13)
@@ -1380,6 +1380,20 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       return;
     }
 
+    const diff = frameA.elapsedTime - this.driverA.sector1;
+
+    // if (Math.abs(diff) < 0.1) {
+    //   console.log({
+    //     elapsedTime: frameA.elapsedTime,
+    //     distance: frameA.sample.d,
+    //     sector1Time: this.driverA.sector1,
+    //     sector1Distance: this.sectorMarkers[0].d,
+    //     diff,
+    //   });
+    // }
+
+    // console.log('UPDATE', frameA.elapsedTime);
+
     const frameB = playbackFrame.driverB;
 
     const cursorX = this.xScale(frameA.sample.d);
@@ -1443,9 +1457,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   ): void {
     const boundaries = [
       0,
-      ...this.sectorMarkers.map(
-        (marker) => marker.rd * this.driverA.maxDistance,
-      ),
+      ...this.sectorMarkers.map((marker) => marker.d),
       this.driverA.maxDistance,
     ];
 

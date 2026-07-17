@@ -1,7 +1,11 @@
 export interface SectorMarker {
   sector: string;
+
   time: number;
+
   rd: number;
+
+  d: number;
 }
 
 export interface TelemetryPoint {
