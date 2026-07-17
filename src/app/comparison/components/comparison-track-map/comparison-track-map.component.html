@@ -39,11 +39,11 @@
       class="hover-ring"
       [attr.cx]="hover.x"
       [attr.cy]="hover.y"
-      r="320"
+      r="250"
     />
 
     <!-- Solid center -->
-    <circle class="hover-dot" [attr.cx]="hover.x" [attr.cy]="hover.y" r="220" />
+    <circle class="hover-dot" [attr.cx]="hover.x" [attr.cy]="hover.y" r="175" />
   }
 
   @let positions = displayPositions;
@@ -54,7 +54,7 @@
       class="driver-dot-halo"
       [attr.cx]="driverA.x"
       [attr.cy]="driverA.y"
-      r="250"
+      r="200"
     />
 
     <!-- Driver -->
@@ -63,7 +63,7 @@
       [attr.cx]="driverA.x"
       [attr.cy]="driverA.y"
       [attr.fill]="driverATheme.color"
-      r="150"
+      r="120"
     />
   }
 
@@ -73,7 +73,7 @@
       class="driver-dot-halo"
       [attr.cx]="driverB.x"
       [attr.cy]="driverB.y"
-      r="300"
+      r="200"
     />
 
     <!-- Driver -->
@@ -82,7 +82,7 @@
       [attr.cx]="driverB.x"
       [attr.cy]="driverB.y"
       [attr.fill]="driverBTheme?.color"
-      r="170"
+      r="120"
     />
   }
 

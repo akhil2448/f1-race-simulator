@@ -80,12 +80,12 @@ export class LapPlaybackService {
     if (this.driverATelemetry.length > 0) {
       const last = this.driverATelemetry[this.driverATelemetry.length - 1];
 
-      console.log({
-        referenceLapTime: this.referenceLapTimeSeconds,
-        telemetryLastTime: last.t,
-        telemetryLastRd: last.rd,
-        telemetryLastDistance: last.d,
-      });
+      // console.log({
+      //   referenceLapTime: this.referenceLapTimeSeconds,
+      //   telemetryLastTime: last.t,
+      //   telemetryLastRd: last.rd,
+      //   telemetryLastDistance: last.d,
+      // });
     }
 
     if (this.driverATelemetry.length === 0) {
@@ -458,17 +458,17 @@ export class LapPlaybackService {
 
     const distance = previous.d + (next.d - previous.d) * factor;
 
-    if (elapsedTime > 16.2 && elapsedTime < 16.3) {
-      console.log({
-        factor,
+    // if (elapsedTime > 16.2 && elapsedTime < 16.3) {
+    //   console.log({
+    //     factor,
 
-        interpolated: {
-          t: previous.t + (next.t - previous.t) * factor,
-          d: distance,
-          rd: progress,
-        },
-      });
-    }
+    //     interpolated: {
+    //       t: previous.t + (next.t - previous.t) * factor,
+    //       d: distance,
+    //       rd: progress,
+    //     },
+    //   });
+    // }
 
     return this.buildInterpolatedFrame(
       previous,

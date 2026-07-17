@@ -56,6 +56,24 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
 
   hoverPosition: { x: number; y: number } | null = null;
 
+  private rotation = 0;
+
+  private rotationCenter = {
+    x: 0,
+    y: 0,
+  };
+
+  private rotatedSector1: { x: number; y: number }[] = [];
+  private rotatedSector2: { x: number; y: number }[] = [];
+  private rotatedSector3: { x: number; y: number }[] = [];
+
+  private rotatedBounds = {
+    minX: 0,
+    maxX: 0,
+    minY: 0,
+    maxY: 0,
+  };
+
   ngOnInit(): void {
     this.hoverService.hoverProgress$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -70,11 +88,15 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
           progress,
         );
 
+        // this.hoverPosition = frame
+        //   ? {
+        //       x: frame.sample.x,
+        //       y: frame.sample.y,
+        //     }
+        //   : null;
+
         this.hoverPosition = frame
-          ? {
-              x: frame.sample.x,
-              y: frame.sample.y,
-            }
+          ? this.rotateXY(frame.sample.x, frame.sample.y)
           : null;
       });
   }
@@ -83,17 +105,128 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
     if (changes['driverATelemetry'] || changes['driverBTelemetry']) {
       this.cachedDominanceMap = null;
     }
+
+    if (changes['trackMap'] && this.trackMap) {
+      this.computeBestRotation();
+      //   console.log(this.rotation);
+      //   console.log(this.rotatedBounds);
+      //   console.log(this.trackMap.bounds);
+    }
+  }
+
+  private computeBestRotation(): void {
+    const b = this.trackMap.bounds;
+
+    this.rotationCenter = {
+      x: (b.minX + b.maxX) / 2,
+      y: (b.minY + b.maxY) / 2,
+    };
+
+    let bestAngle = 0;
+    let bestScale = -1;
+
+    let bestSector1: { x: number; y: number }[] = [];
+    let bestSector2: { x: number; y: number }[] = [];
+    let bestSector3: { x: number; y: number }[] = [];
+
+    let bestBounds = {
+      minX: 0,
+      maxX: 0,
+      minY: 0,
+      maxY: 0,
+    };
+
+    for (let angle = 0; angle < 180; angle += 5) {
+      const sector1 = this.trackMap.sector1.map((p) =>
+        this.rotatePoint(p, angle),
+      );
+
+      const sector2 = this.trackMap.sector2.map((p) =>
+        this.rotatePoint(p, angle),
+      );
+
+      const sector3 = this.trackMap.sector3.map((p) =>
+        this.rotatePoint(p, angle),
+      );
+
+      const all = [...sector1, ...sector2, ...sector3];
+
+      const xs = all.map((p) => p.x);
+      const ys = all.map((p) => p.y);
+
+      const bounds = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+
+      const width = bounds.maxX - bounds.minX;
+      const height = bounds.maxY - bounds.minY;
+
+      const scale = Math.min(388 / width, 155 / height);
+
+      // console.log({
+      //   angle,
+      //   width,
+      //   height,
+      //   ratio: width / height,
+      //   scale,
+      // });
+
+      if (scale > bestScale) {
+        bestScale = scale;
+        bestAngle = angle;
+
+        bestSector1 = sector1;
+        bestSector2 = sector2;
+        bestSector3 = sector3;
+
+        bestBounds = bounds;
+      }
+    }
+
+    this.rotation = bestAngle;
+
+    this.rotatedSector1 = bestSector1;
+    this.rotatedSector2 = bestSector2;
+    this.rotatedSector3 = bestSector3;
+
+    this.rotatedBounds = bestBounds;
+  }
+
+  private rotatePoint(point: { x: number; y: number }, angle = this.rotation) {
+    if (angle === 0) {
+      return point;
+    }
+
+    const radians = (angle * Math.PI) / 180;
+
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+
+    const dx = point.x - this.rotationCenter.x;
+    const dy = point.y - this.rotationCenter.y;
+
+    return {
+      x: this.rotationCenter.x + dx * cos - dy * sin,
+      y: this.rotationCenter.y + dx * sin + dy * cos,
+    };
+  }
+
+  private rotateXY(x: number, y: number) {
+    return this.rotatePoint({ x, y });
   }
 
   get viewBox(): string {
-    const b = this.trackMap.bounds;
+    const b = this.rotatedBounds;
 
     const width = b.maxX - b.minX;
 
     const height = b.maxY - b.minY;
 
-    const paddingX = width * 0.1;
-    const paddingY = height * 0.1;
+    const paddingX = width * 0.04;
+    const paddingY = height * 0.04;
 
     return `
     ${b.minX - paddingX}
@@ -104,15 +237,15 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
   }
 
   get sector1Polyline(): string {
-    return this.trackMap.sector1.map((p) => `${p.x},${p.y}`).join(' ');
+    return this.rotatedSector1.map((p) => `${p.x},${p.y}`).join(' ');
   }
 
   get sector2Polyline(): string {
-    return this.trackMap.sector2.map((p) => `${p.x},${p.y}`).join(' ');
+    return this.rotatedSector2.map((p) => `${p.x},${p.y}`).join(' ');
   }
 
   get sector3Polyline(): string {
-    return this.trackMap.sector3.map((p) => `${p.x},${p.y}`).join(' ');
+    return this.rotatedSector3.map((p) => `${p.x},${p.y}`).join(' ');
   }
 
   private buildDominanceMap(): {
@@ -167,9 +300,19 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
         interpolatedTime = before.t + ratio * (after.t - before.t);
       }
 
+      // result.push({
+      //   x: pointA.x,
+      //   y: pointA.y,
+      //   delta: interpolatedTime - pointA.t,
+      //   gain: 0,
+      //   winner: 'N',
+      // });
+
+      const p = this.rotateXY(pointA.x, pointA.y);
+
       result.push({
-        x: pointA.x,
-        y: pointA.y,
+        x: p.x,
+        y: p.y,
         delta: interpolatedTime - pointA.t,
         gain: 0,
         winner: 'N',
@@ -275,24 +418,32 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
   }
 
   get startFinishLine() {
-    const sf = this.trackMap.startFinish;
+    const p1 = this.rotateXY(
+      this.trackMap.startFinish.x1,
+      this.trackMap.startFinish.y1,
+    );
 
-    const dx = sf.x2 - sf.x1;
-    const dy = sf.y2 - sf.y1;
+    const p2 = this.rotateXY(
+      this.trackMap.startFinish.x2,
+      this.trackMap.startFinish.y2,
+    );
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
 
     const length = Math.sqrt(dx * dx + dy * dy);
 
     const ux = dx / length;
     const uy = dy / length;
 
-    const extension = 350;
+    const extension = 175;
 
     return {
-      x1: sf.x1 - ux * extension,
-      y1: sf.y1 - uy * extension,
+      x1: p1.x - ux * extension,
+      y1: p1.y - uy * extension,
 
-      x2: sf.x2 + ux * extension,
-      y2: sf.y2 + uy * extension,
+      x2: p2.x + ux * extension,
+      y2: p2.y + uy * extension,
     };
   }
 
@@ -389,10 +540,7 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
     const frameA = playbackFrame?.driverA ?? null;
 
     const driverA = frameA
-      ? {
-          x: frameA.sample.x,
-          y: frameA.sample.y,
-        }
+      ? this.rotateXY(frameA.sample.x, frameA.sample.y)
       : null;
 
     //
@@ -404,10 +552,7 @@ export class ComparisonTrackMapComponent implements OnChanges, OnInit {
     const frameB = playbackFrame?.driverB ?? null;
 
     if (frameB) {
-      driverB = {
-        x: frameB.sample.x,
-        y: frameB.sample.y,
-      };
+      driverB = this.rotateXY(frameB.sample.x, frameB.sample.y);
     }
 
     //
