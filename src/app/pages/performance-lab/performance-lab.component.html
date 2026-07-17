@@ -59,11 +59,20 @@
   <div class="content">
     <div class="content-card">
       @if (mode === "ultimate") {
-        <div class="mode-title">Driving Style Analysis</div>
+        <div class="mode-title">Qualifying Performance Analysis</div>
 
         <div class="mode-description">
-          Compare qualifying laps with synchronized speed, braking, throttle,
-          RPM and racing line.
+          Compare <strong>synchronized qualifying laps</strong> while analysing
+          <strong>speed</strong>, <strong>braking</strong>,
+          <strong>throttle</strong>, <strong>RPM</strong>,
+          <strong>racing line</strong> & <strong>lap delta</strong>
+          throughout the circuit.
+        </div>
+
+        <div class="mode-note">
+          * Hover over the telemetry graphs to inspect synchronized telemetry,
+          compare driver metrics and view lap delta at any point around the
+          circuit.
         </div>
       }
 
@@ -71,15 +80,24 @@
         <div class="mode-title">Race Management Analysis</div>
 
         <div class="mode-description">
-          Find the laps that best represent a driver's true race pace. PitWall's
-          race management model evaluates tyre wear, traffic, wake effects,
-          clean air, DRS usage and stint progression to identify the most
-          comparable race laps.
+          Compare <strong>representative race laps</strong> using
+          <strong>synchronized playback</strong> while analysing
+          <strong>tyre management</strong>, <strong>pace evolution</strong>,
+          <strong>traffic</strong>, <strong>DRS usage</strong> &
+          <strong>race strategy</strong>
+          throughout each stint.
         </div>
 
         <div class="mode-note">
-          * You can select up to two drivers. PitWall's race management model
-          generates recommendations based on the driver combination you choose.
+          * Hover over the telemetry graphs to inspect synchronized telemetry,
+          compare driver metrics and view lap delta at any point around the
+          circuit.
+        </div>
+
+        <div class="mode-note">
+          * Select up to two drivers. PitWall analyses tyre wear, traffic, clean
+          air, wake effects, DRS usage and stint progression to recommend the
+          most comparable race laps.
         </div>
       }
     </div>

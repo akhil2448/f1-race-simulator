@@ -226,16 +226,29 @@ CONTENT
   font-size: 16px;
 }
 
+.mode-description strong {
+  font-family: "Formula1Bold";
+  font-weight: normal;
+  color: #e7e3e3;
+}
+
 .mode-note {
-  margin-top: 14px;
+  margin-top: 1px;
 
   font-size: 13px;
 
-  line-height: 1.5;
+  line-height: 1.45;
 
   color: #9f9f9f;
 
   font-family: Formula1;
+
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.mode-description + .mode-note {
+  margin-top: 14px;
 }
 
 .selection-card {

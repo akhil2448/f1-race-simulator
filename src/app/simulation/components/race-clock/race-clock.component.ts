@@ -71,4 +71,16 @@ export class RaceClockComponent implements OnInit, OnDestroy {
       ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
       : `${m}:${s.toString().padStart(2, '0')}`;
   }
+
+  get timeWidthClass(): string {
+    if (this.currentSecond >= 3600) {
+      return 'hours';
+    }
+
+    if (this.currentSecond >= 600) {
+      return 'minutes-2';
+    }
+
+    return 'minutes-1';
+  }
 }

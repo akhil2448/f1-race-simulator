@@ -1,5 +1,7 @@
 <div class="race-clock-bar">
-  <div class="time">{{ formattedTime }}</div>
+  <div class="time" [ngClass]="timeWidthClass">
+    {{ formattedTime }}
+  </div>
 
   <div class="controls">
     <button [class.active-play]="!paused" (click)="play()">▶</button>
