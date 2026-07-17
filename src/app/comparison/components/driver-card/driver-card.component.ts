@@ -18,6 +18,9 @@ export class DriverCardComponent {
   @Input({ required: true })
   progress = 0;
 
+  @Input({ required: true })
+  elapsedTime = 0;
+
   @Input()
   gap: number | null = null;
 
@@ -33,9 +36,9 @@ export class DriverCardComponent {
   @Input()
   sector3!: SectorDisplay;
 
-  get elapsedTime(): number {
-    return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
-  }
+  // get elapsedTime(): number {
+  //   return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
+  // }
 
   get lapTimer(): string {
     return this.formatTime(this.elapsedTime);

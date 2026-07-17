@@ -233,6 +233,41 @@ export class LapPlaybackService {
   }
 
   /**
+   * Returns the index of the first telemetry sample
+   * whose elapsed time >= requested elapsed time.
+   *
+   * This is used by the time-based playback implementation.
+   *
+   * NOTE:
+   * The existing playback searches using normalized distance (rd).
+   * This helper searches using telemetry time (t).
+   *
+   * Keeping both implementations makes it easy to compare
+   * and revert if necessary.
+   */
+  private findNextTimeSampleIndex(
+    telemetry: any[],
+    elapsedTime: number,
+  ): number {
+    let low = 0;
+    let high = telemetry.length - 1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+
+      const t = Number(telemetry[mid].t);
+
+      if (t < elapsedTime) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return Math.min(low, telemetry.length - 1);
+  }
+
+  /**
    * Builds an interpolated playback frame from two telemetry samples.
    */
   private buildInterpolatedFrame(
@@ -275,7 +310,14 @@ export class LapPlaybackService {
   }
 
   /**
-   * Interpolates telemetry for any driver at the given lap progress.
+   * LEGACY IMPLEMENTATION
+   *
+   * Interpolates telemetry using normalized lap distance (rd).
+   *
+   * Playback progress is interpreted as distance progress.
+   *
+   * This implementation is retained for comparison and rollback.
+   * The preferred implementation is interpolateTelemetryByTime().
    */
   public interpolateTelemetry(
     telemetry: any[],
@@ -328,6 +370,91 @@ export class LapPlaybackService {
       nextRd === previousRd
         ? 0
         : (progress - previousRd) / (nextRd - previousRd);
+
+    const distance = previous.d + (next.d - previous.d) * factor;
+
+    if (elapsedTime > 16.2 && elapsedTime < 16.3) {
+      console.log({
+        factor,
+
+        interpolated: {
+          t: previous.t + (next.t - previous.t) * factor,
+          d: distance,
+          rd: progress,
+        },
+      });
+    }
+
+    return this.buildInterpolatedFrame(
+      previous,
+      next,
+      factor,
+      progress,
+      distance,
+    );
+  }
+
+  public interpolateTelemetryByTime(
+    telemetry: any[],
+    progress: number,
+  ): PlaybackFrame | null {
+    if (!telemetry?.length) {
+      return null;
+    }
+
+    const elapsedTime = progress * this.referenceLapTimeSeconds;
+
+    const clampedElapsedTime = Math.min(
+      elapsedTime,
+      telemetry[telemetry.length - 1].t,
+    );
+
+    const nextIndex = this.findNextTimeSampleIndex(
+      telemetry,
+      clampedElapsedTime,
+    );
+
+    if (nextIndex <= 0) {
+      const sample = telemetry[0];
+
+      return {
+        progress,
+        previous: sample,
+        next: sample,
+        factor: 0,
+        sample,
+      };
+    }
+
+    const previous = telemetry[nextIndex - 1];
+    const next = telemetry[nextIndex];
+
+    if (elapsedTime > 16.2 && elapsedTime < 16.3) {
+      // console.log('--------------------------------');
+      // console.log({
+      //   elapsedTime,
+      //   progress,
+      //   previous: {
+      //     t: previous.t,
+      //     d: previous.d,
+      //     rd: previous.rd,
+      //   },
+      //   next: {
+      //     t: next.t,
+      //     d: next.d,
+      //     rd: next.rd,
+      //   },
+      // });
+    }
+    const previousTime = Number(previous.t);
+    const nextTime = Number(next.t);
+
+    const rawFactor =
+      nextTime === previousTime
+        ? 0
+        : (clampedElapsedTime - previousTime) / (nextTime - previousTime);
+
+    const factor = Math.max(0, Math.min(rawFactor, 1));
 
     const distance = previous.d + (next.d - previous.d) * factor;
 
@@ -433,11 +560,29 @@ export class LapPlaybackService {
   private publishFrame(): void {
     const progress = this.currentProgressSubject.value;
 
+    /**
+     * Playback currently uses the time-based interpolation.
+     *
+     * The previous distance-based implementation has been
+     * intentionally retained for debugging and comparison.
+     *
+     * To revert playback behaviour, replace:
+     *
+     *   interpolateTelemetryByTime()
+     *
+     * with:
+     *
+     *   interpolateTelemetry()
+     */
+
     //
     // Driver A
     //
 
-    const driverA = this.interpolateTelemetry(this.driverATelemetry, progress);
+    const driverA = this.interpolateTelemetryByTime(
+      this.driverATelemetry,
+      progress,
+    );
 
     if (!driverA) {
       this.currentFrameSubject.next(null);
@@ -449,7 +594,7 @@ export class LapPlaybackService {
     //
 
     const driverB = this.driverBTelemetry.length
-      ? this.interpolateTelemetry(this.driverBTelemetry, progress)
+      ? this.interpolateTelemetryByTime(this.driverBTelemetry, progress)
       : null;
 
     this.currentFrameSubject.next({

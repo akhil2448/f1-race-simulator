@@ -736,7 +736,10 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         d3
           .axisRight(this.deltaYScale)
           .tickValues([-maxAbsDelta, 0, maxAbsDelta])
-          .tickFormat((d) => Number(d).toFixed(3)),
+          .tickFormat((d) => {
+            const value = Number(d);
+            return value > 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
+          }),
       );
 
     deltaAxis.attr('transform', `translate(${chartWidth},0)`);

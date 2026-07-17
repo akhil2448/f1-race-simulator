@@ -55,7 +55,10 @@ export class QualifyingComparisonPageComponent implements OnInit {
       response.driverB?.teamColor ?? response.driverA.teamColor,
     );
 
-    const referenceLapTime = Math.min(
+    // Changed this from min to max to accomodate the bug of playback stopping when the fastest driver
+    // finished the lap, the playback stops, leaving the trailing driver behind finish line when
+    // playback stops.
+    const referenceLapTime = Math.max(
       response.driverA.lapTime,
       response.driverB?.lapTime ?? response.driverA.lapTime,
     );
@@ -118,8 +121,9 @@ export class QualifyingComparisonPageComponent implements OnInit {
     const driverB = this.comparison.driverB;
 
     const elapsedA = this.driverAElapsedTime;
-
     const elapsedB = this.driverBElapsedTime;
+
+    const myElapsed = driver === 'A' ? elapsedA : elapsedB;
 
     const sectorEndA =
       sector === 1
@@ -135,7 +139,9 @@ export class QualifyingComparisonPageComponent implements OnInit {
           ? driverB.sector1 + driverB.sector2
           : driverB.lapTime;
 
-    if (elapsedA < sectorEndA || elapsedB < sectorEndB) {
+    const mySectorEnd = driver === 'A' ? sectorEndA : sectorEndB;
+
+    if (myElapsed < mySectorEnd) {
       return {
         text: null,
         color: 'white',
@@ -188,11 +194,24 @@ export class QualifyingComparisonPageComponent implements OnInit {
       return null;
     }
 
-    const gap = this.driverAElapsedTime - this.driverBElapsedTime;
+    const driverAFrame = this.playbackService.currentFrame?.driverA;
 
-    //
-    // Leading driver shows no gap.
-    //
+    if (!driverAFrame) {
+      return null;
+    }
+
+    const driverBAtSameDistance =
+      this.playbackService.interpolateTelemetryByDistance(
+        this.comparison.driverB.telemetry,
+        driverAFrame.sample.d,
+      );
+
+    if (!driverBAtSameDistance) {
+      return null;
+    }
+
+    const gap = driverAFrame.sample.t - driverBAtSameDistance.sample.t;
+
     return gap > 0 ? gap : null;
   }
 
@@ -201,7 +220,23 @@ export class QualifyingComparisonPageComponent implements OnInit {
       return null;
     }
 
-    const gap = this.driverBElapsedTime - this.driverAElapsedTime;
+    const driverBFrame = this.playbackService.currentFrame?.driverB;
+
+    if (!driverBFrame) {
+      return null;
+    }
+
+    const driverAAtSameDistance =
+      this.playbackService.interpolateTelemetryByDistance(
+        this.comparison.driverA.telemetry,
+        driverBFrame.sample.d,
+      );
+
+    if (!driverAAtSameDistance) {
+      return null;
+    }
+
+    const gap = driverBFrame.sample.t - driverAAtSameDistance.sample.t;
 
     return gap > 0 ? gap : null;
   }

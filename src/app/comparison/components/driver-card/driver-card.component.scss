@@ -202,11 +202,21 @@
 }
 
 .lap-left {
-  display: flex;
+  display: grid;
+  grid-template-columns: 160px 60px;
+  align-items: end;
+  column-gap: 12px;
+}
 
-  align-items: flex-end;
+.lap-time {
+  font-size: 32px;
+  line-height: 1;
+}
 
-  gap: 12px;
+.gap {
+  font-size: 16px;
+  color: #cfcfcf;
+  opacity: 0.9;
 }
 
 .tyre-info {
