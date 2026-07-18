@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   DriverApiData,
   RaceApiResponse,
@@ -18,6 +18,8 @@ export class LiveTimingService {
 
   private lastLeaderCompletedLaps = -1;
 
+  private clockSub?: Subscription;
+
   constructor(private clock: RaceClockService) {}
 
   /* =====================================================
@@ -25,6 +27,8 @@ export class LiveTimingService {
      ===================================================== */
 
   initialize(raceData: RaceApiResponse, trackLength: number): void {
+    this.clockSub?.unsubscribe();
+
     this.raceData = raceData;
     this.trackLength = trackLength;
 
@@ -278,5 +282,14 @@ export class LiveTimingService {
     drivers.forEach((d) => {
       d.lapsDown = Math.max(0, leaderCompletedLaps - d.completedLaps);
     });
+  }
+
+  reset(): void {
+    this.clockSub?.unsubscribe();
+    this.clockSub = undefined;
+
+    this.lastLeaderCompletedLaps = -1;
+
+    this.stateSubject.next([]);
   }
 }

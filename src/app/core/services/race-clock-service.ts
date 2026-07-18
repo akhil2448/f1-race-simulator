@@ -48,7 +48,12 @@ export class RaceClockService {
 
   reset() {
     this.pause();
+
+    this.speed = 1;
+
     this.currentSecond$.next(0);
+
+    this.playbackMode$.next('PAUSED');
   }
 
   seekTo(second: number) {

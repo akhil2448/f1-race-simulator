@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  HostListener,
+  OnDestroy,
+  DestroyRef,
+} from '@angular/core';
 import { RaceContextService } from '../../core/services/race-context.service';
 import { QualifyingComparisonResponse } from '../../comparison/models/qualifying-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
@@ -12,6 +19,7 @@ import { ComparisonTheme } from '../../comparison/models/comparison-theme.model'
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
 import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-qualifying-comparison-page',
@@ -26,12 +34,13 @@ import { LoadingOverlayService } from '../../core/services/loading-overlay.servi
   templateUrl: './qualifying-comparison-page.component.html',
   styleUrl: './qualifying-comparison-page.component.scss',
 })
-export class QualifyingComparisonPageComponent implements OnInit {
+export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
   readonly playbackService = inject(LapPlaybackService);
   private readonly raceContext = inject(RaceContextService);
   private readonly overlay = inject(LoadingOverlayService);
   private readonly router = inject(Router);
   private themeService = inject(ComparisonThemeService);
+  private destroyRef = inject(DestroyRef);
 
   comparison: QualifyingComparisonResponse | null = null;
   theme!: ComparisonTheme;
@@ -73,13 +82,15 @@ export class QualifyingComparisonPageComponent implements OnInit {
 
     this.loading = false;
 
-    this.playbackService.currentFrame$.subscribe((frame) => {
-      if (!frame) {
-        return;
-      }
+    this.playbackService.currentFrame$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((frame) => {
+        if (!frame) {
+          return;
+        }
 
-      // console.log(frame);
-    });
+        // console.log(frame);
+      });
   }
 
   get driverASector1() {
@@ -267,6 +278,8 @@ export class QualifyingComparisonPageComponent implements OnInit {
 
       await this.delay(remaining);
 
+      this.playbackService.destroy();
+
       await this.router.navigate(['/performance-lab']);
     } finally {
       this.overlay.hide();
@@ -279,6 +292,8 @@ export class QualifyingComparisonPageComponent implements OnInit {
     await this.delay(800);
 
     this.overlay.hide();
+
+    this.playbackService.destroy();
 
     await this.router.navigate(['/performance-lab']);
   }
@@ -293,5 +308,9 @@ export class QualifyingComparisonPageComponent implements OnInit {
   beforeUnload(event: BeforeUnloadEvent): void {
     event.preventDefault();
     event.returnValue = '';
+  }
+
+  ngOnDestroy(): void {
+    this.playbackService.destroy();
   }
 }

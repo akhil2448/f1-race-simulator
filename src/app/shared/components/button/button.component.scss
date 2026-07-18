@@ -58,6 +58,19 @@
   }
 }
 
+.app-button.xs {
+  min-width: 95px;
+  height: 40px;
+
+  padding: 0 10px;
+
+  font-size: 12px;
+
+  border-width: 2px;
+
+  letter-spacing: 0.3px;
+}
+
 .app-button.sm {
   min-width: 120px;
   height: 40px;

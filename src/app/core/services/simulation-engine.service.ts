@@ -16,6 +16,8 @@ export class SimulationEngineService {
   frame$ = this.currentFrameSubject.asObservable();
 
   private clockSub?: Subscription;
+  private trackMapSub?: Subscription;
+
   private initialized = false;
 
   private trackLengthMeters = 0;
@@ -34,7 +36,7 @@ export class SimulationEngineService {
     this.initialized = true;
 
     // Get track length ONCE
-    this.trackMapState.trackData$.subscribe((data) => {
+    this.trackMapSub = this.trackMapState.trackData$.subscribe((data) => {
       if (!data) return;
 
       this.trackLengthMeters = data.trackInfo.trackLength;
@@ -68,8 +70,14 @@ export class SimulationEngineService {
    * Optional cleanup (useful for future race switching)
    */
   destroy(): void {
+    console.log('******** DESTROY RACE CALLED ********');
+
     this.clockSub?.unsubscribe();
     this.clockSub = undefined;
+
+    this.trackMapSub?.unsubscribe();
+    this.trackMapSub = undefined;
+
     this.initialized = false;
     this.trackLengthMeters = 0;
     this.currentFrameSubject.next(null);

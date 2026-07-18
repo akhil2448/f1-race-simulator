@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { DriverMetaService } from '../../core/services/driver-meta.service';
@@ -50,7 +50,7 @@ import { RaceContextService } from '../../core/services/race-context.service';
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
 })
-export class SimulationComponent implements OnInit {
+export class SimulationComponent implements OnInit, OnDestroy {
   availableDrivers: string[] = [];
   selectedDrivers: (string | null)[] = [null, null];
 
@@ -172,13 +172,18 @@ export class SimulationComponent implements OnInit {
     this.showExitModal = false;
   }
 
+  private raceDestroyed = false;
+
   private exitReplay(): void {
-    this.raceClock.reset();
+    this.raceDestroyed = true;
+    // Destroy all race-scoped state
+    this.bootstrap.destroyRace();
 
+    // Clear navigation context
     this.routeAccess.reset();
-
     this.routeAccess.navigationStep = 'race-selection';
 
+    // Navigate back
     this.router.navigate(['/select-race']);
   }
 
@@ -201,6 +206,12 @@ export class SimulationComponent implements OnInit {
     if (!this.raceFinished) {
       event.preventDefault();
       event.returnValue = '';
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (!this.raceDestroyed) {
+      this.bootstrap.destroyRace();
     }
   }
 }

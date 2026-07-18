@@ -21,6 +21,7 @@ import { FastestLapService } from './fastest-lap.service';
 import { RaceControlService } from './race-control.service';
 import { RaceApiResponse } from '../models/race-data.model';
 import { StartingGridService } from './starting-grid.service';
+import { RaceClockService } from './race-clock-service';
 
 interface RaceContext {
   year: number;
@@ -54,6 +55,7 @@ export class SimulationBootstrapService {
 
   constructor(
     private raceDataService: RaceDataService,
+    private raceClock: RaceClockService,
     private startingGridService: StartingGridService,
     private driverMeta: DriverMetaService,
     private sectorAnchors: SectorAnchorService,
@@ -507,6 +509,17 @@ export class SimulationBootstrapService {
   destroyRace(): void {
     this.bootstrapCompleteSubject.next(false);
 
+    this.raceClock.reset();
+    console.log('Clock second after reset:', this.raceClock.getCurrentSecond());
+
+    this.liveTiming.reset();
+    console.log('LiveTiming reset');
+
+    this.timingProcessor.reset();
+    console.log('Timing processor reset');
+
+    this.leaderboard.reset();
+
     this.failureTypeSubject.next('none');
 
     this.availableDriversSubject.next([]);
@@ -518,6 +531,7 @@ export class SimulationBootstrapService {
     this.stepsSubject.next([]);
 
     this.engine.destroy();
+    console.log('Engine destroyed');
 
     this.telemetry.clear();
 

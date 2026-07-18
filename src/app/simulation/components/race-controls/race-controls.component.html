@@ -1,6 +1,6 @@
 <div class="race-controls">
   <app-button
-    size="sm"
+    size="xs"
     variant="secondary"
     [active]="isPreRace"
     (clicked)="showTyre()"
@@ -9,7 +9,7 @@
   </app-button>
 
   <app-button
-    size="sm"
+    size="xs"
     variant="secondary"
     [disabled]="isPreRace"
     (clicked)="showPit()"
@@ -18,7 +18,7 @@
   </app-button>
 
   <app-button
-    size="sm"
+    size="xs"
     variant="secondary"
     [disabled]="isPreRace"
     (clicked)="showLapped()"
@@ -26,7 +26,7 @@
     GAP TO LEADER
   </app-button>
 
-  <app-button size="sm" variant="secondary" [disabled]="isPreRace">
+  <app-button size="xs" variant="secondary" [disabled]="isPreRace">
     GAINED/LOST
   </app-button>
 </div>

@@ -682,4 +682,18 @@ export class LapPlaybackService {
   setPlaybackRate(rate: number): void {
     this.playbackRateValue = rate;
   }
+
+  destroy(): void {
+    this.pause();
+
+    this.driverATelemetry = [];
+    this.driverBTelemetry = [];
+
+    this.referenceLapTimeSeconds = 0;
+
+    this.currentProgressSubject.next(0);
+    this.currentFrameSubject.next(null);
+
+    this.playbackRateValue = 1;
+  }
 }

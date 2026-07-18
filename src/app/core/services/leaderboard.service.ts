@@ -461,4 +461,29 @@ export class LeaderboardService {
   getFastestLap() {
     return this.raceData.results.fastestLap;
   }
+
+  reset(): void {
+    this.raceFinished = false;
+
+    this.reducedTotalLaps = null;
+
+    this.startingGrid = [];
+
+    this.showingStartingGrid = false;
+
+    this.lastStableLeaderLap = 1;
+
+    this.timingClockTime = 0;
+
+    this.outAtTime.clear();
+
+    this.lastLiveEntries = [];
+
+    this.subject.next({
+      entries: [],
+      leaderLap: 1,
+      totalLaps: 0,
+      raceFinished: false,
+    });
+  }
 }
