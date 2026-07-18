@@ -8,6 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { RaceClockService } from '../../../core/services/race-clock-service';
+import { LeaderboardService } from '../../../core/services/leaderboard.service';
 
 @Component({
   selector: 'app-race-clock',
@@ -27,7 +28,10 @@ export class RaceClockComponent implements OnInit, OnDestroy {
   @Output()
   stopRequested = new EventEmitter<void>();
 
-  constructor(private raceClock: RaceClockService) {}
+  constructor(
+    private raceClock: RaceClockService,
+    private leaderboard: LeaderboardService,
+  ) {}
 
   ngOnInit(): void {
     this.sub = this.raceClock.raceTime$.subscribe((sec) => {
@@ -45,6 +49,9 @@ export class RaceClockComponent implements OnInit, OnDestroy {
 
   play() {
     window.dispatchEvent(new CustomEvent('replay-resumed'));
+
+    this.leaderboard.hideStartingGrid();
+
     this.raceClock.play();
   }
 

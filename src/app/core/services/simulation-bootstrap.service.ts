@@ -20,6 +20,7 @@ import { DriverPresenceService } from './driver-presence.service';
 import { FastestLapService } from './fastest-lap.service';
 import { RaceControlService } from './race-control.service';
 import { RaceApiResponse } from '../models/race-data.model';
+import { StartingGridService } from './starting-grid.service';
 
 interface RaceContext {
   year: number;
@@ -53,6 +54,7 @@ export class SimulationBootstrapService {
 
   constructor(
     private raceDataService: RaceDataService,
+    private startingGridService: StartingGridService,
     private driverMeta: DriverMetaService,
     private sectorAnchors: SectorAnchorService,
     private leaderboard: LeaderboardService,
@@ -119,7 +121,7 @@ export class SimulationBootstrapService {
     this.loadRaceDataWithRetry(year, round);
   }
 
-  private handleRetry(stepId: string, retryAction: () => void): void {
+  private handleRetry(stepId: string, retryAction: () => void): boolean {
     const retries = this.getRetryCount(stepId);
 
     if (retries < this.MAX_RETRIES) {
@@ -129,19 +131,20 @@ export class SimulationBootstrapService {
         retryAction();
       }, this.RETRY_DELAY_MS);
 
-      return;
+      return true; // Another retry was scheduled
     }
 
     this.updateStep(stepId, 'error');
-
     this.addFailedStep(stepId);
 
     if (this.isMandatoryStep(stepId)) {
       this.failureTypeSubject.next('mandatory');
-      return;
+      return false;
     }
 
     this.optionalFailuresDetected = true;
+
+    return false; // No more retries
   }
 
   private handleTrackMapSuccess(
@@ -267,19 +270,7 @@ export class SimulationBootstrapService {
 
         /* Continue bootstrap flow */
 
-        this.loadTrackStatusWithRetry(year, round);
-
-        this.loadWeatherWithRetry(year, round);
-
-        this.loadRaceControlWithRetry(year, round);
-
-        this.updateStep('local-time', 'loading');
-
-        this.raceLocalTime.initialize(raceData.session.localTimeAtRaceStart);
-
-        this.updateStep('local-time', 'success');
-
-        this.loadTrackMapWithRetry(year, round, raceData);
+        this.loadStartingGridWithRetry(year, round, raceData);
       },
 
       error: (err) => {
@@ -290,6 +281,57 @@ export class SimulationBootstrapService {
         );
       },
     });
+  }
+
+  private loadStartingGridWithRetry(
+    year: number,
+    round: number,
+    raceData: RaceApiResponse,
+  ): void {
+    this.updateStep('starting-grid', 'loading');
+
+    this.startingGridService.getStartingGrid(year, round).subscribe({
+      next: (grid) => {
+        this.leaderboard.setStartingGrid(grid);
+        this.leaderboard.showStartingGrid();
+
+        this.updateStep('starting-grid', 'success');
+
+        this.continueBootstrapAfterStartingGrid(year, round, raceData);
+      },
+
+      error: (err) => {
+        console.error('STARTING GRID REQUEST FAILED', err);
+
+        const retrying = this.handleRetry('starting-grid', () =>
+          this.loadStartingGridWithRetry(year, round, raceData),
+        );
+
+        if (!retrying) {
+          this.continueBootstrapAfterStartingGrid(year, round, raceData);
+        }
+      },
+    });
+  }
+
+  private continueBootstrapAfterStartingGrid(
+    year: number,
+    round: number,
+    raceData: RaceApiResponse,
+  ): void {
+    this.loadTrackStatusWithRetry(year, round);
+
+    this.loadWeatherWithRetry(year, round);
+
+    this.loadRaceControlWithRetry(year, round);
+
+    this.updateStep('local-time', 'loading');
+
+    this.raceLocalTime.initialize(raceData.session.localTimeAtRaceStart);
+
+    this.updateStep('local-time', 'success');
+
+    this.loadTrackMapWithRetry(year, round, raceData);
   }
 
   private loadTrackMapWithRetry(
@@ -395,6 +437,11 @@ export class SimulationBootstrapService {
       {
         id: 'race-data',
         label: 'Loading race data',
+        status: 'pending',
+      },
+      {
+        id: 'starting-grid',
+        label: 'Loading starting grid',
         status: 'pending',
       },
       {

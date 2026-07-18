@@ -151,6 +151,11 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Hide leaderboard under flags + first 2 laps after GREEN */
   get hideLeaderboard(): boolean {
+    // Always show the official starting grid before the race starts
+    if (this.leaderboardService.isShowingStartingGrid()) {
+      return false;
+    }
+
     if (
       this.trackStatus === 'RED' ||
       this.trackStatus === 'SC' ||
@@ -199,6 +204,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   /* FLIP ANIMATION                                        */
   /* ===================================================== */
   private runFLIP(): void {
+    if (this.leaderboardService.isShowingStartingGrid()) {
+      return;
+    }
+
     if (!this.rows || this.hideLeaderboard) return;
 
     this.rows.forEach((rowRef) => {
@@ -342,6 +351,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  get isShowingStartingGrid(): boolean {
+  return this.leaderboardService.isShowingStartingGrid();
+}
+
   /* ===================================================== */
   /* TOGGLES                                               */
   /* ===================================================== */
@@ -433,6 +446,11 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formatIntervalGap(row: LeaderboardEntry): string {
     // 🚧 PIT HAS HIGHEST PRIORITY
     if (row.isInPit) return 'IN PIT';
+
+    // PRE-RACE STARTING GRID
+    if (this.leaderboardService.isShowingStartingGrid()) {
+      return row.tyreLife != null ? `${row.tyreLife}` : '–';
+    }
 
     if (row.position === 1) return 'Interval';
 

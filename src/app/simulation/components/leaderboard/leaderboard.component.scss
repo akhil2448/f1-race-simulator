@@ -382,7 +382,8 @@ hr {
   opacity: 0.4;
 }
 
-.driver-stats.toggle-mode {
+.driver-stats.toggle-mode,
+.driver-stats.starting-grid-mode {
   justify-self: center;
   text-align: center;
   padding-left: 20px;

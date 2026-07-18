@@ -1,13 +1,32 @@
 <div class="race-controls">
-  <app-button size="sm" variant="secondary" (clicked)="showTyre()">
-    TYRE
+  <app-button
+    size="sm"
+    variant="secondary"
+    [active]="isPreRace"
+    (clicked)="showTyre()"
+  >
+    TYRE AGE
   </app-button>
 
-  <app-button size="sm" variant="secondary" (clicked)="showPit()">
-    PIT
+  <app-button
+    size="sm"
+    variant="secondary"
+    [disabled]="isPreRace"
+    (clicked)="showPit()"
+  >
+    PITSTOP COUNT
   </app-button>
 
-  <app-button size="sm" variant="secondary" (clicked)="showLapped()">
-    LAPPED
+  <app-button
+    size="sm"
+    variant="secondary"
+    [disabled]="isPreRace"
+    (clicked)="showLapped()"
+  >
+    GAP TO LEADER
+  </app-button>
+
+  <app-button size="sm" variant="secondary" [disabled]="isPreRace">
+    GAINED/LOST
   </app-button>
 </div>

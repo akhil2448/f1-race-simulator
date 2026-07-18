@@ -14,6 +14,7 @@ import {
 } from './timing-event-processor.service';
 import { RaceFinishService } from './race-finish.service';
 import { RaceApiResponse } from '../models/race-data.model';
+import { StartingGridEntry } from '../models/starting-grid.model';
 
 export interface LeaderboardViewState {
   entries: LeaderboardEntry[];
@@ -42,6 +43,9 @@ export class LeaderboardService {
 
   private reducedTotalLaps: number | null = null;
 
+  private startingGrid: StartingGridEntry[] = [];
+  private showingStartingGrid = false;
+
   initialize(raceData: RaceApiResponse): void {
     this.raceData = raceData;
 
@@ -53,6 +57,18 @@ export class LeaderboardService {
     if (officialLaps < sessionLaps) {
       this.reducedTotalLaps = officialLaps;
     }
+  }
+
+  setStartingGrid(grid: StartingGridEntry[]): void {
+    this.startingGrid = grid;
+  }
+
+  showStartingGrid(): void {
+    this.showingStartingGrid = true;
+  }
+
+  hideStartingGrid(): void {
+    this.showingStartingGrid = false;
   }
 
   /* ===============================
@@ -139,6 +155,22 @@ export class LeaderboardService {
       if (!states.length) return;
 
       const displayTotalLaps = this.getDisplayTotalLaps(this.timingClockTime);
+
+      /* ---------- PRE-RACE STARTING GRID ---------- */
+
+      if (this.showingStartingGrid && this.startingGrid.length) {
+        this.subject.next({
+          entries: this.buildStartingGridEntries(),
+
+          leaderLap: 0,
+
+          totalLaps: displayTotalLaps,
+
+          raceFinished: false,
+        });
+
+        return;
+      }
 
       /**
        * 🔒 FINAL CLASSIFICATION MODE
@@ -266,6 +298,40 @@ export class LeaderboardService {
         raceFinished: this.raceFinished,
       });
     });
+  }
+
+  private buildStartingGridEntries(): LeaderboardEntry[] {
+    return this.startingGrid.map((driver) => ({
+      position: driver.position,
+
+      driver: driver.driver,
+
+      // Race hasn't started yet
+      lap: 0,
+
+      gapToLeader: null,
+      intervalGap: null,
+      lapsDown: 0,
+
+      lapDistance: 0,
+      raceDistance: 0,
+
+      isInPit: false,
+
+      compound: driver.compound ?? '',
+
+      tyreLife: driver.tyreLife ?? null,
+
+      pitStops: 0,
+
+      provisional: null,
+
+      status: null,
+    }));
+  }
+
+  isShowingStartingGrid(): boolean {
+    return this.showingStartingGrid;
   }
 
   /* =====================================================

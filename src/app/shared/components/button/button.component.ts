@@ -13,5 +13,7 @@ export class ButtonComponent {
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() disabled = false;
 
+  @Input() active = false;
+
   @Output() clicked = new EventEmitter<void>();
 }
