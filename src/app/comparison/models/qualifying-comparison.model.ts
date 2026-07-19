@@ -45,8 +45,13 @@ export interface DriverLap {
   lapTime: number;
 
   sector1: number;
+  isSector1SessionFastest: boolean;
+
   sector2: number;
+  isSector2SessionFastest: boolean;
+
   sector3: number;
+  isSector3SessionFastest: boolean;
 
   sampleCount: number;
   maxDistance: number;

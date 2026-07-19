@@ -125,6 +125,7 @@ export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
       return {
         text: null,
         color: 'white',
+        isSessionFastest: false,
       };
     }
 
@@ -156,6 +157,7 @@ export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
       return {
         text: null,
         color: 'white',
+        isSessionFastest: false,
       };
     }
 
@@ -178,9 +180,29 @@ export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
 
     const winner = myTime <= otherTime;
 
+    const isSessionFastest =
+      driver === 'A'
+        ? sector === 1
+          ? driverA.isSector1SessionFastest
+          : sector === 2
+            ? driverA.isSector2SessionFastest
+            : driverA.isSector3SessionFastest
+        : sector === 1
+          ? driverB.isSector1SessionFastest
+          : sector === 2
+            ? driverB.isSector2SessionFastest
+            : driverB.isSector3SessionFastest;
+
+    const color = isSessionFastest
+      ? '#b25cff' // Purple
+      : winner
+        ? '#00d25a'
+        : '#ffd400';
+
     return {
       text: winner ? myTime.toFixed(3) : `+${(myTime - otherTime).toFixed(3)}`,
-      color: winner ? '#00d25a' : '#ffd400',
+      color,
+      isSessionFastest,
     };
   }
 

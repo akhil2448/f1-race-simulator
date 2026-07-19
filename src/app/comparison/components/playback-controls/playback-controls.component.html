@@ -35,8 +35,14 @@
   </div>
 
   <div class="time">
-    {{ format(currentTime) }}
-    /
-    {{ format(totalTime) }}
+    <span class="current-time">
+      {{ format(currentTime) }}
+    </span>
+
+    <span class="separator"> / </span>
+
+    <span class="total-time">
+      {{ format(totalTime) }}
+    </span>
   </div>
 </div>

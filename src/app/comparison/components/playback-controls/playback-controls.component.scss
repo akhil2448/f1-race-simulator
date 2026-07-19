@@ -115,17 +115,30 @@
 ========================== */
 
 .time {
-  flex: 0 0 165px;
+  flex: 0 0 175px;
 
   text-align: right;
 
   font-family: "Formula1";
-
   font-size: 16px;
 
-  color: #d7d7d7;
-
   white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.current-time {
+  color: #ffffff;
+}
+
+.separator {
+  color: #8d8d8d;
+
+  margin: 0 4px;
+}
+
+.total-time {
+  color: #8d8d8d;
 }
 
 .material-symbols-rounded {
