@@ -109,3 +109,18 @@
 
   letter-spacing: 1px;
 }
+
+.app-button.fliptrack {
+  min-width: 100px;
+  height: 47px;
+
+  padding: 0 8px;
+
+  font-size: 14px;
+
+  border-width: 2px;
+
+  letter-spacing: 0.3px;
+
+  transform: translateY(1px);
+}

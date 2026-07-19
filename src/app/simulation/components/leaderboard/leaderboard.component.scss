@@ -393,6 +393,18 @@ hr {
   opacity: 1;
 }
 
+.driver-stats.gain {
+  color: #00d26a !important;
+}
+
+.driver-stats.loss {
+  color: #ff4747 !important;
+}
+
+.driver-stats.same {
+  color: #ffffff !important;
+}
+
 .driver-stats.in-pit {
   position: relative;
   padding: 1px 6px;

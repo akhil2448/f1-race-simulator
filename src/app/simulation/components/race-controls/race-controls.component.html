@@ -2,7 +2,7 @@
   <app-button
     size="xs"
     variant="secondary"
-    [active]="isPreRace"
+    [active]="isPreRace || activeTemporaryMode === 'TYRE'"
     (clicked)="showTyre()"
   >
     TYRE AGE
@@ -12,6 +12,7 @@
     size="xs"
     variant="secondary"
     [disabled]="isPreRace"
+    [active]="activeTemporaryMode === 'PIT'"
     (clicked)="showPit()"
   >
     PITSTOP COUNT
@@ -21,12 +22,19 @@
     size="xs"
     variant="secondary"
     [disabled]="isPreRace"
+    [active]="activeTemporaryMode === 'LAPPED'"
     (clicked)="showLapped()"
   >
     GAP TO LEADER
   </app-button>
 
-  <app-button size="xs" variant="secondary" [disabled]="isPreRace">
+  <app-button
+    size="xs"
+    variant="secondary"
+    [disabled]="isPreRace"
+    [active]="activeTemporaryMode === 'GAINED_LOST'"
+    (clicked)="showGainLoss()"
+  >
     GAINED/LOST
   </app-button>
 </div>

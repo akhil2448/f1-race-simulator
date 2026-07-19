@@ -67,13 +67,14 @@
 }
 
 .rain-row {
-  grid-template-columns: 18px auto 1fr;
+  grid-template-columns: 26px auto 1fr;
 
   transition: all 300ms ease;
 
   border-radius: 4px;
 
-  padding: 0 4px;
+  // padding: 0 4px;
+  transform: translateX(-6.5px);
 }
 
 .rain-row.raining {

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ButtonComponent {
   @Input() variant: 'primary' | 'secondary' = 'primary';
-  @Input() size: 'xs' | 'sm' | 'md' | 'lg' = 'md';
+  @Input() size: 'xs' | 'sm' | 'md' | 'lg' | 'fliptrack' = 'md';
   @Input() disabled = false;
 
   @Input() active = false;

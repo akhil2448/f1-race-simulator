@@ -44,6 +44,7 @@ export class LeaderboardService {
   private reducedTotalLaps: number | null = null;
 
   private startingGrid: StartingGridEntry[] = [];
+  private startingPositions = new Map<string, number>();
   private showingStartingGrid = false;
 
   initialize(raceData: RaceApiResponse): void {
@@ -61,6 +62,16 @@ export class LeaderboardService {
 
   setStartingGrid(grid: StartingGridEntry[]): void {
     this.startingGrid = grid;
+
+    this.startingPositions.clear();
+
+    for (const driver of grid) {
+      this.startingPositions.set(driver.driver, driver.position);
+    }
+  }
+
+  getStartingPosition(driver: string): number | undefined {
+    return this.startingPositions.get(driver);
   }
 
   showStartingGrid(): void {

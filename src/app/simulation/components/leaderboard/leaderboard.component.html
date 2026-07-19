@@ -80,6 +80,9 @@
             'starting-grid-mode': isShowingStartingGrid,
             'in-pit':
               row.isInPit && row.status !== 'OUT' && !isTemporaryModeActive,
+            gain: getGainLossClass(row) === 'gain',
+            loss: getGainLossClass(row) === 'loss',
+            same: getGainLossClass(row) === 'same',
           }"
           [style.color]="
             row.isInPit && row.status !== 'OUT' && !isTemporaryModeActive

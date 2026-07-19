@@ -352,8 +352,38 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isShowingStartingGrid(): boolean {
-  return this.leaderboardService.isShowingStartingGrid();
-}
+    return this.leaderboardService.isShowingStartingGrid();
+  }
+
+  getGainLossClass(row: LeaderboardEntry): string | null {
+    // Only apply colours in Gain/Loss mode
+    if (this.activeDisplayMode !== 'GAINED_LOST') {
+      return null;
+    }
+
+    // OUT drivers should not be coloured
+    if (row.status === 'OUT') {
+      return null;
+    }
+
+    const startPos = this.leaderboardService.getStartingPosition(row.driver);
+
+    if (startPos == null) {
+      return null;
+    }
+
+    const delta = startPos - row.position;
+
+    if (delta > 0) {
+      return 'gain';
+    }
+
+    if (delta < 0) {
+      return 'loss';
+    }
+
+    return 'same';
+  }
 
   /* ===================================================== */
   /* TOGGLES                                               */
@@ -431,6 +461,11 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return row.pitStops != null ? String(row.pitStops) : '0';
       case 'LAPPED':
         return this.formatLappedMode(row);
+      case 'GAINED_LOST':
+        return this.formatGainLoss(row);
+
+      default:
+        return this.formatIntervalGap(row);
     }
   }
 
@@ -484,5 +519,29 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return this.formatLeaderGap(row);
+  }
+
+  private formatGainLoss(row: LeaderboardEntry): string {
+    if (row.isInPit) {
+      return 'IN PIT';
+    }
+
+    const startPos = this.leaderboardService.getStartingPosition(row.driver);
+
+    if (startPos == null) {
+      return '–';
+    }
+
+    const delta = startPos - row.position;
+
+    if (delta > 0) {
+      return `▲ ${delta}`;
+    }
+
+    if (delta < 0) {
+      return `▼ ${Math.abs(delta)}`;
+    }
+
+    return '=';
   }
 }

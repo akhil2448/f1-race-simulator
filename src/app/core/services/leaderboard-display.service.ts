@@ -6,7 +6,8 @@ export type LeaderboardDisplayMode =
   | 'LEADER_GAP'
   | 'TYRE'
   | 'PIT'
-  | 'LAPPED';
+  | 'LAPPED'
+  | 'GAINED_LOST';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class LeaderboardDisplayService {
 
   private timer?: number;
 
-  showTemporaryMode(mode: 'TYRE' | 'PIT' | 'LAPPED'): void {
+  showTemporaryMode(mode: 'TYRE' | 'PIT' | 'LAPPED' | 'GAINED_LOST'): void {
     this.temporaryModeSubject.next(mode);
 
     clearTimeout(this.timer);
