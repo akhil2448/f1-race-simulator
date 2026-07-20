@@ -302,7 +302,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const cursorLayer = root.append('g');
+    const plotLayer = root.append('g');
+
+    const playbackLayer = root.append('g');
+
+    const hoverLayer = root.append('g');
+
+    const markerLayer = root.append('g');
 
     svg
       .on('mousemove', (event: MouseEvent) => {
@@ -507,17 +513,33 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Drawing groups
     //
 
-    this.speedGroup = root.append('g');
+    this.speedGroup = plotLayer.append('g');
 
-    this.deltaGroup = root
+    this.deltaGroup = plotLayer
       .append('g')
       .attr('transform', `translate(0, ${speedHeight})`);
 
-    this.rpmGroup = root
+    const deltaMarkerLayer = markerLayer
+      .append('g')
+      .attr('transform', `translate(0, ${speedHeight})`);
+
+    const deltaHoverLayer = markerLayer
+      .append('g')
+      .attr('transform', `translate(0, ${speedHeight})`);
+
+    this.rpmGroup = plotLayer
       .append('g')
       .attr('transform', `translate(0, ${speedHeight + deltaHeight})`);
 
-    this.throttleGroup = root
+    const rpmMarkerLayer = markerLayer
+      .append('g')
+      .attr('transform', `translate(0, ${speedHeight + deltaHeight})`);
+
+    const rpmHoverLayer = markerLayer
+      .append('g')
+      .attr('transform', `translate(0, ${speedHeight + deltaHeight})`);
+
+    this.throttleGroup = plotLayer
       .append('g')
       .attr(
         'transform',
@@ -526,7 +548,37 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const throttlePlot = this.throttleGroup.append('g');
 
-    this.brakeGroup = root.append('g').attr(
+    const throttleMarkerLayer = markerLayer
+      .append('g')
+      .attr(
+        'transform',
+        `translate(0, ${speedHeight + deltaHeight + rpmHeight})`,
+      );
+
+    const throttleHoverLayer = markerLayer
+      .append('g')
+      .attr(
+        'transform',
+        `translate(0, ${speedHeight + deltaHeight + rpmHeight})`,
+      );
+
+    this.brakeGroup = plotLayer.append('g').attr(
+      'transform',
+      `translate(
+      0,
+      ${speedHeight + deltaHeight + rpmHeight + throttleSectionHeight + GRAPH_GAP}
+    )`,
+    );
+
+    const brakeMarkerLayer = markerLayer.append('g').attr(
+      'transform',
+      `translate(
+      0,
+      ${speedHeight + deltaHeight + rpmHeight + throttleSectionHeight + GRAPH_GAP}
+    )`,
+    );
+
+    const brakeHoverLayer = markerLayer.append('g').attr(
       'transform',
       `translate(
       0,
@@ -937,7 +989,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', speedLine);
 
-    this.speedMarkerA = this.speedGroup
+    this.speedMarkerA = markerLayer
       .append('circle')
       .attr('r', 4)
       .attr('fill', driverAColor)
@@ -955,7 +1007,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('stroke-width', 1.5)
         .attr('d', speedLine);
 
-      this.speedMarkerB = this.speedGroup
+      this.speedMarkerB = markerLayer
         .append('circle')
         .attr('r', 4)
         .attr('fill', driverBColor)
@@ -1048,7 +1100,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Delta playback markers
     //
 
-    this.deltaMarkerA = this.deltaGroup
+    this.deltaMarkerA = deltaMarkerLayer
       .append('circle')
       .attr('r', 4)
       .attr('fill', this.driverATheme.color)
@@ -1056,7 +1108,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5);
 
     if (this.driverB?.telemetry?.length) {
-      this.deltaMarkerB = this.deltaGroup
+      this.deltaMarkerB = deltaMarkerLayer
         .append('circle')
         .attr('r', 4)
         .attr('fill', this.driverBTheme?.color ?? '#fff')
@@ -1076,7 +1128,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', rpmLine);
 
-    this.rpmMarkerA = this.rpmGroup
+    this.rpmMarkerA = rpmMarkerLayer
       .append('circle')
       .attr('r', 4)
       .attr('fill', driverAColor)
@@ -1093,7 +1145,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', throttleLine);
 
-    this.throttleMarkerA = throttlePlot
+    this.throttleMarkerA = throttleMarkerLayer
       .append('circle')
       .attr('r', 4)
       .attr('fill', driverAColor)
@@ -1113,7 +1165,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('stroke-width', 1.5)
       .attr('d', brakeLine);
 
-    this.brakeMarkerA = this.brakeGroup
+    this.brakeMarkerA = brakeMarkerLayer
       .append('circle')
       .attr('r', 4)
       .attr('fill', driverAColor)
@@ -1135,7 +1187,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('stroke-width', 1.5)
         .attr('d', rpmLine);
 
-      this.rpmMarkerB = this.rpmGroup
+      this.rpmMarkerB = rpmMarkerLayer
         .append('circle')
         .attr('r', 4)
         .attr('fill', driverBColor)
@@ -1154,7 +1206,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('stroke-width', 1.5)
         .attr('d', throttleLine);
 
-      this.throttleMarkerB = throttlePlot
+      this.throttleMarkerB = throttleMarkerLayer
         .append('circle')
         .attr('r', 4)
         .attr('fill', driverBColor)
@@ -1174,7 +1226,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('stroke-width', 1.5)
         .attr('d', brakeLine);
 
-      this.brakeMarkerB = this.brakeGroup
+      this.brakeMarkerB = brakeMarkerLayer
         .append('circle')
         .attr('r', 4)
         .attr('fill', driverBColor)
@@ -1188,7 +1240,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Playback cursor
     //
 
-    this.playbackCursor = root
+    this.playbackCursor = playbackLayer
       .append('line')
       .attr('class', 'playback-cursor')
       .attr('x1', 0)
@@ -1204,7 +1256,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Hover cursor
     //
 
-    this.hoverCursor = root
+    this.hoverCursor = hoverLayer
       .append('line')
       .attr('x1', 0)
       .attr('x2', 0)
@@ -1215,7 +1267,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('opacity', 0)
       .style('pointer-events', 'none');
 
-    this.hoverSpeedMarkerA = this.speedGroup
+    this.hoverSpeedMarkerA = markerLayer
       .append('circle')
       .attr('r', 5)
       .attr('fill', driverAColor)
@@ -1224,7 +1276,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('opacity', 0);
 
     if (this.driverB?.telemetry?.length) {
-      this.hoverSpeedMarkerB = this.speedGroup
+      this.hoverSpeedMarkerB = markerLayer
         .append('circle')
         .attr('r', 5)
         .attr('fill', driverBColor)
@@ -1238,13 +1290,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     this.hoverDeltaMarkerA = this.createHoverMarker(
-      this.deltaGroup,
+      deltaHoverLayer,
       this.driverATheme.color,
     );
 
     if (this.driverB?.telemetry?.length) {
       this.hoverDeltaMarkerB = this.createHoverMarker(
-        this.deltaGroup,
+        deltaHoverLayer,
         this.driverBTheme?.color ?? '#fff',
       );
     }
@@ -1253,11 +1305,11 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Hover RPM markers
     //
 
-    this.hoverRpmMarkerA = this.createHoverMarker(this.rpmGroup, driverAColor);
+    this.hoverRpmMarkerA = this.createHoverMarker(rpmHoverLayer, driverAColor);
 
     if (this.driverB?.telemetry?.length) {
       this.hoverRpmMarkerB = this.createHoverMarker(
-        this.rpmGroup,
+        rpmHoverLayer,
         driverBColor,
       );
     }
@@ -1267,13 +1319,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     this.hoverThrottleMarkerA = this.createHoverMarker(
-      throttlePlot,
+      throttleHoverLayer,
       driverAColor,
     );
 
     if (this.driverB?.telemetry?.length) {
       this.hoverThrottleMarkerB = this.createHoverMarker(
-        throttlePlot,
+        throttleHoverLayer,
         driverBColor,
       );
     }
@@ -1283,50 +1335,16 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     this.hoverBrakeMarkerA = this.createHoverMarker(
-      this.brakeGroup,
+      brakeHoverLayer,
       driverAColor,
     );
 
     if (this.driverB?.telemetry?.length) {
       this.hoverBrakeMarkerB = this.createHoverMarker(
-        this.brakeGroup,
+        brakeHoverLayer,
         driverBColor,
       );
     }
-
-    //
-    // Bring markers above playback/hover cursors
-    //
-
-    // this.speedMarkerA.raise();
-    // this.speedMarkerB?.raise();
-
-    // this.deltaMarkerA.raise();
-    // this.deltaMarkerB?.raise();
-
-    // this.rpmMarkerA.raise();
-    // this.rpmMarkerB?.raise();
-
-    // this.throttleMarkerA.raise();
-    // this.throttleMarkerB?.raise();
-
-    // this.brakeMarkerA.raise();
-    // this.brakeMarkerB?.raise();
-
-    // this.hoverSpeedMarkerA.raise();
-    // this.hoverSpeedMarkerB?.raise();
-
-    // this.hoverDeltaMarkerA.raise();
-    // this.hoverDeltaMarkerB?.raise();
-
-    // this.hoverRpmMarkerA.raise();
-    // this.hoverRpmMarkerB?.raise();
-
-    // this.hoverThrottleMarkerA.raise();
-    // this.hoverThrottleMarkerB?.raise();
-
-    // this.hoverBrakeMarkerA.raise();
-    // this.hoverBrakeMarkerB?.raise();
 
     //
     // Shared bottom X axis
