@@ -10,7 +10,7 @@ import { NgClass } from '@angular/common';
 export class SupportButtonComponent {
   @Input() text = 'Support Me';
 
-  @Input() buyMeCoffeeUrl = 'https://buymeacoffee.com/YOUR_PAGE';
+  buyMeCoffeeUrl = 'https://buymeacoffee.com/pitwallf1';
 
   @Input() size: 'normal' | 'compact' = 'normal';
 
