@@ -12,6 +12,9 @@ import { simulationGuard } from './core/guards/simulation.guard';
 import { QualifyingComparisonPageComponent } from './pages/qualifying-comparison-page/qualifying-comparison-page.component';
 import { PerformanceLabComponent } from './pages/performance-lab/performance-lab.component';
 import { RaceComparisonPageComponent } from './pages/race-comparison-page/race-comparison-page.component';
+import { qualifyingComparisonGuard } from './core/guards/qualifying-comparison.guard';
+import { raceComparisonGuard } from './core/guards/race-comparison.guard';
+import { performanceLabGuard } from './core/guards/performance-lab.guard';
 
 export const routes: Routes = [
   {
@@ -37,12 +40,18 @@ export const routes: Routes = [
       {
         path: 'qualifying-comparison',
         component: QualifyingComparisonPageComponent,
+        canActivate: [qualifyingComparisonGuard],
       },
       {
         path: 'race-comparison',
         component: RaceComparisonPageComponent,
+        canActivate: [raceComparisonGuard],
       },
-      { path: 'performance-lab', component: PerformanceLabComponent },
+      {
+        path: 'performance-lab',
+        component: PerformanceLabComponent,
+        canActivate: [performanceLabGuard],
+      },
       {
         path: '**',
         component: NotFoundComponent,

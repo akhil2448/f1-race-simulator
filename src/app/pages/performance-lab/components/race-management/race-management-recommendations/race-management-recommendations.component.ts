@@ -235,6 +235,8 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
 
       this.raceContext.comparison = response;
 
+      this.raceContext.navigationStep = 'race-comparison';
+
       this.raceContext.save();
 
       await this.router.navigate(['/race-comparison']);

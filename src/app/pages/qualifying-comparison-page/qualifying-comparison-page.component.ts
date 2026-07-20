@@ -302,6 +302,8 @@ export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
 
       this.playbackService.destroy();
 
+      this.raceContext.navigationStep = 'performance-lab';
+
       await this.router.navigate(['/performance-lab']);
     } finally {
       this.overlay.hide();
@@ -316,6 +318,8 @@ export class QualifyingComparisonPageComponent implements OnInit, OnDestroy {
     this.overlay.hide();
 
     this.playbackService.destroy();
+
+    this.raceContext.navigationStep = 'performance-lab';
 
     await this.router.navigate(['/performance-lab']);
   }

@@ -326,6 +326,8 @@ export class DriverSelectionComponent {
 
       this.raceContext.comparison = response;
 
+      this.raceContext.navigationStep = 'qualifying-comparison';
+
       this.raceContext.save();
 
       await this.router.navigate(['/qualifying-comparison']);

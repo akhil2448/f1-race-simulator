@@ -46,7 +46,9 @@ export class RaceContextService {
     | 'race-selection'
     | 'qualifying'
     | 'simulation'
-    | 'performance-lab' = 'home';
+    | 'performance-lab'
+    | 'qualifying-comparison'
+    | 'race-comparison' = 'home';
 
   save(): void {
     sessionStorage.setItem(
