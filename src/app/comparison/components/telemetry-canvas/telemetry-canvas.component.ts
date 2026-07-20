@@ -452,7 +452,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
           const delta = deltaPoint.delta;
 
-          this.tooltip.delta.value = delta;
+          this.tooltip.delta.value = Math.abs(delta);
 
           this.tooltip.delta.leader =
             delta > 0
