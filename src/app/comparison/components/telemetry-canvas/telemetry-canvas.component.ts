@@ -492,7 +492,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Bottom section layout
     //
 
-    const GRAPH_GAP = 4;
+    // const GRAPH_GAP = 4;
+    const GRAPH_GAP = 0;
     const PLOT_PADDING = 2;
 
     // const totalBottomHeight =
