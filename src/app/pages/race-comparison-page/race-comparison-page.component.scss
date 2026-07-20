@@ -1,0 +1,179 @@
+.comparison-page {
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 8px 6px;
+
+  background: #1d1b1b;
+  color: #e5e7eb;
+
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.comparison-header {
+  flex: 0 0 38px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 10px;
+
+  // margin-bottom: 2px;
+
+  background: #222020;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+.header-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.back-button {
+  border: none;
+
+  background: transparent;
+
+  padding: 0;
+
+  width: 24px;
+
+  height: 24px;
+
+  color: #d8d8d8;
+
+  font-family: "Formula1";
+
+  font-size: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: color 0.15s ease;
+}
+
+.back-button:hover {
+  color: white;
+}
+
+.f1-logo {
+  height: 18px;
+
+  width: auto;
+
+  display: block;
+
+  transform: translateY(-1px);
+}
+
+.title {
+  font-family: "Formula1";
+
+  font-size: 20px;
+
+  letter-spacing: 0.3px;
+  color: #f3f3f3;
+}
+
+.header-right {
+  font-family: "Formula1";
+
+  font-size: 20px;
+
+  color: #bdbdbd;
+}
+
+/* ==========================
+   TELEMETRY PANEL
+========================== */
+
+.telemetry-panel {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  // border: 1px solid rgba(255, 255, 255, 0.15);
+
+  overflow: hidden;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+.comparison-footer {
+  // flex: 0 0 170px;
+
+  // min-height: 170px;
+  // max-height: 170px;
+
+  flex: 0 0 155px;
+
+  min-height: 155px;
+  max-height: 155px;
+
+  display: grid;
+
+  grid-template-columns:
+    500px
+    388px
+    500px;
+
+  // gap: 5px;
+
+  margin-top: 4px;
+  margin-left: 20px;
+
+  overflow: hidden;
+}
+
+.driver-card,
+.track-map-card {
+  min-height: 0;
+  height: 100%;
+
+  // border: 1px solid rgba(255, 255, 255, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-map-card {
+  overflow: hidden;
+}
+
+/* ==========================
+   CONTROLS
+========================== */
+
+.controls-panel {
+  flex: 0 0 52px;
+
+  min-height: 52px;
+  max-height: 52px;
+
+  margin-top: 2px;
+
+  display: flex;
+  align-items: center;
+}

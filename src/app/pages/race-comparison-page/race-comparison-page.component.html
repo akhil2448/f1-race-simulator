@@ -1,0 +1,113 @@
+<div class="comparison-page">
+  <!-- HEADER -->
+  <section class="comparison-header">
+    <div class="header-left">
+      <button class="back-button" type="button" (click)="onBackClicked()">
+        &lt;
+      </button>
+
+      <img class="f1-logo" src="assets/icons/f1-logo-bw.svg" alt="Formula 1" />
+
+      <span class="title"> Race Management </span>
+    </div>
+
+    <div class="header-right">
+      @if (comparison) {
+        {{ comparison.year }} •
+        {{ comparison.grandPrix }}
+      }
+    </div>
+  </section>
+
+  <!-- TELEMETRY PANEL -->
+  <section class="telemetry-panel">
+    @if (comparison) {
+      <app-telemetry-panel
+        [driverA]="comparison.driverA"
+        [driverB]="comparison.driverB"
+        [driverATheme]="theme.driverA"
+        [driverBTheme]="theme.driverB"
+      >
+      </app-telemetry-panel>
+    }
+  </section>
+
+  <!-- BOTTOM SECTION -->
+  <section class="comparison-footer">
+    <div class="driver-card">
+      @if (comparison) {
+        <app-driver-card
+          [theme]="theme.driverA"
+          [driver]="comparison.driverA"
+          [position]="comparison.driverA.position"
+          [lapNumber]="comparison.driverA.lapNumber"
+          [progress]="playbackService.currentProgress"
+          [elapsedTime]="driverAElapsedTime"
+          [gap]="driverAGap"
+          [sector1]="driverASector1"
+          [sector2]="driverASector2"
+          [sector3]="driverASector3"
+        />
+      }
+    </div>
+
+    <div class="track-map-card">
+      @if (comparison) {
+        <app-comparison-track-map
+          [trackMap]="comparison.trackMap"
+          [driverATelemetry]="comparison.driverA.telemetry"
+          [driverBTelemetry]="comparison.driverB?.telemetry ?? null"
+          [driverATheme]="theme.driverA"
+          [driverBTheme]="theme.driverB"
+          [progress]="playbackService.currentProgress"
+        />
+      }
+    </div>
+
+    <div class="driver-card">
+      @if (comparison?.driverB; as driverB) {
+        <app-driver-card
+          [theme]="theme.driverB"
+          [driver]="driverB"
+          [position]="driverB.position"
+          [lapNumber]="driverB.lapNumber"
+          [progress]="playbackService.currentProgress"
+          [elapsedTime]="driverBElapsedTime"
+          [gap]="driverBGap"
+          [sector1]="driverBSector1"
+          [sector2]="driverBSector2"
+          [sector3]="driverBSector3"
+        />
+      }
+    </div>
+  </section>
+
+  <!-- CONTROLS -->
+  <section class="controls-panel">
+    @if (comparison) {
+      <app-playback-controls
+        [progress]="playbackService.currentProgress"
+        [playing]="playbackService.isPlaying"
+        [playbackRate]="playbackService.playbackRate"
+        [currentTime]="playbackService.currentTimeSeconds"
+        [totalTime]="playbackService.totalTimeSeconds"
+        (playPause)="togglePlay()"
+        (stepForward)="stepForward()"
+        (stepBackward)="stepBackward()"
+        (progressChanged)="playbackService.seek($event)"
+        (playbackRateChanged)="playbackService.setPlaybackRate($event)"
+      />
+    }
+  </section>
+
+  <app-confirmation-dialog
+    [visible]="showExitDialog"
+    title="Leave Ultimate Pace?"
+    message="Your current playback progress will be lost."
+    confirmText="Leave"
+    cancelText="Stay"
+    (confirmed)="confirmExit()"
+    (cancelled)="cancelExit()"
+  >
+  </app-confirmation-dialog>
+</div>

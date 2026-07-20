@@ -54,6 +54,7 @@
                 [card]="card"
                 [driverInfoA]="dualRecommendation!.driverA"
                 [driverInfoB]="dualRecommendation!.driverB"
+                (analyze)="analyzeDualRecommendation($event)"
               />
             </div>
           }
@@ -76,6 +77,7 @@
                     normalizeColor(singleRecommendation!.driver.teamColor)
                   "
                   [lap]="lap"
+                  (analyze)="analyzeSingleRecommendation($event)"
                 >
                 </app-single-recommendation-card>
               </div>

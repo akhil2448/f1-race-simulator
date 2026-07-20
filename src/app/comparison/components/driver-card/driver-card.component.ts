@@ -36,6 +36,14 @@ export class DriverCardComponent {
   @Input()
   sector3!: SectorDisplay;
 
+  // RACE COMPARISON PAGE EXCLUSIVE
+  @Input() position?: number;
+  @Input() lapNumber?: number;
+
+  get showRaceInfo(): boolean {
+    return this.position !== undefined && this.lapNumber !== undefined;
+  }
+
   // get elapsedTime(): number {
   //   return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
   // }

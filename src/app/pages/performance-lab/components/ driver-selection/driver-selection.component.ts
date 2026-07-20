@@ -328,7 +328,7 @@ export class DriverSelectionComponent {
 
       this.raceContext.save();
 
-      await this.router.navigate(['/ultimate-pace']);
+      await this.router.navigate(['/qualifying-comparison']);
 
       const elapsed = Date.now() - startTime;
 

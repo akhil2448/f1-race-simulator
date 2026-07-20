@@ -1,7 +1,19 @@
 <div class="card">
   <div class="header">
-    <div class="driver">
-      {{ driver.driverName }}
+    <div class="driver-info">
+      <span class="driver">
+        {{ driver.driverName }}
+      </span>
+
+      @if (showRaceInfo) {
+        <span class="race-info">
+          <span class="position">P{{ position }}</span>
+
+          <span class="dot">•</span>
+
+          <span class="lap">LAP {{ lapNumber }}</span>
+        </span>
+      }
     </div>
 
     <div class="team-icon">

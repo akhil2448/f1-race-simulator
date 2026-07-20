@@ -13,11 +13,17 @@ import {
   DualRecommendationCard,
   DualRecommendationStint,
   RecommendationPair,
+  SingleDriverRecommendation,
   SingleDriverRecommendationResponse,
 } from '../../../models/race-management-recommendation.model';
 import { SingleRecommendationCardComponent } from './single-recommendation-card/single-recommendation-card.component';
 import { TeamUiService } from '../../../services/team-ui.service';
 import { DualRecommendationCardComponent } from './dual-recommendation-card/dual-recommendation-card.component';
+import { RaceComparisonService } from '../../../../../core/services/race-comparison.service';
+import { RaceContextService } from '../../../../../core/services/race-context.service';
+import { LoadingOverlayService } from '../../../../../core/services/loading-overlay.service';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-race-management-recommendations',
@@ -32,6 +38,14 @@ import { DualRecommendationCardComponent } from './dual-recommendation-card/dual
 })
 export class RaceManagementRecommendationsComponent implements OnChanges {
   private readonly teamUi = inject(TeamUiService);
+  private readonly comparisonService = inject(RaceComparisonService);
+  private readonly raceContext = inject(RaceContextService);
+  private readonly overlay = inject(LoadingOverlayService);
+  private readonly router = inject(Router);
+
+  private readonly MIN_LOADING_MS = 2000;
+  private readonly MAX_RETRIES = 3;
+
   @Input()
   singleRecommendation: SingleDriverRecommendationResponse | null = null;
 
@@ -161,5 +175,105 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
     }
 
     return Math.max(0, this.recommendationLaps.length - 1);
+  }
+
+  private async fetchComparisonWithRetry(
+    driverA: string,
+    lapA: number,
+    driverB?: string,
+    lapB?: number,
+  ) {
+    let attempt = 0;
+
+    while (attempt < this.MAX_RETRIES) {
+      try {
+        return await firstValueFrom(
+          this.comparisonService.getComparison(
+            this.raceContext.selectedYear!,
+            this.raceContext.selectedRound!,
+            driverA,
+            lapA,
+            driverB,
+            lapB,
+          ),
+        );
+      } catch {
+        attempt++;
+
+        if (attempt >= this.MAX_RETRIES) {
+          throw new Error();
+        }
+
+        this.overlay.show(
+          `Connection issue. Retrying (${attempt}/${this.MAX_RETRIES})...`,
+        );
+
+        await this.delay(1000);
+      }
+    }
+
+    throw new Error();
+  }
+
+  private async startRaceComparison(
+    driverA: string,
+    lapA: number,
+    driverB?: string,
+    lapB?: number,
+  ): Promise<void> {
+    this.overlay.show('Loading race comparison...');
+
+    const startTime = Date.now();
+
+    try {
+      const response = await this.fetchComparisonWithRetry(
+        driverA,
+        lapA,
+        driverB,
+        lapB,
+      );
+
+      this.raceContext.comparison = response;
+
+      this.raceContext.save();
+
+      await this.router.navigate(['/race-comparison']);
+
+      const elapsed = Date.now() - startTime;
+
+      const remaining = Math.max(0, this.MIN_LOADING_MS - elapsed);
+
+      await this.delay(remaining);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.overlay.hide();
+    }
+  }
+
+  async analyzeDualRecommendation(
+    recommendation: RecommendationPair,
+  ): Promise<void> {
+    await this.startRaceComparison(
+      this.dualRecommendation!.driverA.driverCode,
+      recommendation.lapA.lapNumber,
+      this.dualRecommendation!.driverB.driverCode,
+      recommendation.lapB.lapNumber,
+    );
+  }
+
+  async analyzeSingleRecommendation(
+    recommendation: SingleDriverRecommendation,
+  ): Promise<void> {
+    await this.startRaceComparison(
+      this.singleRecommendation!.driver.driverCode,
+      recommendation.lapNumber,
+    );
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 }

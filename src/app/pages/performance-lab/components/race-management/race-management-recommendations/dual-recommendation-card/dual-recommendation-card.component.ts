@@ -5,6 +5,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import {
   DualRecommendationCard,
@@ -31,6 +33,9 @@ export class DualRecommendationCardComponent implements OnChanges {
 
   @Input({ required: true })
   driverInfoB!: RaceRecommendationDriver;
+
+  @Output()
+  analyze = new EventEmitter<RecommendationPair>();
 
   availableDriverALaps: number[] = [];
   availableDriverBLaps: number[] = [];
@@ -127,5 +132,9 @@ export class DualRecommendationCardComponent implements OnChanges {
     if (index >= 0) {
       this.selectedRecommendationIndex = index;
     }
+  }
+
+  analyzeRecommendation(): void {
+    this.analyze.emit(this.recommendation);
   }
 }

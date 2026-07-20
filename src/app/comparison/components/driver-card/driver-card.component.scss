@@ -26,16 +26,47 @@
 
 .header {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
+}
+
+.driver-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+
+  min-width: 0;
 }
 
 .driver {
   font-size: 28px;
-
   line-height: 1;
+}
+
+.race-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 14px;
+
+  color: #b5b5b5;
+
+  letter-spacing: 0.4px;
+}
+
+.position {
+  color: #ffffff;
+
+  font-weight: 600;
+}
+
+.lap {
+  color: #b5b5b5;
+}
+
+.dot {
+  color: #666;
 }
 
 // .team-logo {

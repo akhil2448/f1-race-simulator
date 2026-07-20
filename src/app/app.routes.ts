@@ -11,6 +11,7 @@ import { qualifyingGuard } from './core/guards/qualifying.guard';
 import { simulationGuard } from './core/guards/simulation.guard';
 import { QualifyingComparisonPageComponent } from './pages/qualifying-comparison-page/qualifying-comparison-page.component';
 import { PerformanceLabComponent } from './pages/performance-lab/performance-lab.component';
+import { RaceComparisonPageComponent } from './pages/race-comparison-page/race-comparison-page.component';
 
 export const routes: Routes = [
   {
@@ -34,8 +35,12 @@ export const routes: Routes = [
         canActivate: [simulationGuard],
       },
       {
-        path: 'ultimate-pace',
+        path: 'qualifying-comparison',
         component: QualifyingComparisonPageComponent,
+      },
+      {
+        path: 'race-comparison',
+        component: RaceComparisonPageComponent,
       },
       { path: 'performance-lab', component: PerformanceLabComponent },
       {
