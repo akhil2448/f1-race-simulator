@@ -49,7 +49,11 @@
 
       <span class="separator">•</span>
 
-      <span class="fresh">
+      <span
+        class="fresh"
+        [class.new]="freshTyreText === 'NEW'"
+        [class.used]="freshTyreText === 'USED'"
+      >
         {{ freshTyreText }}
       </span>
 

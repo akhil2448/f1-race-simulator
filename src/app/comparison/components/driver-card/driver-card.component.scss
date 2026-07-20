@@ -281,9 +281,16 @@
 }
 
 .fresh {
-  color: #00d25a;
-
   font-size: 12px;
+  font-weight: 600;
+}
+
+.fresh.new {
+  color: #00d25a;
+}
+
+.fresh.used {
+  color: #9b9b9b;
 }
 
 .age {
