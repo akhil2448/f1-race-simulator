@@ -94,11 +94,23 @@
 }
 
 .header-right {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 18px;
+
   font-family: "Formula1";
 
+  color: #bdbdbd;
+}
+
+.session-details {
   font-size: 20px;
 
-  color: #bdbdbd;
+  white-space: nowrap;
 }
 
 /* ==========================

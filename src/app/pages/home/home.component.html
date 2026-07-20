@@ -14,6 +14,23 @@
         standings and more.
       </div>
     </div>
+
+    <div class="hero-bottom">
+      <div class="scroll-hint">
+        <span class="material-symbols-rounded scroll-icon">
+          keyboard_double_arrow_down
+        </span>
+
+        <div class="scroll-text">SCROLL TO EXPLORE</div>
+      </div>
+
+      <button
+        class="cta-button hero-enter-button"
+        (click)="goToRaceSelection()"
+      >
+        ENTER PITWALL
+      </button>
+    </div>
   </section>
 
   <!-- FEATURES -->
@@ -66,6 +83,9 @@
         <p *ngIf="feature.extraNote" class="feature-note">
           {{ feature.extraNote }}
         </p>
+        <p *ngIf="feature.extraNote2" class="feature-note">
+          {{ feature.extraNote2 }}
+        </p>
       </div>
     </div>
   </section>
@@ -83,7 +103,7 @@
       <div class="cta-subtitle">
         Explore
         <span class="cta-highlight">races</span>
-         every season
+        every season
         <span class="cta-highlight">from 2018</span>
       </div>
 

@@ -27,17 +27,119 @@
 
   scroll-snap-align: start;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  position: relative;
 
   text-align: center;
 
   padding: 0 24px;
+
+  position: relative;
 }
 
 .hero-content {
   max-width: 900px;
+
+  position: absolute;
+
+  top: 42%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: min(900px, calc(100% - 48px));
+
+  text-align: center;
+}
+
+.hero-bottom {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 28px;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  pointer-events: none;
+}
+
+.hero-bottom::before {
+  content: "";
+
+  position: absolute;
+
+  width: 140px;
+  height: 1px;
+
+  top: -26px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  background: rgba(255, 255, 255, 0.08);
+
+  opacity: 0;
+
+  animation: scrollReveal 0.7s ease 2.2s forwards;
+}
+
+.scroll-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.45);
+
+  opacity: 0;
+
+  pointer-events: auto;
+
+  animation:
+    scrollReveal 0.7s ease 2.3s forwards,
+    bounceHint 2.5s ease-in-out 3s infinite;
+}
+
+.scroll-icon {
+  font-size: 32px;
+
+  font-variation-settings: "wght" 200;
+
+  line-height: 1;
+
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+.scroll-text {
+  margin-bottom: 10px;
+
+  font-size: 11px;
+
+  font-family: "Formula1Bold", sans-serif;
+
+  letter-spacing: 5px;
+
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.hero-enter-button {
+  position: absolute;
+
+  right: 72px;
+
+  margin-top: 0;
+
+  pointer-events: auto;
+
+  opacity: 0;
+
+  transform: translateY(18px);
+
+  animation: buttonReveal 0.6s ease 2.9s forwards;
 }
 
 .hero-title {
@@ -475,5 +577,44 @@ video.feature-media {
   to {
     opacity: 1;
     transform: scaleX(1);
+  }
+}
+
+@keyframes scrollReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceHint {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(5px);
   }
 }

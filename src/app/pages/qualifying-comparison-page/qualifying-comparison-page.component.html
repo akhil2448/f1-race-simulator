@@ -13,10 +13,19 @@
 
     <div class="header-right">
       @if (comparison) {
-        {{ comparison.sessionPart }} •
-        {{ comparison.year }}
-        {{ comparison.grandPrix }}
+        <div class="session-details">
+          {{ comparison.sessionPart }} •
+          {{ comparison.year }}
+          {{ comparison.grandPrix }}
+        </div>
       }
+
+      <app-support-button
+        size="compact"
+        text="Support PitWall"
+        buyMeCoffeeUrl="https://buymeacoffee.com/akhil2448"
+      >
+      </app-support-button>
     </div>
   </section>
 

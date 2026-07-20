@@ -5,13 +5,19 @@ import { LoadingOverlayService } from '../../core/services/loading-overlay.servi
 import { DriverSelectionComponent } from './components/ driver-selection/driver-selection.component';
 import { RaceContextService } from '../../core/services/race-context.service';
 import { RaceManagementComponent } from './components/race-management/race-management.component';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 type AnalysisMode = 'ultimate' | 'race';
 
 @Component({
   selector: 'app-performance-lab',
   standalone: true,
-  imports: [CommonModule, DriverSelectionComponent, RaceManagementComponent],
+  imports: [
+    CommonModule,
+    DriverSelectionComponent,
+    RaceManagementComponent,
+    SupportButtonComponent,
+  ],
   templateUrl: './performance-lab.component.html',
   styleUrl: './performance-lab.component.scss',
 })

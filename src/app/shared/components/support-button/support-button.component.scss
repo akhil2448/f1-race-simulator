@@ -90,3 +90,28 @@
 .icon-hover {
   opacity: 0;
 }
+
+.support-button.compact {
+  min-width: 128px;
+
+  height: 38px;
+
+  padding: 0 14px;
+
+  gap: 8px;
+
+  border-width: 1.25px;
+
+  &:hover {
+    border-width: 2px;
+  }
+}
+
+.support-button.compact .button-text {
+  font-size: 0.95rem;
+}
+
+.support-button.compact .icon-wrapper {
+  width: 20px;
+  height: 20px;
+}

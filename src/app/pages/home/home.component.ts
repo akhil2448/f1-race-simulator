@@ -16,6 +16,7 @@ export interface Feature {
   title: string;
   description: string;
   extraNote?: string;
+  extraNote2?: string;
 
   type: 'video' | 'image';
 
@@ -37,13 +38,13 @@ export class HomeComponent implements AfterViewInit {
   ) {}
 
   features: Feature[] = [
-    {
-      title: 'Qualifying Results',
-      description:
-        'View qualifying lap times and starting grid before the race',
-      type: 'image',
-      mediaUrl: 'assets/features/qualifying-results.png',
-    },
+    // {
+    //   title: 'Qualifying Results',
+    //   description:
+    //     'View qualifying lap times and starting grid before the race',
+    //   type: 'image',
+    //   mediaUrl: 'assets/features/qualifying-results.png',
+    // },
     {
       title: 'Live Leaderboard',
       description:
@@ -53,13 +54,13 @@ export class HomeComponent implements AfterViewInit {
       type: 'video',
       mediaUrl: 'assets/features/live-leaderboard.mp4',
     },
-    {
-      title: 'Controls Area',
-      description:
-        'Check PitStop count, Tyre Age & Lapped Cars anytime on the go',
-      type: 'video',
-      mediaUrl: 'assets/features/controls-area.mp4',
-    },
+    // {
+    //   title: 'Controls Area',
+    //   description:
+    //     'Check PitStop count, Tyre Age & Lapped Cars anytime on the go',
+    //   type: 'video',
+    //   mediaUrl: 'assets/features/controls-area.mp4',
+    // },
     {
       title: 'Interactive Track Map',
       description:
@@ -67,29 +68,29 @@ export class HomeComponent implements AfterViewInit {
       type: 'video',
       mediaUrl: 'assets/features/track-map.mp4',
     },
-    {
-      title: 'Race Control Messages',
-      description:
-        'Follow official FIA race control events including flags, penalties and investigations',
-      type: 'video',
-      mediaUrl: 'assets/features/race-control-messages.mp4',
-    },
-    {
-      title: 'Weather Conditions',
-      description:
-        'Monitor track temperature, air temperature, humidity, wind and rainfall',
-      type: 'video',
-      mediaUrl: 'assets/features/weather.mp4',
-    },
-    {
-      title: 'Race Clock',
-      description:
-        'Control playback speed and relive the race at your own pace',
-      extraNote:
-        '* At 4x speed, a 90-minute race completes in approximately 22 minutes',
-      type: 'video',
-      mediaUrl: 'assets/features/race-clock.mp4',
-    },
+    // {
+    //   title: 'Race Control Messages',
+    //   description:
+    //     'Follow official FIA race control events including flags, penalties and investigations',
+    //   type: 'video',
+    //   mediaUrl: 'assets/features/race-control-messages.mp4',
+    // },
+    // {
+    //   title: 'Weather Conditions',
+    //   description:
+    //     'Monitor track temperature, air temperature, humidity, wind and rainfall',
+    //   type: 'video',
+    //   mediaUrl: 'assets/features/weather.mp4',
+    // },
+    // {
+    //   title: 'Race Clock',
+    //   description:
+    //     'Control playback speed and relive the race at your own pace',
+    //   extraNote:
+    //     '* At 4x speed, a 90-minute race completes in approximately 22 minutes',
+    //   type: 'video',
+    //   mediaUrl: 'assets/features/race-clock.mp4',
+    // },
     {
       title: 'Driver Telemetry',
       description: 'Dive deeper into speed, throttle, brake, RPM and gear data',
@@ -109,6 +110,24 @@ export class HomeComponent implements AfterViewInit {
         'View the official FIA race classification, Fastest lap, and Championship standings at the chequered flag',
       type: 'image',
       mediaUrl: 'assets/features/final-classification.png',
+    },
+
+    {
+      title: 'Performance Lab',
+      description: 'Ultimate Pace & Race Managament',
+      extraNote: '* Ultimate Pace - Qualifying lap analysis.',
+      extraNote2: '* Race Management - AI-powered representative race laps.',
+      type: 'video',
+      mediaUrl: 'assets/features/performance-lab.mp4',
+    },
+    {
+      title: 'Compare Driving Styles',
+      description:
+        'Analyze race or qualifying laps side by side with synchronized telemetry graphs and track position playback.',
+      extraNote:
+        '* Hover over the telemetry graphs to view the per frame telemtry info.',
+      type: 'video',
+      mediaUrl: 'assets/features/comparison-telemetry.mp4',
     },
   ];
 

@@ -12,6 +12,8 @@ export class SupportButtonComponent {
 
   @Input() buyMeCoffeeUrl = 'https://buymeacoffee.com/YOUR_PAGE';
 
+  @Input() size: 'normal' | 'compact' = 'normal';
+
   openSupportPage(): void {
     window.open(this.buyMeCoffeeUrl, '_blank', 'noopener,noreferrer');
   }

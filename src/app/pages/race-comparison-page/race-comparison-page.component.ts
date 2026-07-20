@@ -20,6 +20,7 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 import { Router } from '@angular/router';
 import { LoadingOverlayService } from '../../core/services/loading-overlay.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 
 @Component({
   selector: 'app-race-comparison-page',
@@ -30,6 +31,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     PlaybackControlsComponent,
     DriverCardComponent,
     ConfirmationDialogComponent,
+    SupportButtonComponent,
   ],
   templateUrl: './race-comparison-page.component.html',
   styleUrl: './race-comparison-page.component.scss',
