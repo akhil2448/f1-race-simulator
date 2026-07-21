@@ -18,15 +18,12 @@
       <div class="season-bar">
         <span class="season-bar-label">SEASON</span>
 
-        <select
+        <app-pw-select
           class="year-selector"
-          [(ngModel)]="selectedYear"
-          (change)="onYearChange()"
-        >
-          <option *ngFor="let year of years" [value]="year">
-            {{ year }}
-          </option>
-        </select>
+          [options]="yearOptions"
+          [value]="selectedYear"
+          (valueChange)="onYearSelected($event)"
+        ></app-pw-select>
       </div>
 
       <div class="support-me-button">

@@ -1,0 +1,256 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.pw-select {
+  position: relative;
+  width: 100%;
+  outline: none;
+}
+
+/* ==========================================================
+   Trigger
+   ========================================================== */
+
+.select-trigger {
+  width: 100%;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 14px;
+
+  background: #1d1b1b;
+  border: 1px solid #3b3b3b;
+  border-radius: 12px;
+
+  color: #e5e7eb;
+
+  cursor: pointer;
+
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.select-trigger:hover {
+  border-color: #555;
+}
+
+.pw-select.open .select-trigger {
+  border-color: #ffffff33;
+
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================
+   Trigger Content
+   ========================================================== */
+
+.trigger-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  overflow: hidden;
+}
+
+.placeholder {
+  color: #888;
+}
+
+.label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ==========================================================
+   Accent
+   ========================================================== */
+
+.accent {
+  width: 5px;
+  height: 22px;
+  border-radius: 3px;
+
+  border-radius: 99px;
+
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   Chevron
+   ========================================================== */
+
+.chevron {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  transition: transform 0.18s ease;
+}
+
+.pw-select.open .chevron {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================
+   Dropdown
+   ========================================================== */
+
+.dropdown {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  top: calc(100% + 6px);
+
+  max-height: 320px;
+
+  overflow-y: auto;
+
+  background: #252525;
+
+  border: 1px solid #3d3d3d;
+
+  border-radius: 12px;
+
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+  z-index: 1000;
+
+  animation: dropdownIn 0.14s ease;
+}
+
+/* open upwards */
+
+.pw-select.open-up .dropdown {
+  top: auto;
+  bottom: calc(100% + 6px);
+
+  transform-origin: bottom;
+}
+
+/* ==========================================================
+   Option
+   ========================================================== */
+
+.option {
+  width: 100%;
+
+  height: 42px;
+
+  padding: 0 14px;
+
+  border: none;
+  background: transparent;
+
+  color: #e5e7eb;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.option-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option:hover,
+.option.highlighted {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.option.selected {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.option.disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.check {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   Scrollbar
+   ========================================================== */
+
+.dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 999px;
+}
+
+.dropdown::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Firefox */
+
+.dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: #4a4a4a transparent;
+}
+
+/* ==========================================================
+   Animation
+   ========================================================== */
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pw-select.open-up .dropdown {
+  animation: dropdownUp 0.14s ease;
+}
+
+@keyframes dropdownUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

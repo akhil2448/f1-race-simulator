@@ -1,0 +1,83 @@
+<div
+  class="pw-select"
+  [class.open]="isOpen"
+  [class.open-up]="openUpwards"
+  tabindex="0"
+>
+  <!-- Selected Value -->
+
+  <button type="button" class="select-trigger" (click)="toggle()">
+    <div class="trigger-label">
+      @if (selectedOption) {
+        @if (selectedOption.accentColor) {
+          <span
+            class="accent"
+            [style.background]="selectedOption.accentColor"
+          ></span>
+        }
+
+        <span class="label">
+          {{ selectedOption.label }}
+        </span>
+      } @else {
+        <span class="placeholder">
+          {{ placeholder }}
+        </span>
+      }
+    </div>
+
+    <svg class="chevron" viewBox="0 0 24 24">
+      <path
+        d="M6 9l6 6 6-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
+
+  <!-- Dropdown -->
+
+  @if (isOpen) {
+    <div #dropdown class="dropdown">
+      @for (option of options; track option.value; let i = $index) {
+        <button
+          type="button"
+          class="option"
+          [class.selected]="option.value === value"
+          [class.highlighted]="i === highlightedIndex"
+          [class.disabled]="option.disabled"
+          (click)="select(option)"
+        >
+          <div class="option-left">
+            @if (option.accentColor) {
+              <span
+                class="accent"
+                [style.background]="option.accentColor"
+              ></span>
+            }
+
+            <span class="label">
+              {{ option.label }}
+            </span>
+          </div>
+
+          @if (option.value === value) {
+            <svg class="check" viewBox="0 0 24 24">
+              <path
+                d="M5 12l5 5L19 7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

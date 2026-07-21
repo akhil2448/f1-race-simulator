@@ -26,6 +26,7 @@ import { LoadingOverlayComponent } from '../../simulation/components/loading-ove
 import { ExitConfirmationModalComponent } from '../../simulation/components/exit-confirmation-modal/exit-confirmation-modal.component';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 import { RaceContextService } from '../../core/services/race-context.service';
+import { DriverPresenceService } from '../../core/services/driver-presence.service';
 
 @Component({
   selector: 'app-simulation',
@@ -52,6 +53,7 @@ import { RaceContextService } from '../../core/services/race-context.service';
 })
 export class SimulationComponent implements OnInit, OnDestroy {
   availableDrivers: string[] = [];
+  private allDrivers: string[] = [];
   selectedDrivers: (string | null)[] = [null, null];
 
   raceContext: { year: number; round: number } | null = null;
@@ -69,6 +71,7 @@ export class SimulationComponent implements OnInit, OnDestroy {
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
+    private driverPresence: DriverPresenceService,
     private raceFinish: RaceFinishService,
     private raceClock: RaceClockService,
     private router: Router,
@@ -92,7 +95,12 @@ export class SimulationComponent implements OnInit, OnDestroy {
     });
 
     this.bootstrap.availableDrivers$.subscribe((drivers) => {
-      this.availableDrivers = drivers;
+      this.allDrivers = drivers;
+      this.updateAvailableDrivers();
+    });
+
+    this.driverPresence.outDrivers$.subscribe(() => {
+      this.updateAvailableDrivers();
     });
 
     this.bootstrap.raceData$.subscribe((raceData) => {
@@ -133,6 +141,12 @@ export class SimulationComponent implements OnInit, OnDestroy {
     });
 
     this.activeRedFlag = active ?? null;
+  }
+
+  private updateAvailableDrivers(): void {
+    this.availableDrivers = this.allDrivers.filter(
+      (driver) => !this.driverPresence.isOut(driver),
+    );
   }
 
   getAvailableDriversForSlot(slot: number): string[] {

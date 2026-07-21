@@ -12,6 +12,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { RaceClockService } from '../../../core/services/race-clock-service';
 import { SeekCoordinatorService } from '../../../core/services/seek-coordinator.service';
+import { PwSelectComponent } from '../../../shared/components/pw-select/pw-select.component';
+import { PwSelectOption } from '../../../shared/components/pw-select/pw-select-option';
 import {
   DriverTelemetryBufferService,
   DriverTelemetryPoint,
@@ -25,6 +27,7 @@ import {
   startWith,
 } from 'rxjs';
 import { takeUntil, switchMap, map } from 'rxjs/operators';
+import { DriverMetaService } from '../../../core/services/driver-meta.service';
 
 export interface DriverTelemetryView {
   speed: number;
@@ -38,7 +41,7 @@ export interface DriverTelemetryView {
 @Component({
   selector: 'app-driver-telemetry',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PwSelectComponent],
   providers: [DriverTelemetryBufferService], // ✅ unique instance per panel
   templateUrl: './driver-telemetry.component.html',
   styleUrl: './driver-telemetry.component.scss',
@@ -65,6 +68,7 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   constructor(
     private raceClock: RaceClockService,
     private buffer: DriverTelemetryBufferService,
+    private driverMeta: DriverMetaService,
     private elementRef: ElementRef,
     private seekCoordinator: SeekCoordinatorService,
   ) {
@@ -193,9 +197,20 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
     };
   }
 
-  onSelect(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    if (value) this.driverSelected.emit(value);
+  get driverOptions(): PwSelectOption<string>[] {
+    return this.availableDrivers.map((driver) => ({
+      value: driver,
+      label: driver,
+      accentColor: this.getDriverColor(driver),
+    }));
+  }
+
+  private getDriverColor(driver: string): string {
+    return this.driverMeta.get(driver)?.color ?? '#888888';
+  }
+
+  onDriverChosen(driver: string): void {
+    this.driverSelected.emit(driver);
   }
 
   onChangeDriver(): void {

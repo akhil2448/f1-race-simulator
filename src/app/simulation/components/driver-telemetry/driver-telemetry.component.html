@@ -1,12 +1,12 @@
 <div class="driver-telemetry-panel" [style.border-color]="highlightColor">
   <!-- NOT SELECTED -->
   <ng-container *ngIf="!selectedDriver; else telemetryBox">
-    <select class="driver-select" (change)="onSelect($event)">
-      <option value="" disabled selected>Select Driver</option>
-      <option *ngFor="let d of availableDrivers" [value]="d">
-        {{ d }}
-      </option>
-    </select>
+    <app-pw-select
+      placeholder="Select Driver"
+      [options]="driverOptions"
+      [value]="selectedDriver"
+      (valueChange)="onDriverChosen($event)"
+    ></app-pw-select>
   </ng-container>
 
   <!-- SELECTED -->

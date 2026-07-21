@@ -34,6 +34,14 @@ export class LeaderboardService {
 
   leaderboard$ = this.subject.asObservable();
 
+  readonly activeDrivers$ = this.leaderboard$.pipe(
+    map((state) =>
+      state.entries
+        .filter((entry) => entry.status !== 'OUT')
+        .map((entry) => entry.driver),
+    ),
+  );
+
   /** leader lap observable */
   leaderLap$ = this.leaderboard$.pipe(map((s) => s.leaderLap));
 

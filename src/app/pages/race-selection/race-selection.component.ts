@@ -14,6 +14,9 @@ import { SupportButtonComponent } from '../../shared/components/support-button/s
 import { RaceContextService } from '../../core/services/race-context.service';
 import { DriverSelectionResponse } from '../performance-lab/models/performance-lab.model';
 
+import { PwSelectComponent } from '../../shared/components/pw-select/pw-select.component';
+import { PwSelectOption } from '../../shared/components/pw-select/pw-select-option';
+
 export interface RaceSchedule {
   round: number;
   country: string;
@@ -44,7 +47,12 @@ interface YearScheduleResponse {
 @Component({
   selector: 'app-race-selection',
   standalone: true,
-  imports: [CommonModule, FormsModule, SupportButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SupportButtonComponent,
+    PwSelectComponent,
+  ],
   templateUrl: './race-selection.component.html',
   styleUrls: ['./race-selection.component.scss'],
 })
@@ -52,6 +60,13 @@ export class RaceSelectionComponent implements OnInit {
   private readonly http = inject(HttpClient);
 
   years: number[] = [];
+
+  get yearOptions(): PwSelectOption<number>[] {
+    return this.years.map((year) => ({
+      value: year,
+      label: year.toString(),
+    }));
+  }
 
   selectedYear = new Date().getFullYear();
 
@@ -95,6 +110,11 @@ export class RaceSelectionComponent implements OnInit {
     this.state.selectedYear = this.selectedYear;
 
     this.loadSchedule();
+  }
+
+  onYearSelected(year: number): void {
+    this.selectedYear = year;
+    this.onYearChange();
   }
 
   async loadSchedule(): Promise<void> {
