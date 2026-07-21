@@ -42,7 +42,7 @@ export class SeekCoordinatorService {
    * must go through this service.
    */
   async seekToRaceSecond(targetSecond: number): Promise<void> {
-    console.log('[SeekCoordinator] Starting seek:', targetSecond);
+    // console.log('[SeekCoordinator] Starting seek:', targetSecond);
 
     /* =========================================
    1. ENTER SEEK MODE
@@ -100,7 +100,7 @@ export class SeekCoordinatorService {
 
     this.seekingSubject.next(false);
 
-    console.log('[SeekCoordinator] Seek complete:', targetSecond);
+    // console.log('[SeekCoordinator] Seek complete:', targetSecond);
   }
 
   private delay(ms: number): Promise<void> {

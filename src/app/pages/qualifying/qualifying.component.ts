@@ -232,7 +232,7 @@ export class QualifyingComponent implements OnInit {
         take(1),
       )
       .subscribe(() => {
-        console.log('QUALIFYING RECEIVED BOOTSTRAP COMPLETE', this.failureType);
+        // console.log('QUALIFYING RECEIVED BOOTSTRAP COMPLETE', this.failureType);
 
         if (this.failureType === 'none') {
           this.raceContext.navigationStep = 'simulation';

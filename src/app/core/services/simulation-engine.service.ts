@@ -70,7 +70,7 @@ export class SimulationEngineService {
    * Optional cleanup (useful for future race switching)
    */
   destroy(): void {
-    console.log('******** DESTROY RACE CALLED ********');
+    // console.log('******** DESTROY RACE CALLED ********');
 
     this.clockSub?.unsubscribe();
     this.clockSub = undefined;

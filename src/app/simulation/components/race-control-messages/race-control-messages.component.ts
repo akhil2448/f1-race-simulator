@@ -163,7 +163,7 @@ export class RaceControlMessagesComponent implements OnInit, OnDestroy {
   }
 
   private resetForSeek(targetSecond: number): void {
-    console.log('[RaceControl] Resetting for seek:', targetSecond);
+    // console.log('[RaceControl] Resetting for seek:', targetSecond);
 
     /**
      * Clear transient UI state

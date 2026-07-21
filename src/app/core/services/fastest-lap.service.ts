@@ -88,7 +88,7 @@ export class FastestLapService {
       this.currentFastestDriver = bestDriver;
 
       this.currentFastestLapTime = bestLapTime;
-      console.log('[FASTEST LAP]', bestDriver, bestLapTime);
+      // console.log('[FASTEST LAP]', bestDriver, bestLapTime);
 
       if (bestDriver) {
         const driverData = this.raceData.drivers[bestDriver];

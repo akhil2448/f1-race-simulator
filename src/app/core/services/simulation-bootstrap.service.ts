@@ -162,7 +162,7 @@ export class SimulationBootstrapService {
     const trackLength = data.trackInfo.trackLength;
 
     if (!trackLength) {
-      console.error('Track length not available');
+      // console.error('Track length not available');
 
       this.updateStep('track-map', 'error');
 
@@ -503,20 +503,20 @@ export class SimulationBootstrapService {
       this.bootstrapCompleteSubject.next(true);
     }, 1000);
 
-    console.log('BOOTSTRAP COMPLETE');
+    // console.log('BOOTSTRAP COMPLETE');
   }
 
   destroyRace(): void {
     this.bootstrapCompleteSubject.next(false);
 
     this.raceClock.reset();
-    console.log('Clock second after reset:', this.raceClock.getCurrentSecond());
+    // console.log('Clock second after reset:', this.raceClock.getCurrentSecond());
 
     this.liveTiming.reset();
-    console.log('LiveTiming reset');
+    // console.log('LiveTiming reset');
 
     this.timingProcessor.reset();
-    console.log('Timing processor reset');
+    // console.log('Timing processor reset');
 
     this.leaderboard.reset();
 
@@ -531,7 +531,7 @@ export class SimulationBootstrapService {
     this.stepsSubject.next([]);
 
     this.engine.destroy();
-    console.log('Engine destroyed');
+    // console.log('Engine destroyed');
 
     this.telemetry.clear();
 
@@ -551,6 +551,6 @@ export class SimulationBootstrapService {
 
     this.optionalFailuresDetected = false;
 
-    console.log('DESTROY RACE');
+    // console.log('DESTROY RACE');
   }
 }

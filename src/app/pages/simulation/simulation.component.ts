@@ -83,8 +83,8 @@ export class SimulationComponent implements OnInit, OnDestroy {
     });
 
     this.bootstrap.steps$.subscribe((steps) => {
-      console.log('BOOTSTRAP STEPS');
-      console.table(steps);
+      // console.log('BOOTSTRAP STEPS');
+      // console.table(steps);
     });
 
     this.raceClock.raceTime$.subscribe((raceSecond) => {
