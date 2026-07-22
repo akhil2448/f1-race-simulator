@@ -136,6 +136,20 @@
   font-family: "Formula1", sans-serif;
 }
 
+.telemetry-helper {
+  margin-top: 6px;
+
+  max-width: 420px;
+
+  color: #bdbdbd;
+
+  font-size: 12px;
+
+  line-height: 1.45;
+
+  font-family: "Formula1", sans-serif;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

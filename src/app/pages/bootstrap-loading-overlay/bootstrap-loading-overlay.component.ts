@@ -22,6 +22,9 @@ export class BootstrapLoadingOverlayComponent {
   @Input()
   failureType: BootstrapFailureType = 'none';
 
+  @Input()
+  showTelemetryHelper = false;
+
   @Output()
   retry = new EventEmitter<void>();
 

@@ -75,6 +75,7 @@ export class QualifyingComponent implements OnInit {
   showBootstrapOverlay = false;
 
   failureType: BootstrapFailureType = 'none';
+  showTelemetryHelper = false;
 
   constructor() {
     this.bootstrap.steps$
@@ -87,6 +88,12 @@ export class QualifyingComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((type) => {
         this.failureType = type;
+      });
+
+    this.bootstrap.telemetryHelper$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((show) => {
+        this.showTelemetryHelper = show;
       });
   }
 

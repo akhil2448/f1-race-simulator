@@ -100,6 +100,10 @@ export class SimulationBootstrapService {
 
   raceContext$ = this.raceContextSubject.asObservable();
 
+  private telemetryHelperSubject = new BehaviorSubject<boolean>(false);
+  telemetryHelper$ = this.telemetryHelperSubject.asObservable();
+  private telemetryHelperTimer?: ReturnType<typeof setTimeout>;
+
   /** 🚦 SINGLE ENTRY POINT */
   startRace(config: { year: number; round: number }): void {
     // This line needs to be at Top!!!
@@ -134,6 +138,10 @@ export class SimulationBootstrapService {
       }, this.RETRY_DELAY_MS);
 
       return true; // Another retry was scheduled
+    }
+
+    if (stepId === 'telemetry') {
+      this.clearTelemetryHelper();
     }
 
     this.updateStep(stepId, 'error');
@@ -368,11 +376,15 @@ export class SimulationBootstrapService {
   ): void {
     this.updateStep('telemetry', 'loading');
 
+    this.startTelemetryHelperTimer();
+
     this.telemetry
       .initialize(year, round, trackLength)
       .pipe(timeout(60000))
       .subscribe({
         next: () => {
+          this.clearTelemetryHelper();
+
           this.updateStep('telemetry', 'success');
 
           this.initializeEngine();
@@ -466,17 +478,17 @@ export class SimulationBootstrapService {
       },
       {
         id: 'race-control',
-        label: 'Processing race control',
+        label: 'Collecting race control messages',
         status: 'pending',
       },
       {
         id: 'local-time',
-        label: 'Synchronizing track time',
+        label: 'Synchronizing local track time',
         status: 'pending',
       },
       {
         id: 'telemetry',
-        label: 'Processing driver telemetry',
+        label: 'Calculationg driver positions',
         status: 'pending',
       },
       {
@@ -509,7 +521,26 @@ export class SimulationBootstrapService {
     // console.log('BOOTSTRAP COMPLETE');
   }
 
+  private startTelemetryHelperTimer(): void {
+    this.clearTelemetryHelper();
+
+    this.telemetryHelperTimer = setTimeout(() => {
+      this.telemetryHelperSubject.next(true);
+    }, 30000);
+  }
+
+  private clearTelemetryHelper(): void {
+    if (this.telemetryHelperTimer) {
+      clearTimeout(this.telemetryHelperTimer);
+      this.telemetryHelperTimer = undefined;
+    }
+
+    this.telemetryHelperSubject.next(false);
+  }
+
   destroyRace(): void {
+    this.clearTelemetryHelper();
+
     this.bootstrapCompleteSubject.next(false);
 
     this.raceClock.reset();

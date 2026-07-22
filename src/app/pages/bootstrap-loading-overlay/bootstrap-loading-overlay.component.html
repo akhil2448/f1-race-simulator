@@ -25,6 +25,17 @@
           >
             Retrying ({{ step.retryCount }}/3)
           </div>
+          <div
+            class="telemetry-helper"
+            *ngIf="
+              step.id === 'telemetry' &&
+              step.status === 'loading' &&
+              showTelemetryHelper
+            "
+          >
+            Building track positions for all drivers. This may take a little
+            while.
+          </div>
         </div>
       </div>
     </div>
