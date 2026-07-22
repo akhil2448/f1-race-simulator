@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, timeout } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, TimeoutError, timeout } from 'rxjs';
 
 import { RaceDataService } from './race-data.service';
 import { DriverMetaService } from './driver-meta.service';
@@ -380,7 +381,7 @@ export class SimulationBootstrapService {
 
     this.telemetry
       .initialize(year, round, trackLength)
-      .pipe(timeout(60000))
+      .pipe(timeout(180000))
       .subscribe({
         next: () => {
           this.clearTelemetryHelper();
@@ -393,9 +394,39 @@ export class SimulationBootstrapService {
         error: (err) => {
           console.error('TELEMETRY LOAD FAILED', err);
 
-          this.handleRetry('telemetry', () =>
-            this.loadTelemetryWithRetry(year, round, trackLength),
-          );
+          // Backend hung for 3 minutes.
+          // Don't start another expensive telemetry build.
+          if (err instanceof TimeoutError) {
+            this.clearTelemetryHelper();
+            this.updateStep('telemetry', 'error');
+            this.addFailedStep('telemetry');
+            this.failureTypeSubject.next('mandatory');
+            return;
+          }
+
+          if (err instanceof HttpErrorResponse) {
+            // Client errors (400s) won't succeed on retry.
+            if (err.status >= 400 && err.status < 500) {
+              this.clearTelemetryHelper();
+              this.updateStep('telemetry', 'error');
+              this.addFailedStep('telemetry');
+              this.failureTypeSubject.next('mandatory');
+              return;
+            }
+
+            // Retry server errors (5xx) and network failures (status === 0).
+            this.handleRetry('telemetry', () =>
+              this.loadTelemetryWithRetry(year, round, trackLength),
+            );
+
+            return;
+          }
+
+          // Unknown error.
+          this.clearTelemetryHelper();
+          this.updateStep('telemetry', 'error');
+          this.addFailedStep('telemetry');
+          this.failureTypeSubject.next('mandatory');
         },
       });
   }
@@ -488,7 +519,7 @@ export class SimulationBootstrapService {
       },
       {
         id: 'telemetry',
-        label: 'Calculationg driver positions',
+        label: 'Calculating driver positions',
         status: 'pending',
       },
       {
