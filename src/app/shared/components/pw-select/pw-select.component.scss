@@ -72,6 +72,22 @@
   letter-spacing: 0.3px;
 }
 
+.search-input {
+  width: 100%;
+
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: #e5e7eb;
+
+  font: inherit;
+}
+
+.search-input::placeholder {
+  color: #b7b7b7;
+  opacity: 1;
+}
 /* ==========================================================
    Accent
    ========================================================== */

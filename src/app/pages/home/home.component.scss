@@ -59,7 +59,7 @@
 
   left: 0;
   right: 0;
-  bottom: 28px;
+  bottom: 72px;
 
   display: flex;
   justify-content: center;
@@ -68,25 +68,25 @@
   pointer-events: none;
 }
 
-.hero-bottom::before {
-  content: "";
+// .hero-bottom::before {
+//   content: "";
 
-  position: absolute;
+//   position: absolute;
 
-  width: 140px;
-  height: 1px;
+//   width: 140px;
+//   height: 1px;
 
-  top: -26px;
-  left: 50%;
+//   top: -26px;
+//   left: 50%;
 
-  transform: translateX(-50%);
+//   transform: translateX(-50%);
 
-  background: rgba(255, 255, 255, 0.08);
+//   background: rgba(255, 255, 255, 0.08);
 
-  opacity: 0;
+//   opacity: 0;
 
-  animation: scrollReveal 0.7s ease 2.2s forwards;
-}
+//   animation: scrollReveal 0.7s ease 2.2s forwards;
+// }
 
 .scroll-hint {
   display: flex;

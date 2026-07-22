@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { DriverApiData } from '../models/race-data.model';
+import {
+  DriverApiData,
+  RaceClassificationEntry,
+} from '../models/race-data.model';
 import { TEAM_COLORS } from '../constants/team-data';
 import { DriverMeta } from '../models/driver-meta.model';
 
@@ -27,17 +30,37 @@ export class DriverMetaService {
   /**
    * Call ONCE after race data is fetched
    */
-  initialize(drivers: Record<string, DriverApiData>): void {
+  initialize(
+    drivers: Record<string, DriverApiData>,
+    classification: RaceClassificationEntry[],
+  ): void {
+    const classificationMap = new Map(
+      classification.map((entry) => [entry.driver, entry]),
+    );
+
     const map = new Map<string, DriverMeta>();
 
     for (const [driverCode, data] of Object.entries(drivers)) {
-      const team = data.team;
+      const classificationEntry = classificationMap.get(driverCode);
+
+      const fullName = classificationEntry?.fullName ?? driverCode;
+
+      const parts = fullName.split(' ');
 
       map.set(driverCode, {
         driverCode,
+
         driverNumber: data.driverNumber,
-        team,
-        color: TEAM_COLORS[team] ?? '#888888', // safe fallback
+
+        fullName,
+
+        firstName: parts[0] ?? '',
+
+        lastName: parts.slice(1).join(' '),
+
+        team: data.team,
+
+        color: TEAM_COLORS[data.team] ?? '#888888',
       });
     }
 

@@ -5,4 +5,6 @@ export interface PwSelectOption<T = string> {
   accentColor?: string;
 
   disabled?: boolean;
+
+  keywords?: string[];
 }

@@ -35,17 +35,26 @@ export class PwSelectComponent<T> implements AfterViewChecked {
     return this._value;
   }
 
+  @Input() searchable = false;
+
   @Output() valueChange = new EventEmitter<T>();
 
   @ViewChild('dropdown')
   dropdown?: ElementRef<HTMLDivElement>;
 
+  @ViewChild('searchInput')
+  searchInput?: ElementRef<HTMLInputElement>;
+
   isOpen = false;
+
+  searchText = '';
+  filteredOptions: PwSelectOption<T>[] = [];
 
   highlightedIndex = -1;
 
   openUpwards = false;
   private pendingScroll = false;
+  private pendingFocus = false;
 
   @HostListener('window:resize')
   onResize(): void {
@@ -72,15 +81,22 @@ export class PwSelectComponent<T> implements AfterViewChecked {
 
     this.isOpen = true;
 
-    this.highlightedIndex = this.options.findIndex(
+    this.searchText = '';
+    this.filteredOptions = [...this.options];
+
+    this.highlightedIndex = this.filteredOptions.findIndex(
       (o) => o.value === this.value,
     );
 
-    if (this.highlightedIndex < 0 && this.options.length > 0) {
+    if (this.highlightedIndex < 0 && this.filteredOptions.length > 0) {
       this.highlightedIndex = 0;
     }
 
     this.pendingScroll = true;
+
+    if (this.searchable) {
+      this.pendingFocus = true;
+    }
   }
 
   close(): void {
@@ -137,7 +153,7 @@ export class PwSelectComponent<T> implements AfterViewChecked {
         event.preventDefault();
 
         this.highlightedIndex = Math.min(
-          this.options.length - 1,
+          this.filteredOptions.length - 1,
           this.highlightedIndex + 1,
         );
 
@@ -156,14 +172,49 @@ export class PwSelectComponent<T> implements AfterViewChecked {
         event.preventDefault();
 
         if (this.highlightedIndex >= 0) {
-          this.select(this.options[this.highlightedIndex]);
+          this.select(this.filteredOptions[this.highlightedIndex]);
         }
 
         break;
     }
   }
 
+  onSearchChange(value: string): void {
+    this.searchText = value;
+    this.filterOptions();
+  }
+
+  private filterOptions(): void {
+    const query = this.searchText.trim().toLowerCase();
+
+    if (!query) {
+      this.filteredOptions = [...this.options];
+    } else {
+      this.filteredOptions = this.options.filter((option) => {
+        const keywords = option.keywords ?? [option.label];
+
+        return keywords.some((keyword) =>
+          keyword.toLowerCase().includes(query),
+        );
+      });
+
+      // If nothing matches, show all drivers again.
+      if (this.filteredOptions.length === 0) {
+        this.filteredOptions = [...this.options];
+      }
+    }
+
+    this.highlightedIndex = this.filteredOptions.length > 0 ? 0 : -1;
+
+    this.pendingScroll = true;
+  }
+
   ngAfterViewChecked(): void {
+    if (this.pendingFocus && this.searchInput) {
+      this.pendingFocus = false;
+      this.searchInput.nativeElement.focus();
+    }
+
     if (!this.pendingScroll || !this.dropdown) {
       return;
     }

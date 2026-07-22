@@ -198,11 +198,23 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   }
 
   get driverOptions(): PwSelectOption<string>[] {
-    return this.availableDrivers.map((driver) => ({
-      value: driver,
-      label: driver,
-      accentColor: this.getDriverColor(driver),
-    }));
+    return this.availableDrivers.map((driver) => {
+      const meta = this.driverMeta.get(driver);
+
+      return {
+        value: driver,
+        label: driver,
+        accentColor: meta?.color,
+
+        keywords: [
+          driver,
+          meta?.fullName ?? '',
+          meta?.firstName ?? '',
+          meta?.lastName ?? '',
+          meta?.team ?? '',
+        ],
+      };
+    });
   }
 
   private getDriverColor(driver: string): string {

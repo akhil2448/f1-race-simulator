@@ -6,23 +6,35 @@
 >
   <!-- Selected Value -->
 
-  <button type="button" class="select-trigger" (click)="toggle()">
+  <button type="button" class="select-trigger" (click)="!isOpen && toggle()">
     <div class="trigger-label">
-      @if (selectedOption) {
-        @if (selectedOption.accentColor) {
-          <span
-            class="accent"
-            [style.background]="selectedOption.accentColor"
-          ></span>
-        }
-
-        <span class="label">
-          {{ selectedOption.label }}
-        </span>
+      @if (isOpen && searchable) {
+        <input
+          #searchInput
+          class="search-input"
+          type="text"
+          placeholder="🔍 Driver, team, code..."
+          [value]="searchText"
+          (click)="$event.stopPropagation()"
+          (input)="onSearchChange($any($event.target).value)"
+        />
       } @else {
-        <span class="placeholder">
-          {{ placeholder }}
-        </span>
+        @if (selectedOption) {
+          @if (selectedOption.accentColor) {
+            <span
+              class="accent"
+              [style.background]="selectedOption.accentColor"
+            ></span>
+          }
+
+          <span class="label">
+            {{ selectedOption.label }}
+          </span>
+        } @else {
+          <span class="placeholder">
+            {{ placeholder }}
+          </span>
+        }
       }
     </div>
 
@@ -42,7 +54,7 @@
 
   @if (isOpen) {
     <div #dropdown class="dropdown">
-      @for (option of options; track option.value; let i = $index) {
+      @for (option of filteredOptions; track option.value; let i = $index) {
         <button
           type="button"
           class="option"

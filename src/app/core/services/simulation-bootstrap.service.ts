@@ -251,7 +251,10 @@ export class SimulationBootstrapService {
 
         /* ---------- STATIC META ---------- */
 
-        this.driverMeta.initialize(raceData.drivers);
+        this.driverMeta.initialize(
+          raceData.drivers,
+          raceData.results.classification,
+        );
         this.sectorAnchors.initialize(raceData);
         this.raceFinish.initialize(raceData);
         this.fastestLap.initialize(raceData);
