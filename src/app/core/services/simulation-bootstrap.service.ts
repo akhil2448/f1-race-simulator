@@ -370,7 +370,7 @@ export class SimulationBootstrapService {
 
     this.telemetry
       .initialize(year, round, trackLength)
-      .pipe(timeout(30000))
+      .pipe(timeout(60000))
       .subscribe({
         next: () => {
           this.updateStep('telemetry', 'success');
@@ -441,12 +441,12 @@ export class SimulationBootstrapService {
     this.stepsSubject.next([
       {
         id: 'race-data',
-        label: 'Loading race data',
+        label: 'Preparing race data',
         status: 'pending',
       },
       {
         id: 'starting-grid',
-        label: 'Loading starting grid',
+        label: 'Setting up starting grid',
         status: 'pending',
       },
       {
@@ -456,32 +456,32 @@ export class SimulationBootstrapService {
       },
       {
         id: 'weather',
-        label: 'Loading weather information',
+        label: 'Fetching weather data',
         status: 'pending',
       },
       {
         id: 'track-status',
-        label: 'Loading track status',
+        label: 'Analyzing track status',
         status: 'pending',
       },
       {
         id: 'race-control',
-        label: 'Loading race control messages',
+        label: 'Processing race control',
         status: 'pending',
       },
       {
         id: 'local-time',
-        label: 'Synchronizing local track time',
+        label: 'Synchronizing track time',
         status: 'pending',
       },
       {
         id: 'telemetry',
-        label: 'Loading telemetry',
+        label: 'Processing driver telemetry',
         status: 'pending',
       },
       {
         id: 'engine',
-        label: 'Initializing simulation engine',
+        label: 'Starting simulation engine',
         status: 'pending',
       },
     ]);
