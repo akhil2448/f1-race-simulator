@@ -34,6 +34,18 @@ HEADER
   width: 520px;
 }
 
+.header-actions {
+  display: block;
+}
+
+.mobile-title-actions {
+  display: none;
+}
+
+.title-block .title-actions {
+  display: flex;
+}
+
 .title-block {
   display: flex;
 
@@ -288,5 +300,185 @@ CONTENT
     opacity: 1;
 
     transform: none;
+  }
+}
+
+/* ==========================================================
+   MOBILE PORTRAIT
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  .page {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .header-left {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .header-actions {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+  }
+
+  .mobile-title-actions {
+    display: flex;
+    transform: scale(0.7) translateY(-18px);
+    margin-right: -30px;
+  }
+
+  .title-block .title-actions {
+    display: none;
+  }
+
+  .title-block {
+    order: -1;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+
+    max-width: none;
+  }
+
+  .title-actions {
+    justify-content: center;
+  }
+
+  .selected-event {
+    justify-content: left;
+
+    font-size: 18px;
+
+    flex-wrap: wrap;
+  }
+
+  .back-button {
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .mode-card {
+    width: 100%;
+  }
+
+  .mode-button {
+    padding: 14px 8px;
+
+    font-size: 16px;
+  }
+
+  .content-card {
+    padding: 18px;
+  }
+
+  .mode-title {
+    font-size: 22px;
+  }
+
+  .mode-description {
+    font-size: 14px;
+
+    line-height: 1.6;
+  }
+
+  .selection-card {
+    padding: 16px;
+  }
+}
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .page {
+    padding: 18px;
+  }
+
+  .header {
+    align-items: flex-start;
+
+    gap: 24px;
+
+    margin-bottom: 8px;
+  }
+
+  .header-left {
+    width: 360px;
+
+    gap: 16px;
+  }
+
+  .title-block .title-actions {
+    display: flex;
+  }
+
+  .mobile-title-actions {
+    display: none;
+  }
+
+  .back-button {
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 32px;
+    letter-spacing: 1.4;
+  }
+
+  .subtitle {
+    font-size: 12px;
+
+    max-width: 370px;
+  }
+
+  .selected-event {
+    font-size: 20px;
+  }
+
+  .mode-card {
+    width: 360px;
+  }
+
+  .mode-button {
+    padding: 14px;
+
+    font-size: 12px;
+  }
+
+  .content-card {
+    padding: 18px 22px;
+  }
+
+  .mode-description {
+    font-size: 14px;
+  }
+
+  .selection-card {
+    padding: 18px;
+  }
+
+  .title-actions {
+    transform: scale(0.8) translateY(-15px);
+    margin-right: -20px;
   }
 }

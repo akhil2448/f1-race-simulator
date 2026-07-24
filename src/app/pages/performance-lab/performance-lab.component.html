@@ -5,10 +5,15 @@
     <!-- LEFT COLUMN -->
 
     <div class="header-left">
-      <div class="back-button" (click)="goBack()">
-        <span class="back-chevron">‹</span>
+      <div class="header-actions">
+        <div class="back-button" (click)="goBack()">
+          <span class="back-chevron">‹</span>
+          <span class="back-text">Select Another Race</span>
+        </div>
 
-        <span class="back-text"> Select Another Race </span>
+        <div class="title-actions mobile-title-actions">
+          <app-support-button text="Support PitWall"></app-support-button>
+        </div>
       </div>
 
       <div class="selected-event">
