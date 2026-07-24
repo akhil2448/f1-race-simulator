@@ -280,3 +280,53 @@
 
   line-height: 1.6;
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .recommendations {
+    margin-top: 18px;
+  }
+
+  .stint-selector {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stint-button {
+    height: 34px;
+    padding: 0 16px;
+    font-size: 10px;
+  }
+
+  .carousel-wrapper {
+    padding: 0 18px;
+  }
+
+  .carousel-arrow {
+    width: 42px;
+    height: 42px;
+  }
+
+  .carousel-arrow.left {
+    left: -8px;
+  }
+
+  .carousel-arrow.right {
+    right: -8px;
+  }
+
+  .carousel-arrow .material-symbols-rounded {
+    font-size: 30px;
+  }
+
+  .dots {
+    margin-top: 18px;
+  }
+
+  .loading-overlay {
+    min-height: 360px;
+  }
+}

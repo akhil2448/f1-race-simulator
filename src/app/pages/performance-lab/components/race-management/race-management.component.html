@@ -137,7 +137,23 @@
     }
 
     @if (showRecommendations) {
+      <div class="rotate-device-message">
+        <img
+          class="rotate-gif"
+          src="assets/images/rotate-device.gif"
+          alt="Rotate device"
+        />
+
+        <div class="rotate-title">Rotate your device</div>
+
+        <div class="rotate-subtitle">
+          This analysis is designed for landscape viewing.<br /><br />
+          Rotate your device to continue.
+        </div>
+      </div>
+
       <app-race-management-recommendations
+        class="recommendations-landscape"
         [loading]="loadingRecommendations"
         [singleRecommendation]="raceContext.singleDriverRecommendation"
         [dualRecommendation]="raceContext.dualDriverRecommendation"

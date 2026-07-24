@@ -527,6 +527,14 @@
   transform: translateX(1px) translateY(-1px);
 }
 
+.rotate-device-message {
+  display: none;
+}
+
+.recommendations-landscape {
+  display: block;
+}
+
 /* ==========================================================
    MOBILE PORTRAIT
    ========================================================== */
@@ -565,6 +573,58 @@
   .analyze-button {
     width: 100%;
   }
+
+  .rotate-device-message {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+
+    min-height: 320px;
+
+    padding: 40px 24px;
+
+    border-radius: 16px;
+
+    background: #252525;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    text-align: center;
+  }
+
+  .rotate-gif {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+  }
+
+  .rotate-title {
+    font-family: Formula1;
+
+    font-size: 22px;
+
+    color: white;
+  }
+
+  .rotate-subtitle {
+    max-width: 320px;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+
+    color: #9f9f9f;
+  }
+
+  .recommendations-landscape {
+    display: none;
+  }
 }
 
 /* ==========================================================
@@ -602,5 +662,13 @@
 
   .non-starter-card {
     width: 130px;
+  }
+
+  .rotate-device-message {
+    display: none;
+  }
+
+  .recommendations-landscape {
+    display: block;
   }
 }
