@@ -38,7 +38,7 @@ HEADER
   display: block;
 }
 
-.mobile-title-actions {
+.title-actions.mobile-title-actions {
   display: none;
 }
 
@@ -331,7 +331,7 @@ CONTENT
     align-items: center;
   }
 
-  .mobile-title-actions {
+  .title-actions.mobile-title-actions {
     display: flex;
     transform: scale(0.7) translateY(-18px);
     margin-right: -30px;
@@ -432,7 +432,7 @@ CONTENT
     display: flex;
   }
 
-  .mobile-title-actions {
+  .title-actions.mobile-title-actions {
     display: none;
   }
 
