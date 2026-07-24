@@ -366,3 +366,160 @@
 
   transform: translateY(-1px);
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .card {
+    min-height: 280px;
+
+    padding: 16px 18px;
+
+    gap: 14px;
+
+    border-radius: 18px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .driver-title {
+    gap: 10px;
+  }
+
+  .driver-accent {
+    width: 4px;
+    height: 28px;
+  }
+
+  .confidence {
+    height: 36px;
+    padding: 0 14px;
+    gap: 6px;
+  }
+
+  .confidence .label {
+    font-size: 9px;
+  }
+
+  .confidence .value {
+    font-size: 20px;
+  }
+
+  .hero-row {
+    gap: 12px;
+
+    margin-bottom: 2px;
+  }
+
+  .hero-label {
+    font-size: 10px;
+
+    margin-bottom: 4px;
+  }
+
+  .hero-value {
+    font-size: 18px;
+  }
+
+  .tyre {
+    font-size: 18px;
+  }
+
+  .tyre-age {
+    font-size: 15px;
+  }
+
+  .metrics-header {
+    margin-bottom: 12px;
+
+    font-size: 9px;
+  }
+
+  .analysis-grid {
+    gap: 12px;
+  }
+
+  .analysis-section {
+    padding: 10px 12px;
+  }
+
+  .section-title {
+    font-size: 9px;
+
+    margin-bottom: 10px;
+  }
+
+  // .row {
+  //   min-height: 26px;
+  // }
+
+  .row,
+  .traffic-row {
+    min-height: 18px;
+    font-size: 8px;
+  }
+
+  // .traffic-row {
+  //   gap: 5px;
+  // }
+
+  .row span:first-child {
+    font-size: 10px;
+  }
+
+  .row span:last-child {
+    font-size: 10px;
+  }
+
+  .traffic-grid {
+    row-gap: 8px;
+
+    column-gap: 16px;
+  }
+
+  .traffic-row {
+    gap: 4px;
+  }
+
+  .traffic-row span:first-child {
+    font-size: 10px;
+  }
+
+  .traffic-row span:last-child {
+    font-size: 10px;
+  }
+
+  .pit-marker {
+    transform: scale(0.9);
+  }
+
+  .reasons {
+    margin-top: 16px;
+
+    padding-top: 14px;
+  }
+
+  .reason {
+    margin-top: 4px;
+
+    font-size: 8px;
+
+    line-height: 1.2;
+  }
+
+  .reasons-footer {
+    gap: 18px;
+  }
+
+  .analyze-button {
+    height: 34px;
+
+    padding: 0 16px;
+
+    font-size: 10px;
+  }
+}
