@@ -155,22 +155,22 @@ body {
 }
 
 /* ==========================================================
-   MOBILE FOOTER
+   MOBILE FOOTER - PORTRAIT
    ========================================================== */
 
 @media (max-width: 1024px) {
   .app-footer {
-    padding: 18px 16px 24px;
+    padding: 14px 8px 20px;
   }
 
   .footer-wrapper {
     width: 100%;
-    max-width: 650px;
-    gap: 14px;
+    max-width: 850px;
+    gap: 4px;
   }
 
   .footer-text {
-    font-size: 13px;
+    font-size: 10px;
     line-height: 1.7;
     white-space: normal;
     text-align: center;
@@ -178,20 +178,61 @@ body {
 
   .footer-text a {
     display: inline-block;
-    padding: 6px 4px;
+    padding: 6px 3px;
+    font-size: 10px;
   }
 
   .footer-disclaimer {
     max-width: 100%;
 
-    font-size: 12px;
+    font-size: 9.5px;
     line-height: 1.7;
 
-    padding: 0 8px;
+    padding: 0 2px;
   }
 
   .footer-disclaimer a {
     display: inline-block;
     padding: 4px;
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .app-footer {
+    padding: 14px 0px 20px;
+  }
+  .footer-wrapper {
+    width: 100%;
+    max-width: 950px;
+    gap: 4px;
+  }
+
+  .footer-text {
+    font-size: 8px;
+    line-height: 1.5;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .footer-text a {
+    display: inline-block;
+    padding: 6px 3px;
+    font-size: 8px;
+  }
+
+  .footer-disclaimer {
+    max-width: 95%;
+
+    font-size: 7px;
+    line-height: 1.7;
+
+    padding: 0 2px;
+  }
+
+  .footer-disclaimer a {
+    display: inline-block;
+    padding: 4px;
+    font-size: 7px;
   }
 }
