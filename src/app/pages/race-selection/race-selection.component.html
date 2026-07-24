@@ -11,24 +11,26 @@
     <div class="title-accent"></div>
 
     <div class="page-tagline">Replay Formula 1 Races</div>
+  </div>
 
-    <div class="header-toolbar">
-      <div class="toolbar-spacer"></div>
+  <div class="header-toolbar">
+    <div class="mobile-home" (click)="goHome()">← HOME</div>
 
-      <div class="season-bar">
-        <span class="season-bar-label">SEASON</span>
+    <div class="toolbar-spacer"></div>
 
-        <app-pw-select
-          class="year-selector"
-          [options]="yearOptions"
-          [value]="selectedYear"
-          (valueChange)="onYearSelected($event)"
-        ></app-pw-select>
-      </div>
+    <div class="season-bar">
+      <span class="season-bar-label">SEASON</span>
 
-      <div class="support-me-button">
-        <app-support-button text="Support PitWall"> </app-support-button>
-      </div>
+      <app-pw-select
+        class="year-selector"
+        [options]="yearOptions"
+        [value]="selectedYear"
+        (valueChange)="onYearSelected($event)"
+      ></app-pw-select>
+    </div>
+
+    <div class="support-me-button">
+      <app-support-button text="Support PitWall"> </app-support-button>
     </div>
   </div>
 
