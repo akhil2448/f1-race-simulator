@@ -341,3 +341,54 @@
 
   text-align: right;
 }
+
+/* ==========================================================
+   MOBILE PORTRAIT
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  .driver-row {
+    grid-template-columns: 100px 1fr 28px;
+    gap: 8px;
+
+    padding: 2px 4px;
+  }
+
+  .driver-info {
+    grid-template-columns: 4px 1fr 24px;
+
+    height: 28px;
+  }
+
+  .driver-name {
+    padding-left: 8px;
+
+    font-size: 16px;
+  }
+
+  .team-icon {
+    transform: scale(0.8);
+    transform-origin: center;
+  }
+
+  .laps {
+    font-size: 14px;
+  }
+
+  .strategy {
+    height: 12px;
+  }
+
+  .stint {
+    height: 12px;
+  }
+
+  .pit-marker {
+    width: 20px;
+    height: 20px;
+
+    right: -10px;
+
+    font-size: 8px;
+  }
+}
