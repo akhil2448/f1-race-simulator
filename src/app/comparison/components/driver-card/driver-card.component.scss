@@ -22,51 +22,61 @@
   color: #f3f3f3;
   border-radius: 3%;
   border: 2px solid rgba(255, 255, 255, 0.141);
+  overflow: hidden;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
-.driver-info {
+.position-badge {
+  width: 44px;
+  height: calc(100% + 20px);
+
+  margin-top: -10px;
+  margin-bottom: -10px;
+  margin-left: -14px;
+
   display: flex;
-  align-items: baseline;
+  justify-content: center;
+  align-items: center;
+
+  background: #1b1b1b;
+
+  color: white;
+
+  font-family: Formula1Bold;
+  font-size: 22px;
+
+  flex-shrink: 0;
+}
+
+.position-badge.leader {
+  background: #e10600;
+}
+
+.driver-name {
+  font-size: 24px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  flex: 1;
+
+  font-family: "Formula1", system-ui, sans-serif;
+}
+
+.header-right {
+  display: flex;
+
+  align-items: center;
+
   gap: 12px;
-
-  min-width: 0;
-}
-
-.driver {
-  font-size: 28px;
-  line-height: 1;
-}
-
-.race-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  font-size: 14px;
-
-  color: #b5b5b5;
-
-  letter-spacing: 0.4px;
-}
-
-.position {
-  color: #ffffff;
-
-  font-weight: 600;
-}
-
-.lap {
-  color: #b5b5b5;
-}
-
-.dot {
-  color: #666;
 }
 
 // .team-logo {
@@ -88,50 +98,55 @@
 /* TEAM LOGO OVERRIDES */
 
 .team-icon img.redbull {
-  transform: translateX(-34px) scale(3);
+  // transform: translateX(-34px) scale(3);
+  transform: translateX(-13px) translateY(1px) scale(2);
 
   transform-origin: center;
 
   image-rendering: auto;
+  margin-left: 24px;
 }
 
-.team-icon img.alfaromeo {
-  transform: scale(1.15);
-}
+// .team-icon img.alfaromeo {
+//   transform: scale(1);
+// }
 
 .team-icon img.renault {
   filter: brightness(0) invert(1);
-  transform: translateX(-1px) scale(1.05);
+  // transform: translateX(-1px) scale(1.05);
+  transform: translateX(-1px) scale(0.9);
 }
 
 .team-icon img.mclaren {
   padding-top: 2px;
-
-  transform: translateX(-10px) scale(1.5);
+  // transform: translateX(-10px) scale(1.5);
 }
 
-.team-icon img.ferrari {
-  transform: translateX(-8px) scale(1.25);
-}
+// .team-icon img.ferrari {
+//   transform: translateX(-8px) scale(1.25);
+// }
 
 .team-icon img.mercedes {
-  transform: translateX(-8px) scale(1.15);
+  // transform: translateX(-8px) scale(1.15);
+  transform: translateY(1px) scale(0.8);
 }
 
 .team-icon img.forceindia {
-  transform: translateX(-8px) scale(1.5);
+  // transform: translateX(-8px) scale(1.5);
+  transform: translateY(2px);
 }
 
 .team-icon img.haas {
-  transform: translateX(-8px) scale(1.25);
+  // transform: translateX(-8px) scale(1.25);
+  transform: scale(0.9);
 }
 
 .team-icon img.tororosso {
-  width: 70px;
+  width: 40px;
 
-  height: 35px;
+  height: 20px;
 
-  transform: translateX(-4px);
+  transform: translateY(2px);
 
   transform-origin: center;
 
@@ -141,35 +156,38 @@
 .team-icon img.racingpoint {
   filter: brightness(0) invert(1);
 
-  transform: translateX(-1px) scale(1.15);
+  // transform: translateX(-1px) scale(1.15);
+  transform: translateY(1px) scale(0.85);
 }
 
 .team-icon img.alphatauri {
   filter: brightness(0) invert(1);
 
-  transform: translateX(-15px) scale(2.5);
+  transform: translateX(0px) translateY(2px) scale(1.5);
+  margin-left: 0px;
 }
 
 .team-icon img.alpine {
   filter: brightness(0) invert(1);
 
-  transform: translateX(-10px) scale(2.25);
+  transform: translateY(1px) scale(1.5);
 }
 
 .team-icon img.astonmartin {
   padding-top: 3px;
 
-  transform: translateX(-35px) translateY(3px) scale(3.5);
+  transform: translateX(-12px) translateY(3px) scale(2);
+  margin-left: 20px;
 }
 
 .team-icon img.racingbulls {
   filter: brightness(0) invert(1);
 
-  transform: translateX(-8px) scale(1.4);
+  transform: translateX(-1px) scale(1.1);
 }
 
 .team-icon img.kicksauber {
-  transform: translateX(-6px) scale(1.4);
+  transform: translateX(-1px) translateY(2px) scale(0.95);
 }
 
 .team-icon img.cadillac {
@@ -179,13 +197,15 @@
 
   filter: brightness(0) invert(1);
 
-  transform: translateX(-22px) scale(3);
+  transform: translateX(-7px) translateY(-1px) scale(1.9);
+  margin-left: 12px;
 }
 
 .team-icon img.audi {
   filter: brightness(0) invert(1);
 
-  transform: translateX(-22px) scale(2.25);
+  transform: translateX(-5px) translateY(2px) scale(1.5);
+  margin-left: 10px;
 }
 
 .team-icon img.plcholder {
@@ -193,13 +213,14 @@
 }
 
 .team-strip {
+  margin-left: -14px;
+  margin-right: -14px;
+
   margin-top: 8px;
 
+  width: calc(100% + 28px);
+
   height: 5px;
-
-  border-radius: 999px;
-
-  width: 100%;
 }
 
 .lap-row {
@@ -271,7 +292,7 @@
 }
 
 .compound {
-  font-size: 18px;
+  font-size: 20px;
 
   line-height: 1;
 }
@@ -371,17 +392,36 @@
 
   /* ---------- HEADER ---------- */
 
-  .driver-info {
+  .header {
     gap: 6px;
   }
 
-  .driver {
+  .position-badge {
+    width: 24px;
+
+    margin-top: -5px;
+    margin-bottom: 0px;
+    margin-left: -8px;
+
+    height: calc(100% + 10px);
+
+    font-size: 12px;
+  }
+
+  .driver-name {
     font-size: 16px;
   }
 
-  .race-info {
-    gap: 4px;
-    font-size: 9px;
+  .header-right {
+    gap: 6px;
+  }
+
+  .compound {
+    font-size: 12px;
+  }
+
+  .lap {
+    font-size: 10px;
   }
 
   .team-icon img {
@@ -392,6 +432,11 @@
   /* ---------- TEAM STRIP ---------- */
 
   .team-strip {
+    margin-left: -8px;
+    margin-right: -8px;
+
+    width: calc(100% + 16px);
+
     margin-top: 1px;
     height: 3px;
   }
@@ -426,10 +471,6 @@
     font-size: 7px;
   }
 
-  .compound {
-    font-size: 9px;
-  }
-
   .fresh {
     font-size: 8px;
   }
@@ -453,46 +494,70 @@
     font-size: 9px;
   }
 
-  /* ---------- LARGE TEAM LOGOS ---------- */
+  /* ---------- TEAM LOGO OVERRIDES ---------- */
 
   .team-icon img.redbull {
-    transform: translateX(-22px) scale(2);
+    transform: translateX(-8px) translateY(1px) scale(1.35);
+    margin-left: 16px;
   }
 
-  .team-icon img.astonmartin {
-    transform: translateX(-22px) translateY(2px) scale(2.3);
+  .team-icon img.renault {
+    transform: translateX(-1px) scale(0.65);
   }
 
-  .team-icon img.alphatauri {
-    transform: translateX(-8px) scale(1.7);
+  .team-icon img.mercedes {
+    transform: translateY(1px) scale(0.65);
   }
 
-  .team-icon img.alpine {
-    transform: translateX(-6px) scale(1.6);
+  .team-icon img.forceindia {
+    transform: translateY(1px) scale(0.8);
+  }
+
+  .team-icon img.haas {
+    transform: scale(0.75);
   }
 
   .team-icon img.tororosso {
-    width: 46px;
-    height: 22px;
+    width: 26px;
+    height: 13px;
+    transform: translateY(1px);
+  }
+
+  .team-icon img.racingpoint {
+    transform: translateY(1px) scale(0.7);
+  }
+
+  .team-icon img.alphatauri {
+    transform: translateY(1px) scale(1.05);
+    margin-left: 0;
+  }
+
+  .team-icon img.alpine {
+    transform: translateY(1px) scale(1.05);
+  }
+
+  .team-icon img.astonmartin {
+    transform: translateX(-8px) translateY(2px) scale(1.35);
+    margin-left: 13px;
+  }
+
+  .team-icon img.racingbulls {
+    transform: scale(0.85);
+  }
+
+  .team-icon img.kicksauber {
+    transform: translateY(1px) scale(0.75);
   }
 
   .team-icon img.cadillac {
-    width: 16px;
+    width: 15px;
     height: 6px;
-    transform: translateX(-12px) scale(2.1);
+    transform: translateX(-5px) translateY(0) scale(1.35);
+    margin-left: 8px;
   }
 
   .team-icon img.audi {
-    transform: translateX(-12px) scale(1.6);
-  }
-
-  .team-icon img.mclaren,
-  .team-icon img.ferrari,
-  .team-icon img.mercedes,
-  .team-icon img.forceindia,
-  .team-icon img.haas,
-  .team-icon img.racingbulls,
-  .team-icon img.kicksauber {
-    transform: scale(1.05);
+    transform: translateX(-3px) translateY(1px) scale(1.05);
+    margin-left: 6px;
   }
 }

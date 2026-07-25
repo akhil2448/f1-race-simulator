@@ -1,19 +1,7 @@
 <div class="card">
   <div class="header">
-    <div class="driver-info">
-      <span class="driver">
-        {{ driver.driverName }}
-      </span>
-
-      @if (showRaceInfo) {
-        <span class="race-info">
-          <span class="position">P{{ position }}</span>
-
-          <span class="dot">•</span>
-
-          <span class="lap">LAP {{ lapNumber }}</span>
-        </span>
-      }
+    <div class="position-badge" [class.leader]="position === 1">
+      {{ position }}
     </div>
 
     <div class="team-icon">
@@ -22,6 +10,20 @@
         [class]="getTeamLogoClass(driver.teamName)"
         (error)="onTeamLogoError($event)"
       />
+    </div>
+
+    <div class="driver-name">
+      {{ driver.driverName | uppercase }}
+    </div>
+
+    <div class="header-right">
+      @if (lapNumber !== undefined) {
+        <span class="lap">LAP {{ lapNumber }}</span>
+      }
+
+      <span class="compound" [ngClass]="compoundClass">
+        {{ compoundShort }}
+      </span>
     </div>
   </div>
 
@@ -42,12 +44,6 @@
 
     <div class="tyre-info">
       <span class="tyre-label">TYRE</span>
-
-      <span class="compound" [ngClass]="compoundClass">
-        {{ compoundShort }}
-      </span>
-
-      <span class="separator">•</span>
 
       <span
         class="fresh"

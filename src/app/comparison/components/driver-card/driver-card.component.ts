@@ -36,13 +36,10 @@ export class DriverCardComponent {
   @Input()
   sector3!: SectorDisplay;
 
-  // RACE COMPARISON PAGE EXCLUSIVE
   @Input() position?: number;
-  @Input() lapNumber?: number;
 
-  get showRaceInfo(): boolean {
-    return this.position !== undefined && this.lapNumber !== undefined;
-  }
+  // RACE COMPARISON PAGE EXCLUSIVE
+  @Input() lapNumber?: number;
 
   // get elapsedTime(): number {
   //   return Math.min(this.driver.lapTime * this.progress, this.driver.lapTime);
@@ -192,9 +189,9 @@ export class DriverCardComponent {
     return this.normalizeTeamName(team);
   }
 
-  //   private normalizeTeamName(team: string): string {
-  //     return 'williams';
-  //   }
+  // private normalizeTeamName(team: string): string {
+  //   return 'plcholder';
+  // }
 
   private normalizeTeamName(team: string): string {
     if (team === 'Red Bull Racing') return 'redbull';

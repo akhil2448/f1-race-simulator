@@ -54,6 +54,7 @@
           <app-driver-card
             [theme]="theme.driverA"
             [driver]="comparison.driverA"
+            [position]="comparison.driverA.position"
             [progress]="playbackService.currentProgress"
             [elapsedTime]="driverAElapsedTime"
             [gap]="driverAGap"
@@ -82,6 +83,7 @@
           <app-driver-card
             [theme]="theme.driverB"
             [driver]="driverB"
+            [position]="driverB.position"
             [progress]="playbackService.currentProgress"
             [elapsedTime]="driverBElapsedTime"
             [gap]="driverBGap"
