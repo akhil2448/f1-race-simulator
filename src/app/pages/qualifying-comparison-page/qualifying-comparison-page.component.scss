@@ -189,3 +189,112 @@
   display: flex;
   align-items: center;
 }
+
+/* ==========================================================
+   PHONE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .comparison-page {
+    padding: 2px;
+    min-height: 100vh;
+    height: auto;
+
+    overflow: visible;
+  }
+
+  /* ---------- HEADER ---------- */
+
+  .comparison-header {
+    flex: 0 0 22px;
+    padding: 0 4px;
+  }
+
+  .header-left {
+    gap: 4px;
+  }
+
+  .back-button {
+    width: 16px;
+    height: 16px;
+    font-size: 18px;
+  }
+
+  .f1-logo {
+    height: 10px;
+  }
+
+  .title {
+    font-size: 12px;
+  }
+
+  .header-right {
+    gap: 4px;
+  }
+
+  .session-details {
+    font-size: 12px;
+    margin-right: 5px;
+  }
+
+  app-support-button {
+    display: flex;
+
+    align-items: center;
+    transform-origin: right center;
+  }
+
+  /* ---------- TELEMETRY ---------- */
+
+  .telemetry-panel {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    margin: 2px 0;
+  }
+
+  /* ---------- DRIVER CARDS ---------- */
+
+  .comparison-footer {
+    flex: 0 0 85px;
+
+    min-height: 85px;
+    max-height: 85px;
+
+    margin-top: -2px; /* was 2px */
+
+    margin-bottom: 8px; /* NEW */
+
+    margin-left: 0;
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(220px, 1fr)
+      minmax(140px, 0.8fr)
+      minmax(220px, 1fr);
+
+    column-gap: 6px;
+  }
+
+  .driver-card,
+  .track-map-card {
+    align-items: stretch;
+  }
+
+  /* ---------- CONTROLS ---------- */
+
+  .controls-panel {
+    flex: 0 0 25px;
+
+    min-height: 25px;
+    max-height: 25px;
+
+    margin-top: 0;
+
+    padding-bottom: 4px;
+
+    box-sizing: border-box;
+  }
+}

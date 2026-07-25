@@ -279,15 +279,26 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     svg.selectAll('*').remove();
 
-    const SVG_WIDTH = 1400;
-    const SVG_HEIGHT = 580;
+    const isPhoneLandscape = window.matchMedia(
+      '(max-width: 1024px) and (orientation: landscape)',
+    ).matches;
 
-    const margin = {
-      top: 15,
-      right: 40,
-      bottom: 20,
-      left: 50,
-    };
+    const SVG_WIDTH = isPhoneLandscape ? 1600 : 1400;
+    const SVG_HEIGHT = isPhoneLandscape ? 500 : 580;
+
+    const margin = isPhoneLandscape
+      ? {
+          top: 10,
+          right: 60,
+          bottom: 16,
+          left: 50,
+        }
+      : {
+          top: 15,
+          right: 40,
+          bottom: 20,
+          left: 50,
+        };
 
     const chartWidth = SVG_WIDTH - margin.left - margin.right;
     const chartHeight = SVG_HEIGHT - margin.top - margin.bottom;

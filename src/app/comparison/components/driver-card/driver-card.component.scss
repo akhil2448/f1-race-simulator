@@ -358,3 +358,141 @@
 
   color: white;
 }
+
+/* ==========================================================
+   PHONE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .card {
+    padding: 5px 8px;
+    border-width: 1px;
+  }
+
+  /* ---------- HEADER ---------- */
+
+  .driver-info {
+    gap: 6px;
+  }
+
+  .driver {
+    font-size: 16px;
+  }
+
+  .race-info {
+    gap: 4px;
+    font-size: 9px;
+  }
+
+  .team-icon img {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ---------- TEAM STRIP ---------- */
+
+  .team-strip {
+    margin-top: 1px;
+    height: 3px;
+  }
+
+  /* ---------- LAP ---------- */
+
+  .lap-row {
+    margin-top: 5px;
+  }
+
+  .lap-left {
+    grid-template-columns: 75px 38px;
+    column-gap: 6px;
+  }
+
+  .lap-time {
+    font-size: 14px;
+  }
+
+  .gap {
+    font-size: 8px;
+  }
+
+  /* ---------- TYRES ---------- */
+
+  .tyre-info {
+    gap: 3px;
+    font-size: 7px;
+  }
+
+  .tyre-label {
+    font-size: 7px;
+  }
+
+  .compound {
+    font-size: 9px;
+  }
+
+  .fresh {
+    font-size: 8px;
+  }
+
+  .age {
+    font-size: 8px;
+  }
+
+  /* ---------- SECTORS ---------- */
+
+  .sectors {
+    gap: 4px;
+  }
+
+  .sector-label {
+    font-size: 7px;
+    margin-bottom: 2px;
+  }
+
+  .sector-time {
+    font-size: 9px;
+  }
+
+  /* ---------- LARGE TEAM LOGOS ---------- */
+
+  .team-icon img.redbull {
+    transform: translateX(-22px) scale(2);
+  }
+
+  .team-icon img.astonmartin {
+    transform: translateX(-22px) translateY(2px) scale(2.3);
+  }
+
+  .team-icon img.alphatauri {
+    transform: translateX(-8px) scale(1.7);
+  }
+
+  .team-icon img.alpine {
+    transform: translateX(-6px) scale(1.6);
+  }
+
+  .team-icon img.tororosso {
+    width: 46px;
+    height: 22px;
+  }
+
+  .team-icon img.cadillac {
+    width: 16px;
+    height: 6px;
+    transform: translateX(-12px) scale(2.1);
+  }
+
+  .team-icon img.audi {
+    transform: translateX(-12px) scale(1.6);
+  }
+
+  .team-icon img.mclaren,
+  .team-icon img.ferrari,
+  .team-icon img.mercedes,
+  .team-icon img.forceindia,
+  .team-icon img.haas,
+  .team-icon img.racingbulls,
+  .team-icon img.kicksauber {
+    transform: scale(1.05);
+  }
+}
