@@ -343,10 +343,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('cy', this.brakeYScale(sampleA.brake))
       .attr('opacity', 1);
 
-    this.hoverDeltaMarkerA
-      .attr('cx', this.xScale(deltaPoint.d))
-      .attr('cy', this.deltaYScale(deltaPoint.delta))
-      .attr('opacity', 1);
+    if (deltaPoint) {
+      this.hoverDeltaMarkerA
+        .attr('cx', this.xScale(deltaPoint.d))
+        .attr('cy', this.deltaYScale(deltaPoint.delta))
+        .attr('opacity', 1);
+    }
 
     if (sampleB) {
       this.hoverSpeedMarkerB
@@ -369,10 +371,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
         .attr('cy', this.brakeYScale(sampleB.brake))
         .attr('opacity', 1);
 
-      this.hoverDeltaMarkerB
-        ?.attr('cx', this.xScale(deltaPoint.d))
-        .attr('cy', this.deltaYScale(0))
-        .attr('opacity', 1);
+      if (deltaPoint) {
+        this.hoverDeltaMarkerB
+          ?.attr('cx', this.xScale(deltaPoint.d))
+          .attr('cy', this.deltaYScale(0))
+          .attr('opacity', 1);
+      }
     }
 
     this.tooltipVisible = true;
@@ -427,7 +431,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       this.tooltip.throttle.b = Math.round(sampleB.throttle);
       this.tooltip.brake.b = sampleB.brake > 0;
 
-      const delta = deltaPoint.delta;
+      const delta = deltaPoint?.delta ?? 0;
 
       this.tooltip.delta.value = Math.abs(delta);
 
@@ -1505,13 +1509,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const deltaPoint = this.interpolateDelta(frameA.sample.d);
 
-    this.deltaMarkerA
-      .attr('cx', this.xScale(deltaPoint.d))
-      .attr('cy', this.deltaYScale(deltaPoint.delta));
+    if (deltaPoint) {
+      this.deltaMarkerA
+        .attr('cx', this.xScale(deltaPoint.d))
+        .attr('cy', this.deltaYScale(deltaPoint.delta));
 
-    this.deltaMarkerB
-      ?.attr('cx', this.xScale(deltaPoint.d))
-      .attr('cy', this.deltaYScale(0));
+      this.deltaMarkerB
+        ?.attr('cx', this.xScale(deltaPoint.d))
+        .attr('cy', this.deltaYScale(0));
+    }
 
     if (this.driverB?.telemetry?.length && this.speedMarkerB) {
       if (frameB) {
@@ -1604,8 +1610,12 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     return best;
   }
 
-  private interpolateDelta(distance: number): DeltaPoint {
+  private interpolateDelta(distance: number): DeltaPoint | null {
     const data = this.deltaSeries;
+
+    if (data.length === 0) {
+      return null;
+    }
 
     let index = 0;
 

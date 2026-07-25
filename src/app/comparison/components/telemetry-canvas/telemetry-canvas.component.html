@@ -21,20 +21,22 @@
         >
       </div>
 
-      <div class="row">
-        <span class="driver" [style.color]="driverBTheme?.color">
-          {{ driverB.driver }}
-        </span>
+      @if (driverB) {
+        <div class="row">
+          <span class="driver" [style.color]="driverBTheme?.color">
+            {{ driverB.driver }}
+          </span>
 
-        <span [style.color]="driverBTheme?.color"
-          >{{ tooltip.speed.b }} km/h</span
-        >
-      </div>
+          <span [style.color]="driverBTheme?.color">
+            {{ tooltip.speed.b }} km/h
+          </span>
+        </div>
+      }
     </div>
 
     <div
       class="telemetry-tooltip delta"
-      *ngIf="tooltipVisible"
+      *ngIf="tooltipVisible && driverB"
       [style.left.px]="tooltipX"
       [class.left-side]="tooltipOnLeft"
       [class.visible]="tooltipVisible"
@@ -85,13 +87,17 @@
         <span [style.color]="driverATheme.color">{{ tooltip.rpm.a }}</span>
       </div>
 
-      <div class="row">
-        <span class="driver" [style.color]="driverBTheme?.color">
-          {{ driverB.driver }}
-        </span>
+      @if (driverB) {
+        <div class="row">
+          <span class="driver" [style.color]="driverBTheme?.color">
+            {{ driverB.driver }}
+          </span>
 
-        <span [style.color]="driverBTheme?.color">{{ tooltip.rpm.b }}</span>
-      </div>
+          <span [style.color]="driverBTheme?.color">
+            {{ tooltip.rpm.b }}
+          </span>
+        </div>
+      }
     </div>
 
     <div
@@ -115,15 +121,17 @@
         >
       </div>
 
-      <div class="row">
-        <span class="driver" [style.color]="driverBTheme?.color">
-          {{ driverB.driver }}
-        </span>
+      @if (driverB) {
+        <div class="row">
+          <span class="driver" [style.color]="driverBTheme?.color">
+            {{ driverB.driver }}
+          </span>
 
-        <span [style.color]="driverBTheme?.color"
-          >{{ tooltip.throttle.b }}%</span
-        >
-      </div>
+          <span [style.color]="driverBTheme?.color">
+            {{ tooltip.throttle.b }}%
+          </span>
+        </div>
+      }
     </div>
 
     <div
@@ -147,15 +155,17 @@
         }}</span>
       </div>
 
-      <div class="row">
-        <span class="driver" [style.color]="driverBTheme?.color">
-          {{ driverB.driver }}
-        </span>
+      @if (driverB) {
+        <div class="row">
+          <span class="driver" [style.color]="driverBTheme?.color">
+            {{ driverB.driver }}
+          </span>
 
-        <span [style.color]="driverBTheme?.color">
-          {{ tooltip.brake.b ? "ON" : "OFF" }}</span
-        >
-      </div>
+          <span [style.color]="driverBTheme?.color">
+            {{ tooltip.brake.b ? "ON" : "OFF" }}
+          </span>
+        </div>
+      }
     </div>
   }
 </div>
