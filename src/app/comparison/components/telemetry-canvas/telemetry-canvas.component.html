@@ -39,8 +39,9 @@
       [class.left-side]="tooltipOnLeft"
       [class.visible]="tooltipVisible"
     >
-      <div class="distance">{{ tooltip.distance }} m</div>
-
+      @if (!isPhoneLandscape) {
+        <div class="distance">{{ tooltip.distance }} m</div>
+      }
       <div class="row">
         <span
           class="driver"
@@ -72,7 +73,9 @@
       [class.left-side]="tooltipOnLeft"
       [class.visible]="tooltipVisible"
     >
-      <div class="distance">{{ tooltip.distance }} m</div>
+      @if (!isPhoneLandscape) {
+        <div class="distance">{{ tooltip.distance }} m</div>
+      }
 
       <div class="row">
         <span class="driver" [style.color]="driverATheme.color">
@@ -98,7 +101,9 @@
       [class.left-side]="tooltipOnLeft"
       [class.visible]="tooltipVisible"
     >
-      <div class="distance">{{ tooltip.distance }} m</div>
+      @if (!isPhoneLandscape) {
+        <div class="distance">{{ tooltip.distance }} m</div>
+      }
 
       <div class="row">
         <span class="driver" [style.color]="driverATheme.color">
@@ -128,7 +133,9 @@
       [class.left-side]="tooltipOnLeft"
       [class.visible]="tooltipVisible"
     >
-      <div class="distance">{{ tooltip.distance }} m</div>
+      @if (!isPhoneLandscape) {
+        <div class="distance">{{ tooltip.distance }} m</div>
+      }
 
       <div class="row">
         <span class="driver" [style.color]="driverATheme.color">
@@ -142,7 +149,7 @@
 
       <div class="row">
         <span class="driver" [style.color]="driverBTheme?.color">
-          {{ driverA.driver }}
+          {{ driverB.driver }}
         </span>
 
         <span [style.color]="driverBTheme?.color">

@@ -63,6 +63,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   tooltipX = 0;
   tooltipOnLeft = false;
 
+  isPhoneLandscape = false;
+
   tooltip = {
     distance: 0,
 
@@ -240,6 +242,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   private throttleYScale!: d3.ScaleLinear<number, number>;
   private brakeYScale!: d3.ScaleLinear<number, number>;
 
+  private chartMargin = {
+    top: 15,
+    right: 40,
+    bottom: 20,
+    left: 50,
+  };
+
   private deltaSeries: DeltaPoint[] = [];
 
   ngAfterViewInit(): void {
@@ -260,6 +269,173 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  private updateHover(
+    mouseX: number,
+    chartX: number,
+    chartWidth: number,
+  ): void {
+    if (chartX < 0 || chartX > chartWidth) {
+      this.tooltipVisible = false;
+
+      this.hoverCursor.attr('opacity', 0);
+
+      this.hoverSpeedMarkerA.attr('opacity', 0);
+      this.hoverDeltaMarkerA.attr('opacity', 0);
+      this.hoverRpmMarkerA.attr('opacity', 0);
+      this.hoverThrottleMarkerA.attr('opacity', 0);
+      this.hoverBrakeMarkerA.attr('opacity', 0);
+
+      this.hoverSpeedMarkerB?.attr('opacity', 0);
+      this.hoverDeltaMarkerB?.attr('opacity', 0);
+      this.hoverRpmMarkerB?.attr('opacity', 0);
+      this.hoverThrottleMarkerB?.attr('opacity', 0);
+      this.hoverBrakeMarkerB?.attr('opacity', 0);
+
+      return;
+    }
+
+    const distance = this.xScale.invert(chartX);
+    const hoverX = this.xScale(distance);
+
+    this.hoverCursor.attr('x1', hoverX).attr('x2', hoverX).attr('opacity', 1);
+
+    const frameA = this.playbackService.interpolateTelemetryByDistance(
+      this.driverA.telemetry,
+      distance,
+    );
+
+    if (!frameA) {
+      return;
+    }
+
+    const sampleA = frameA.sample;
+
+    const frameB = this.driverB
+      ? this.playbackService.interpolateTelemetryByDistance(
+          this.driverB.telemetry,
+          distance,
+        )
+      : null;
+
+    const sampleB = frameB?.sample ?? null;
+
+    this.hoverService.setHoverProgress(sampleA.rd);
+
+    const deltaPoint = this.interpolateDelta(distance);
+
+    this.hoverSpeedMarkerA
+      .attr('cx', this.xScale(sampleA.d))
+      .attr('cy', this.speedYScale(sampleA.speed))
+      .attr('opacity', 1);
+
+    this.hoverRpmMarkerA
+      .attr('cx', this.xScale(sampleA.d))
+      .attr('cy', this.rpmYScale(sampleA.rpm))
+      .attr('opacity', 1);
+
+    this.hoverThrottleMarkerA
+      .attr('cx', this.xScale(sampleA.d))
+      .attr('cy', this.throttleYScale(sampleA.throttle))
+      .attr('opacity', 1);
+
+    this.hoverBrakeMarkerA
+      .attr('cx', this.xScale(sampleA.d))
+      .attr('cy', this.brakeYScale(sampleA.brake))
+      .attr('opacity', 1);
+
+    this.hoverDeltaMarkerA
+      .attr('cx', this.xScale(deltaPoint.d))
+      .attr('cy', this.deltaYScale(deltaPoint.delta))
+      .attr('opacity', 1);
+
+    if (sampleB) {
+      this.hoverSpeedMarkerB
+        ?.attr('cx', this.xScale(sampleB.d))
+        .attr('cy', this.speedYScale(sampleB.speed))
+        .attr('opacity', 1);
+
+      this.hoverRpmMarkerB
+        ?.attr('cx', this.xScale(sampleB.d))
+        .attr('cy', this.rpmYScale(sampleB.rpm))
+        .attr('opacity', 1);
+
+      this.hoverThrottleMarkerB
+        ?.attr('cx', this.xScale(sampleB.d))
+        .attr('cy', this.throttleYScale(sampleB.throttle))
+        .attr('opacity', 1);
+
+      this.hoverBrakeMarkerB
+        ?.attr('cx', this.xScale(sampleB.d))
+        .attr('cy', this.brakeYScale(sampleB.brake))
+        .attr('opacity', 1);
+
+      this.hoverDeltaMarkerB
+        ?.attr('cx', this.xScale(deltaPoint.d))
+        .attr('cy', this.deltaYScale(0))
+        .attr('opacity', 1);
+    }
+
+    this.tooltipVisible = true;
+
+    this.isPhoneLandscape = window.matchMedia(
+      '(max-width: 1024px) and (orientation: landscape)',
+    ).matches;
+
+    const isPhoneLandscape = this.isPhoneLandscape;
+
+    if (isPhoneLandscape) {
+      const svg = this.chartSvgRef.nativeElement;
+
+      const scaleX = svg.clientWidth / svg.viewBox.baseVal.width;
+
+      const hoverScreenX = mouseX * scaleX;
+
+      const GAP = 4;
+      const TOOLTIP_WIDTH = 92;
+
+      this.tooltipOnLeft = hoverScreenX + TOOLTIP_WIDTH + GAP > svg.clientWidth;
+
+      this.tooltipX = this.tooltipOnLeft
+        ? hoverScreenX - GAP
+        : hoverScreenX + GAP;
+    } else {
+      const TOOLTIP_OFFSET = 26;
+      const TOOLTIP_WIDTH = 165;
+      const EXTRA_GAP = 18;
+
+      this.tooltipOnLeft =
+        mouseX + TOOLTIP_OFFSET + TOOLTIP_WIDTH >
+        this.chartSvgRef.nativeElement.clientWidth;
+
+      this.tooltipX = this.tooltipOnLeft
+        ? mouseX - TOOLTIP_WIDTH - TOOLTIP_OFFSET - EXTRA_GAP
+        : mouseX + TOOLTIP_OFFSET + EXTRA_GAP;
+    }
+
+    this.tooltip.distance = Math.round(sampleA.d);
+
+    this.tooltip.distance = Math.round(sampleA.d);
+
+    this.tooltip.speed.a = Math.round(sampleA.speed);
+    this.tooltip.rpm.a = Math.round(sampleA.rpm);
+    this.tooltip.throttle.a = Math.round(sampleA.throttle);
+    this.tooltip.brake.a = sampleA.brake > 0;
+
+    if (sampleB) {
+      this.tooltip.speed.b = Math.round(sampleB.speed);
+      this.tooltip.rpm.b = Math.round(sampleB.rpm);
+      this.tooltip.throttle.b = Math.round(sampleB.throttle);
+      this.tooltip.brake.b = sampleB.brake > 0;
+
+      const delta = deltaPoint.delta;
+
+      this.tooltip.delta.value = Math.abs(delta);
+
+      this.tooltip.delta.leader =
+        delta > 0 ? this.driverA.driver : delta < 0 ? this.driverB.driver : '';
+    }
+  }
+
   private render(): void {
     if (!this.driverA?.telemetry?.length) {
       return;
@@ -271,7 +447,6 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     this.deltaSeries = this.buildDeltaSeries();
 
     const deltaSeries = this.deltaSeries;
-    // console.log(deltaSeries);
 
     const SPEED_TICK = 25;
 
@@ -279,14 +454,16 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     svg.selectAll('*').remove();
 
-    const isPhoneLandscape = window.matchMedia(
+    this.isPhoneLandscape = window.matchMedia(
       '(max-width: 1024px) and (orientation: landscape)',
     ).matches;
+
+    const isPhoneLandscape = this.isPhoneLandscape;
 
     const SVG_WIDTH = isPhoneLandscape ? 1600 : 1400;
     const SVG_HEIGHT = isPhoneLandscape ? 500 : 580;
 
-    const margin = isPhoneLandscape
+    this.chartMargin = isPhoneLandscape
       ? {
           top: 10,
           right: 60,
@@ -299,6 +476,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
           bottom: 20,
           left: 50,
         };
+
+    const margin = this.chartMargin;
 
     const chartWidth = SVG_WIDTH - margin.left - margin.right;
     const chartHeight = SVG_HEIGHT - margin.top - margin.bottom;
@@ -327,151 +506,34 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
         const chartX = mouseX - margin.left;
 
-        if (chartX < 0 || chartX > chartWidth) {
-          this.tooltipVisible = false;
+        this.updateHover(mouseX, chartX, chartWidth);
+      })
+      .on('touchstart', (event: TouchEvent) => {
+        event.preventDefault();
 
-          this.hoverCursor.attr('opacity', 0);
-
-          this.hoverSpeedMarkerA.attr('opacity', 0);
-          this.hoverDeltaMarkerA.attr('opacity', 0);
-          this.hoverRpmMarkerA.attr('opacity', 0);
-          this.hoverThrottleMarkerA.attr('opacity', 0);
-          this.hoverBrakeMarkerA.attr('opacity', 0);
-
-          this.hoverSpeedMarkerB?.attr('opacity', 0);
-          this.hoverDeltaMarkerB?.attr('opacity', 0);
-          this.hoverRpmMarkerB?.attr('opacity', 0);
-          this.hoverThrottleMarkerB?.attr('opacity', 0);
-          this.hoverBrakeMarkerB?.attr('opacity', 0);
-
-          return;
-        }
-
-        const distance = this.xScale.invert(chartX);
-        const hoverX = this.xScale(distance);
-
-        this.hoverCursor
-          .attr('x1', hoverX)
-          .attr('x2', hoverX)
-          .attr('opacity', 1);
-
-        const frameA = this.playbackService.interpolateTelemetryByDistance(
-          this.driverA.telemetry,
-          distance,
+        const [touchX] = d3.pointer(
+          event.touches[0],
+          this.chartSvgRef.nativeElement,
         );
 
-        if (!frameA) {
-          return;
-        }
+        const chartX = touchX - margin.left;
 
-        const sampleA = frameA.sample;
+        this.updateHover(touchX, chartX, chartWidth);
+      })
+      .on('touchmove', (event: TouchEvent) => {
+        event.preventDefault();
 
-        const frameB = this.driverB
-          ? this.playbackService.interpolateTelemetryByDistance(
-              this.driverB.telemetry,
-              distance,
-            )
-          : null;
+        const [touchX] = d3.pointer(
+          event.touches[0],
+          this.chartSvgRef.nativeElement,
+        );
 
-        const sampleB = frameB?.sample ?? null;
+        const chartX = touchX - margin.left;
 
-        this.hoverService.setHoverProgress(sampleA.rd);
-
-        const deltaPoint = this.interpolateDelta(distance);
-
-        this.hoverSpeedMarkerA
-          .attr('cx', this.xScale(sampleA.d))
-          .attr('cy', this.speedYScale(sampleA.speed))
-          .attr('opacity', 1);
-
-        this.hoverRpmMarkerA
-          .attr('cx', this.xScale(sampleA.d))
-          .attr('cy', this.rpmYScale(sampleA.rpm))
-          .attr('opacity', 1);
-
-        this.hoverThrottleMarkerA
-          .attr('cx', this.xScale(sampleA.d))
-          .attr('cy', this.throttleYScale(sampleA.throttle))
-          .attr('opacity', 1);
-
-        this.hoverBrakeMarkerA
-          .attr('cx', this.xScale(sampleA.d))
-          .attr('cy', this.brakeYScale(sampleA.brake))
-          .attr('opacity', 1);
-
-        this.hoverDeltaMarkerA
-          .attr('cx', this.xScale(deltaPoint.d))
-          .attr('cy', this.deltaYScale(deltaPoint.delta))
-          .attr('opacity', 1);
-
-        if (sampleB) {
-          this.hoverSpeedMarkerB
-            ?.attr('cx', this.xScale(sampleB.d))
-            .attr('cy', this.speedYScale(sampleB.speed))
-            .attr('opacity', 1);
-
-          this.hoverRpmMarkerB
-            ?.attr('cx', this.xScale(sampleB.d))
-            .attr('cy', this.rpmYScale(sampleB.rpm))
-            .attr('opacity', 1);
-
-          this.hoverThrottleMarkerB
-            ?.attr('cx', this.xScale(sampleB.d))
-            .attr('cy', this.throttleYScale(sampleB.throttle))
-            .attr('opacity', 1);
-
-          this.hoverBrakeMarkerB
-            ?.attr('cx', this.xScale(sampleB.d))
-            .attr('cy', this.brakeYScale(sampleB.brake))
-            .attr('opacity', 1);
-
-          this.hoverDeltaMarkerB
-            ?.attr('cx', this.xScale(deltaPoint.d))
-            .attr('cy', this.deltaYScale(0))
-            .attr('opacity', 1);
-        }
-
-        this.tooltipVisible = true;
-
-        const TOOLTIP_OFFSET = 26;
-        const TOOLTIP_WIDTH = 165; // approximate width of the metrics box
-
-        this.tooltipOnLeft =
-          mouseX + TOOLTIP_OFFSET + TOOLTIP_WIDTH >
-          this.chartSvgRef.nativeElement.clientWidth;
-
-        const EXTRA_GAP = 18;
-
-        this.tooltipX = this.tooltipOnLeft
-          ? mouseX - TOOLTIP_WIDTH - TOOLTIP_OFFSET - EXTRA_GAP
-          : mouseX + TOOLTIP_OFFSET + EXTRA_GAP;
-
-        this.tooltip.distance = Math.round(sampleA.d);
-
-        this.tooltip.distance = Math.round(sampleA.d);
-
-        this.tooltip.speed.a = Math.round(sampleA.speed);
-        this.tooltip.rpm.a = Math.round(sampleA.rpm);
-        this.tooltip.throttle.a = Math.round(sampleA.throttle);
-        this.tooltip.brake.a = sampleA.brake > 0;
-
-        if (sampleB) {
-          this.tooltip.speed.b = Math.round(sampleB.speed);
-          this.tooltip.rpm.b = Math.round(sampleB.rpm);
-          this.tooltip.throttle.b = Math.round(sampleB.throttle);
-          this.tooltip.brake.b = sampleB.brake > 0;
-
-          const delta = deltaPoint.delta;
-
-          this.tooltip.delta.value = Math.abs(delta);
-
-          this.tooltip.delta.leader =
-            delta > 0
-              ? this.driverA.driver
-              : delta < 0
-                ? this.driverB.driver
-                : '';
-        }
+        this.updateHover(touchX, chartX, chartWidth);
+      })
+      .on('touchend', () => {
+        // Keep tooltip visible after finger is lifted.
       })
       .on('mouseleave', () => {
         this.tooltipVisible = false;
@@ -1414,18 +1476,6 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     }
 
     const diff = frameA.elapsedTime - this.driverA.sector1;
-
-    // if (Math.abs(diff) < 0.1) {
-    //   console.log({
-    //     elapsedTime: frameA.elapsedTime,
-    //     distance: frameA.sample.d,
-    //     sector1Time: this.driverA.sector1,
-    //     sector1Distance: this.sectorMarkers[0].d,
-    //     diff,
-    //   });
-    // }
-
-    // console.log('UPDATE', frameA.elapsedTime);
 
     const frameB = playbackFrame.driverB;
 

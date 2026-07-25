@@ -142,10 +142,79 @@ svg {
 
 .telemetry-tooltip.left-side {
   transform-origin: right center;
-
   transform: translateX(-12px) scale(0.94);
 }
 
 .telemetry-tooltip.left-side.visible {
   transform: translateX(0) scale(1);
+}
+
+/* ==========================================================
+   PHONE LANDSCAPE
+   ========================================================== */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .telemetry-tooltip {
+    width: 92px;
+
+    padding: 5px 6px;
+
+    border-radius: 6px;
+
+    font-size: 8px;
+
+    line-height: 1.15;
+
+    transform: translateX(4px);
+    padding: 5px 8px; /* reduce vertical padding */
+  }
+
+  .distance {
+    font-size: 9px;
+
+    margin-bottom: 4px;
+  }
+
+  .row {
+    font-size: 9px;
+
+    gap: 6px;
+
+    margin-bottom: 2px;
+  }
+
+  .tooltip-row {
+    margin: 1px 0;
+  }
+
+  .tooltip-content {
+    gap: 2px;
+  }
+
+  .telemetry-tooltip.visible {
+    transform: translateX(4px);
+  }
+
+  .telemetry-tooltip.left-side.visible {
+    transform: translateX(calc(-100% - 4px));
+  }
+
+  .telemetry-tooltip.speed {
+    top: 0px;
+  }
+
+  .telemetry-tooltip.delta {
+    top: 66px;
+  }
+
+  .telemetry-tooltip.rpm {
+    top: 110px;
+  }
+
+  .telemetry-tooltip.throttle {
+    top: 158px;
+  }
+
+  .telemetry-tooltip.brake {
+    top: 200px;
+  }
 }
