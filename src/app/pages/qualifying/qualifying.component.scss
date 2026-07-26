@@ -11,6 +11,26 @@
 }
 
 /* =========================================
+   LANDSCAPE REQUIRED
+========================================= */
+
+.qualifying-container {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+}
+
+.qualifying-page-container {
+  width: 100%;
+  height: 100%;
+}
+
+.rotate-overlay {
+  display: none;
+}
+
+/* =========================================
    SHELL
 ========================================= */
 
@@ -244,6 +264,17 @@
   font-size: 18px;
 
   margin-bottom: 12px;
+}
+
+.grid-content {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .starting-grid {
@@ -551,4 +582,257 @@
 app-support-button {
   margin-left: auto;
   scale: 0.9;
+}
+
+/* ==========================================================
+   PHONE PORTRAIT
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  .qualifying-page-container {
+    display: none;
+  }
+
+  .rotate-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 24px;
+
+    background: #1d1b1b;
+
+    z-index: 9999;
+
+    text-align: center;
+
+    padding: 32px;
+  }
+
+  .rotate-gif {
+    width: 180px;
+
+    height: auto;
+  }
+
+  .rotate-title {
+    font-family: Formula1Bold;
+
+    font-size: 24px;
+
+    color: white;
+  }
+
+  .rotate-subtitle {
+    max-width: 320px;
+
+    color: #9ca3af;
+
+    font-size: 16px;
+
+    line-height: 1.5;
+  }
+}
+
+/* ==========================================================
+   PHONE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .qualifying-container {
+    overflow: hidden;
+  }
+
+  .page-header {
+    height: 36px;
+
+    padding: 0 10px;
+
+    gap: 10px;
+
+    margin-bottom: 4px;
+  }
+
+  .back-button {
+    width: 24px;
+    height: 24px;
+  }
+
+  .back-chevron {
+    width: 9px;
+    height: 9px;
+
+    border-left-width: 2px;
+    border-bottom-width: 2px;
+  }
+
+  .page-title {
+    font-size: 14px;
+  }
+
+  app-support-button {
+    scale: 0.65;
+  }
+  .qualifying-shell {
+    height: calc(100vh - 40px);
+  }
+  .qualifying-page {
+    gap: 8px;
+
+    padding: 4px;
+
+    height: 100%;
+
+    min-height: 0;
+
+    overflow: hidden;
+  }
+  .grid-content {
+    flex: 1;
+
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 2px;
+  }
+
+  .results-panel,
+  .grid-panel {
+    padding: 8px;
+
+    border-radius: 8px;
+    min-height: 0;
+  }
+  .results-panel {
+    overflow-y: auto;
+  }
+
+  .grid-panel {
+    overflow: hidden;
+  }
+  .results-title,
+  .panel-title,
+  .pitlane-title {
+    font-size: 12px;
+
+    margin-bottom: 6px;
+  }
+  .session-group {
+    gap: 6px;
+
+    margin-bottom: 6px;
+  }
+
+  .session-rail {
+    width: 18px;
+
+    font-size: 8px;
+
+    border-radius: 5px;
+  }
+  .result-row {
+    grid-template-columns:
+      24px
+      2px
+      34px
+      22px
+      minmax(60px, 1fr)
+      55px;
+
+    height: 18px;
+
+    gap: 4px;
+  }
+
+  .driver-color {
+    width: 2px;
+
+    height: 10px;
+
+    border-radius: 1px;
+  }
+
+  .position,
+  .driver-code,
+  .team-name,
+  .lap-time {
+    font-size: 9px;
+  }
+
+  .team-name {
+    padding-left: 4px;
+  }
+  .starting-grid {
+    gap: 10px;
+  }
+
+  .grid-column {
+    gap: 4px;
+  }
+
+  .staggered {
+    padding-top: 10px;
+  }
+  .grid-position {
+    width: 28px;
+    height: 24px;
+
+    font-size: 8px;
+
+    border-radius: 4px;
+  }
+
+  .grid-driver,
+  .pitlane-card {
+    height: 24px;
+
+    gap: 4px;
+
+    padding: 0 6px;
+
+    border-radius: 4px;
+  }
+
+  .driver-name {
+    font-size: 8px;
+  }
+
+  .simulate-button {
+    width: calc(100% - 16px);
+
+    margin-top: 12px;
+
+    flex-shrink: 0;
+
+    height: 28px;
+
+    border-radius: 6px;
+
+    font-size: 9px;
+  }
+  .team-icon img {
+    width: 11px;
+    height: 11px;
+  }
+
+  .results-panel::-webkit-scrollbar,
+  .grid-panel::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .results-panel::-webkit-scrollbar-thumb,
+  .grid-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+  }
 }

@@ -161,13 +161,25 @@ export class QualifyingComponent implements OnInit {
 
     this.q2Drivers = results.filter((d) => d.finalSession === 'Q2');
 
-    this.q1Drivers = results.filter((d) => d.finalSession === 'Q1');
+    this.q1Drivers = results
+      .filter((d) => d.finalSession === 'Q1')
+      .sort((a, b) => {
+        if (a.position === null && b.position === null) return 0;
+
+        if (a.position === null) return 1;
+
+        if (b.position === null) return -1;
+
+        return a.position - b.position;
+      });
 
     const gridDrivers = results
-      .filter((d) => d.gridPosition > 0)
+      .filter((d) => !d.isPitLaneStart)
       .sort((a, b) => a.gridPosition - b.gridPosition);
 
-    this.pitLaneDrivers = results.filter((d) => d.gridPosition === 0);
+    this.pitLaneDrivers = results
+      .filter((d) => d.isPitLaneStart)
+      .sort((a, b) => a.gridPosition - b.gridPosition);
 
     this.leftGridDrivers = gridDrivers.filter((_, index) => index % 2 === 0);
 

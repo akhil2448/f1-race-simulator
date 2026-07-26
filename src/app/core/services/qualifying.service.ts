@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface QualifyingDriver {
-  position: number;
+  position: number | null;
 
   driverNumber: string;
 
@@ -22,6 +22,8 @@ export interface QualifyingDriver {
 
   gridPosition: number;
 
+  isPitLaneStart: boolean;
+
   q1: string | null;
 
   q2: string | null;
@@ -30,7 +32,7 @@ export interface QualifyingDriver {
 
   finalSession: 'Q1' | 'Q2' | 'Q3';
 
-  finalLapTime: string;
+  finalLapTime: string | null;
 }
 
 export interface QualifyingResponse {

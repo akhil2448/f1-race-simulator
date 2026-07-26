@@ -63,7 +63,9 @@ export class PwSelectComponent<T> implements AfterViewChecked {
 
   @HostListener('window:scroll')
   onScroll(): void {
-    this.close();
+    if (window.innerWidth > 1024) {
+      this.close();
+    }
   }
 
   constructor(private host: ElementRef<HTMLElement>) {}
@@ -115,7 +117,23 @@ export class PwSelectComponent<T> implements AfterViewChecked {
     this.close();
   }
 
+  // IF ANY BUGS IN DROP DOWNS- USE THIS VERSION AND COMMENT THE FUNCTION BELOW IT
+  // private calculateDirection(): void {
+  //   const rect = this.host.nativeElement.getBoundingClientRect();
+
+  //   const spaceBelow = window.innerHeight - rect.bottom;
+
+  //   this.openUpwards = spaceBelow < 340;
+  // }
+
   private calculateDirection(): void {
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+
+    if (isMobile) {
+      this.openUpwards = false;
+      return;
+    }
+
     const rect = this.host.nativeElement.getBoundingClientRect();
 
     const spaceBelow = window.innerHeight - rect.bottom;
