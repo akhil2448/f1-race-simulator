@@ -1,119 +1,9 @@
-<div class="simulation-layout" [class.post-race]="raceFinished">
-  <!-- LEFT SIDE -->
-  <div class="left-panel-area">
-    <div class="top-info-row">
-      <app-leaderboard
-        [highlightedDrivers]="[
-          {
-            driver: selectedDrivers[0],
-            color: '#ffffff',
-          },
-          {
-            driver: selectedDrivers[1],
-            color: '#ffe600',
-          },
-        ]"
-      >
-      </app-leaderboard>
-
-      <div class="info-sidebar">
-        <app-weather></app-weather>
-
-        <div class="telemetry-panels">
-          <h4>Driver Telemetry</h4>
-
-          <div class="header-divider"></div>
-
-          <app-driver-telemetry
-            [selectedDriver]="selectedDrivers[0]"
-            [availableDrivers]="getAvailableDriversForSlot(0)"
-            [teamColor]="getDriverColor(selectedDrivers[0])"
-            [year]="raceContext?.year ?? 0"
-            [round]="raceContext?.round ?? 0"
-            [highlightColor]="'#ffffff'"
-            (driverSelected)="onDriverSelected(0, $event)"
-            (clearDriver)="onDriverCleared(0)"
-          >
-          </app-driver-telemetry>
-
-          <app-driver-telemetry
-            [selectedDriver]="selectedDrivers[1]"
-            [availableDrivers]="getAvailableDriversForSlot(1)"
-            [teamColor]="getDriverColor(selectedDrivers[1])"
-            [year]="raceContext?.year ?? 0"
-            [round]="raceContext?.round ?? 0"
-            [highlightColor]="'#ffe600'"
-            (driverSelected)="onDriverSelected(1, $event)"
-            (clearDriver)="onDriverCleared(1)"
-          >
-          </app-driver-telemetry>
-        </div>
-
-        <app-fastest-lap-banner> </app-fastest-lap-banner>
-
-        <div class="leaderboard-controls-header">
-          <h4>Leaderboard Controls</h4>
-          <div class="header-divider"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="controls-row">
-      <app-race-controls></app-race-controls>
-    </div>
-    <!-- <button
-      style="position: absolute; top: 20px; right: 20px; z-index: 10000"
-      (click)="openExitModal()"
-    >
-      TEST EXIT
-    </button> -->
-  </div>
-
-  <!-- TRACK SIDE -->
-  <div class="track-column">
-    <!-- TOP HUD -->
-    <div class="track-hud">
-      <div class="hud-left">
-        <app-race-clock (stopRequested)="requestExit()"></app-race-clock>
-
-        <!-- =====================================
-       1. REPLAY READY MESSAGE (highest priority)
-       ===================================== -->
-        <ng-container *ngIf="showReplayResumeMessage; else redFlagOrMessages">
-          <div class="resume-message-bar">
-            <div class="resume-category">REPLAY READY</div>
-
-            <div class="resume-text">PRESS PLAY BUTTON TO RESUME RACE</div>
-          </div>
-        </ng-container>
-
-        <!-- =====================================
-       2. RED FLAG OR NORMAL MESSAGES
-       ===================================== -->
-        <ng-template #redFlagOrMessages>
-          <ng-container *ngIf="activeRedFlag; else raceControlMessages">
-            <app-red-flag-resume [redFlag]="activeRedFlag">
-            </app-red-flag-resume>
-          </ng-container>
-
-          <ng-template #raceControlMessages>
-            <app-race-control-messages
-              [year]="raceContext?.year ?? 0"
-              [round]="raceContext?.round ?? 0"
-            >
-            </app-race-control-messages>
-          </ng-template>
-        </ng-template>
-      </div>
-
-      <div class="hud-right">
-        <app-track-map-header></app-track-map-header>
-      </div>
-    </div>
-
-    <div class="track-stage">
-      <ng-container *ngIf="!raceFinished; else classification">
-        <app-track-map
+<div class="simulation-container">
+  <div class="simulation-layout" [class.post-race]="raceFinished">
+    <!-- LEFT SIDE -->
+    <div class="left-panel-area">
+      <div class="top-info-row">
+        <app-leaderboard
           [highlightedDrivers]="[
             {
               driver: selectedDrivers[0],
@@ -125,33 +15,159 @@
             },
           ]"
         >
-        </app-track-map>
-      </ng-container>
+        </app-leaderboard>
 
-      <ng-template #classification>
-        <div class="post-race-overlay">
-          <app-final-classification></app-final-classification>
+        <div class="info-sidebar">
+          <app-weather></app-weather>
+
+          <div class="telemetry-panels">
+            <h4>Driver Telemetry</h4>
+
+            <div class="header-divider"></div>
+
+            <app-driver-telemetry
+              [selectedDriver]="selectedDrivers[0]"
+              [availableDrivers]="getAvailableDriversForSlot(0)"
+              [teamColor]="getDriverColor(selectedDrivers[0])"
+              [year]="raceContext?.year ?? 0"
+              [round]="raceContext?.round ?? 0"
+              [highlightColor]="'#ffffff'"
+              (driverSelected)="onDriverSelected(0, $event)"
+              (clearDriver)="onDriverCleared(0)"
+            >
+            </app-driver-telemetry>
+
+            <app-driver-telemetry
+              [selectedDriver]="selectedDrivers[1]"
+              [availableDrivers]="getAvailableDriversForSlot(1)"
+              [teamColor]="getDriverColor(selectedDrivers[1])"
+              [year]="raceContext?.year ?? 0"
+              [round]="raceContext?.round ?? 0"
+              [highlightColor]="'#ffe600'"
+              (driverSelected)="onDriverSelected(1, $event)"
+              (clearDriver)="onDriverCleared(1)"
+            >
+            </app-driver-telemetry>
+          </div>
+
+          <app-fastest-lap-banner> </app-fastest-lap-banner>
+
+          <div class="leaderboard-controls-header">
+            <h4>Leaderboard Controls</h4>
+            <div class="header-divider"></div>
+          </div>
         </div>
-      </ng-template>
+      </div>
+
+      <div class="controls-row">
+        <app-race-controls></app-race-controls>
+      </div>
+      <!-- <button
+      style="position: absolute; top: 20px; right: 20px; z-index: 10000"
+      (click)="openExitModal()"
+    >
+      TEST EXIT
+    </button> -->
     </div>
 
-    <!-- <div class="track-stage">
+    <!-- TRACK SIDE -->
+    <div class="track-column">
+      <!-- TOP HUD -->
+      <div class="track-hud">
+        <div class="hud-left">
+          <app-race-clock (stopRequested)="requestExit()"></app-race-clock>
+
+          <!-- =====================================
+       1. REPLAY READY MESSAGE (highest priority)
+       ===================================== -->
+          <ng-container *ngIf="showReplayResumeMessage; else redFlagOrMessages">
+            <div class="resume-message-bar">
+              <div class="resume-category">REPLAY READY</div>
+
+              <div class="resume-text">PRESS PLAY BUTTON TO RESUME RACE</div>
+            </div>
+          </ng-container>
+
+          <!-- =====================================
+       2. RED FLAG OR NORMAL MESSAGES
+       ===================================== -->
+          <ng-template #redFlagOrMessages>
+            <ng-container *ngIf="activeRedFlag; else raceControlMessages">
+              <app-red-flag-resume [redFlag]="activeRedFlag">
+              </app-red-flag-resume>
+            </ng-container>
+
+            <ng-template #raceControlMessages>
+              <app-race-control-messages
+                [year]="raceContext?.year ?? 0"
+                [round]="raceContext?.round ?? 0"
+              >
+              </app-race-control-messages>
+            </ng-template>
+          </ng-template>
+        </div>
+
+        <div class="hud-right">
+          <app-track-map-header></app-track-map-header>
+        </div>
+      </div>
+
+      <div class="track-stage">
+        <ng-container *ngIf="!raceFinished; else classification">
+          <app-track-map
+            [highlightedDrivers]="[
+              {
+                driver: selectedDrivers[0],
+                color: '#ffffff',
+              },
+              {
+                driver: selectedDrivers[1],
+                color: '#ffe600',
+              },
+            ]"
+          >
+          </app-track-map>
+        </ng-container>
+
+        <ng-template #classification>
+          <div class="post-race-overlay">
+            <app-final-classification></app-final-classification>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- <div class="track-stage">
       <app-final-classification> </app-final-classification>
     </div> -->
 
-    <app-support-button
-      *ngIf="raceFinished"
-      class="support-button"
-      text="Support PitWall"
-    >
-    </app-support-button>
+      <app-support-button
+        *ngIf="raceFinished"
+        class="support-button"
+        text="Support PitWall"
+      >
+      </app-support-button>
+    </div>
+  </div>
+
+  <app-loading-overlay></app-loading-overlay>
+  <app-exit-confirmation-modal
+    [visible]="showExitModal"
+    (confirm)="confirmExit()"
+    (cancel)="cancelExit()"
+  >
+  </app-exit-confirmation-modal>
+
+  <div class="rotate-overlay" *ngIf="showRotateOverlay">
+    <img
+      src="assets/images/rotate-device.gif"
+      alt="Rotate device"
+      class="rotate-gif"
+    />
+
+    <div class="rotate-title">Rotate your device</div>
+
+    <div class="rotate-subtitle">
+      Simulation is available in landscape mode only.
+    </div>
   </div>
 </div>
-
-<app-loading-overlay></app-loading-overlay>
-<app-exit-confirmation-modal
-  [visible]="showExitModal"
-  (confirm)="confirmExit()"
-  (cancel)="cancelExit()"
->
-</app-exit-confirmation-modal>

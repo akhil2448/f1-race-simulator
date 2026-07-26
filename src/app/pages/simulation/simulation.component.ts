@@ -68,6 +68,10 @@ export class SimulationComponent implements OnInit, OnDestroy {
 
   showExitModal = false;
 
+  showRotateOverlay = false;
+
+  private pausedByRotation = false;
+
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
@@ -123,6 +127,8 @@ export class SimulationComponent implements OnInit, OnDestroy {
     // setTimeout(() => {
     //   this.raceFinished = true;
     // }, 3000);
+
+    this.handleOrientationChange();
   }
 
   private updateActiveRedFlag(raceSecond: number): void {
@@ -221,6 +227,32 @@ export class SimulationComponent implements OnInit, OnDestroy {
       event.preventDefault();
       event.returnValue = '';
     }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.handleOrientationChange();
+  }
+
+  private handleOrientationChange(): void {
+    const isPhonePortrait = window.matchMedia(
+      '(max-width: 1024px) and (orientation: portrait)',
+    ).matches;
+
+    if (isPhonePortrait) {
+      this.showRotateOverlay = true;
+
+      if (!this.raceClock.isPaused()) {
+        this.pausedByRotation = true;
+        this.raceClock.pause();
+      }
+
+      return;
+    }
+
+    this.showRotateOverlay = false;
+
+    this.pausedByRotation = false;
   }
 
   ngOnDestroy(): void {
