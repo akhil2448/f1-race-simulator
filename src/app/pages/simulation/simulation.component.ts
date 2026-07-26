@@ -234,6 +234,10 @@ export class SimulationComponent implements OnInit, OnDestroy {
     this.handleOrientationChange();
   }
 
+  get isRaceInProgress(): boolean {
+    return this.raceClock.getCurrentSecond() > 0 && !this.raceFinished;
+  }
+
   private handleOrientationChange(): void {
     const isPhonePortrait = window.matchMedia(
       '(max-width: 1024px) and (orientation: portrait)',

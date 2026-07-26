@@ -165,9 +165,14 @@
     />
 
     <div class="rotate-title">Rotate your device</div>
-
     <div class="rotate-subtitle">
-      Simulation is available in landscape mode only.
+      @if (isRaceInProgress) {
+        Simulation is available in landscape mode only.
+        <br /><br />
+        Race is paused. Rotate the device and click play to continue playback.
+      } @else {
+        Simulation is available in landscape mode only.
+      }
     </div>
   </div>
 </div>

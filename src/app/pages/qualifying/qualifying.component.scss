@@ -841,6 +841,23 @@ app-support-button {
     transform: scale(0.9);
   }
 
+  .grid-team-icon img.astonmartin {
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+
+  .grid-team-icon img.cadillac {
+    margin-right: -4px;
+    margin-left: -4px;
+  }
+
+  .grid-team-icon img.redbull {
+    margin-right: 3px;
+  }
+  .grid-team-icon img.audi {
+    margin-right: 3px;
+  }
+
   .results-panel::-webkit-scrollbar,
   .grid-panel::-webkit-scrollbar {
     width: 4px;
