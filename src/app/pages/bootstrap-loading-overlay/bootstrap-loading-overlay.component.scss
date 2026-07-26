@@ -185,3 +185,109 @@
 
   margin-bottom: 10px;
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .overlay-card {
+    width: min(84vw, 560px);
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+  }
+
+  .race-title {
+    font-size: 13px;
+
+    letter-spacing: 0.5px;
+
+    margin-bottom: 10px;
+  }
+
+  .steps {
+    gap: 2px;
+  }
+
+  .step-row {
+    min-height: 18px;
+
+    gap: 6px;
+  }
+
+  .step-icon {
+    width: 16px;
+
+    font-size: 13px;
+  }
+
+  .step-label {
+    font-size: 11px;
+
+    line-height: 1.15;
+  }
+
+  .retry-text {
+    margin-top: 1px;
+
+    font-size: 9px;
+  }
+
+  .telemetry-helper {
+    margin-top: 2px;
+
+    font-size: 9px;
+
+    line-height: 1.2;
+  }
+
+  .footer-text {
+    margin-top: 8px;
+
+    font-size: 10px;
+
+    letter-spacing: 0.8px;
+  }
+
+  .failure-panel {
+    margin-top: 8px;
+
+    padding-top: 8px;
+  }
+
+  .failure-title {
+    font-size: 13px;
+
+    margin-bottom: 2px;
+  }
+
+  .failure-message {
+    font-size: 10px;
+
+    margin-bottom: 8px;
+
+    line-height: 1.2;
+  }
+
+  .failure-actions {
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+  }
+
+  .failure-actions app-button {
+    transform: scale(0.82);
+
+    transform-origin: center;
+  }
+}

@@ -825,6 +825,22 @@ app-support-button {
     height: 11px;
   }
 
+  .team-icon img.cadillac {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.tororosso {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.astonmartin {
+    transform: translateY(-2px) scale(2);
+  }
+
+  .team-icon img.racingbulls {
+    transform: scale(0.9);
+  }
+
   .results-panel::-webkit-scrollbar,
   .grid-panel::-webkit-scrollbar {
     width: 4px;

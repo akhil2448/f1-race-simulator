@@ -40,7 +40,9 @@
       </div>
     </div>
 
-    <div class="footer-text">PREPARING REPLAY</div>
+    <div class="footer-text" *ngIf="failureType === 'none'">
+      PREPARING REPLAY
+    </div>
     <!-- MANDATORY FAILURE -->
     <div class="failure-panel mandatory" *ngIf="failureType === 'mandatory'">
       <div class="failure-title">Race Metadata Fetch Failed</div>
