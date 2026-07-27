@@ -1,8 +1,14 @@
-.weather-panel {
-  //margin-top: 5px;
+:host {
+  --panel-scale: 1;
+}
 
-  width: 180px;
-  padding: 12px 14px;
+.weather-panel {
+  width: 100%;
+  padding: 10px 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 
   background: rgba(0, 0, 0, 0.75);
   border-radius: 6px;
@@ -11,10 +17,13 @@
   font-family: "Formula1", system-ui, sans-serif;
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+  position: relative;
+  box-sizing: border-box;
 }
 
 .weather-title {
-  font-size: 14px;
+  font-size: calc(14px * var(--panel-scale));
   font-weight: 700;
   margin-bottom: 12px;
 }
@@ -25,12 +34,12 @@
   column-gap: 6px;
 
   align-items: center;
-  font-size: 15px;
+  font-size: calc(15px * var(--panel-scale));
   line-height: 1.6;
 }
 
 .icon {
-  font-size: 14px;
+  font-size: calc(14px * var(--panel-scale));
   opacity: 0.9;
 }
 
@@ -39,7 +48,7 @@
 }
 
 .unit {
-  font-size: 11px; /* adjust as needed */
+  font-size: calc(11px * var(--panel-scale));
   opacity: 0.8;
 }
 
@@ -130,10 +139,6 @@
   }
 }
 
-.weather-panel {
-  position: relative;
-}
-
 .weather-panel::before {
   content: "";
 
@@ -156,4 +161,61 @@
     0 0 18px #00a6ff;
 
   animation: rainPulse 3.5s infinite;
+}
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .weather-panel {
+    justify-content: space-evenly;
+
+    min-height: 80px;
+  }
+
+  .info-sidebar h4 {
+    font-size: 12px;
+
+    margin: 0 0 4px;
+
+    line-height: 1.1;
+
+    letter-spacing: 0.3px;
+  }
+  .header-divider {
+    margin: -16px 0 8px;
+
+    width: 100%;
+  }
+
+  .icon {
+    display: none;
+  }
+
+  .weather-row {
+    grid-template-columns: 52px 1fr;
+
+    line-height: 1.1;
+
+    column-gap: 3px;
+  }
+
+  .rain-row {
+    transform: translateX(0);
+  }
+
+  .value {
+    white-space: nowrap;
+  }
+
+  .label {
+    white-space: nowrap;
+  }
+  .rain-row {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .rain-indicator {
+    display: none;
+  }
 }

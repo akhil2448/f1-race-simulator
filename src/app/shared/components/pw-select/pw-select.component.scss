@@ -270,3 +270,50 @@
     transform: translateY(0);
   }
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .select-trigger {
+    height: 40px;
+
+    padding: 0 10px;
+
+    border-radius: 10px;
+  }
+
+  .trigger-label {
+    gap: 7px;
+  }
+
+  .placeholder {
+    font-size: 11px;
+
+    line-height: 1.1;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .accent {
+    width: 4px;
+
+    height: 18px;
+  }
+
+  .chevron {
+    width: 16px;
+    height: 16px;
+  }
+
+  .search-input {
+    font-size: 11px;
+  }
+
+  .search-input::placeholder {
+    font-size: 11px;
+  }
+}

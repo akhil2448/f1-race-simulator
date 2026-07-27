@@ -1,11 +1,14 @@
+:host {
+  --panel-scale: 1;
+}
+
 .fastest-lap-wrapper {
   display: flex;
 
   align-items: center;
 
-  width: 205px;
-
-  height: 50px;
+  width: calc(205px * var(--panel-scale));
+  height: calc(50px * var(--panel-scale));
 
   margin-top: 0px;
 
@@ -27,7 +30,7 @@
 /* LEFT PURPLE BOX */
 
 .icon-box {
-  width: 32px;
+  width: calc(32px * var(--panel-scale));
 
   height: 100%;
 
@@ -43,9 +46,8 @@
 }
 
 .icon-box img {
-  width: 32px;
-
-  height: 32px;
+  width: calc(32px * var(--panel-scale));
+  height: calc(32px * var(--panel-scale));
 
   object-fit: contain;
 }
@@ -71,7 +73,7 @@
 .title {
   color: #d77cff;
 
-  font-size: 10px;
+  font-size: calc(10px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -112,7 +114,7 @@
 .driver {
   color: white;
 
-  font-size: 12px;
+  font-size: calc(12px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -248,7 +250,7 @@
 .lap-time {
   color: white;
 
-  font-size: 13px;
+  font-size: calc(13px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -257,4 +259,92 @@
   margin-left: auto;
 
   letter-spacing: 1.8px;
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .fastest-lap-wrapper {
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    height: calc(44px * var(--panel-scale));
+
+    box-sizing: border-box;
+  }
+
+  .icon-box {
+    width: calc(26px * var(--panel-scale));
+  }
+
+  .icon-box img {
+    width: calc(24px * var(--panel-scale));
+    height: calc(24px * var(--panel-scale));
+  }
+
+  .info-bar {
+    justify-content: center;
+
+    padding: 0 8px 0 6px;
+  }
+
+  .title {
+    display: none;
+  }
+
+  .bottom-row {
+    gap: 3px;
+
+    margin-top: 0;
+
+    height: 100%;
+
+    justify-content: flex-start;
+
+    align-items: center;
+
+    flex: 1;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .driver-color {
+    width: 2px;
+
+    height: 14px;
+  }
+
+  .team-icon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .driver {
+    min-width: 28px;
+
+    width: auto;
+
+    flex-shrink: 0;
+
+    font-size: calc(16px * var(--panel-scale));
+
+    line-height: 1;
+  }
+
+  .lap-time {
+    font-size: calc(18px * var(--panel-scale));
+
+    letter-spacing: 0.8px;
+
+    line-height: 1;
+
+    flex-shrink: 0;
+
+    margin-left: auto;
+
+    white-space: nowrap;
+  }
 }

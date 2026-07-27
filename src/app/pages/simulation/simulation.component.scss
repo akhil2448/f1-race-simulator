@@ -9,7 +9,8 @@
 .simulation-layout {
   display: grid;
 
-  grid-template-columns: 445px 1fr;
+  // grid-template-columns: 445px 1fr;
+  grid-template-columns: auto 1fr;
 
   height: 100vh;
 
@@ -41,7 +42,7 @@ app-track-map {
 
   height: 100vh;
 
-  overflow-y: hidden;
+  overflow-y: visible;
 
   overflow-x: visible;
 
@@ -55,12 +56,12 @@ app-track-map {
 .top-info-row {
   display: grid;
 
-  grid-template-columns: 235px 210px;
+  // grid-template-columns: 235px 210px;
 
   align-content: start;
   align-items: start;
 
-  overflow: hidden;
+  // overflow: hidden;
 }
 // UNCOMMENT THIS CODE IF LAYOUT IS CHANGED!!!!!
 // .controls-row {
@@ -80,12 +81,33 @@ app-track-map {
   font-size: 13.7px;
 }
 
+// .controls-row {
+//   display: flex;
+
+//   align-items: flex-end;
+
+//   padding: 0px 16px 12px;
+
+//   min-height: 75px;
+
+//   border-top: 1.5px solid rgba(255, 255, 255, 0.08);
+
+//   box-sizing: border-box;
+
+//   overflow: visible;
+
+//   position: relative;
+
+//   z-index: 40;
+// }
+
 .controls-row {
   display: flex;
 
   align-items: flex-end;
+  justify-content: center;
 
-  padding: 0px 16px 12px;
+  padding: 0 16px 12px;
 
   min-height: 75px;
 
@@ -100,14 +122,20 @@ app-track-map {
   z-index: 40;
 }
 
+.controls-row app-race-controls {
+  width: 100%;
+}
+
 /* Leaderboard */
 app-leaderboard {
   align-self: start;
+  overflow: hidden;
 }
 
 /* Sidebar column */
 .info-sidebar {
-  width: 180px;
+  // width: 180px;
+  width: 100%;
 
   height: 100%;
   display: flex;
@@ -135,7 +163,8 @@ app-weather {
 }
 
 .header-divider {
-  width: 210px;
+  // width: 210px;
+  width: 100%;
   height: 2px;
 
   background: linear-gradient(
@@ -366,7 +395,8 @@ app-track-map {
 }
 
 .post-race .top-info-row {
-  grid-template-columns: 235px 0px;
+  // grid-template-columns: 235px 0px;
+  grid-template-columns: 1fr 0;
 }
 
 .post-race .info-sidebar {
@@ -467,5 +497,154 @@ app-track-map {
     max-width: 280px;
 
     line-height: 1.5;
+  }
+}
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .left-panel-area {
+    grid-template-rows: minmax(0, 1fr) 62px;
+    min-height: 0;
+  }
+
+  .top-info-row {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .info-sidebar {
+    width: 100%;
+
+    padding: 0;
+    gap: 8px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    min-height: 0;
+    align-self: stretch;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .info-sidebar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .info-sidebar h4 {
+    font-size: 12px;
+
+    margin: 0 0 4px;
+
+    line-height: 1.1;
+
+    letter-spacing: 0.3px;
+  }
+
+  .header-divider {
+    // width: 170px;
+    width: 100%;
+
+    margin: 2px 0 8px;
+  }
+
+  app-weather {
+    display: block;
+
+    margin-top: -16px;
+
+    margin-bottom: 4px;
+  }
+  .telemetry-panels {
+    min-height: 0px;
+  }
+
+  // .leaderboard-controls-header h4,
+  // .telemetry-panels h4 {
+  //   font-size: 12px;
+  // }
+
+  .controls-row {
+    min-height: 62px;
+
+    padding: 0 10px 8px;
+  }
+
+  .track-hud {
+    padding: 10px 16px 0;
+  }
+
+  .hud-left {
+    gap: 8px;
+
+    padding-right: 16px;
+  }
+
+  .resume-message-bar {
+    min-width: 280px;
+
+    padding: 10px 14px;
+  }
+
+  .resume-category {
+    font-size: 9px;
+  }
+
+  .resume-text {
+    font-size: 13px;
+  }
+
+  app-fastest-lap-banner {
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 42px;
+
+    flex-shrink: 0;
+
+    margin-top: 12px;
+  }
+
+  app-race-control-messages {
+    max-height: 170px;
+  }
+
+  .track-stage {
+    padding: 14px;
+  }
+
+  .post-race-overlay {
+    left: 14px;
+
+    right: 14px;
+
+    top: 4px;
+
+    bottom: 56px;
+  }
+
+  .support-button {
+    transform: translateY(-16px) scale(0.85);
+  }
+
+  .controls-row {
+    padding: 0 8px 8px;
+  }
+
+  .race-controls {
+    gap: 4px;
+
+    transform: none;
   }
 }

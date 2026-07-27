@@ -27,6 +27,7 @@ import { ExitConfirmationModalComponent } from '../../simulation/components/exit
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 import { RaceContextService } from '../../core/services/race-context.service';
 import { DriverPresenceService } from '../../core/services/driver-presence.service';
+import { LayoutScaleService } from '../../core/services/layout-scale.service';
 
 @Component({
   selector: 'app-simulation',
@@ -72,6 +73,10 @@ export class SimulationComponent implements OnInit, OnDestroy {
 
   private pausedByRotation = false;
 
+  leftPanelWidth = 445;
+  leaderboardWidth = 235;
+  sidebarWidth = 210;
+
   constructor(
     private bootstrap: SimulationBootstrapService,
     private driverMetaService: DriverMetaService,
@@ -80,9 +85,16 @@ export class SimulationComponent implements OnInit, OnDestroy {
     private raceClock: RaceClockService,
     private router: Router,
     private routeAccess: RaceContextService,
+    private layoutScale: LayoutScaleService,
   ) {}
 
   ngOnInit(): void {
+    this.layoutScale.metrics$.subscribe((layout) => {
+      this.leftPanelWidth = layout.leftPanelWidth;
+      this.leaderboardWidth = layout.leaderboardWidth;
+      this.sidebarWidth = layout.sidebarWidth;
+    });
+
     history.pushState(null, '', location.href);
 
     this.bootstrap.raceContext$.subscribe((context) => {

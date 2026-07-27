@@ -7,6 +7,10 @@
 //   margin-left: 8px;
 // }
 
+.leaderboard-scale-wrapper {
+  display: inline-block;
+}
+
 :host {
   display: block;
 
@@ -672,3 +676,30 @@ hr {
 
 //   z-index: 9999;
 // }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  :host {
+    margin-top: -1px;
+    margin-left: 2px;
+  }
+
+  // .f1-logo-bw {
+  //   width: 88px;
+  //   height: auto;
+  //   padding-left: 35%;
+  // }
+
+  .leaderboard-scale-wrapper {
+    transform-origin: top left;
+
+    transform: scale(var(--mobile-scale));
+  }
+
+  // .leaderboard-body {
+  //   overflow: visible !important;
+  // }
+}

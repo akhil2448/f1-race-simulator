@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Observable } from 'rxjs';
 
 import { WeatherStatusService } from '../../../core/services/weather-status.service';
 import { WeatherEntry } from '../../../core/models/weather.model';
+import { LayoutScaleService } from '../../../core/services/layout-scale.service';
 
 @Component({
   selector: 'app-weather',
@@ -16,8 +17,17 @@ import { WeatherEntry } from '../../../core/models/weather.model';
 export class WeatherComponent {
   weather$: Observable<WeatherEntry | null>;
 
-  constructor(private weatherStatus: WeatherStatusService) {
+  mobileScale = 1;
+
+  constructor(
+    private weatherStatus: WeatherStatusService,
+    private layoutScale: LayoutScaleService,
+  ) {
     this.weather$ = this.weatherStatus.currentWeather$;
+
+    this.layoutScale.metrics$.subscribe((layout) => {
+      this.mobileScale = layout.scale;
+    });
   }
 
   getWindDirection(deg: number): string {
@@ -26,5 +36,10 @@ export class WeatherComponent {
     const index = Math.round(deg / 45) % 8;
 
     return directions[index];
+  }
+
+  @HostBinding('style.--panel-scale')
+  get panelScaleCss(): number {
+    return this.mobileScale;
   }
 }

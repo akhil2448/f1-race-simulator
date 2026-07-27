@@ -7,6 +7,9 @@ import {
   QueryList,
   ViewChildren,
   Input,
+  HostListener,
+  HostBinding,
+  ViewChild,
 } from '@angular/core';
 import { LeaderboardEntry } from '../../../core/models/leaderboard-entry.model';
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
@@ -21,6 +24,7 @@ import {
 } from '../../../core/services/leaderboard-display.service';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
 import { FastestLapService } from '../../../core/services/fastest-lap.service';
+import { LayoutScaleService } from '../../../core/services/layout-scale.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -49,6 +53,9 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
 
+  @ViewChild('leaderboardPanel', { read: ElementRef })
+  leaderboardPanel!: ElementRef<HTMLElement>;
+
   /** UI STATE */
   baseMode: LeaderboardDisplayMode = 'LEADER_GAP';
   activeTemporaryMode: LeaderboardDisplayMode | null = null;
@@ -65,6 +72,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   highlightedDrivers: { driver: string | null; color: string }[] = [];
 
+  mobileScale = 1;
+
   constructor(
     private leaderboardService: LeaderboardService,
     private driverMeta: DriverMetaService,
@@ -72,6 +81,7 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private leaderboardDisplay: LeaderboardDisplayService,
     private raceFinish: RaceFinishService,
     private fastestLap: FastestLapService,
+    private layoutScale: LayoutScaleService,
   ) {
     // Track flag state
     this.trackStatusService.status$.subscribe((status) => {
@@ -117,6 +127,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
       requestAnimationFrame(() => this.runFLIP());
     });
 
+    this.layoutScale.metrics$.subscribe((layout) => {
+      this.mobileScale = layout.scale;
+    });
+
     this.raceFinish.finishedDrivers$.subscribe((drivers) => {
       this.finishedDrivers = drivers;
 
@@ -141,6 +155,12 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.runFLIP();
+
+    requestAnimationFrame(() => {
+      const height = this.leaderboardPanel.nativeElement.offsetHeight;
+
+      this.layoutScale.setDesktopLeftPanelHeight(height);
+    });
   }
 
   ngOnDestroy(): void {}
@@ -543,5 +563,10 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return '=';
+  }
+
+  @HostBinding('style.--mobile-scale')
+  get mobileScaleCss(): number {
+    return this.mobileScale;
   }
 }

@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   HostListener,
   ElementRef,
+  HostBinding,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RaceClockService } from '../../../core/services/race-clock-service';
@@ -28,6 +29,7 @@ import {
 } from 'rxjs';
 import { takeUntil, switchMap, map } from 'rxjs/operators';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
+import { LayoutScaleService } from '../../../core/services/layout-scale.service';
 
 export interface DriverTelemetryView {
   speed: number;
@@ -61,6 +63,8 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
 
   telemetry: DriverTelemetryView | null = null;
 
+  mobileScale = 1;
+
   confirmChange = false;
 
   private destroy$ = new Subject<void>();
@@ -71,7 +75,12 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
     private driverMeta: DriverMetaService,
     private elementRef: ElementRef,
     private seekCoordinator: SeekCoordinatorService,
+    private layoutScale: LayoutScaleService,
   ) {
+    this.layoutScale.metrics$.subscribe((layout) => {
+      this.mobileScale = layout.scale;
+    });
+
     /**
      * 🚀 10 Hz telemetry sampling interval(100)
      * - We'll downsample for better readability
@@ -255,6 +264,11 @@ export class DriverTelemetryComponent implements OnChanges, OnDestroy {
   private getRaceSpeed(): number {
     // mirrors RaceClockService speeds
     return (this.raceClock as any).speed ?? 1;
+  }
+
+  @HostBinding('style.--panel-scale')
+  get panelScaleCss(): number {
+    return this.mobileScale;
   }
 
   ngOnDestroy(): void {

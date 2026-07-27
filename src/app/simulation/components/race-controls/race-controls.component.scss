@@ -1,9 +1,17 @@
 .race-controls {
   display: flex;
+
   align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
 
   gap: 6px;
 
-  transform: translateX(-10px) translateY(-11px);
+  // transform: translateY(-11px);
 }
 
+.race-controls app-button {
+  flex: 1;
+}

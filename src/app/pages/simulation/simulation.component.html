@@ -1,8 +1,13 @@
 <div class="simulation-container">
   <div class="simulation-layout" [class.post-race]="raceFinished">
     <!-- LEFT SIDE -->
-    <div class="left-panel-area">
-      <div class="top-info-row">
+    <div class="left-panel-area" [style.width.px]="leftPanelWidth">
+      <div
+        class="top-info-row"
+        [style.gridTemplateColumns]="
+          leaderboardWidth + 'px ' + sidebarWidth + 'px'
+        "
+      >
         <app-leaderboard
           [highlightedDrivers]="[
             {
@@ -52,10 +57,10 @@
 
           <app-fastest-lap-banner> </app-fastest-lap-banner>
 
-          <div class="leaderboard-controls-header">
+          <!-- <div class="leaderboard-controls-header">
             <h4>Leaderboard Controls</h4>
             <div class="header-divider"></div>
-          </div>
+          </div> -->
         </div>
       </div>
 

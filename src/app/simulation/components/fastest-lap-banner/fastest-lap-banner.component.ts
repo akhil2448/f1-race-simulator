@@ -3,6 +3,7 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  HostBinding,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -14,6 +15,7 @@ import {
   FastestLapData,
 } from '../../../core/services/fastest-lap.service';
 import { DriverMetaService } from '../../../core/services/driver-meta.service';
+import { LayoutScaleService } from '../../../core/services/layout-scale.service';
 
 @Component({
   selector: 'app-fastest-lap-banner',
@@ -26,12 +28,15 @@ import { DriverMetaService } from '../../../core/services/driver-meta.service';
 export class FastestLapBannerComponent implements OnInit {
   fastestLap: FastestLapData | null = null;
 
+  mobileScale = 1;
+
   private sub?: Subscription;
 
   constructor(
     private fastestLapService: FastestLapService,
     private driverMeta: DriverMetaService,
     private cdr: ChangeDetectorRef,
+    private layoutScale: LayoutScaleService,
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +47,10 @@ export class FastestLapBannerComponent implements OnInit {
         this.cdr.markForCheck();
       },
     );
+
+    this.layoutScale.metrics$.subscribe((layout) => {
+      this.mobileScale = layout.scale;
+    });
   }
 
   get teamLogo(): string {
@@ -76,6 +85,11 @@ export class FastestLapBannerComponent implements OnInit {
     }
 
     return this.fastestLap.team.toLowerCase().replace(/\s/g, '');
+  }
+
+  @HostBinding('style.--panel-scale')
+  get panelScaleCss(): number {
+    return this.mobileScale;
   }
 
   ngOnDestroy(): void {
