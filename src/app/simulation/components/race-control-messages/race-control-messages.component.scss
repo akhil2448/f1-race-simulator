@@ -104,3 +104,35 @@
 
   letter-spacing: 0.4px;
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .race-control-container {
+    width: 100%;
+
+    max-width: none;
+  }
+
+  .message-bar {
+    padding: 8px 12px;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .message-category {
+    font-size: 7px;
+
+    letter-spacing: 1px;
+  }
+
+  .message-text {
+    font-size: 9px;
+
+    line-height: 1.2;
+  }
+}

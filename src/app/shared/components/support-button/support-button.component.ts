@@ -12,7 +12,7 @@ export class SupportButtonComponent {
 
   buyMeCoffeeUrl = 'https://buymeacoffee.com/pitwallf1';
 
-  @Input() size: 'normal' | 'compact' = 'normal';
+  @Input() size: 'normal' | 'compact' | 'trackmap-header' = 'normal';
 
   openSupportPage(): void {
     window.open(this.buyMeCoffeeUrl, '_blank', 'noopener,noreferrer');

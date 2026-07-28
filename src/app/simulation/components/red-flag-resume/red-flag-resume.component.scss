@@ -103,3 +103,55 @@
 
   border-color: #009944;
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .red-flag-banner {
+    gap: 12px;
+
+    padding: 8px 12px;
+
+    border-radius: 6px;
+
+    border-left-width: 3px;
+
+    max-width: 520px;
+  }
+
+  .content {
+    gap: 4px;
+  }
+
+  .message {
+    font-size: 10px;
+
+    line-height: 1.15;
+  }
+
+  .restart-info {
+    font-size: 11px;
+
+    line-height: 1.2;
+  }
+
+  .restart-time {
+    font-size: 11px;
+
+    letter-spacing: 0.2px;
+  }
+
+  .actions {
+    align-self: center;
+  }
+
+  :host ::ng-deep .actions .app-button {
+    min-height: 24px;
+
+    padding: 0 10px;
+
+    font-size: 10px;
+  }
+}

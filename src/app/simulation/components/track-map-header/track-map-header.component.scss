@@ -99,3 +99,38 @@
 
   padding: 0 16px;
 }
+
+/* ==========================================================
+   MOBILE LANDSCAPE
+   ========================================================== */
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .track-header {
+    gap: 3px;
+  }
+  .event-name {
+    font-size: 10px;
+  }
+  .track-location {
+    font-size: 9px;
+  }
+  .race-local-time {
+    gap: 8px;
+  }
+  .time-label {
+    font-size: 7px;
+
+    letter-spacing: 0.8px;
+  }
+  .time-value {
+    font-size: 11px;
+  }
+  .header-divider {
+    width: 120px;
+    height: 1px;
+    margin: 0;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+}

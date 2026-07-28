@@ -648,4 +648,25 @@ app-track-map {
 
     transform: none;
   }
+
+  .track-hud {
+    padding: 5px 2px 0 12px;
+
+    align-items: stretch;
+  }
+
+  .hud-left {
+    flex: 1.4;
+
+    gap: 6px;
+
+    padding-right: 10px;
+  }
+
+  .hud-right {
+    flex: 0.8;
+
+    display: flex;
+    justify-content: flex-end;
+  }
 }
