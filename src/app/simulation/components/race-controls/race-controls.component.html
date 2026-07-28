@@ -5,7 +5,7 @@
     [active]="isPreRace || activeTemporaryMode === 'TYRE'"
     (clicked)="showTyre()"
   >
-    TYRE AGE
+    {{ isMobileLandscape ? "TYRE\nAGE" : "TYRE AGE" }}
   </app-button>
 
   <app-button
@@ -15,7 +15,7 @@
     [active]="activeTemporaryMode === 'PIT'"
     (clicked)="showPit()"
   >
-    PITSTOP COUNT
+    {{ isMobileLandscape ? "PITSTOP\nCOUNT" : "PITSTOP COUNT" }}
   </app-button>
 
   <app-button
@@ -25,7 +25,7 @@
     [active]="activeTemporaryMode === 'LAPPED'"
     (clicked)="showLapped()"
   >
-    GAP TO LEADER
+    {{ isMobileLandscape ? "GAP TO\nLEADER" : "GAP TO LEADER" }}
   </app-button>
 
   <app-button
@@ -35,6 +35,6 @@
     [active]="activeTemporaryMode === 'GAINED_LOST'"
     (clicked)="showGainLoss()"
   >
-    GAINED/LOST
+    {{ isMobileLandscape ? "GAINED\nLOST" : "GAINED/LOST" }}
   </app-button>
 </div>

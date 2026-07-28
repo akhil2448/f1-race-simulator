@@ -30,7 +30,21 @@ export class LayoutScaleService {
 
   private static readonly MOBILE_LEADERBOARD_PERCENT = 0.48;
 
-  private desktopLeftPanelHeight = 760;
+  // IMPORTANT:
+  // This must always match the desktop transform applied in
+  // leaderboard.component.scss:
+  //
+  // .leaderboard-panel {
+  //   transform: scale(0.92);
+  // }
+  //
+  // The measured top-info height uses the layout height,
+  // while the user sees the leaderboard rendered at this scale.
+  // Keep these values in sync.
+  private static readonly DESKTOP_LEADERBOARD_SCALE = 0.92;
+
+  // Rendered height of the entire top section (leaderboard + sidebar)
+  private desktopTopInfoHeight = 760;
 
   private readonly metricsSubject = new BehaviorSubject<LayoutMetrics>({
     scale: 1,
@@ -45,16 +59,16 @@ export class LayoutScaleService {
     this.update();
   }
 
-  setDesktopLeftPanelHeight(height: number): void {
+  setDesktopTopInfoHeight(height: number): void {
     if (height <= 500) {
       return;
     }
 
-    if (Math.abs(this.desktopLeftPanelHeight - height) < 2) {
+    if (Math.abs(this.desktopTopInfoHeight - height) < 2) {
       return;
     }
 
-    this.desktopLeftPanelHeight = height;
+    this.desktopTopInfoHeight = height;
 
     this.update();
   }
@@ -99,8 +113,16 @@ export class LayoutScaleService {
     // Height available for the entire left panel
     const availableHeight = height - LayoutScaleService.MOBILE_CONTROLS_HEIGHT;
 
-    // Height-based scaling using the measured desktop leaderboard height
-    const heightScale = availableHeight / this.desktopLeftPanelHeight;
+    // Height scaling based on the rendered top section
+    // const heightScale = availableHeight / this.desktopTopInfoHeight;
+
+    // Account for the desktop leaderboard transform.
+    // The measured top section uses layout height, but the rendered
+    // leaderboard is scaled down by DESKTOP_LEADERBOARD_SCALE.
+    const renderedTopInfoHeight =
+      this.desktopTopInfoHeight * LayoutScaleService.DESKTOP_LEADERBOARD_SCALE;
+
+    const heightScale = availableHeight / renderedTopInfoHeight;
 
     // Use whichever scale is smaller so both width and height fit
     let scale = Math.min(widthScale, heightScale);

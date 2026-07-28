@@ -124,3 +124,28 @@
 
   transform: translateY(1px);
 }
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .app-button.xs {
+    min-width: 52px;
+    height: 28px;
+
+    padding: 2px 4px;
+
+    font-size: 8px;
+
+    line-height: 1.05;
+
+    border-width: 1.5px;
+
+    white-space: normal;
+
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    white-space: pre-line;
+  }
+}

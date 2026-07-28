@@ -53,8 +53,8 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('driverRow', { read: ElementRef })
   rows!: QueryList<ElementRef<HTMLElement>>;
 
-  @ViewChild('leaderboardPanel', { read: ElementRef })
-  leaderboardPanel!: ElementRef<HTMLElement>;
+  // @ViewChild('leaderboardPanel', { read: ElementRef })
+  // leaderboardPanel!: ElementRef<HTMLElement>;
 
   /** UI STATE */
   baseMode: LeaderboardDisplayMode = 'LEADER_GAP';
@@ -155,12 +155,6 @@ export class LeaderboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.runFLIP();
-
-    requestAnimationFrame(() => {
-      const height = this.leaderboardPanel.nativeElement.offsetHeight;
-
-      this.layoutScale.setDesktopLeftPanelHeight(height);
-    });
   }
 
   ngOnDestroy(): void {}

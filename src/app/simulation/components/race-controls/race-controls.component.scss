@@ -15,3 +15,24 @@
 .race-controls app-button {
   flex: 1;
 }
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  // .race-controls {
+  //   transform-origin: top left;
+
+  //   transform: scale(0.68);
+
+  //   width: 147%;
+  // }
+
+  .race-controls {
+    width: 100%;
+    gap: 2px;
+    // margin-left: 1px;
+  }
+
+  .race-controls app-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

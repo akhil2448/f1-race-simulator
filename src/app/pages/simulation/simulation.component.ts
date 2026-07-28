@@ -1,4 +1,12 @@
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { DriverMetaService } from '../../core/services/driver-meta.service';
@@ -52,7 +60,7 @@ import { LayoutScaleService } from '../../core/services/layout-scale.service';
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.scss',
 })
-export class SimulationComponent implements OnInit, OnDestroy {
+export class SimulationComponent implements OnInit, AfterViewInit, OnDestroy {
   availableDrivers: string[] = [];
   private allDrivers: string[] = [];
   selectedDrivers: (string | null)[] = [null, null];
@@ -70,6 +78,9 @@ export class SimulationComponent implements OnInit, OnDestroy {
   showExitModal = false;
 
   showRotateOverlay = false;
+
+  @ViewChild('topInfoRow', { read: ElementRef })
+  topInfoRow!: ElementRef<HTMLElement>;
 
   private pausedByRotation = false;
 
@@ -141,6 +152,12 @@ export class SimulationComponent implements OnInit, OnDestroy {
     // }, 3000);
 
     this.handleOrientationChange();
+  }
+
+  ngAfterViewInit(): void {
+    requestAnimationFrame(() => {
+      this.measureTopInfoHeight();
+    });
   }
 
   private updateActiveRedFlag(raceSecond: number): void {
@@ -244,6 +261,10 @@ export class SimulationComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onWindowResize(): void {
     this.handleOrientationChange();
+
+    requestAnimationFrame(() => {
+      this.measureTopInfoHeight();
+    });
   }
 
   get isRaceInProgress(): boolean {
@@ -269,6 +290,25 @@ export class SimulationComponent implements OnInit, OnDestroy {
     this.showRotateOverlay = false;
 
     this.pausedByRotation = false;
+  }
+
+  private measureTopInfoHeight(): void {
+    if (!this.topInfoRow) {
+      return;
+    }
+
+    const height = this.topInfoRow.nativeElement.getBoundingClientRect().height;
+
+    this.layoutScale.setDesktopTopInfoHeight(height);
+
+    const rectHeight =
+      this.topInfoRow.nativeElement.getBoundingClientRect().height;
+    const offsetHeight = this.topInfoRow.nativeElement.offsetHeight;
+
+    console.log('getBoundingClientRect:', rectHeight);
+    console.log('offsetHeight:', offsetHeight);
+
+    this.layoutScale.setDesktopTopInfoHeight(rectHeight);
   }
 
   ngOnDestroy(): void {

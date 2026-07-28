@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -16,8 +16,10 @@ import { LeaderboardService } from '../../../core/services/leaderboard.service';
   templateUrl: './race-controls.component.html',
   styleUrl: './race-controls.component.scss',
 })
-export class RaceControlsComponent {
+export class RaceControlsComponent implements OnInit {
   activeTemporaryMode: LeaderboardDisplayMode | null = null;
+
+  isMobileLandscape = false;
 
   constructor(
     private leaderboardDisplay: LeaderboardDisplayService,
@@ -26,6 +28,21 @@ export class RaceControlsComponent {
     this.leaderboardDisplay.temporaryMode$.subscribe((mode) => {
       this.activeTemporaryMode = mode;
     });
+  }
+
+  ngOnInit(): void {
+    this.updateViewport();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateViewport();
+  }
+
+  private updateViewport(): void {
+    this.isMobileLandscape = window.matchMedia(
+      '(max-width: 1024px) and (orientation: landscape)',
+    ).matches;
   }
 
   showTyre(): void {
