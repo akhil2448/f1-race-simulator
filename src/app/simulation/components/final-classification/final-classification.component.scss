@@ -1,3 +1,7 @@
+:host {
+  --panel-scale: 1;
+}
+
 .post-race-layout {
   display: grid;
 
@@ -102,7 +106,7 @@
 /* HEADER */
 
 .classification-header {
-  font-size: 18px;
+  font-size: calc(18px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -169,7 +173,7 @@
 /* POSITION */
 
 .position {
-  font-size: 16px;
+  font-size: calc(16px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -185,7 +189,7 @@
 .number {
   color: #9f9f9f;
 
-  font-size: 14px;
+  font-size: calc(14px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -209,7 +213,7 @@
 /* DRIVER */
 
 .driver {
-  font-size: 15px;
+  font-size: calc(15px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -231,7 +235,7 @@
 
   opacity: 0.9;
 
-  font-size: 13px;
+  font-size: calc(13px * var(--panel-scale));
 
   color: #d7d7d7;
 
@@ -247,7 +251,7 @@
 .points {
   text-align: right;
 
-  font-size: 15px;
+  font-size: calc(15px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -441,7 +445,7 @@
 }
 
 .standings-title {
-  font-size: 12px;
+  font-size: calc(12px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -475,13 +479,13 @@
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-  font-size: 13px;
+  font-size: calc(13px * var(--panel-scale));
 
   letter-spacing: 0.35px;
 }
 
 .standings-pos {
-  font-size: 15px;
+  font-size: calc(15px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -519,7 +523,7 @@
 }
 
 .standings-name {
-  font-size: 14px;
+  font-size: calc(14px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -559,7 +563,7 @@
 .standings-points {
   text-align: right;
 
-  font-size: 14px;
+  font-size: calc(14px * var(--panel-scale));
   font-weight: 700;
   opacity: 0.9;
 
@@ -641,7 +645,7 @@
 }
 
 .fastest-lap-label {
-  font-size: 12px;
+  font-size: calc(12px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -665,7 +669,7 @@
 }
 
 .fastest-lap-driver {
-  font-size: 16px;
+  font-size: calc(16px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -673,7 +677,7 @@
 }
 
 .fastest-lap-time {
-  font-size: 18px;
+  font-size: calc(18px * var(--panel-scale));
 
   font-weight: 800;
 
@@ -746,7 +750,7 @@
 
   cursor: pointer;
 
-  font-size: 10px;
+  font-size: calc(10px * var(--panel-scale));
 
   font-weight: 700;
 
@@ -781,7 +785,7 @@
 
   width: 10px;
 
-  font-size: 11px;
+  font-size: calc(11px * var(--panel-scale));
 
   line-height: 1;
 
@@ -802,4 +806,153 @@
   position: relative;
 
   z-index: 1;
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .post-race-layout {
+    grid-template-columns:
+      minmax(0, 1.05fr)
+      minmax(210px, 0.95fr);
+
+    gap: 22px;
+
+    align-items: start;
+  }
+
+  .classification-wrapper {
+    padding: 8px;
+  }
+
+  .standings-card {
+    padding: 8px;
+  }
+
+  .classification-row {
+    grid-template-columns:
+      16px
+      28px
+      28px
+      4px
+      minmax(0, 1fr)
+      56px
+      22px;
+
+    column-gap: 6px;
+
+    height: 30px;
+
+    padding: 0;
+  }
+
+  .fastest-lap-row {
+    height: 38px;
+
+    padding: 0 10px;
+
+    margin-top: 10px;
+  }
+
+  .standings-row {
+    grid-template-columns:
+      14px
+      22px
+      4px
+      minmax(0, 1fr)
+      26px;
+
+    column-gap: 6px;
+
+    height: 28px;
+  }
+
+  .team-icon {
+    width: 20px;
+  }
+
+  .team-icon img {
+    width: 15px;
+    height: 15px;
+  }
+
+  .standings-team-icon {
+    width: 20px;
+  }
+
+  .driver-color,
+  .standings-color {
+    width: 3px;
+    height: 14px;
+  }
+
+  .fastest-lap-driver-section {
+    gap: 5px;
+
+    margin-left: 10px;
+  }
+
+  .fastest-lap-icon,
+  .fastest-lap-icon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .team-icon img.redbull {
+    transform: scale(1.2);
+  }
+
+  .team-icon img.mclaren {
+    transform: scale(1);
+  }
+
+  .team-icon img.forceindia {
+    transform: scale(1);
+  }
+
+  .team-icon img.tororosso {
+    transform: scale(0.9);
+  }
+
+  .team-icon img.racingpoint {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.alphatauri {
+    transform: scale(1.2);
+  }
+
+  .team-icon img.alpine {
+    transform: scale(1.2);
+  }
+
+  .team-icon img.mercedes {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.williams {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.alfaromeo {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.astonmartin {
+    transform: scale(1.2);
+  }
+
+  .team-icon img.racingbulls {
+    transform: scale(1);
+  }
+
+  .team-icon img.kicksauber {
+    transform: scale(1);
+  }
+
+  .team-icon img.cadillac {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.audi {
+    transform: scale(1.2);
+  }
 }

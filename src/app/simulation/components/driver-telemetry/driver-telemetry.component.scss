@@ -146,7 +146,7 @@
 }
 
 .loading-line {
-  height: 15px;
+  height: calc(15px * var(--panel-scale));
   width: 100%;
   margin: 10px 0;
 
@@ -187,7 +187,8 @@
   }
 
   .change-btn {
-    padding: 2px 5px;
+    padding: 2px 3px;
+    transform: scale(1.3);
   }
 
   .telemetry-row {

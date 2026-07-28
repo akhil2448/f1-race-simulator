@@ -142,11 +142,11 @@ export class SimulationComponent implements OnInit, AfterViewInit, OnDestroy {
       this.showReplayResumeMessage = false;
     });
 
-    //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION
     this.raceFinish.raceFinished$.subscribe((finished: boolean) => {
       this.raceFinished = finished;
     });
 
+    //  REMOVED THIS TO WORK ON TEMPLATING THE FINAL CLASSIFACTION
     // setTimeout(() => {
     //   this.raceFinished = true;
     // }, 3000);

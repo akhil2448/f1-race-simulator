@@ -23,6 +23,7 @@ import { RaceControlService } from './race-control.service';
 import { RaceApiResponse } from '../models/race-data.model';
 import { StartingGridService } from './starting-grid.service';
 import { RaceClockService } from './race-clock-service';
+import { LayoutScaleService } from './layout-scale.service';
 
 interface RaceContext {
   year: number;
@@ -75,6 +76,7 @@ export class SimulationBootstrapService {
     private driverPresence: DriverPresenceService,
     private fastestLap: FastestLapService,
     private raceControl: RaceControlService,
+    private layoutScaleService: LayoutScaleService,
   ) {}
 
   private stepsSubject = new BehaviorSubject<BootstrapStep[]>([]);
@@ -257,6 +259,11 @@ export class SimulationBootstrapService {
     this.raceDataService.getRaceData(year, round).subscribe({
       next: (raceData) => {
         this.updateStep('race-data', 'success');
+
+        /* ---------- DRIVER COUNT FOR LEADERBOARD SCALE MULTIPLIER ---------- */
+        this.layoutScaleService.setDriverCount(
+          Object.keys(raceData.drivers).length,
+        );
 
         /* ---------- STATIC META ---------- */
 

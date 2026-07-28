@@ -144,26 +144,26 @@
   .race-clock-bar {
     gap: 14px;
 
-    padding: 8px 12px;
+    padding: 8px 8px;
 
     border-radius: 10px;
   }
   .time {
     font-size: 12px;
 
-    margin-right: 2px;
+    margin-right: 0;
   }
 
   .time.minutes-1 {
-    width: 72px;
+    width: 60px;
   }
 
   .time.minutes-2 {
-    width: 92px;
+    width: 80px;
   }
 
   .time.hours {
-    width: 120px;
+    width: 100px;
   }
   .controls {
     gap: 6px;

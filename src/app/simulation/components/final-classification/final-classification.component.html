@@ -1,4 +1,4 @@
-<div class="post-race-layout">
+<div class="post-race-layout" [style.--panel-scale]="panelScale">
   <!-- LEFT SIDE -->
   <div class="classification-wrapper">
     <div class="classification-header">FINAL CLASSIFICATION</div>
@@ -34,7 +34,7 @@
 
       <!-- DRIVER -->
       <div class="driver">
-        {{ row.fullName }}
+        {{ isMobileLandscape ? getLastName(row.fullName) : row.fullName }}
       </div>
 
       <!-- GAP -->
@@ -64,7 +64,11 @@
         ></div>
 
         <div class="fastest-lap-driver">
-          {{ fastestLap.fullName }}
+          {{
+            isMobileLandscape
+              ? getLastName(fastestLap.fullName)
+              : fastestLap.fullName
+          }}
         </div>
 
         <div class="team-icon">
@@ -117,7 +121,7 @@
         ></div>
 
         <div class="standings-name">
-          {{ row.driver }}
+          {{ isMobileLandscape ? getLastName(row.driver) : row.driver }}
         </div>
 
         <div class="standings-points">

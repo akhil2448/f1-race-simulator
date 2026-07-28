@@ -1,5 +1,9 @@
 <div class="simulation-container">
-  <div class="simulation-layout" [class.post-race]="raceFinished">
+  <div
+    class="simulation-layout"
+    [class.post-race]="raceFinished"
+    [style.--sidebar-width.px]="sidebarWidth"
+  >
     <!-- LEFT SIDE -->
     <div class="left-panel-area" [style.width.px]="leftPanelWidth">
       <div

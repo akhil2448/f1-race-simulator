@@ -135,4 +135,12 @@
 
     line-height: 1.2;
   }
+
+  .message-bar.chequered-special {
+    padding: 8px 11px;
+  }
+
+  .message-bar.chequered-special .message-text {
+    font-size: 10px;
+  }
 }

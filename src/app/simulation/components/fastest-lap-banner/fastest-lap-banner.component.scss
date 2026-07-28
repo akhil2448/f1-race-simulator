@@ -318,8 +318,7 @@
   }
 
   .team-icon img {
-    width: 18px;
-    height: 18px;
+    transform: scale(0.85);
   }
 
   .driver {
@@ -346,5 +345,77 @@
     margin-left: auto;
 
     white-space: nowrap;
+  }
+
+  .team-icon img.redbull {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.renault {
+    transform: scale(0.7);
+  }
+
+  .team-icon img.mclaren {
+    transform: scale(0.9);
+  }
+
+  .team-icon img.mercedes {
+    transform: scale(0.7);
+  }
+
+  .team-icon img.forceindia {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.tororosso {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.racingpoint {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.alphatauri {
+    transform: scale(1.2);
+  }
+
+  .team-icon img.williams {
+    transform: scale(0.6);
+  }
+
+  .team-icon img.alfaromeo {
+    transform: scale(0.7);
+  }
+
+  .team-icon img.alpine {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.astonmartin {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.racingbulls {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.kicksauber {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.cadillac {
+    transform: scale(0.8);
+  }
+
+  .team-icon img.ferrari {
+    transform: scale(0.7);
+  }
+
+  .team-icon img.audi {
+    transform: scale(1.1);
+  }
+
+  .team-icon img.haas {
+    transform: scale(0.8);
   }
 }

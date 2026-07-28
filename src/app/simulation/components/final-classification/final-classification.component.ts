@@ -13,6 +13,7 @@ import { TEAM_COLORS } from '../../../core/constants/team-data';
 
 import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { RaceFinishService } from '../../../core/services/race-finish.service';
+import { LayoutScaleService } from '../../../core/services/layout-scale.service';
 
 @Component({
   selector: 'app-final-classification',
@@ -38,11 +39,16 @@ export class FinalClassificationComponent implements OnInit {
 
   expandedStandings: 'drivers' | 'constructors' | null = null;
 
+  isMobileLandscape = false;
+
   raceFinished = false;
+
+  panelScale = 1;
 
   constructor(
     private leaderboard: LeaderboardService,
     private raceFinish: RaceFinishService,
+    private layoutScale: LayoutScaleService,
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +59,14 @@ export class FinalClassificationComponent implements OnInit {
     this.constructorStandings = this.leaderboard.getConstructorStandings();
 
     this.fastestLap = this.leaderboard.getFastestLap();
+
+    this.layoutScale.metrics$.subscribe((metrics) => {
+      this.panelScale = metrics.scale;
+    });
+
+    this.isMobileLandscape = window.matchMedia(
+      '(max-width: 1024px) and (orientation: landscape)',
+    ).matches;
 
     this.raceFinish.raceFinished$.subscribe((finished) => {
       this.raceFinished = finished;
@@ -142,5 +156,11 @@ export class FinalClassificationComponent implements OnInit {
     img.src = 'assets/team-logos/plcholder.svg';
 
     img.className = 'plcholder';
+  }
+
+  getLastName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+
+    return parts[parts.length - 1];
   }
 }

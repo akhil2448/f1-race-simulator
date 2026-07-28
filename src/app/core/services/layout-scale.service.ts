@@ -28,6 +28,10 @@ export class LayoutScaleService {
   private static readonly MOBILE_CONTROLS_HEIGHT = 70;
   private static readonly MOBILE_MIN_SCALE = 0.45;
 
+  // FOR 20 DRIVERS: 1.1111 & FOR 22 DRIVERS: 1.0437
+  private static readonly MOBILE_SCALE_MULTIPLIER = 1.1111;
+  // private static readonly MOBILE_SCALE_MULTIPLIER = 1;
+
   private static readonly MOBILE_LEADERBOARD_PERCENT = 0.48;
 
   // IMPORTANT:
@@ -41,10 +45,14 @@ export class LayoutScaleService {
   // The measured top-info height uses the layout height,
   // while the user sees the leaderboard rendered at this scale.
   // Keep these values in sync.
+  // CHANGED TO 1 TO CHECK IF LEADERBOARD APPEARANCE IMPROVES. IF IT IS STILL 1, DONT CHANGE!
+  // PREVIOUS VALUE = 0.92
   private static readonly DESKTOP_LEADERBOARD_SCALE = 0.92;
 
   // Rendered height of the entire top section (leaderboard + sidebar)
   private desktopTopInfoHeight = 760;
+
+  private driverCount = 20;
 
   private readonly metricsSubject = new BehaviorSubject<LayoutMetrics>({
     scale: 1,
@@ -70,6 +78,11 @@ export class LayoutScaleService {
 
     this.desktopTopInfoHeight = height;
 
+    this.update();
+  }
+
+  setDriverCount(count: number): void {
+    this.driverCount = count;
     this.update();
   }
 
@@ -126,6 +139,14 @@ export class LayoutScaleService {
 
     // Use whichever scale is smaller so both width and height fit
     let scale = Math.min(widthScale, heightScale);
+
+    // Temporary mobile tuning
+    const mobileMultiplier =
+      this.driverCount <= 20
+        ? LayoutScaleService.MOBILE_SCALE_MULTIPLIER
+        : 1.0437;
+
+    scale *= mobileMultiplier;
 
     // Prevent it becoming ridiculously small
     scale = Math.max(LayoutScaleService.MOBILE_MIN_SCALE, Math.min(scale, 1));

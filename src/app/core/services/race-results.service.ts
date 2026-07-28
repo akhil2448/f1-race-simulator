@@ -1,3 +1,5 @@
+// DEAD CODE - USING /race API TO FETCH FINAL CLASSIFICATION RESULTS.
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 

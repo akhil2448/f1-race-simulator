@@ -541,7 +541,7 @@ app-track-map {
   }
 
   .info-sidebar h4 {
-    font-size: 12px;
+    font-size: 9px;
 
     margin: 0 0 4px;
 
@@ -553,19 +553,20 @@ app-track-map {
   .header-divider {
     // width: 170px;
     width: 100%;
+    height: 1px;
 
-    margin: 2px 0 8px;
+    margin: 2px 0 2px;
   }
 
   app-weather {
     display: block;
 
-    margin-top: -16px;
+    margin-top: 0;
 
     margin-bottom: 4px;
   }
   .telemetry-panels {
-    min-height: 0px;
+    min-height: auto;
   }
 
   // .leaderboard-controls-header h4,
@@ -640,7 +641,7 @@ app-track-map {
   }
 
   .support-button {
-    transform: translateY(-16px) scale(0.85);
+    transform: translateY(-16px) scale(0.65);
   }
 
   .race-controls {
@@ -668,5 +669,22 @@ app-track-map {
 
     display: flex;
     justify-content: flex-end;
+  }
+
+  .post-race .simulation-layout {
+    grid-template-columns:
+      auto
+      1fr;
+  }
+
+  .post-race .track-column {
+    margin-left: calc(-1 * var(--sidebar-width));
+
+    width: calc(100% + var(--sidebar-width));
+  }
+
+  .post-race-overlay {
+    left: 10px;
+    right: 10px;
   }
 }
