@@ -305,8 +305,8 @@ export class SimulationComponent implements OnInit, AfterViewInit, OnDestroy {
       this.topInfoRow.nativeElement.getBoundingClientRect().height;
     const offsetHeight = this.topInfoRow.nativeElement.offsetHeight;
 
-    console.log('getBoundingClientRect:', rectHeight);
-    console.log('offsetHeight:', offsetHeight);
+    // console.log('getBoundingClientRect:', rectHeight);
+    // console.log('offsetHeight:', offsetHeight);
 
     this.layoutScale.setDesktopTopInfoHeight(rectHeight);
   }

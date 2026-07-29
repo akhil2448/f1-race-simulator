@@ -69,6 +69,7 @@ export class DriverPresenceService {
 
       if (staleFor >= this.OUT_TIMEOUT_SECONDS) {
         out.add(driver);
+        // console.log(driver);
       }
     });
 
