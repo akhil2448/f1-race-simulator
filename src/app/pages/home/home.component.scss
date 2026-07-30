@@ -509,6 +509,39 @@ video.feature-media {
 
 .cta-support {
   margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 18px;
+
+  flex-wrap: wrap;
+}
+
+.install-button {
+  height: 44px;
+
+  padding: 0 22px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  background: transparent;
+
+  color: #e5e7eb;
+
+  font-family: "Formula1";
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.install-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 @keyframes heroTitle {
@@ -629,7 +662,7 @@ video.feature-media {
     right: auto;
     bottom: auto;
 
-    margin-top: 100px;
+    margin-top: 80px;
 
     display: flex;
     flex-direction: column;

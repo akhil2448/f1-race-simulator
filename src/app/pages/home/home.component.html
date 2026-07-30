@@ -26,7 +26,7 @@
 
       <button
         class="cta-button hero-enter-button"
-        (click)="goToRaceSelection()"
+        (click)="openInstallDialog()"
       >
         EXPLORE RACES
       </button>
@@ -113,7 +113,19 @@
     </div>
 
     <div class="cta-support">
+      @if (pwaService.shouldShowInstallButton()) {
+        <button class="install-button" (click)="showInstallDialog.set(true)">
+          Install PitWall
+        </button>
+      }
       <app-support-button text="Support PitWall"> </app-support-button>
     </div>
   </section>
 </div>
+
+<app-install-pitwall-dialog
+  [isOpen]="showInstallDialog()"
+  (closed)="showInstallDialog.set(false)"
+  (maybeLater)="continueToRaces()"
+>
+</app-install-pitwall-dialog>

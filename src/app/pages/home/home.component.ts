@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 import { RaceContextService } from '../../core/services/race-context.service';
+import { InstallPitwallDialogComponent } from '../../shared/components/install-pitwall-dialog/install-pitwall-dialog.component';
+import { PwaService } from '../../core/services/pwa.service';
 
 export interface Feature {
   title: string;
@@ -26,7 +28,11 @@ export interface Feature {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, SupportButtonComponent],
+  imports: [
+    CommonModule,
+    SupportButtonComponent,
+    InstallPitwallDialogComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -35,7 +41,10 @@ export class HomeComponent implements AfterViewInit {
     private ngZone: NgZone,
     private router: Router,
     private raceContext: RaceContextService,
+    public pwaService: PwaService,
   ) {}
+
+  readonly showInstallDialog = signal(false);
 
   features: Feature[] = [
     // {
@@ -192,5 +201,22 @@ export class HomeComponent implements AfterViewInit {
     this.raceContext.navigationStep = 'race-selection';
 
     this.router.navigate(['/select-race']);
+  }
+
+  openInstallDialog(): void {
+    if (this.pwaService.shouldPromptOnExplore()) {
+      this.showInstallDialog.set(true);
+      return;
+    }
+
+    this.goToRaceSelection();
+  }
+
+  continueToRaces(): void {
+    this.pwaService.dismissForNow();
+
+    this.showInstallDialog.set(false);
+
+    this.goToRaceSelection();
   }
 }

@@ -1,0 +1,81 @@
+@if (isOpen) {
+  <div class="overlay" (click)="close()">
+    <div class="dialog" (click)="stopPropagation($event)">
+      <button class="close-button" (click)="close()" aria-label="Close">
+        ✕
+      </button>
+
+      <h2>INSTALL PITWALL</h2>
+
+      <p class="subtitle">
+        PitWall is intended to be viewed as a fullscreen app. Install it to
+        experience race replays exactly as designed.
+      </p>
+
+      @if (supportsNativeInstall()) {
+        @if (canInstall()) {
+          <button class="primary-button" (click)="install()">
+            Install Now
+          </button>
+
+          <button class="later-link" (click)="continueWithoutInstalling()">
+            Maybe Later.
+            <span>Skip installation and continue to Explore Races.</span>
+          </button>
+        } @else {
+          <p class="hint">
+            Your browser supports installation, but the install prompt isn't
+            available yet. Try refreshing the page once.
+          </p>
+        }
+      } @else {
+        @switch (browser) {
+          @case (BrowserType.SafariMac) {
+            <div class="instructions">
+              <h3>Safari on macOS</h3>
+
+              <ol>
+                <li>Open the <strong>File</strong> menu.</li>
+                <li>Select <strong>Add to Dock</strong>.</li>
+                <li>Launch PitWall from your Dock.</li>
+              </ol>
+            </div>
+          }
+
+          @case (BrowserType.SafariIOS) {
+            <div class="instructions">
+              <h3>Safari on iPhone / iPad</h3>
+
+              <ol>
+                <li>Tap the <strong>Share</strong> button.</li>
+                <li>Select <strong>Add to Home Screen</strong>.</li>
+                <li>Tap <strong>Add</strong>.</li>
+              </ol>
+            </div>
+          }
+
+          @case (BrowserType.Firefox) {
+            <div class="instructions">
+              <h3>Firefox</h3>
+
+              <p>
+                Firefox currently doesn't support installing PitWall as a
+                Progressive Web App.
+              </p>
+
+              <p>For the best experience, use Chrome or Microsoft Edge.</p>
+            </div>
+          }
+
+          @default {
+            <div class="instructions">
+              <p>
+                Installation instructions aren't available for your browser.
+              </p>
+            </div>
+          }
+        }
+      }
+    </div>
+  </div>
+}
