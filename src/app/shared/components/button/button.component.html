@@ -1,5 +1,9 @@
 <button
-  (click)="clicked.emit()"
+  (click)="onClick($event)"
+  (pointerdown)="onPointerDown()"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+  (pointerleave)="onPointerUp()"
   class="app-button"
   [class.secondary]="variant === 'secondary'"
   [class.xs]="size === 'xs'"
@@ -8,6 +12,7 @@
   [class.lg]="size === 'lg'"
   [class.fliptrack]="size === 'fliptrack'"
   [class.active]="active"
+  [class.pressed]="pressed"
   [disabled]="disabled"
   type="button"
 >

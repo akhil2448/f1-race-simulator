@@ -142,14 +142,38 @@
   animation: buttonReveal 0.6s ease 2.9s forwards;
 }
 
+.hero-brand {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 18px;
+
+  animation: heroTitle 1s ease forwards;
+}
+
+.hero-logo {
+  width: 160px;
+
+  height: 120px;
+
+  object-fit: contain;
+
+  flex-shrink: 0;
+  margin-right: -25px;
+  transform: translateY(4px);
+}
+
 .hero-title {
   font-family: "Formula1Wide", "Formula1Bold", sans-serif;
 
-  font-size: 88px;
+  font-size: 74px;
 
-  letter-spacing: 6px;
+  line-height: 1;
 
-  animation: heroTitle 1s ease forwards;
+  letter-spacing: 5px;
 }
 
 .hero-accent {
@@ -673,12 +697,25 @@ video.feature-media {
     pointer-events: auto;
   }
 
+  .hero-brand {
+    gap: 10px;
+  }
+
+  .hero-logo {
+    width: clamp(90px, 18vw, 120px);
+
+    height: clamp(50px, 18vw, 80px);
+
+    margin-right: -14px;
+    transform: translateY(2px);
+  }
+
   .hero-title {
     font-family: "Formula1Bold", sans-serif;
 
-    font-size: clamp(44px, 9vw, 64px);
+    font-size: clamp(34px, 8vw, 52px);
 
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 
     line-height: 1;
   }
@@ -686,7 +723,7 @@ video.feature-media {
   .hero-subtitle {
     margin-top: 20px;
 
-    font-size: clamp(20px, 3vw, 28px);
+    font-size: clamp(16px, 3vw, 28px);
 
     line-height: 1.4;
 
@@ -719,8 +756,28 @@ video.feature-media {
    ========================================================== */
 
 @media (max-width: 1024px) and (orientation: landscape) {
+  .hero-brand {
+    gap: 12px;
+  }
+
+  .hero-logo {
+    width: 120px;
+
+    height: 80px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+    margin-right: -18px;
+    transform: translateY(2px);
+  }
+
   .hero-title {
     font-family: "Formula1Wide", sans-serif;
+
+    font-size: clamp(42px, 6vw, 56px);
+
+    letter-spacing: 2px;
   }
 
   .hero-bottom {

@@ -33,7 +33,19 @@
 
   -webkit-tap-highlight-color: transparent;
 
-  &:not(:disabled):hover,
+  // &:not(:disabled):hover,
+  // &.active {
+  //   background: #e10600;
+
+  //   border-color: #ff3b30;
+
+  //   color: #ffffff;
+
+  //   box-shadow: 0 0 18px rgba(225, 6, 0, 0.35);
+
+  //   transform: translateY(-1px);
+  // }
+
   &.active {
     background: #e10600;
 
@@ -46,11 +58,29 @@
     transform: translateY(-1px);
   }
 
-  &:not(:disabled):active {
+  &.pressed {
     background: #ff1801;
+
+    border-color: #ff3b30;
+
+    color: #ffffff;
+
+    box-shadow: 0 0 18px rgba(225, 6, 0, 0.35);
 
     transform: scale(0.98);
   }
+
+  // &:not(:disabled):hover {
+  //   background: #e10600;
+
+  //   border-color: #ff3b30;
+
+  //   color: #ffffff;
+
+  //   box-shadow: 0 0 18px rgba(225, 6, 0, 0.35);
+
+  //   transform: translateY(-1px);
+  // }
 
   &:disabled {
     opacity: 0.4;
@@ -156,5 +186,20 @@
     padding: 0 6px;
 
     font-size: 8px;
+  }
+}
+
+/* ==========================================================
+   TOUCH DEVICES
+   Disable sticky :hover on phones/tablets
+   ========================================================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .app-button:not(:disabled):hover {
+    background: #e10600;
+    border-color: #ff3b30;
+    color: #ffffff;
+    box-shadow: 0 0 18px rgba(225, 6, 0, 0.35);
+    transform: translateY(-1px);
   }
 }

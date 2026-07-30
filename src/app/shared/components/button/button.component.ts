@@ -15,5 +15,26 @@ export class ButtonComponent {
 
   @Input() active = false;
 
+  pressed = false;
+
   @Output() clicked = new EventEmitter<void>();
+
+  onClick(event: MouseEvent): void {
+    this.clicked.emit();
+
+    // Only for touch devices
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      (event.currentTarget as HTMLButtonElement).blur();
+    }
+  }
+
+  onPointerDown(): void {
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      this.pressed = true;
+    }
+  }
+
+  onPointerUp(): void {
+    this.pressed = false;
+  }
 }
