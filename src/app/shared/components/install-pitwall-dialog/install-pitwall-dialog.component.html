@@ -5,12 +5,22 @@
         ✕
       </button>
 
-      <h2>INSTALL PITWALL</h2>
+      <div class="dialog-header">
+        <img
+          src="assets/icons/logo-transperant.png"
+          alt="PitWall"
+          class="pitwall-logo"
+        />
+
+        <h2>PITWALL</h2>
+      </div>
 
       <p class="subtitle">
         PitWall is intended to be viewed as a fullscreen app. Install it to
         experience race replays exactly as designed.
       </p>
+
+      <div class="dialog-divider"></div>
 
       @if (supportsNativeInstall()) {
         @if (canInstall()) {
@@ -19,7 +29,6 @@
           </button>
 
           <button class="later-link" (click)="continueWithoutInstalling()">
-            Maybe Later.
             <span>Skip installation and continue to Explore Races.</span>
           </button>
         } @else {
@@ -32,26 +41,82 @@
         @switch (browser) {
           @case (BrowserType.SafariMac) {
             <div class="instructions">
-              <h3>Safari on macOS</h3>
+              <h3>Install on macOS</h3>
 
-              <ol>
-                <li>Open the <strong>File</strong> menu.</li>
-                <li>Select <strong>Add to Dock</strong>.</li>
-                <li>Launch PitWall from your Dock.</li>
-              </ol>
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/safari.svg"
+                  alt="Safari"
+                  class="instruction-icon"
+                />
+
+                <span>Open in Safari</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/share-ios.svg"
+                  alt="Share"
+                  class="instruction-icon"
+                />
+
+                <span>Tap the <strong>Share</strong> button</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/add-to-dock.svg"
+                  alt="Add to Dock"
+                  class="instruction-icon"
+                />
+
+                <span>Choose <strong>Add to Dock</strong></span>
+              </div>
             </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
           }
 
           @case (BrowserType.SafariIOS) {
             <div class="instructions">
-              <h3>Safari on iPhone / iPad</h3>
+              <h3>Install on iPhone & iPad</h3>
 
-              <ol>
-                <li>Tap the <strong>Share</strong> button.</li>
-                <li>Select <strong>Add to Home Screen</strong>.</li>
-                <li>Tap <strong>Add</strong>.</li>
-              </ol>
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/safari.svg"
+                  alt="Safari"
+                  class="instruction-icon"
+                />
+
+                <span>Open in Safari</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/share-ios.svg"
+                  alt="Share"
+                  class="instruction-icon"
+                />
+
+                <span>Tap the <strong>Share</strong> button</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/add-to-home-screen.svg"
+                  alt="Add to Home Screen"
+                  class="instruction-icon"
+                />
+
+                <span>Tap <strong>Add to Home Screen</strong></span>
+              </div>
             </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
           }
 
           @case (BrowserType.Firefox) {
@@ -63,8 +128,14 @@
                 Progressive Web App.
               </p>
 
-              <p>For the best experience, use Chrome or Microsoft Edge.</p>
+              <p>
+                For the best experience, use Chrome, Microsoft Edge or Safari.
+              </p>
             </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
           }
 
           @default {
@@ -73,6 +144,10 @@
                 Installation instructions aren't available for your browser.
               </p>
             </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
           }
         }
       }
