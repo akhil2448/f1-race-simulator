@@ -35,9 +35,13 @@ export class InstallPitwallDialogComponent {
 
   readonly canInstall = this.pwaService.canInstall;
 
-  readonly isInstalled = this.pwaService.isInstalled;
+  readonly runningAsPwa = this.pwaService.runningAsPwa;
 
   readonly supportsNativeInstall = computed(() => {
+    if (this.runningAsPwa()) {
+      return false;
+    }
+
     return (
       this.browser === BrowserType.ChromeDesktop ||
       this.browser === BrowserType.ChromeAndroid ||

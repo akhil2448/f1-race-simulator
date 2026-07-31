@@ -32,122 +32,254 @@
             <span>Skip installation and continue to Explore Races.</span>
           </button>
         } @else {
-          <p class="hint">
-            Your browser supports installation, but the install prompt isn't
-            available yet. Try refreshing the page once.
-          </p>
-        }
-      } @else {
-        @switch (browser) {
-          @case (BrowserType.SafariMac) {
-            <div class="instructions">
-              <h3>Install on macOS</h3>
+          @switch (browser) {
+            @case (BrowserType.ChromeDesktop) {
+              <div class="instructions">
+                <h3>Install on Chrome</h3>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/safari.svg"
-                  alt="Safari"
-                  class="instruction-icon"
-                />
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/install-page-as-app-chrome.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >Look for the <strong>Install</strong> icon in the address
+                    bar.</span
+                  >
+                </div>
 
-                <span>Open in Safari</span>
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/three-dots-vertical.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >If you don't see it, click the
+                    <strong>Menu &#8594; Save & Share</strong>
+                  </span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/install-page-as-app-chrome.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >Choose <strong>Install Page as App</strong> (or a similarly
+                    named option).</span
+                  >
+                </div>
               </div>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/share-ios.svg"
-                  alt="Share"
-                  class="instruction-icon"
-                />
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-                <span>Tap the <strong>Share</strong> button</span>
+            @case (BrowserType.Edge) {
+              <div class="instructions">
+                <h3>Install on Microsoft Edge</h3>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/apps-add-in-edge.svg"
+                    alt="Edge"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >Look for the <strong>App Install</strong> icon in the
+                    address bar.</span
+                  >
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/three-dots-edge.svg"
+                    alt="Edge"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >If you don't see it, click the
+                    <strong>Menu &#8594; More Tools</strong> .</span
+                  >
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/apps-edge.svg"
+                    alt="Edge"
+                    class="instruction-icon"
+                  />
+                  <span
+                    >Goto <strong>Apps &#8594; Install PitWall</strong> (or a
+                    similarly named option).</span
+                  >
+                </div>
               </div>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/add-to-dock.svg"
-                  alt="Add to Dock"
-                  class="instruction-icon"
-                />
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-                <span>Choose <strong>Add to Dock</strong></span>
+            @case (BrowserType.ChromeAndroid) {
+              <div class="instructions">
+                <h3>Install on Android</h3>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/install-page-as-app-chrome.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span>
+                    Look for the <strong>Install</strong> icon in the address
+                    bar.
+                  </span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/three-dots-vertical.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span>
+                    If you don't see it, tap the <strong>Menu</strong> .
+                  </span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/install-page-as-app-chrome.svg"
+                    alt="Chrome"
+                    class="instruction-icon"
+                  />
+                  <span>
+                    Select <strong>Install app</strong> or
+                    <strong>Add to Home screen</strong>.
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <button class="later-link" (click)="continueWithoutInstalling()">
-              <span>Skip installation and continue to Explore Races.</span>
-            </button>
-          }
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-          @case (BrowserType.SafariIOS) {
-            <div class="instructions">
-              <h3>Install on iPhone & iPad</h3>
+            @case (BrowserType.SafariMac) {
+              <div class="instructions">
+                <h3>Install on macOS</h3>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/safari.svg"
-                  alt="Safari"
-                  class="instruction-icon"
-                />
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/safari.svg"
+                    alt="Safari"
+                    class="instruction-icon"
+                  />
 
-                <span>Open in Safari</span>
+                  <span>Open in Safari</span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/share-ios.svg"
+                    alt="Share"
+                    class="instruction-icon"
+                  />
+
+                  <span>Tap the <strong>Share</strong> button</span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/add-to-dock.svg"
+                    alt="Add to Dock"
+                    class="instruction-icon"
+                  />
+
+                  <span>Choose <strong>Add to Dock</strong></span>
+                </div>
               </div>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/share-ios.svg"
-                  alt="Share"
-                  class="instruction-icon"
-                />
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-                <span>Tap the <strong>Share</strong> button</span>
+            @case (BrowserType.SafariIOS) {
+              <div class="instructions">
+                <h3>Install on iPhone & iPad</h3>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/safari.svg"
+                    alt="Safari"
+                    class="instruction-icon"
+                  />
+
+                  <span>Open in Safari</span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/share-ios.svg"
+                    alt="Share"
+                    class="instruction-icon"
+                  />
+
+                  <span>Tap the <strong>Share</strong> button</span>
+                </div>
+
+                <div class="instruction-step">
+                  <img
+                    src="assets/icons/add-to-home-screen.svg"
+                    alt="Add to Home Screen"
+                    class="instruction-icon"
+                  />
+
+                  <span>Tap <strong>Add to Home Screen</strong></span>
+                </div>
               </div>
 
-              <div class="instruction-step">
-                <img
-                  src="assets/icons/add-to-home-screen.svg"
-                  alt="Add to Home Screen"
-                  class="instruction-icon"
-                />
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-                <span>Tap <strong>Add to Home Screen</strong></span>
+            @case (BrowserType.Firefox) {
+              <div class="instructions">
+                <h3>Firefox</h3>
+
+                <p>
+                  Firefox currently doesn't support installing PitWall as a
+                  Progressive Web App.
+                </p>
+
+                <p>
+                  For the best experience, use Chrome, Microsoft Edge or Safari.
+                </p>
               </div>
-            </div>
 
-            <button class="later-link" (click)="continueWithoutInstalling()">
-              <span>Skip installation and continue to Explore Races.</span>
-            </button>
-          }
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
 
-          @case (BrowserType.Firefox) {
-            <div class="instructions">
-              <h3>Firefox</h3>
+            @default {
+              <div class="instructions">
+                <p>
+                  Installation instructions aren't available for your browser.
+                </p>
+              </div>
 
-              <p>
-                Firefox currently doesn't support installing PitWall as a
-                Progressive Web App.
-              </p>
-
-              <p>
-                For the best experience, use Chrome, Microsoft Edge or Safari.
-              </p>
-            </div>
-
-            <button class="later-link" (click)="continueWithoutInstalling()">
-              <span>Skip installation and continue to Explore Races.</span>
-            </button>
-          }
-
-          @default {
-            <div class="instructions">
-              <p>
-                Installation instructions aren't available for your browser.
-              </p>
-            </div>
-
-            <button class="later-link" (click)="continueWithoutInstalling()">
-              <span>Skip installation and continue to Explore Races.</span>
-            </button>
+              <button class="later-link" (click)="continueWithoutInstalling()">
+                <span>Skip installation and continue to Explore Races.</span>
+              </button>
+            }
           }
         }
       }

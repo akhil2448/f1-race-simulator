@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Icon: install-desktop
+Set: Material Symbols
+Author: Google (https://github.com/google/material-design-icons)
+License: Apache 2.0 (https://github.com/google/material-design-icons/blob/master/LICENSE)
+Source: https://iconify.design
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+viewBox="0 0 24 24"
+width="800"
+height="800">
+<title>Download Icon with Computer Screen</title>
+<metadata>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:cc="http://creativecommons.org/ns#">
+<cc:Work rdf:about="">
+<dc:title>Download Icon with Computer Screen</dc:title>
+<dc:description>A minimalist icon depicting a computer screen with a downward arrow, symbolizing downloading or file transfer. Ideal for use in software interfaces, websites, or apps related to downloads or data transfer.</dc:description>
+<dc:creator>
+<cc:Agent>
+<dc:title>Google</dc:title>
+</cc:Agent>
+</dc:creator>
+<dc:source>https://github.com/google/material-design-icons</dc:source>
+<dc:rights>
+<cc:Agent>
+<dc:title>Google</dc:title>
+</cc:Agent>
+</dc:rights>
+<cc:license rdf:resource="https://github.com/google/material-design-icons/blob/master/LICENSE"/>
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<dc:subject>
+<rdf:Bag>
+<rdf:li>download-icon</rdf:li>
+<rdf:li>computer-screen</rdf:li>
+<rdf:li>file-transfer</rdf:li>
+<rdf:li>data-download</rdf:li>
+<rdf:li>arrow-symbol</rdf:li>
+<rdf:li>technology-icon</rdf:li>
+<rdf:li>software-interface</rdf:li>
+<rdf:li>app-design</rdf:li>
+<rdf:li>web-design</rdf:li>
+<rdf:li>digital-download</rdf:li>
+<rdf:li>file-sharing</rdf:li>
+<rdf:li>cloud-download</rdf:li>
+<rdf:li>desktop-download</rdf:li>
+<rdf:li>tech-symbol</rdf:li>
+<rdf:li>minimal-icon</rdf:li>
+</rdf:Bag>
+</dc:subject>
+</cc:Work>
+<cc:License rdf:about="https://github.com/google/material-design-icons/blob/master/LICENSE">
+<dc:title>Apache 2.0 (Apache-2.0)</dc:title>
+</cc:License>
+</rdf:RDF>
+</metadata>
+<path fill="currentColor" d="M8 21v-2H4q-.825 0-1.412-.587T2 17V5q0-.825.588-1.412T4 3h8v2H4v12h16v-3h2v3q0 .825-.587 1.413T20 19h-4v2zm9-7l-5-5l1.4-1.4l2.6 2.575V3h2v7.175L20.6 7.6L22 9z"/>
+</svg>

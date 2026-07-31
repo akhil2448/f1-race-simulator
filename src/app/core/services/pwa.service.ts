@@ -23,17 +23,17 @@ export class PwaService {
   private static readonly DISMISS_DAYS = 7;
 
   private readonly _canInstall = signal(false);
-  private readonly _isInstalled = signal(this.detectInstalled());
+  private readonly _runningAsPwa = signal(false);
 
   readonly canInstall = this._canInstall.asReadonly();
-  readonly isInstalled = this._isInstalled.asReadonly();
+  readonly runningAsPwa = this._runningAsPwa.asReadonly();
 
   readonly shouldShowInstallButton = computed(() => {
-    return !this.isInstalled();
+    return !this.runningAsPwa();
   });
 
   readonly shouldPromptOnExplore = computed(() => {
-    if (this.isInstalled()) {
+    if (this.runningAsPwa()) {
       return false;
     }
 
@@ -50,8 +50,26 @@ export class PwaService {
     return Date.now() - dismissedAt >= sevenDays;
   });
 
+  readonly shouldShowInstallDialog = computed(() => {
+    if (!this.shouldPromptOnExplore()) {
+      return false;
+    }
+
+    // Chrome/Edge
+    if (this.canInstall()) {
+      return true;
+    }
+
+    // Safari instructions are still useful
+    return false;
+  });
+
   constructor() {
+    this._runningAsPwa.set(this.detectRunningAsPwa());
+
     this.registerEvents();
+
+    this.watchDisplayMode();
   }
 
   private registerEvents(): void {
@@ -76,21 +94,40 @@ export class PwaService {
 
       this._canInstall.set(false);
 
-      this._isInstalled.set(true);
+      this._runningAsPwa.set(true);
     });
   }
 
-  private isStandaloneMode(): boolean {
+  private watchDisplayMode(): void {
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+
+    const update = () => {
+      this._runningAsPwa.set(this.detectRunningAsPwa());
+    };
+
+    update();
+
+    mediaQuery.addEventListener('change', update);
+
+    window.addEventListener('pageshow', update);
+
+    window.addEventListener('focus', update);
+
+    document.addEventListener('visibilitychange', update);
+  }
+
+  private isDisplayModeStandalone(): boolean {
     return window.matchMedia('(display-mode: standalone)').matches;
   }
 
-  private isIOSStandalone(): boolean {
+  private isIOSHomeScreen(): boolean {
     return (window.navigator as NavigatorWithStandalone).standalone === true;
   }
 
-  private detectInstalled(): boolean {
-    return this.isStandaloneMode() || this.isIOSStandalone();
+  private detectRunningAsPwa(): boolean {
+    return this.isDisplayModeStandalone() || this.isIOSHomeScreen();
   }
+
   async install(): Promise<boolean> {
     if (!this.deferredPrompt) {
       return false;
@@ -105,17 +142,14 @@ export class PwaService {
     this._canInstall.set(false);
 
     if (result.outcome === 'accepted') {
-      this._isInstalled.set(true);
+      this._runningAsPwa.set(true);
       return true;
     }
 
     return false;
   }
 
-
   dismissForNow(): void {
     localStorage.setItem(PwaService.DISMISS_KEY, Date.now().toString());
   }
-
- 
 }

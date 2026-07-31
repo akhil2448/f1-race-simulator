@@ -204,7 +204,7 @@ export class HomeComponent implements AfterViewInit {
   }
 
   openInstallDialog(): void {
-    if (this.pwaService.shouldPromptOnExplore()) {
+    if (this.pwaService.shouldShowInstallDialog()) {
       this.showInstallDialog.set(true);
       return;
     }
