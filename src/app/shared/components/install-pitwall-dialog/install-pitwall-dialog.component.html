@@ -35,7 +35,15 @@
           @switch (browser) {
             @case (BrowserType.ChromeDesktop) {
               <div class="instructions">
-                <h3>Install on Chrome</h3>
+                <div class="instruction-heading">
+                  <img
+                    src="assets/icons/chrome.svg"
+                    alt="Chrome"
+                    class="browser-icon"
+                  />
+
+                  <h3>Install on Chrome</h3>
+                </div>
 
                 <div class="instruction-step">
                   <img
@@ -81,7 +89,15 @@
 
             @case (BrowserType.Edge) {
               <div class="instructions">
-                <h3>Install on Microsoft Edge</h3>
+                <div class="instruction-heading">
+                  <img
+                    src="assets/icons/edge.svg"
+                    alt="Microsoft Edge"
+                    class="browser-icon"
+                  />
+
+                  <h3>Install on Microsoft Edge</h3>
+                </div>
 
                 <div class="instruction-step">
                   <img
@@ -127,7 +143,15 @@
 
             @case (BrowserType.ChromeAndroid) {
               <div class="instructions">
-                <h3>Install on Android</h3>
+                <div class="instruction-heading">
+                  <img
+                    src="assets/icons/android.svg"
+                    alt="Chrome"
+                    class="browser-icon"
+                  />
+
+                  <h3>Install on Android</h3>
+                </div>
 
                 <div class="instruction-step">
                   <img
@@ -169,117 +193,143 @@
                 <span>Skip installation and continue to Explore Races.</span>
               </button>
             }
+          }
+        }
+      } @else {
+        @switch (browser) {
+          @case (BrowserType.SafariMac) {
+            <div class="instructions">
+              <div class="instruction-heading">
+                <img
+                  src="assets/icons/mac-os.svg"
+                  alt="Safari"
+                  class="browser-icon"
+                />
 
-            @case (BrowserType.SafariMac) {
-              <div class="instructions">
                 <h3>Install on macOS</h3>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/safari.svg"
-                    alt="Safari"
-                    class="instruction-icon"
-                  />
-
-                  <span>Open in Safari</span>
-                </div>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/share-ios.svg"
-                    alt="Share"
-                    class="instruction-icon"
-                  />
-
-                  <span>Tap the <strong>Share</strong> button</span>
-                </div>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/add-to-dock.svg"
-                    alt="Add to Dock"
-                    class="instruction-icon"
-                  />
-
-                  <span>Choose <strong>Add to Dock</strong></span>
-                </div>
               </div>
 
-              <button class="later-link" (click)="continueWithoutInstalling()">
-                <span>Skip installation and continue to Explore Races.</span>
-              </button>
-            }
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/safari.svg"
+                  alt="Safari"
+                  class="instruction-icon"
+                />
 
-            @case (BrowserType.SafariIOS) {
-              <div class="instructions">
+                <span>Open in Safari</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/share-ios.svg"
+                  alt="Share"
+                  class="instruction-icon"
+                />
+
+                <span>Tap the <strong>Share</strong> button</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/add-to-dock.svg"
+                  alt="Add to Dock"
+                  class="instruction-icon"
+                />
+
+                <span>Choose <strong>Add to Dock</strong></span>
+              </div>
+            </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
+          }
+
+          @case (BrowserType.SafariIOS) {
+            <div class="instructions">
+              <div class="instruction-heading">
+                <img
+                  src="assets/icons/ios.svg"
+                  alt="Safari"
+                  class="browser-icon"
+                />
+
                 <h3>Install on iPhone & iPad</h3>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/safari.svg"
-                    alt="Safari"
-                    class="instruction-icon"
-                  />
-
-                  <span>Open in Safari</span>
-                </div>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/share-ios.svg"
-                    alt="Share"
-                    class="instruction-icon"
-                  />
-
-                  <span>Tap the <strong>Share</strong> button</span>
-                </div>
-
-                <div class="instruction-step">
-                  <img
-                    src="assets/icons/add-to-home-screen.svg"
-                    alt="Add to Home Screen"
-                    class="instruction-icon"
-                  />
-
-                  <span>Tap <strong>Add to Home Screen</strong></span>
-                </div>
               </div>
 
-              <button class="later-link" (click)="continueWithoutInstalling()">
-                <span>Skip installation and continue to Explore Races.</span>
-              </button>
-            }
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/safari.svg"
+                  alt="Safari"
+                  class="instruction-icon"
+                />
 
-            @case (BrowserType.Firefox) {
-              <div class="instructions">
+                <span>Open in Safari</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/share-ios.svg"
+                  alt="Share"
+                  class="instruction-icon"
+                />
+
+                <span>Tap the <strong>Share</strong> button</span>
+              </div>
+
+              <div class="instruction-step">
+                <img
+                  src="assets/icons/add-to-home-screen.svg"
+                  alt="Add to Home Screen"
+                  class="instruction-icon"
+                />
+
+                <span>Tap <strong>Add to Home Screen</strong></span>
+              </div>
+            </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
+          }
+
+          @case (BrowserType.Firefox) {
+            <div class="instructions">
+              <div class="instruction-heading">
+                <img
+                  src="assets/icons/firefox.svg"
+                  alt="Safari"
+                  class="browser-icon"
+                />
+
                 <h3>Firefox</h3>
-
-                <p>
-                  Firefox currently doesn't support installing PitWall as a
-                  Progressive Web App.
-                </p>
-
-                <p>
-                  For the best experience, use Chrome, Microsoft Edge or Safari.
-                </p>
               </div>
 
-              <button class="later-link" (click)="continueWithoutInstalling()">
-                <span>Skip installation and continue to Explore Races.</span>
-              </button>
-            }
+              <p>
+                Firefox currently doesn't support installing PitWall as a
+                Progressive Web App.
+              </p>
 
-            @default {
-              <div class="instructions">
-                <p>
-                  Installation instructions aren't available for your browser.
-                </p>
-              </div>
+              <p>
+                For the best experience, use Chrome, Microsoft Edge or Safari.
+              </p>
+            </div>
 
-              <button class="later-link" (click)="continueWithoutInstalling()">
-                <span>Skip installation and continue to Explore Races.</span>
-              </button>
-            }
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
+          }
+
+          @default {
+            <div class="instructions">
+              <p>
+                Installation instructions aren't available for your browser.
+              </p>
+            </div>
+
+            <button class="later-link" (click)="continueWithoutInstalling()">
+              <span>Skip installation and continue to Explore Races.</span>
+            </button>
           }
         }
       }

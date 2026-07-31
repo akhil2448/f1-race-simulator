@@ -543,19 +543,19 @@ video.feature-media {
 }
 
 .install-button {
-  height: 44px;
+  height: 46px;
 
-  padding: 0 22px;
+  padding: 0 23px;
 
   border-radius: 999px;
 
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.788);
 
   background: transparent;
 
-  color: #e5e7eb;
+  color: #e5e7ebe7;
 
-  font-family: "Formula1";
+  font-family: "Formula1Bold";
 
   cursor: pointer;
 
@@ -563,9 +563,9 @@ video.feature-media {
 }
 
 .install-button:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(231, 6, 6);
 
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: rgb(231, 6, 6);
 }
 
 @keyframes heroTitle {
