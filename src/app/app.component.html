@@ -1,3 +1,7 @@
+@if (showSplash) {
+  <app-splash-screen (finished)="hideSplash()"> </app-splash-screen>
+}
+
 <router-outlet></router-outlet>
 
 <app-loading-overlay></app-loading-overlay>

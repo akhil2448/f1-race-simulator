@@ -4,14 +4,12 @@ import { LoadingOverlayComponent } from './simulation/components/loading-overlay
 import { BrowserService } from './core/services/browser.service';
 import { PwaService } from './core/services/pwa.service';
 import { InstallPitwallDialogComponent } from './shared/components/install-pitwall-dialog/install-pitwall-dialog.component';
+import { SplashScreenComponent } from './pages/splash-screen/splash-screen.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    LoadingOverlayComponent,
-  ],
+  imports: [RouterOutlet, LoadingOverlayComponent, SplashScreenComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -19,6 +17,8 @@ export class AppComponent {
   title = 'f1-race-simulator';
 
   showInstallDialog = signal(true);
+
+  showSplash = true;
 
   constructor(
     public browserService: BrowserService,
@@ -28,5 +28,9 @@ export class AppComponent {
     //   console.log('Installed:', this.pwaService.isInstalled());
     //   console.log('Can Install:', this.pwaService.canInstall());
     // });
+  }
+
+  hideSplash(): void {
+    this.showSplash = false;
   }
 }
