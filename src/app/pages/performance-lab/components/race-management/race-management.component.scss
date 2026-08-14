@@ -247,10 +247,16 @@
   color: #9d9d9d;
 }
 
-.analyze-button {
-  margin-top: 18px;
+.action-buttons {
+  display: flex;
 
-  width: 100%;
+  gap: 14px;
+
+  margin-top: 18px;
+}
+
+.action-button {
+  flex: 1;
 
   height: 48px;
 
@@ -264,12 +270,18 @@
 
   letter-spacing: 0.5px;
 
-  transition: all 0.18s ease;
-
   cursor: pointer;
+
+  transition: all 0.18s ease;
 }
 
-.analyze-button:disabled {
+.action-button strong {
+  font-family: Formula1Bold;
+
+  font-weight: normal;
+}
+
+.action-button:disabled {
   background: #3b3b3b;
 
   color: #8a8a8a;
@@ -277,20 +289,28 @@
   cursor: not-allowed;
 }
 
-.analyze-button:not(:disabled) {
+.strategy-button:not(:disabled) {
   background: #d61d2a;
 
   color: white;
 }
 
-.analyze-button:not(:disabled):hover {
+.strategy-button:not(:disabled):hover {
   background: #ef2535;
 }
 
-.analyze-button strong {
-  font-family: Formula1Bold;
+.performance-button:not(:disabled) {
+  background: #1b5fa7;
 
-  font-weight: normal;
+  color: white;
+}
+
+.performance-button:not(:disabled):hover {
+  background: #2678cf;
+}
+
+.mobile-break {
+  display: inline;
 }
 
 .change-selection-button {
@@ -569,9 +589,30 @@
     width: 100%;
   }
 
-  .change-selection-button,
-  .analyze-button {
+  .change-selection-button {
     width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+
+    height: auto;
+
+    min-height: 58px;
+
+    padding: 12px 18px;
+
+    line-height: 1.5;
+
+    text-align: center;
+  }
+
+  .mobile-break {
+    display: block;
   }
 
   .rotate-device-message {
@@ -669,6 +710,22 @@
   }
 
   .recommendations-landscape {
+    display: block;
+  }
+
+  .action-button {
+    height: auto;
+
+    min-height: 56px;
+
+    padding: 10px 16px;
+
+    line-height: 1.45;
+
+    text-align: center;
+  }
+
+  .mobile-break {
     display: block;
   }
 }

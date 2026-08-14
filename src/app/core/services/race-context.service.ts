@@ -9,6 +9,7 @@ import {
   DualDriverRecommendationResponse,
   SingleDriverRecommendationResponse,
 } from '../../pages/performance-lab/models/race-management-recommendation.model';
+import { RaceAnalyzerResponse } from '../../pages/performance-lab/models/race-performance-analysis.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +36,8 @@ export class RaceContextService {
   singleDriverRecommendation: SingleDriverRecommendationResponse | null = null;
 
   dualDriverRecommendation: DualDriverRecommendationResponse | null = null;
+
+  racePerformanceAnalysis: RaceAnalyzerResponse | null = null;
 
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
@@ -66,6 +69,7 @@ export class RaceContextService {
           this.raceManagementSelectedDriverCodes,
         singleDriverRecommendation: this.singleDriverRecommendation,
         dualDriverRecommendation: this.dualDriverRecommendation,
+        racePerformanceAnalysis: this.racePerformanceAnalysis,
 
         navigationStep: this.navigationStep,
       }),
@@ -93,6 +97,7 @@ export class RaceContextService {
       data.raceManagementSelectedDriverCodes ?? [];
     this.singleDriverRecommendation = data.singleDriverRecommendation ?? null;
     this.dualDriverRecommendation = data.dualDriverRecommendation ?? null;
+    this.racePerformanceAnalysis = data.racePerformanceAnalysis ?? null;
 
     this.navigationStep = data.navigationStep;
   }
@@ -106,6 +111,7 @@ export class RaceContextService {
     this.raceManagementDrivers = null;
     this.singleDriverRecommendation = null;
     this.dualDriverRecommendation = null;
+    this.racePerformanceAnalysis = null;
     this.selectedSession = 'Q3';
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
@@ -119,6 +125,7 @@ export class RaceContextService {
     this.raceManagementDrivers = null;
     this.singleDriverRecommendation = null;
     this.dualDriverRecommendation = null;
+    this.racePerformanceAnalysis = null;
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
     this.selectedSession = 'Q3';

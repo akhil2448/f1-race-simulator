@@ -13,6 +13,8 @@ import { RaceManagementDriverRowComponent } from './race-management-driver-row/r
 import { RaceManagementRecommendationsComponent } from './race-management-recommendations/race-management-recommendations.component';
 import { TeamUiService } from '../../services/team-ui.service';
 import { RaceManagementRecommendationService } from '../../services/race-management-recommendation.service';
+import { RacePerformanceAnalysisComponent } from './race-performance-analysis/race-performance-analysis.component';
+import { RacePerformanceAnalysisService } from '../../services/race-performance-analysis.service';
 
 @Component({
   selector: 'app-race-management',
@@ -21,6 +23,7 @@ import { RaceManagementRecommendationService } from '../../services/race-managem
     CommonModule,
     RaceManagementDriverRowComponent,
     RaceManagementRecommendationsComponent,
+    RacePerformanceAnalysisComponent,
   ],
   templateUrl: './race-management.component.html',
   styleUrl: './race-management.component.scss',
@@ -33,13 +36,17 @@ export class RaceManagementComponent implements OnInit {
   private readonly recommendationService = inject(
     RaceManagementRecommendationService,
   );
+  private readonly performanceAnalysisService = inject(
+    RacePerformanceAnalysisService,
+  );
 
   loading = true;
 
   error = false;
   loadingRecommendations = false;
+  loadingPerformance = false;
 
-  showRecommendations = false;
+  view: 'selection' | 'recommendations' | 'performance' = 'selection';
 
   response: RaceManagementDriversResponse | null = null;
 
@@ -140,7 +147,7 @@ export class RaceManagementComponent implements OnInit {
   ////////////////////////////////////////////////////////////
 
   selectDriver(driver: RaceManagementDriver): void {
-    if (this.showRecommendations) {
+    if (this.view !== 'selection') {
       return;
     }
 
@@ -224,7 +231,7 @@ export class RaceManagementComponent implements OnInit {
       return [];
     }
 
-    if (!this.showRecommendations) {
+    if (this.view === 'selection') {
       return this.response.drivers;
     }
 
@@ -238,7 +245,7 @@ export class RaceManagementComponent implements OnInit {
       return;
     }
 
-    this.showRecommendations = true;
+    this.view = 'recommendations';
     this.loadingRecommendations = true;
 
     try {
@@ -275,8 +282,48 @@ export class RaceManagementComponent implements OnInit {
     }
   }
 
+  async analyzePerformance(): Promise<void> {
+    if (this.selectedDriverCodes.length === 0) {
+      return;
+    }
+
+    this.view = 'performance';
+    this.loadingPerformance = true;
+
+    try {
+      if (this.selectedDriverCodes.length === 1) {
+        const response = await firstValueFrom(
+          this.performanceAnalysisService.getSingleDriverAnalysis(
+            this.raceContext.selectedYear!,
+            this.raceContext.selectedRound!,
+            this.selectedDriverCodes[0],
+          ),
+        );
+
+        this.raceContext.racePerformanceAnalysis = response;
+      } else {
+        const response = await firstValueFrom(
+          this.performanceAnalysisService.getDualDriverAnalysis(
+            this.raceContext.selectedYear!,
+            this.raceContext.selectedRound!,
+            this.selectedDriverCodes[0],
+            this.selectedDriverCodes[1],
+          ),
+        );
+
+        this.raceContext.racePerformanceAnalysis = response;
+      }
+
+      this.raceContext.save();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingPerformance = false;
+    }
+  }
+
   changeSelection(): void {
-    this.showRecommendations = false;
+    this.view = 'selection';
 
     this.raceContext.raceManagementSelectedDriverCodes = [];
 

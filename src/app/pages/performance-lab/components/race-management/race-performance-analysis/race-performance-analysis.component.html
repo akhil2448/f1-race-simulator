@@ -1,0 +1,21 @@
+@if (loading) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+
+    <div class="loading-text">Building race performance analysis...</div>
+
+    <div class="loading-subtext">
+      Loading lap data, track status and telemetry.
+    </div>
+  </div>
+}
+
+@if (!loading && analysis) {
+  <div class="placeholder">
+    <div class="placeholder-title">Race Performance Analysis</div>
+
+    <div class="placeholder-text">
+      Analysis loaded successfully. The lap time chart will be implemented next.
+    </div>
+  </div>
+}

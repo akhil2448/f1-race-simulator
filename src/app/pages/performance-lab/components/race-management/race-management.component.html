@@ -31,7 +31,7 @@
           </div>
         }
 
-        @if (showRecommendations) {
+        @if (view !== "selection") {
           <button
             class="change-selection-button"
             [disabled]="loadingRecommendations"
@@ -76,13 +76,13 @@
           [driver]="driver"
           [totalRaceLaps]="response.totalRaceLaps"
           [selected]="isSelected(driver)"
-          [interactive]="!showRecommendations"
+          [interactive]="view === 'selection'"
           (driverSelected)="selectDriver($event)"
         />
       }
     </div>
 
-    @if (nonStarters.length > 0 && !showRecommendations) {
+    @if (nonStarters.length > 0 && view === "selection") {
       <div class="non-starters">
         <div class="non-starters-title">DNS / Retired on Lap 1:</div>
 
@@ -114,29 +114,55 @@
       </div>
     }
 
-    @if (!showRecommendations) {
-      <button
-        class="analyze-button"
-        [disabled]="!hasSelectedDrivers || loadingRecommendations"
-        (click)="generateRecommendations()"
-      >
-        @if (loadingRecommendations) {
-          GENERATING RECOMMENDATIONS...
-        } @else if (!hasSelectedDrivers) {
-          SELECT AT LEAST ONE DRIVER
-        } @else if (selectedDriverCodes.length === 1) {
-          GENERATE RECOMMENDATIONS FOR
-          <strong>{{ primaryDriver }}</strong>
-        } @else {
-          GENERATE RECOMMENDATIONS FOR
-          <strong>{{ primaryDriver }}</strong>
-          &
-          <strong>{{ secondaryDriver }}</strong>
-        }
-      </button>
+    @if (view === "selection") {
+      <div class="action-buttons">
+        <button
+          class="action-button strategy-button"
+          [disabled]="!hasSelectedDrivers || loadingRecommendations"
+          (click)="generateRecommendations()"
+        >
+          @if (loadingRecommendations) {
+            GENERATING RECOMMENDATIONS...
+          } @else if (!hasSelectedDrivers) {
+            SELECT AT LEAST ONE DRIVER
+          } @else if (selectedDriverCodes.length === 1) {
+            FIND CLEAN LAPS
+            <span class="mobile-break"></span>
+            FOR <strong>{{ primaryDriver }}</strong>
+          } @else {
+            FIND CLEAN LAPS
+            <span class="mobile-break"></span>
+            FOR
+            <strong>{{ primaryDriver }}</strong>
+            &
+            <strong>{{ secondaryDriver }}</strong>
+          }
+        </button>
+
+        <button
+          class="action-button performance-button"
+          [disabled]="!hasSelectedDrivers"
+          (click)="analyzePerformance()"
+        >
+          @if (!hasSelectedDrivers) {
+            SELECT AT LEAST ONE DRIVER
+          } @else if (selectedDriverCodes.length === 1) {
+            ANALYZE RACE PERFORMANCE
+            <span class="mobile-break"></span>
+            OF <strong>{{ primaryDriver }}</strong>
+          } @else {
+            ANALYZE RACE PERFORMANCE
+            <span class="mobile-break"></span>
+            OF
+            <strong>{{ primaryDriver }}</strong>
+            &
+            <strong>{{ secondaryDriver }}</strong>
+          }
+        </button>
+      </div>
     }
 
-    @if (showRecommendations) {
+    @if (view !== "selection") {
       <div class="rotate-device-message">
         <img
           class="rotate-gif"
@@ -152,12 +178,22 @@
         </div>
       </div>
 
-      <app-race-management-recommendations
-        class="recommendations-landscape"
-        [loading]="loadingRecommendations"
-        [singleRecommendation]="raceContext.singleDriverRecommendation"
-        [dualRecommendation]="raceContext.dualDriverRecommendation"
-      />
+      @if (view === "recommendations") {
+        <app-race-management-recommendations
+          class="recommendations-landscape"
+          [loading]="loadingRecommendations"
+          [singleRecommendation]="raceContext.singleDriverRecommendation"
+          [dualRecommendation]="raceContext.dualDriverRecommendation"
+        />
+      }
+
+      @if (view === "performance") {
+        <app-race-performance-analysis
+          class="recommendations-landscape"
+          [loading]="loadingPerformance"
+          [analysis]="raceContext.racePerformanceAnalysis"
+        />
+      }
     }
   </div>
 }
