@@ -11,11 +11,19 @@ import { RaceAnalyzerResponse } from '../models/race-performance-analysis.model'
 export class RacePerformanceAnalysisService {
   private readonly http = inject(HttpClient);
 
+  private readonly useMockData = true;
+
   getSingleDriverAnalysis(
     year: number,
     round: number,
     driver: string,
   ): Observable<RaceAnalyzerResponse> {
+    if (this.useMockData) {
+      return this.http.get<RaceAnalyzerResponse>(
+        'assets/mock-data/race-analyzer/sample.json',
+      );
+    }
+
     return this.http.get<RaceAnalyzerResponse>(
       `api/race-analyzer/${year}/${round}`,
       {
@@ -32,6 +40,12 @@ export class RacePerformanceAnalysisService {
     driverA: string,
     driverB: string,
   ): Observable<RaceAnalyzerResponse> {
+    if (this.useMockData) {
+      return this.http.get<RaceAnalyzerResponse>(
+        'assets/mock-data/race-analyzer/sample.json',
+      );
+    }
+
     return this.http.get<RaceAnalyzerResponse>(
       `api/race-analyzer/${year}/${round}`,
       {

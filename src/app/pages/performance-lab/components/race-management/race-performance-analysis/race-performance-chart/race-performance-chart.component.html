@@ -1,0 +1,28 @@
+<div class="chart-container">
+  <div class="chart-toolbar">
+    <label class="toolbar-option">
+      <input type="checkbox" [checked]="hideOutliers()" />
+
+      <span>Hide Outlier Laps</span>
+    </label>
+
+    <label class="toolbar-option">
+      <input type="checkbox" [checked]="smoothChart()" />
+
+      <span>Smooth Lap Chart</span>
+    </label>
+
+    <label class="toolbar-option">
+      <input type="checkbox" [checked]="showTrackStatus()" />
+
+      <span>Show Track Status</span>
+    </label>
+  </div>
+
+  <div
+    echarts
+    class="lap-chart"
+    [options]="chartOptions"
+    (chartInit)="onChartInit($event)"
+  ></div>
+</div>
