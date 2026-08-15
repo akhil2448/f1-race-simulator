@@ -86,10 +86,10 @@ export class RacePerformanceChartComponent {
       animation: false,
 
       grid: {
-        left: 70,
-        right: 30,
-        top: 30,
-        bottom: 60,
+        left: 50,
+        right: 24,
+        top: 24,
+        bottom: 50,
       },
 
       tooltip: {
@@ -121,11 +121,11 @@ export class RacePerformanceChartComponent {
       xAxis: {
         type: 'value',
 
-        name: 'Lap',
+        name: 'Lap Number',
 
         nameLocation: 'middle',
 
-        nameGap: 35,
+        nameGap: 24,
 
         min: 1,
 
@@ -157,7 +157,7 @@ export class RacePerformanceChartComponent {
 
         nameLocation: 'middle',
 
-        nameGap: 55,
+        nameGap: 24,
 
         scale: true,
 
@@ -187,6 +187,8 @@ export class RacePerformanceChartComponent {
 
         triggerLineEvent: true,
 
+        smooth: this.smoothChart(),
+
         symbol: 'circle',
 
         data: driver.points,
@@ -196,7 +198,7 @@ export class RacePerformanceChartComponent {
         symbolSize: this.getSymbolSize(),
 
         lineStyle: {
-          width: 4,
+          width: this.getLineWidths().normal,
           color: driver.color,
         },
 
@@ -312,24 +314,67 @@ export class RacePerformanceChartComponent {
 
         const selected = hasActiveSelection && activeIndex === index;
 
+        const normalSize = this.getSymbolSize();
+        const lineWidths = this.getLineWidths();
+
         return {
           lineStyle: {
             opacity: !hasActiveSelection ? 1 : selected ? 1 : 0.18,
-            width: !hasActiveSelection ? 4 : selected ? 7 : 3,
+            width: !hasActiveSelection
+              ? lineWidths.normal
+              : selected
+                ? lineWidths.selected
+                : lineWidths.faded,
           },
 
           itemStyle: {
             opacity: !hasActiveSelection ? 1 : selected ? 1 : 0.28,
           },
 
-          symbolSize: !hasActiveSelection ? 12 : selected ? 16 : 12,
+          symbolSize: !hasActiveSelection
+            ? normalSize
+            : selected
+              ? normalSize + 3
+              : normalSize,
         };
       }),
     });
   }
 
+  toggleHideOutliers(): void {
+    this.hideOutliers.update((value) => !value);
+
+    this.buildChart();
+  }
+
+  toggleSmoothChart(): void {
+    this.smoothChart.update((value) => !value);
+
+    this.buildChart();
+  }
+
+  private getOutlierThreshold(): number {
+    const lapTimes = this.analysis.drivers
+      .flatMap((driver) => driver.stints.flatMap((stint) => stint.laps))
+      .filter((lap) => lap.lapTime !== null)
+      .map((lap) => lap.lapTime!);
+
+    if (lapTimes.length === 0) {
+      return Number.MAX_VALUE;
+    }
+
+    const fastestLap = lapTimes.reduce(
+      (fastest, current) => Math.min(fastest, current),
+      Number.MAX_VALUE,
+    );
+
+    return fastestLap * 1.07;
+  }
+
   private buildSeries(): DriverChartSeries[] {
     const drivers = this.analysis.drivers;
+
+    const outlierThreshold = this.getOutlierThreshold();
 
     return drivers.map((driver, index) => {
       //
@@ -340,6 +385,10 @@ export class RacePerformanceChartComponent {
       for (const stint of driver.stints) {
         for (const lap of stint.laps) {
           if (lap.lapTime === null) {
+            continue;
+          }
+
+          if (this.hideOutliers() && lap.lapTime > outlierThreshold) {
             continue;
           }
 
@@ -413,7 +462,52 @@ export class RacePerformanceChartComponent {
   }
 
   private getSymbolSize(): number {
-    // Large enough for mobile tapping.
+    const width = window.innerWidth;
+
+    // Small phones
+    if (width <= 700) {
+      return 8;
+    }
+
+    // Tablets / landscape phones
+    if (width <= 900) {
+      return 9;
+    }
+
+    // Desktop
     return 12;
+  }
+
+  private getLineWidths(): {
+    normal: number;
+    selected: number;
+    faded: number;
+  } {
+    const width = window.innerWidth;
+
+    // Small phones
+    if (width <= 700) {
+      return {
+        normal: 3,
+        selected: 5,
+        faded: 2,
+      };
+    }
+
+    // Tablets / landscape phones
+    if (width <= 900) {
+      return {
+        normal: 3,
+        selected: 6,
+        faded: 2,
+      };
+    }
+
+    // Desktop
+    return {
+      normal: 4,
+      selected: 7,
+      faded: 3,
+    };
   }
 }

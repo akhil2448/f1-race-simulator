@@ -1,13 +1,21 @@
 <div class="chart-container">
   <div class="chart-toolbar">
     <label class="toolbar-option">
-      <input type="checkbox" [checked]="hideOutliers()" />
+      <input
+        type="checkbox"
+        [checked]="hideOutliers()"
+        (change)="toggleHideOutliers()"
+      />
 
-      <span>Hide Outlier Laps</span>
+      <span>Hide Outlier Laps ( > 107%)</span>
     </label>
 
     <label class="toolbar-option">
-      <input type="checkbox" [checked]="smoothChart()" />
+      <input
+        type="checkbox"
+        [checked]="smoothChart()"
+        (change)="toggleSmoothChart()"
+      />
 
       <span>Smooth Lap Chart</span>
     </label>
