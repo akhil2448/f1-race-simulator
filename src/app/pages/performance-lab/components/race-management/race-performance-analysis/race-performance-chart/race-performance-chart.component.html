@@ -21,7 +21,11 @@
     </label>
 
     <label class="toolbar-option">
-      <input type="checkbox" [checked]="showTrackStatus()" />
+      <input
+        type="checkbox"
+        [checked]="showTrackStatus()"
+        (change)="toggleTrackStatus()"
+      />
 
       <span>Show Track Status</span>
     </label>

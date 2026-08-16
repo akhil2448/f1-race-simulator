@@ -12,9 +12,11 @@ import {
   GridComponent,
   LegendComponent,
   TooltipComponent,
+  MarkAreaComponent,
+  GraphicComponent,
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
-import { EChartsOption, ECharts } from 'echarts';
+import { EChartsOption, ECharts, LineSeriesOption } from 'echarts';
 
 import {
   RaceAnalyzerResponse,
@@ -39,11 +41,44 @@ interface DriverChartSeries {
   points: ChartLapPoint[];
 }
 
+interface ResponsiveChartSettings {
+  legendLineWidth: number;
+  legendLineLength: number;
+
+  symbolSize: number;
+
+  lineWidths: {
+    normal: number;
+    selected: number;
+    faded: number;
+  };
+
+  trackStatusLabelFontSize: number;
+  trackStatusLabelRows: number[];
+
+  // NEW
+  grid: {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  };
+
+  legend: {
+    top: number;
+    right: number;
+    spacing: number;
+    textGap: number;
+  };
+}
+
 echarts.use([
   LineChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,
+  MarkAreaComponent,
+  GraphicComponent,
   CanvasRenderer,
 ]);
 
@@ -70,7 +105,7 @@ export class RacePerformanceChartComponent {
 
   readonly smoothChart = signal(true);
 
-  readonly showTrackStatus = signal(true);
+  readonly showTrackStatus = signal(false);
 
   chartOptions: EChartsOption = {};
   private chart!: ECharts;
@@ -80,17 +115,16 @@ export class RacePerformanceChartComponent {
   private buildChart(): void {
     const series = this.buildSeries();
 
+    const responsive = this.getResponsiveChartSettings();
+
     this.chartOptions = {
       backgroundColor: '#1a1a1a',
 
       animation: false,
 
-      grid: {
-        left: 50,
-        right: 24,
-        top: 24,
-        bottom: 50,
-      },
+      grid: responsive.grid,
+
+      graphic: this.buildDriverLegend(),
 
       tooltip: {
         trigger: 'axis',
@@ -133,6 +167,11 @@ export class RacePerformanceChartComponent {
 
         splitLine: {
           show: true,
+
+          lineStyle: {
+            color: '#2c2c2c',
+            width: 1,
+          },
         },
 
         axisLine: {
@@ -153,7 +192,7 @@ export class RacePerformanceChartComponent {
       yAxis: {
         type: 'value',
 
-        name: 'Lap Time (s)',
+        name: 'Lap Time (seconds)',
 
         nameLocation: 'middle',
 
@@ -163,8 +202,12 @@ export class RacePerformanceChartComponent {
 
         splitLine: {
           show: true,
-        },
 
+          lineStyle: {
+            color: '#2c2c2c',
+            width: 1,
+          },
+        },
         axisLine: {
           lineStyle: {
             color: '#9ca3af',
@@ -180,32 +223,42 @@ export class RacePerformanceChartComponent {
         },
       },
 
-      series: series.map((driver) => ({
-        name: driver.driver,
+      series: series.map(
+        (driver, index): LineSeriesOption => ({
+          name: driver.driver,
 
-        type: 'line',
+          type: 'line',
 
-        triggerLineEvent: true,
+          triggerEvent: true,
 
-        smooth: this.smoothChart(),
+          smooth: this.smoothChart(),
 
-        symbol: 'circle',
+          symbol: 'circle',
 
-        data: driver.points,
+          data: driver.points,
 
-        showSymbol: true,
+          showSymbol: true,
 
-        symbolSize: this.getSymbolSize(),
+          symbolSize: responsive.symbolSize,
 
-        lineStyle: {
-          width: this.getLineWidths().normal,
-          color: driver.color,
-        },
+          lineStyle: {
+            width: responsive.lineWidths.normal,
+            color: driver.color,
+          },
 
-        itemStyle: {
-          borderWidth: 2,
-        },
-      })),
+          itemStyle: {
+            borderWidth: 2,
+          },
+
+          markArea:
+            index === 0
+              ? {
+                  silent: true,
+                  data: this.buildTrackStatusMarkAreas(),
+                }
+              : undefined,
+        }),
+      ),
     };
   }
 
@@ -314,8 +367,10 @@ export class RacePerformanceChartComponent {
 
         const selected = hasActiveSelection && activeIndex === index;
 
-        const normalSize = this.getSymbolSize();
-        const lineWidths = this.getLineWidths();
+        const responsive = this.getResponsiveChartSettings();
+
+        const normalSize = responsive.symbolSize;
+        const lineWidths = responsive.lineWidths;
 
         return {
           lineStyle: {
@@ -349,6 +404,12 @@ export class RacePerformanceChartComponent {
 
   toggleSmoothChart(): void {
     this.smoothChart.update((value) => !value);
+
+    this.buildChart();
+  }
+
+  toggleTrackStatus(): void {
+    this.showTrackStatus.update((value) => !value);
 
     this.buildChart();
   }
@@ -461,53 +522,275 @@ export class RacePerformanceChartComponent {
     }
   }
 
-  private getSymbolSize(): number {
-    const width = window.innerWidth;
+  private getTrackStatusColor(status: string): string {
+    switch (status) {
+      case 'RED_FLAG':
+        return 'rgba(220, 38, 38, 0.18)';
 
-    // Small phones
-    if (width <= 700) {
-      return 8;
+      case 'SAFETY_CAR':
+        return 'rgba(255, 214, 10, 0.18)';
+
+      case 'YELLOW':
+        return 'rgba(255, 245, 80, 0.12)';
+
+      case 'VSC':
+        return 'rgba(155, 89, 255, 0.18)';
+
+      default:
+        return 'transparent';
     }
-
-    // Tablets / landscape phones
-    if (width <= 900) {
-      return 9;
-    }
-
-    // Desktop
-    return 12;
   }
 
-  private getLineWidths(): {
-    normal: number;
-    selected: number;
-    faded: number;
-  } {
+  private buildTrackStatusMarkAreas(): Array<[any, any]> {
+    if (!this.showTrackStatus()) {
+      return [];
+    }
+
+    const responsive = this.getResponsiveChartSettings();
+
+    const labelRows = responsive.trackStatusLabelRows;
+
+    return this.analysis.trackMetadata.statusRanges.map((range, index) => [
+      {
+        xAxis: range.startLap,
+
+        itemStyle: {
+          color: this.getTrackStatusColor(range.status),
+        },
+
+        label: {
+          show: true,
+
+          position:
+            range.startLap <= 2
+              ? 'insideTopLeft'
+              : range.endLap >= this.analysis.race.totalLaps - 1
+                ? 'insideTopRight'
+                : 'insideTop',
+
+          align: 'center',
+          verticalAlign: 'top',
+          padding: [2, 4],
+
+          distance: labelRows[index % labelRows.length],
+
+          formatter: this.getTrackStatusLabel(range),
+
+          color: '#f5f5f5',
+
+          fontFamily: 'Formula1',
+
+          fontWeight: 'bold',
+
+          fontSize: responsive.trackStatusLabelFontSize,
+        },
+      },
+      {
+        xAxis: range.endLap + 1,
+      },
+    ]);
+  }
+
+  private buildDriverLegend(): any[] {
+    const responsive = this.getResponsiveChartSettings();
+
+    const fontSize = responsive.trackStatusLabelFontSize + 1;
+
+    const lineLength = responsive.legendLineLength;
+
+    const lineWidth = responsive.legendLineWidth;
+
+    const spacing = responsive.legend.spacing;
+    const startRight = responsive.legend.right;
+
+    return this.analysis.drivers.map((driver, index) => {
+      const right =
+        startRight + (this.analysis.drivers.length - 1 - index) * spacing;
+
+      return {
+        type: 'group',
+
+        right,
+
+        top: responsive.legend.top,
+
+        z: 100,
+        zlevel: 10,
+
+        children: [
+          {
+            type: 'line',
+
+            shape: {
+              x1: 0,
+              y1: 8,
+              x2: lineLength,
+              y2: 8,
+            },
+
+            style: {
+              stroke: this.getDriverColor(index),
+              lineWidth,
+              lineCap: 'round',
+            },
+          },
+
+          {
+            type: 'circle',
+
+            shape: {
+              cx: lineLength / 2,
+              cy: 8,
+              r: lineWidth + 1,
+            },
+
+            style: {
+              fill: this.getDriverColor(index),
+              stroke: '#1a1a1a',
+              lineWidth: 2,
+            },
+          },
+
+          {
+            type: 'text',
+
+            left: lineLength + responsive.legend.textGap,
+
+            top: 0,
+
+            style: {
+              text: driver.driver,
+              fill: '#e5e7eb',
+              font: `bold ${fontSize}px Formula1`,
+              textVerticalAlign: 'middle',
+            },
+          },
+        ],
+      };
+    });
+  }
+
+  private getTrackStatusLabel(range: any): string {
+    const lapText =
+      range.startLap === range.endLap
+        ? `${range.startLap}`
+        : `${range.startLap} - ${range.endLap}`;
+
+    switch (range.status) {
+      case 'RED_FLAG':
+        return `🟥 - ${lapText}`;
+
+      case 'SAFETY_CAR':
+        return `🟨 SC • ${lapText}`;
+
+      case 'VSC':
+        return `🟪 VSC • ${lapText}`;
+
+      case 'YELLOW':
+        return `🟨 - ${lapText}`;
+
+      default:
+        return lapText;
+    }
+  }
+
+  private getResponsiveChartSettings(): ResponsiveChartSettings {
     const width = window.innerWidth;
 
-    // Small phones
     if (width <= 700) {
       return {
-        normal: 3,
-        selected: 5,
-        faded: 2,
+        legendLineWidth: 3,
+        legendLineLength: 26,
+        symbolSize: 8,
+
+        lineWidths: {
+          normal: 3,
+          selected: 5,
+          faded: 2,
+        },
+
+        trackStatusLabelFontSize: 8,
+
+        trackStatusLabelRows: [8, 22],
+
+        grid: {
+          left: 36,
+          right: 12,
+          top: 28,
+          bottom: 34,
+        },
+
+        legend: {
+          top: 6,
+          right: 12,
+          spacing: 72,
+          textGap: 6,
+        },
       };
     }
 
-    // Tablets / landscape phones
     if (width <= 900) {
       return {
-        normal: 3,
-        selected: 6,
-        faded: 2,
+        legendLineWidth: 4,
+        legendLineLength: 34,
+
+        symbolSize: 9,
+
+        lineWidths: {
+          normal: 3,
+          selected: 6,
+          faded: 2,
+        },
+
+        trackStatusLabelFontSize: 9,
+
+        trackStatusLabelRows: [8, 24],
+
+        grid: {
+          left: 42,
+          right: 18,
+          top: 34,
+          bottom: 42,
+        },
+
+        legend: {
+          top: 8,
+          right: 18,
+          spacing: 92,
+          textGap: 8,
+        },
       };
     }
 
-    // Desktop
     return {
-      normal: 4,
-      selected: 7,
-      faded: 3,
+      legendLineWidth: 5,
+      legendLineLength: 42,
+
+      symbolSize: 12,
+
+      lineWidths: {
+        normal: 4,
+        selected: 7,
+        faded: 3,
+      },
+
+      trackStatusLabelFontSize: 10,
+
+      trackStatusLabelRows: [8, 26],
+
+      grid: {
+        left: 50,
+        right: 24,
+        top: 42,
+        bottom: 50,
+      },
+
+      legend: {
+        top: 11,
+        right: 28,
+        spacing: 114,
+        textGap: 10,
+      },
     };
   }
 }
