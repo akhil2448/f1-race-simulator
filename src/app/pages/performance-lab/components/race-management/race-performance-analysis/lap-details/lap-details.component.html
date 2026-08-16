@@ -1,0 +1,168 @@
+<div class="cards">
+  @for (card of selectedLaps; track card) {
+    <div class="lap-card">
+      <!-- HEADER -->
+
+      <div class="header">
+        <div class="driver">
+          <span class="number"> #{{ card.driver.driverNumber }} </span>
+
+          <span class="name">
+            {{ card.driver.fullName.split(" ").slice(-1)[0] }}
+          </span>
+        </div>
+
+        <div class="header-right">
+          <img class="team-logo" [src]="getTeamLogo(card.driver.teamName)" />
+
+          <button
+            type="button"
+            class="icon-btn pin-btn"
+            [class.pinned]="card.pinned"
+            (click)="togglePin.emit(card.id)"
+            [title]="card.pinned ? 'Unpin lap' : 'Pin lap'"
+          >
+            <span class="material-symbols-outlined"> push_pin </span>
+          </button>
+
+          <button
+            type="button"
+            class="icon-btn close-btn"
+            (click)="remove.emit(card.id)"
+            title="Remove lap"
+          >
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- POSITION -->
+
+      <div class="position">P{{ card.lap.position }}</div>
+
+      <!-- LAP -->
+
+      <div class="lap">
+        <span>Lap {{ card.lap.lapNumber }}</span>
+
+        <span>{{ formatLapTime(card.lap.lapTime) }}</span>
+      </div>
+
+      <!-- SECTORS -->
+
+      <div class="sectors">
+        <div class="sector s1">
+          {{ formatLapTime(card.lap.sector1) }}
+        </div>
+
+        <div class="sector s2">
+          {{ formatLapTime(card.lap.sector2) }}
+        </div>
+
+        <div class="sector s3">
+          {{ formatLapTime(card.lap.sector3) }}
+        </div>
+      </div>
+
+      <!-- TYRES -->
+
+      <div class="tyres">
+        <span> Stint {{ card.stint.stint }} </span>
+
+        <span>
+          {{ card.stint.compound }}
+        </span>
+
+        <span> Age {{ card.lap.tyreLife }} </span>
+      </div>
+
+      <!-- LAP DISTRIBUTION -->
+
+      <div class="section-title">Lap Distribution</div>
+
+      @for (
+        item of [
+          ["Full Throttle", card.lap.distribution.fullThrottle],
+
+          ["Brake", card.lap.distribution.brake],
+
+          ["Rolling", card.lap.distribution.rolling],
+
+          ["Partial Throttle", card.lap.distribution.partialThrottle],
+
+          ["Lift & Coast", card.lap.distribution.liftAndCoast],
+        ];
+        track item
+      ) {
+        <div class="bar-row">
+          <span>{{ item[0] }}</span>
+
+          <div class="bar">
+            <div class="fill" [style.width.%]="item[1]"></div>
+          </div>
+
+          <span>{{ item[1] }}%</span>
+        </div>
+      }
+
+      <!-- DRIVING CHARACTERISTICS -->
+
+      <div class="section-title">Driving Characteristics</div>
+
+      @for (
+        item of [
+          ["Cornering", card.lap.distribution.cornering],
+
+          ["Clipping", card.lap.distribution.clipping],
+        ];
+        track item
+      ) {
+        <div class="bar-row">
+          <span>{{ item[0] }}</span>
+
+          <div class="bar">
+            <div class="fill secondary" [style.width.%]="item[1]"></div>
+          </div>
+
+          <span>{{ item[1] }}%</span>
+        </div>
+      }
+
+      <!-- FOOTER -->
+
+      <div class="footer">
+        <div>
+          Avg
+
+          <strong>
+            {{ card.lap.speed.average }}
+          </strong>
+        </div>
+
+        <div>
+          Top
+
+          <strong>
+            {{ card.lap.speed.top }}
+          </strong>
+        </div>
+
+        <div>
+          Min
+
+          <strong>
+            {{ card.lap.speed.minimum }}
+          </strong>
+        </div>
+
+        <div>
+          Shifts
+
+          <strong>
+            {{ card.lap.gearShifts }}
+          </strong>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,142 @@
+.cards {
+  display: flex;
+
+  gap: 24px;
+
+  margin-top: 28px;
+
+  flex-wrap: wrap;
+}
+
+.lap-card {
+  flex: 1;
+
+  min-width: 420px;
+
+  background: #1f1f1f;
+
+  border: 1px solid #363636;
+
+  border-radius: 14px;
+
+  padding: 18px;
+}
+
+.header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.icon-btn mat-icon {
+  width: 20px;
+  height: 20px;
+
+  font-size: 20px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pin-btn mat-icon {
+  color: #8a8a8a;
+
+  transform: rotate(45deg);
+}
+
+.pin-btn.pinned mat-icon {
+  color: #f5c242;
+
+  transform: rotate(0deg);
+}
+
+.pin-btn:hover mat-icon {
+  color: #ffd75c;
+}
+
+.close-btn mat-icon {
+  color: #c8c8c8;
+}
+
+.close-btn:hover mat-icon {
+  color: #ff5a5a;
+}
+
+.team-logo {
+  height: 32px;
+}
+
+.bar {
+  height: 8px;
+
+  background: #363636;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  flex: 1;
+}
+
+.fill {
+  height: 100%;
+
+  background: #28c76f;
+}
+
+.fill.secondary {
+  background: #2ea3ff;
+}
+
+.bar-row {
+  display: grid;
+
+  grid-template-columns: 130px 1fr 48px;
+
+  gap: 12px;
+
+  align-items: center;
+
+  margin: 8px 0;
+}
+
+.footer {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  margin-top: 18px;
+
+  text-align: center;
+}

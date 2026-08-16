@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   signal,
 } from '@angular/core';
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
@@ -22,6 +24,7 @@ import {
   RaceAnalyzerResponse,
   RaceAnalyzerLap,
 } from '../../../../models/race-performance-analysis.model';
+import { SelectedLap } from '../../../../models/lap-details.model';
 
 interface ChartLapPoint {
   value: [number, number];
@@ -29,6 +32,8 @@ interface ChartLapPoint {
   lap: RaceAnalyzerLap;
 
   driver: string;
+
+  driverIndex: number;
 
   stint: number;
 
@@ -107,6 +112,9 @@ echarts.use([
 })
 export class RacePerformanceChartComponent {
   private analysis!: RaceAnalyzerResponse;
+
+  @Output()
+  lapSelected = new EventEmitter<SelectedLap>();
 
   @Input({ required: true })
   set analysisData(value: RaceAnalyzerResponse) {
@@ -329,15 +337,36 @@ export class RacePerformanceChartComponent {
     }
 
     //
-    // Only accept clicks on the actual line.
+    // Every click on a line series gives us a ChartLapPoint.
+    // Emit the selected lap.
     //
-    if (params.dataType === 'node') {
-      return;
+    if (params.data) {
+      this.emitSelectedLap(params);
     }
 
     this.selectedSeriesIndex = params.seriesIndex;
 
     this.updateSeriesStyles();
+  }
+
+  private emitSelectedLap(params: any): void {
+    const point = params.data as ChartLapPoint;
+
+    const driver = this.analysis.drivers[point.driverIndex];
+
+    const stint = driver.stints.find((s) => s.stint === point.stint);
+
+    if (!stint) {
+      return;
+    }
+
+    this.lapSelected.emit({
+      id: `${driver.driver}-${point.lap.lapNumber}`,
+      driver,
+      stint,
+      lap: point.lap,
+      pinned: false,
+    });
   }
 
   private onCanvasClick(event: any): void {
@@ -472,6 +501,7 @@ export class RacePerformanceChartComponent {
             lap,
 
             driver: driver.driver,
+            driverIndex: index,
             stint: stint.stint,
             compound: stint.compound,
 

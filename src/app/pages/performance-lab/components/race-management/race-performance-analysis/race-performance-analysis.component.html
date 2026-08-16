@@ -11,5 +11,15 @@
 }
 
 @if (!loading && analysis) {
-  <app-race-performance-chart [analysisData]="analysis" />
+  <app-race-performance-chart
+    [analysisData]="analysis"
+    (lapSelected)="onLapSelected($event)"
+  ></app-race-performance-chart>
+
+  <app-lap-details
+    *ngIf="selectedLaps.length"
+    [selectedLaps]="selectedLaps"
+    (remove)="removeLap($event)"
+    (togglePin)="togglePinned($event)"
+  ></app-lap-details>
 }
