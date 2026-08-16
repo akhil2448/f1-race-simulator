@@ -717,24 +717,35 @@ export class RacePerformanceChartComponent {
       const label =
         range.startLap === range.endLap
           ? `🌧 Rain • ${range.startLap} Lap`
-          : `🌧 Rain • ${range.startLap}-${range.endLap} Laps`;
+          : `🌧 Rain • ${range.startLap} - ${range.endLap} Laps`;
 
       const labelWidth = echarts.format.getTextRect(
         label,
         `${responsive.rainTimeline.fontSize}px Formula1Bold`,
       ).width;
 
-      const labelPadding = labelWidth / 2 + 8;
+      const chartLeft = this.chart.convertToPixel({ xAxisIndex: 0 }, 1);
 
-      let center = (startX + endX) / 2;
+      const chartRight = this.chart.convertToPixel(
+        { xAxisIndex: 0 },
+        this.analysis.race.totalLaps,
+      );
 
-      center = Math.max(labelPadding, center);
+      let labelLeft = (startX + endX) / 2 - labelWidth / 2;
 
-      const chartWidth = this.chart ? this.chart.getWidth() : window.innerWidth;
+      const margin = 6;
 
-      center = Math.min(chartWidth - labelPadding, center);
+      // Prevent clipping on the left edge
+      if (labelLeft < chartLeft + margin) {
+        labelLeft = chartLeft + margin;
+      }
 
-      const width = Math.max(endX - startX, 10);
+      // Prevent clipping on the right edge
+      if (labelLeft + labelWidth > chartRight - margin) {
+        labelLeft = chartRight - labelWidth - margin;
+      }
+
+      const width = Math.max(1, endX - startX);
 
       return [
         {
@@ -771,7 +782,7 @@ export class RacePerformanceChartComponent {
         {
           type: 'text',
 
-          left: center - labelWidth / 2,
+          left: labelLeft,
 
           bottom:
             responsive.rainTimeline.stripBottom +
