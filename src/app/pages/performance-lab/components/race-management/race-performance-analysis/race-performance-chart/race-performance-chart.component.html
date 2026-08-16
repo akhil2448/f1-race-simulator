@@ -20,7 +20,7 @@
       <span>Smooth Lap Chart</span>
     </label>
 
-    <label class="toolbar-option">
+    <label class="toolbar-option" *ngIf="hasTrackStatus">
       <input
         type="checkbox"
         [checked]="showTrackStatus()"
@@ -28,6 +28,16 @@
       />
 
       <span>Show Track Status</span>
+    </label>
+
+    <label class="toolbar-option" *ngIf="hasRainRanges">
+      <input
+        type="checkbox"
+        [checked]="showRainLaps()"
+        (change)="toggleRainLaps()"
+      />
+
+      <span>Show Rain Laps</span>
     </label>
   </div>
 

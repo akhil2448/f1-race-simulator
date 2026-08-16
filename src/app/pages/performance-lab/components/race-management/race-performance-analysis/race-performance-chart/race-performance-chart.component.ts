@@ -76,6 +76,14 @@ interface ResponsiveChartSettings {
     spacing: number;
     textGap: number;
   };
+
+  rainTimeline: {
+    labelBottom: number;
+    stripBottom: number;
+    stripHeight: number;
+    fontSize: number;
+    leftPadding: number;
+  };
 }
 
 echarts.use([
@@ -112,6 +120,15 @@ export class RacePerformanceChartComponent {
   readonly smoothChart = signal(true);
 
   readonly showTrackStatus = signal(false);
+  readonly showRainLaps = signal(true);
+
+  get hasTrackStatus(): boolean {
+    return this.analysis?.trackMetadata?.statusRanges?.length > 0;
+  }
+
+  get hasRainRanges(): boolean {
+    return this.analysis?.trackMetadata?.rainRanges?.length > 0;
+  }
 
   chartOptions: EChartsOption = {};
   private chart!: ECharts;
@@ -125,49 +142,43 @@ export class RacePerformanceChartComponent {
 
     const responsive = this.getResponsiveChartSettings();
 
+    const grid = {
+      ...responsive.grid,
+    };
+
+    if (
+      this.showRainLaps() &&
+      this.analysis.trackMetadata.rainRanges.length > 0
+    ) {
+      grid.bottom += responsive.rainTimeline.labelBottom + 10;
+    }
+
     this.chartOptions = {
       backgroundColor: '#1a1a1a',
-
       animation: false,
-
-      grid: responsive.grid,
-
-      graphic: this.buildDriverLegend(),
-
+      grid,
+      graphic: [],
       tooltip: {
         trigger: 'item',
-
         renderMode: 'html',
-
         className: 'pitwall-tooltip-wrapper',
-
         enterable: false,
-
         confine: true,
-
         borderWidth: 0,
-
         backgroundColor: 'transparent',
-
         extraCssText:
           'box-shadow:none;padding:0;border:none;background:transparent;',
-
         formatter: (params: any) => this.buildTooltip(params),
       },
 
       xAxis: {
         type: 'value',
-
+        maxInterval: 5,
         name: 'Lap Number',
-
         nameLocation: 'middle',
-
         nameGap: 24,
-
         min: 1,
-
         max: this.analysis.race.totalLaps,
-
         splitLine: {
           show: true,
 
@@ -176,17 +187,14 @@ export class RacePerformanceChartComponent {
             width: 1,
           },
         },
-
         axisLine: {
           lineStyle: {
             color: '#9ca3af',
           },
         },
-
         axisLabel: {
           color: '#d1d5db',
         },
-
         nameTextStyle: {
           color: '#d1d5db',
         },
@@ -194,15 +202,10 @@ export class RacePerformanceChartComponent {
 
       yAxis: {
         type: 'value',
-
         name: 'Lap Time (seconds)',
-
         nameLocation: 'middle',
-
         nameGap: 24,
-
         scale: true,
-
         splitLine: {
           show: true,
 
@@ -216,11 +219,9 @@ export class RacePerformanceChartComponent {
             color: '#9ca3af',
           },
         },
-
         axisLabel: {
           color: '#d1d5db',
         },
-
         nameTextStyle: {
           color: '#d1d5db',
         },
@@ -229,30 +230,20 @@ export class RacePerformanceChartComponent {
       series: series.map(
         (driver, index): LineSeriesOption => ({
           name: driver.driver,
-
           type: 'line',
-
           triggerEvent: true,
-
           smooth: this.smoothChart(),
-
           symbol: 'circle',
-
           data: driver.points,
-
           showSymbol: true,
-
           symbolSize: responsive.symbolSize,
-
           lineStyle: {
             width: responsive.lineWidths.normal,
             color: driver.color,
           },
-
           itemStyle: {
             borderWidth: 2,
           },
-
           markArea:
             index === 0
               ? {
@@ -280,7 +271,6 @@ export class RacePerformanceChartComponent {
       }
 
       this.hoveredSeriesIndex = params.seriesIndex;
-
       this.updateSeriesStyles();
     });
 
@@ -303,7 +293,6 @@ export class RacePerformanceChartComponent {
       }
 
       this.hoveredSeriesIndex = null;
-
       this.updateSeriesStyles();
     });
 
@@ -313,8 +302,15 @@ export class RacePerformanceChartComponent {
       }
 
       this.hoveredSeriesIndex = null;
-
       this.updateSeriesStyles();
+    });
+
+    // Fires after the chart has finished rendering.
+    // This guarantees convertToPixel() returns correct values.
+    chart.on('finished', () => {
+      requestAnimationFrame(() => {
+        this.refreshRainTimeline();
+      });
     });
 
     chart.getZr().on('click', this.onCanvasClick.bind(this));
@@ -413,6 +409,16 @@ export class RacePerformanceChartComponent {
 
   toggleTrackStatus(): void {
     this.showTrackStatus.update((value) => !value);
+
+    this.buildChart();
+  }
+
+  toggleRainLaps(): void {
+    this.showRainLaps.update((v) => !v);
+
+    if (this.chart) {
+      this.refreshRainTimeline();
+    }
 
     this.buildChart();
   }
@@ -685,6 +691,125 @@ export class RacePerformanceChartComponent {
     });
   }
 
+  private buildRainTimeline(): any[] {
+    if (
+      !this.showRainLaps() ||
+      this.analysis.trackMetadata.rainRanges.length === 0
+    ) {
+      return [];
+    }
+
+    const responsive = this.getResponsiveChartSettings();
+
+    return this.analysis.trackMetadata.rainRanges.flatMap((range) => {
+      const startX = this.chart.convertToPixel(
+        { xAxisIndex: 0 },
+        range.startLap,
+      );
+
+      const endLapPixel = Math.min(
+        range.endLap + 1,
+        this.analysis.race.totalLaps,
+      );
+
+      const endX = this.chart.convertToPixel({ xAxisIndex: 0 }, endLapPixel);
+
+      const label =
+        range.startLap === range.endLap
+          ? `🌧 Rain • ${range.startLap} Lap`
+          : `🌧 Rain • ${range.startLap}-${range.endLap} Laps`;
+
+      const labelWidth = echarts.format.getTextRect(
+        label,
+        `${responsive.rainTimeline.fontSize}px Formula1Bold`,
+      ).width;
+
+      const labelPadding = labelWidth / 2 + 8;
+
+      let center = (startX + endX) / 2;
+
+      center = Math.max(labelPadding, center);
+
+      const chartWidth = this.chart ? this.chart.getWidth() : window.innerWidth;
+
+      center = Math.min(chartWidth - labelPadding, center);
+
+      const width = Math.max(endX - startX, 10);
+
+      return [
+        {
+          type: 'rect',
+
+          left: startX,
+
+          bottom: responsive.rainTimeline.stripBottom,
+
+          shape: {
+            width,
+            height: responsive.rainTimeline.stripHeight,
+            r: 4,
+          },
+
+          style: {
+            fill: {
+              image:
+                'data:image/svg+xml;utf8,' +
+                encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                    <rect width="12" height="12" fill="#2b78ff"/>
+                    <path d="M-2 12 L12 -2 M2 14 L16 0"
+                          stroke="rgba(255,255,255,0.30)"
+                          stroke-width="3"/>
+                </svg>`),
+              repeat: 'repeat',
+            },
+          },
+
+          silent: true,
+        },
+
+        {
+          type: 'text',
+
+          left: center - labelWidth / 2,
+
+          bottom:
+            responsive.rainTimeline.stripBottom +
+            responsive.rainTimeline.stripHeight +
+            4,
+
+          style: {
+            text: label,
+
+            width: labelWidth,
+
+            textAlign: 'center',
+
+            fill: '#ffffff',
+
+            font: `${responsive.rainTimeline.fontSize}px Formula1Bold`,
+
+            textShadowColor: 'rgba(0,0,0,.8)',
+
+            textShadowBlur: 4,
+          },
+
+          silent: true,
+        },
+      ];
+    });
+  }
+
+  private refreshRainTimeline(): void {
+    if (!this.chart) {
+      return;
+    }
+
+    this.chart.setOption({
+      graphic: [...this.buildDriverLegend(), ...this.buildRainTimeline()],
+    });
+  }
+
   private getTrackStatusLabel(range: any): string {
     const lapText =
       range.startLap === range.endLap
@@ -774,97 +899,97 @@ export class RacePerformanceChartComponent {
     }
 
     return `
-<div class="pitwall-tooltip">
+      <div class="pitwall-tooltip">
 
-  <div class="tooltip-header">
+        <div class="tooltip-header">
 
-    <span class="tooltip-lap">
-        Lap ${lap.lapNumber}
-    </span>
+          <span class="tooltip-lap">
+              Lap ${lap.lapNumber}
+          </span>
 
-    <span class="tooltip-position">
-        P${lap.position}
-    </span>
+          <span class="tooltip-position">
+              P${lap.position}
+          </span>
 
-  </div>
+        </div>
 
-  <div class="tooltip-divider"></div>
+        <div class="tooltip-divider"></div>
 
-  <div class="tooltip-driver primary">
+        <div class="tooltip-driver primary">
 
-      <span class="tooltip-driver-code">
+            <span class="tooltip-driver-code">
 
-        <span class="tooltip-driver-legend">
+              <span class="tooltip-driver-legend">
 
-            <span
-                class="tooltip-driver-line"
-                style="background:${this.getDriverColor(hovered.seriesIndex)}"
-            ></span>
+                  <span
+                      class="tooltip-driver-line"
+                      style="background:${this.getDriverColor(hovered.seriesIndex)}"
+                  ></span>
 
-            <span
-                class="tooltip-driver-dot"
-                style="background:${this.getDriverColor(hovered.seriesIndex)}"
-            ></span>
+                  <span
+                      class="tooltip-driver-dot"
+                      style="background:${this.getDriverColor(hovered.seriesIndex)}"
+                  ></span>
 
-        </span>
+              </span>
 
-        ${hovered.seriesName}
+              ${hovered.seriesName}
 
-      </span>
+            </span>
 
-      <span>
+            <span>
 
-          ${this.formatLapTime(hoveredTime)}
+                ${this.formatLapTime(hoveredTime)}
 
-          ${hoveredSlower ? `<span class="delta">(+${delta.toFixed(3)})</span>` : ''}
+                ${hoveredSlower ? `<span class="delta">(+${delta.toFixed(3)})</span>` : ''}
 
-      </span>
+            </span>
 
-  </div>
+        </div>
 
-  ${comparisonHtml}
+        ${comparisonHtml}
 
-  <div class="tooltip-sectors">
+        <div class="tooltip-sectors">
 
-      <span class="sector sector1">
-          S1 ${this.formatSector(lap.sector1)}
-      </span>
+            <span class="sector sector1">
+                S1 ${this.formatSector(lap.sector1)}
+            </span>
 
-      <span class="sector sector2">
-          S2 ${this.formatSector(lap.sector2)}
-      </span>
+            <span class="sector sector2">
+                S2 ${this.formatSector(lap.sector2)}
+            </span>
 
-      <span class="sector sector3">
-          S3 ${this.formatSector(lap.sector3)}
-      </span>
+            <span class="sector sector3">
+                S3 ${this.formatSector(lap.sector3)}
+            </span>
 
-  </div>
+        </div>
 
-  <div class="tooltip-tyre">
+        <div class="tooltip-tyre">
 
-    <span class="tooltip-stint">
+          <span class="tooltip-stint">
 
-        Stint ${hovered.data.stint} • 
+              Stint ${hovered.data.stint} • 
 
-    </span>
+          </span>
 
-    <span
-        class="tooltip-compound"
-        style="color:${this.getTyreColor(hovered.data.compound)}"
-    >
-        ${hovered.data.compound}
-    </span>
+          <span
+              class="tooltip-compound"
+              style="color:${this.getTyreColor(hovered.data.compound)}"
+          >
+              ${hovered.data.compound}
+          </span>
 
-    <span class="tooltip-age">
+          <span class="tooltip-age">
 
-        • Age ${lap.tyreLife}
+              • Age ${lap.tyreLife}
 
-    </span>
+          </span>
 
-  </div>
+        </div>
 
-</div>
-`;
+      </div>
+    `;
   }
 
   private formatLapTime(seconds: number): string {
@@ -915,6 +1040,14 @@ export class RacePerformanceChartComponent {
           spacing: 72,
           textGap: 6,
         },
+
+        rainTimeline: {
+          labelBottom: 24,
+          stripBottom: 14,
+          stripHeight: 8,
+          fontSize: 8,
+          leftPadding: 4,
+        },
       };
     }
 
@@ -948,6 +1081,14 @@ export class RacePerformanceChartComponent {
           spacing: 92,
           textGap: 8,
         },
+
+        rainTimeline: {
+          labelBottom: 28,
+          stripBottom: 16,
+          stripHeight: 9,
+          fontSize: 9,
+          leftPadding: 5,
+        },
       };
     }
 
@@ -979,6 +1120,14 @@ export class RacePerformanceChartComponent {
         right: 28,
         spacing: 114,
         textGap: 10,
+      },
+
+      rainTimeline: {
+        labelBottom: 31,
+        stripBottom: 18,
+        stripHeight: 10,
+        fontSize: 10,
+        leftPadding: 6,
       },
     };
   }
