@@ -28,6 +28,12 @@ interface ChartLapPoint {
 
   lap: RaceAnalyzerLap;
 
+  driver: string;
+
+  stint: number;
+
+  compound: string;
+
   itemStyle: {
     color: string;
     borderColor: string;
@@ -112,6 +118,8 @@ export class RacePerformanceChartComponent {
   private selectedSeriesIndex: number | null = null;
   private hoveredSeriesIndex: number | null = null;
 
+  private driverLapLookup = new Map<string, Map<number, ChartLapPoint>>();
+
   private buildChart(): void {
     const series = this.buildSeries();
 
@@ -127,29 +135,24 @@ export class RacePerformanceChartComponent {
       graphic: this.buildDriverLegend(),
 
       tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
 
-        axisPointer: {
-          type: 'line',
+        renderMode: 'html',
 
-          snap: true,
+        className: 'pitwall-tooltip-wrapper',
 
-          lineStyle: {
-            color: '#9ca3af',
-            width: 1,
-            type: 'dashed',
-          },
+        enterable: false,
 
-          label: {
-            show: false,
-          },
-        },
-      },
+        confine: true,
 
-      axisPointer: {
-        show: true,
+        borderWidth: 0,
 
-        triggerTooltip: true,
+        backgroundColor: 'transparent',
+
+        extraCssText:
+          'box-shadow:none;padding:0;border:none;background:transparent;',
+
+        formatter: (params: any) => this.buildTooltip(params),
       },
 
       xAxis: {
@@ -437,11 +440,15 @@ export class RacePerformanceChartComponent {
 
     const outlierThreshold = this.getOutlierThreshold();
 
+    this.driverLapLookup.clear();
+
     return drivers.map((driver, index) => {
       //
       // Flatten all laps across every stint.
       //
       const points: ChartLapPoint[] = [];
+
+      const lapLookup = new Map<number, ChartLapPoint>();
 
       for (const stint of driver.stints) {
         for (const lap of stint.laps) {
@@ -453,21 +460,29 @@ export class RacePerformanceChartComponent {
             continue;
           }
 
-          points.push({
+          const point: ChartLapPoint = {
             value: [lap.lapNumber, lap.lapTime],
 
             lap,
 
+            driver: driver.driver,
+            stint: stint.stint,
+            compound: stint.compound,
+
             itemStyle: {
               color: this.getTyreColor(stint.compound),
-
               borderColor: this.getDriverColor(index),
-
               borderWidth: 2,
             },
-          });
+          };
+
+          points.push(point);
+
+          lapLookup.set(lap.lapNumber, point);
         }
       }
+
+      this.driverLapLookup.set(driver.driver, lapLookup);
 
       return {
         driver: driver.driver,
@@ -661,7 +676,7 @@ export class RacePerformanceChartComponent {
             style: {
               text: driver.driver,
               fill: '#e5e7eb',
-              font: `bold ${fontSize}px Formula1`,
+              font: `${fontSize}px Formula1Bold`,
               textVerticalAlign: 'middle',
             },
           },
@@ -692,6 +707,180 @@ export class RacePerformanceChartComponent {
       default:
         return lapText;
     }
+  }
+
+  private buildTooltip(param: any): string {
+    const hovered = param;
+
+    if (!hovered) {
+      return '';
+    }
+
+    const lap = hovered.data.lap as RaceAnalyzerLap;
+
+    const hoveredDriver = hovered.seriesName as string;
+
+    const otherDriver = this.analysis.drivers.find(
+      (driver) => driver.driver !== hoveredDriver,
+    );
+
+    const otherPoint = otherDriver
+      ? this.driverLapLookup.get(otherDriver.driver)?.get(lap.lapNumber)
+      : undefined;
+
+    const otherLap = otherPoint?.lap;
+    const otherCompound = otherPoint?.compound;
+
+    const hoveredTime = lap.lapTime ?? 0;
+
+    let comparisonHtml = '';
+
+    let delta = 0;
+
+    let hoveredSlower = false;
+
+    let otherSlower = false;
+
+    if (otherLap?.lapTime != null) {
+      const otherTime = otherLap.lapTime;
+
+      delta = Math.abs(otherTime - hoveredTime);
+
+      hoveredSlower = hoveredTime > otherTime;
+
+      otherSlower = otherTime > hoveredTime;
+
+      comparisonHtml = `
+      <div class="tooltip-driver secondary">
+
+        <span class="tooltip-driver-code">
+          ${otherDriver?.driver ?? ''}
+        </span>
+
+        <span>
+
+          ${this.formatLapTime(otherTime)}
+
+          ${
+            otherSlower
+              ? `<span class="delta">(+${delta.toFixed(3)})</span>`
+              : ''
+          }
+
+        </span>
+
+      </div>
+    `;
+    }
+
+    return `
+<div class="pitwall-tooltip">
+
+  <div class="tooltip-header">
+
+    <span class="tooltip-lap">
+        Lap ${lap.lapNumber}
+    </span>
+
+    <span class="tooltip-position">
+        P${lap.position}
+    </span>
+
+  </div>
+
+  <div class="tooltip-divider"></div>
+
+  <div class="tooltip-driver primary">
+
+      <span class="tooltip-driver-code">
+
+        <span class="tooltip-driver-legend">
+
+            <span
+                class="tooltip-driver-line"
+                style="background:${this.getDriverColor(hovered.seriesIndex)}"
+            ></span>
+
+            <span
+                class="tooltip-driver-dot"
+                style="background:${this.getDriverColor(hovered.seriesIndex)}"
+            ></span>
+
+        </span>
+
+        ${hovered.seriesName}
+
+      </span>
+
+      <span>
+
+          ${this.formatLapTime(hoveredTime)}
+
+          ${hoveredSlower ? `<span class="delta">(+${delta.toFixed(3)})</span>` : ''}
+
+      </span>
+
+  </div>
+
+  ${comparisonHtml}
+
+  <div class="tooltip-sectors">
+
+      <span class="sector sector1">
+          S1 ${this.formatSector(lap.sector1)}
+      </span>
+
+      <span class="sector sector2">
+          S2 ${this.formatSector(lap.sector2)}
+      </span>
+
+      <span class="sector sector3">
+          S3 ${this.formatSector(lap.sector3)}
+      </span>
+
+  </div>
+
+  <div class="tooltip-tyre">
+
+    <span class="tooltip-stint">
+
+        Stint ${hovered.data.stint} • 
+
+    </span>
+
+    <span
+        class="tooltip-compound"
+        style="color:${this.getTyreColor(hovered.data.compound)}"
+    >
+        ${hovered.data.compound}
+    </span>
+
+    <span class="tooltip-age">
+
+        • Age ${lap.tyreLife}
+
+    </span>
+
+  </div>
+
+</div>
+`;
+  }
+
+  private formatLapTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+
+    const remaining = seconds % 60;
+
+    return `${minutes}:${remaining.toFixed(3).padStart(6, '0')}`;
+  }
+
+  private formatSector(seconds: number | null): string {
+    if (seconds == null) {
+      return '--.---';
+    }
+
+    return seconds.toFixed(3);
   }
 
   private getResponsiveChartSettings(): ResponsiveChartSettings {

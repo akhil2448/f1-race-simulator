@@ -236,3 +236,330 @@ body {
     font-size: 7px;
   }
 }
+
+/* ==========================================================
+   PITWALL CHART TOOLTIP
+   ========================================================== */
+
+.pitwall-tooltip-wrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.pitwall-tooltip {
+  // background: #262626;
+
+  background: #222428;
+  color: #fff;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  padding: 14px 16px;
+
+  min-width: 230px;
+  max-width: 260px;
+
+  font-family: Formula1;
+
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 10px;
+
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.tooltip-position,
+.tooltip-lap {
+  color: white;
+}
+
+.tooltip-divider {
+  height: 1px;
+
+  margin: 8px 0 10px;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+}
+
+.tooltip-driver {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 4px;
+
+  color: white;
+
+  font-size: 14px;
+}
+
+.tooltip-driver.primary {
+  font-weight: bold;
+}
+
+.tooltip-driver.secondary {
+  opacity: 0.9;
+}
+
+.tooltip-driver-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-weight: bold;
+}
+
+.tooltip-driver-line {
+  width: 22px;
+  height: 5px;
+
+  border-radius: 999px;
+}
+
+.tooltip-driver-legend {
+  position: relative;
+
+  width: 22px;
+  height: 12px;
+
+  display: inline-flex;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.tooltip-driver-dot {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 11px;
+  height: 11px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  border: 2px solid #262626;
+
+  box-sizing: border-box;
+}
+
+.tooltip-sectors {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+
+  margin: 10px 0;
+}
+
+.sector {
+  padding: 3px 7px;
+  border-radius: 5px;
+
+  color: white;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.sector1 {
+  background: #b23443;
+}
+.sector2 {
+  background: #1c6a97;
+}
+.sector3 {
+  background: #856032;
+}
+
+.tooltip-tyre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 8px;
+
+  font-size: 13px;
+}
+
+.tyre-dot {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tooltip-stint {
+  color: #d4d4d4;
+}
+
+.tooltip-compound {
+  font-family: "Formula1Bold";
+}
+
+.tooltip-age {
+  color: #d4d4d4;
+}
+
+.delta {
+  color: #59df6d;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .pitwall-tooltip {
+    min-width: 205px;
+    max-width: 230px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+  }
+
+  .tooltip-header {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .tooltip-divider {
+    margin: 8px 0 10px;
+  }
+
+  .tooltip-driver {
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .tooltip-driver-line {
+    width: 18px;
+    height: 4px;
+  }
+
+  .tooltip-driver-legend {
+    width: 18px;
+    height: 10px;
+  }
+
+  .tooltip-driver-dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .tooltip-driver-code {
+    gap: 6px;
+  }
+
+  .tooltip-sectors,
+  .tooltip-tyre {
+    font-size: 11px;
+    margin-top: 7px;
+  }
+
+  .tooltip-sectors {
+    gap: 5px;
+    margin: 8px 0;
+  }
+
+  .sector {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .tooltip-stint,
+  .tooltip-compound,
+  .tooltip-age {
+    font-size: 11px;
+  }
+
+  .delta {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 700px) and (orientation: landscape) {
+  .pitwall-tooltip {
+    min-width: 180px;
+    max-width: 205px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+  }
+
+  .tooltip-header {
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  .tooltip-divider {
+    margin: 7px 0 8px;
+  }
+
+  .tooltip-driver {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .tooltip-driver-line {
+    width: 16px;
+    height: 3px;
+  }
+
+  .tooltip-driver-legend {
+    width: 16px;
+    height: 9px;
+  }
+
+  .tooltip-driver-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .tooltip-driver-code {
+    gap: 5px;
+  }
+
+  .tooltip-sectors {
+    gap: 4px;
+    margin: 7px 0;
+  }
+
+  .tooltip-sectors,
+  .tooltip-tyre {
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  .sector {
+    font-size: 10px;
+    padding: 2px 5px;
+  }
+
+  .tooltip-stint,
+  .tooltip-compound,
+  .tooltip-age {
+    font-size: 10px;
+  }
+
+  .delta {
+    font-size: 9px;
+    margin-left: 4px;
+  }
+}
