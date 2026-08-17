@@ -362,34 +362,236 @@
   background: #ffd23f;
 }
 
+.tyres {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 26px;
+
+  margin-top: 10px;
+  margin-bottom: 18px;
+
+  font-family: Formula1;
+  font-size: 15px;
+}
+
+.tyre-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.stint {
+  color: #b5b5b5;
+
+  letter-spacing: 0.03em;
+}
+
+.tyre-label {
+  font-family: Formula1;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+}
+
+.compound {
+  font-family: Formula1Bold;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tyre-value {
+  font-family: Formula1Bold;
+  font-size: 16px;
+  color: #f2f2f2;
+}
+
+.tyres > * + *::before {
+  content: "•";
+
+  color: rgba(255, 255, 255, 0.22);
+
+  margin-right: 18px;
+}
+
+.section-divider {
+  height: 1px;
+  margin: 18px 0 18px;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 12%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.18) 88%,
+    transparent 100%
+  );
+}
+
+.section-gap {
+  margin-top: 26px;
+}
+
+.section-header {
+  margin: 18px 0 14px;
+}
+
+.section-subtitle {
+  margin-left: 8px;
+  font-family: Formula1;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: #8d8d8d;
+  text-transform: none;
+}
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+
+  margin: 18px 0 12px;
+
+  font-family: Formula1Bold;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+
+  color: #f3f3f3;
+}
+
+.section-title::before {
+  content: "";
+
+  width: 4px;
+  height: 18px;
+
+  border-radius: 999px;
+
+  background: #35d07f;
+}
+
+.section-title.driving::before {
+  background: #3ca0ff;
+}
+
 .bar {
-  height: 8px;
-  background: #363636;
+  height: 10px;
+  background: #383838;
   border-radius: 999px;
   overflow: hidden;
-  flex: 1;
+}
+
+.bar-row {
+  margin: 14px 0;
+}
+
+.bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 6px;
+}
+
+.bar-label {
+  font-family: Formula1;
+  font-size: 15px;
+  color: #ececec;
+}
+
+.bar-value {
+  font-family: Formula1Bold;
+  font-size: 15px;
+  color: #ffffff;
 }
 
 .fill {
   height: 100%;
-  background: #28c76f;
+  border-radius: 999px;
 }
 
-.fill.secondary {
-  background: #2ea3ff;
+.fill.full-throttle {
+  background: linear-gradient(90deg, #29d66f, #43e48c);
 }
 
-.bar-row {
-  display: grid;
-  grid-template-columns: 130px 1fr 48px;
-  gap: 12px;
-  align-items: center;
-  margin: 8px 0;
+.fill.brake {
+  background: linear-gradient(90deg, #ff5757, #ff7676);
+}
+
+.fill.rolling {
+  background: linear-gradient(90deg, #8c8c8c, #b0b0b0);
+}
+
+.fill.partial {
+  background: linear-gradient(90deg, #ffb81c, #ffd95b);
+}
+
+.fill.lift {
+  background: linear-gradient(90deg, #38a9ff, #61c6ff);
+}
+
+.fill.cornering {
+  background: linear-gradient(90deg, #2e90ff, #55b3ff);
+}
+
+.fill.clipping {
+  background: linear-gradient(90deg, #9a5cff, #c18cff);
 }
 
 .footer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  margin-top: 18px;
-  text-align: center;
+  gap: 12px;
+  margin: 18px 0 26px;
+}
+
+.footer > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footer > div {
+  font-family: Formula1;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8c8c8c;
+}
+
+.footer strong {
+  margin-top: 6px;
+  font-family: Formula1Bold;
+  font-size: 18px;
+  color: white;
+}
+
+.metric-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+
+  margin-top: 6px;
+}
+
+.metric-value span {
+  font-family: Formula1;
+
+  font-size: 10px;
+
+  letter-spacing: 0.08em;
+
+  color: #9b9b9b;
+
+  text-transform: uppercase;
+}
+
+.footer strong {
+  margin-top: 0;
 }

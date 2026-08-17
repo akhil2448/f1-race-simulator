@@ -101,102 +101,173 @@
         <!-- TYRES -->
 
         <div class="tyres">
-          <span> Stint {{ card.stint.stint }} </span>
+          <div class="tyre-item">
+            <span class="tyre-label">STINT</span>
+            <span class="tyre-value">{{ card.stint.stint }}</span>
+          </div>
 
-          <span>
-            {{ card.stint.compound }}
-          </span>
+          <div class="tyre-item">
+            <span class="tyre-label">COMPOUND</span>
 
-          <span> Age {{ card.lap.tyreLife }} </span>
+            <span
+              class="compound tyre-value"
+              [style.color]="getCompoundColor(card.stint.compound)"
+            >
+              {{ card.stint.compound }}
+            </span>
+          </div>
+
+          <div class="tyre-item">
+            <span class="tyre-label">AGE</span>
+            <span class="tyre-value">{{ card.lap.tyreLife }} LAPS</span>
+          </div>
         </div>
+
+        <!-- SPEED SUMMARY -->
+
+        <div class="footer">
+          <div>
+            AVG SPEED
+
+            <div class="metric-value">
+              <strong>{{ card.lap.speed.average }}</strong>
+              <span>km/h</span>
+            </div>
+          </div>
+
+          <div>
+            TOP SPEED
+
+            <div class="metric-value">
+              <strong>{{ card.lap.speed.top }}</strong>
+              <span>km/h</span>
+            </div>
+          </div>
+
+          <div>
+            MIN SPEED
+
+            <div class="metric-value">
+              <strong>{{ card.lap.speed.minimum }}</strong>
+              <span>km/h</span>
+            </div>
+          </div>
+
+          <div>
+            GEAR SHIFTS
+
+            <div class="metric-value">
+              <strong>{{ card.lap.gearShifts }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
 
         <!-- LAP DISTRIBUTION -->
 
-        <div class="section-title">Lap Distribution</div>
+        <div class="section-header">
+          <div class="section-title">
+            Lap Time Distribution
 
+            <span class="section-subtitle"> (% of total lap time) </span>
+          </div>
+        </div>
         @for (
           item of [
-            ["Full Throttle", card.lap.distribution.fullThrottle],
+            {
+              label: "Full Throttle",
+              value: card.lap.distribution.fullThrottle,
+              css: "full-throttle",
+            },
 
-            ["Brake", card.lap.distribution.brake],
+            {
+              label: "Brake",
+              value: card.lap.distribution.brake,
+              css: "brake",
+            },
 
-            ["Rolling", card.lap.distribution.rolling],
+            {
+              label: "Rolling",
+              value: card.lap.distribution.rolling,
+              css: "rolling",
+            },
 
-            ["Partial Throttle", card.lap.distribution.partialThrottle],
+            {
+              label: "Partial Throttle",
+              value: card.lap.distribution.partialThrottle,
+              css: "partial",
+            },
 
-            ["Lift & Coast", card.lap.distribution.liftAndCoast],
+            {
+              label: "Lift & Coast",
+              value: card.lap.distribution.liftAndCoast,
+              css: "lift",
+            },
           ];
           track item
         ) {
           <div class="bar-row">
-            <span>{{ item[0] }}</span>
+            <div class="bar-header">
+              <span class="bar-label">{{ item.label }}</span>
 
-            <div class="bar">
-              <div class="fill" [style.width.%]="item[1]"></div>
+              <span class="bar-value"> {{ item.value }}% </span>
             </div>
 
-            <span>{{ item[1] }}%</span>
+            <div class="bar">
+              <div
+                class="fill"
+                [ngClass]="item.css"
+                [style.width.%]="item.value"
+              ></div>
+            </div>
           </div>
         }
 
         <!-- DRIVING CHARACTERISTICS -->
 
-        <div class="section-title">Driving Characteristics</div>
+        <div class="section-gap"></div>
+
+        <div class="section-header">
+          <div class="section-title driving">
+            Driving Characteristics
+
+            <span class="section-subtitle"> (% of total lap time) </span>
+          </div>
+        </div>
 
         @for (
           item of [
-            ["Cornering", card.lap.distribution.cornering],
+            {
+              label: "Cornering",
+              value: card.lap.distribution.cornering,
+              css: "cornering",
+            },
 
-            ["Clipping", card.lap.distribution.clipping],
+            {
+              label: "Clipping",
+              value: card.lap.distribution.clipping,
+              css: "clipping",
+            },
           ];
           track item
         ) {
           <div class="bar-row">
-            <span>{{ item[0] }}</span>
+            <div class="bar-header">
+              <span class="bar-label">{{ item.label }}</span>
 
-            <div class="bar">
-              <div class="fill secondary" [style.width.%]="item[1]"></div>
+              <span class="bar-value"> {{ item.value }}% </span>
             </div>
 
-            <span>{{ item[1] }}%</span>
+            <div class="bar">
+              <div
+                class="fill"
+                [ngClass]="item.css"
+                [style.width.%]="item.value"
+              ></div>
+            </div>
           </div>
         }
-
-        <!-- FOOTER -->
-
-        <div class="footer">
-          <div>
-            Avg
-
-            <strong>
-              {{ card.lap.speed.average }}
-            </strong>
-          </div>
-
-          <div>
-            Top
-
-            <strong>
-              {{ card.lap.speed.top }}
-            </strong>
-          </div>
-
-          <div>
-            Min
-
-            <strong>
-              {{ card.lap.speed.minimum }}
-            </strong>
-          </div>
-
-          <div>
-            Shifts
-
-            <strong>
-              {{ card.lap.gearShifts }}
-            </strong>
-          </div>
-        </div>
       </div>
     </div>
   }

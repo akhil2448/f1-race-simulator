@@ -96,4 +96,26 @@ export class LapDetailsComponent {
     img.src = 'assets/team-logos/plcholder.svg';
     img.className = 'plcholder';
   }
+
+  getCompoundColor(compound: string): string {
+    switch (compound.toUpperCase()) {
+      case 'SOFT':
+        return '#ff2b2b';
+
+      case 'MEDIUM':
+        return '#ffd400';
+
+      case 'HARD':
+        return '#dfdfdf';
+
+      case 'INTERMEDIATE':
+        return '#3cff00';
+
+      case 'WET':
+        return '#0066ff';
+
+      default:
+        return '#ffffff';
+    }
+  }
 }
