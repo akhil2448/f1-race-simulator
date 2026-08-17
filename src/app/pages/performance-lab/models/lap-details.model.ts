@@ -14,4 +14,6 @@ export interface SelectedLap {
   lap: RaceAnalyzerLap;
 
   pinned: boolean;
+
+  lineColor: string;
 }

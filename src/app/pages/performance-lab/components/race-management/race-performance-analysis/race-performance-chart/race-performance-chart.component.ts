@@ -44,6 +44,8 @@ interface ChartLapPoint {
     borderColor: string;
     borderWidth: number;
   };
+
+  lineColor: string;
 }
 
 interface DriverChartSeries {
@@ -366,6 +368,7 @@ export class RacePerformanceChartComponent {
       stint,
       lap: point.lap,
       pinned: false,
+      lineColor: point.lineColor,
     });
   }
 
@@ -504,6 +507,7 @@ export class RacePerformanceChartComponent {
             driverIndex: index,
             stint: stint.stint,
             compound: stint.compound,
+            lineColor: this.getDriverColor(index),
 
             itemStyle: {
               color: this.getTyreColor(stint.compound),

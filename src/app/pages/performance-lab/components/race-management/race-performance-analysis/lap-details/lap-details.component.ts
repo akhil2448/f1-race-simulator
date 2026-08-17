@@ -28,10 +28,6 @@ export class LapDetailsComponent {
   @Output()
   togglePin = new EventEmitter<string>();
 
-  getTeamLogo(team: string): string {
-    return `assets/team-logos/${team.toLowerCase().replace(/ /g, '-')}.svg`;
-  }
-
   formatLapTime(time: number | null): string {
     if (time == null) {
       return '--';
@@ -41,5 +37,51 @@ export class LapDetailsComponent {
     const seconds = time % 60;
 
     return `${minutes}:${seconds.toFixed(3).padStart(6, '0')}`;
+  }
+
+  getTeamLogo(team: string): string {
+    return 'assets/team-logos/' + this.normalizeTeamName(team) + '.svg';
+  }
+
+  getTeamLogoClass(team: string): string {
+    return this.normalizeTeamName(team);
+  }
+
+  // private normalizeTeamName(team: string): string {
+  //   return 'plcholder';
+  // }
+
+  private normalizeTeamName(team: string): string {
+    if (team === 'Red Bull Racing') return 'redbull';
+    if (team === 'Red Bull') return 'redbull';
+    if (team === 'Mercedes') return 'mercedes';
+    if (team === 'Ferrari') return 'ferrari';
+    if (team === 'McLaren') return 'mclaren';
+    if (team === 'Toro Rosso') return 'tororosso';
+    if (team === 'AlphaTauri') return 'alphatauri';
+    if (team === 'Alfa Romeo' || team === 'Alfa Romeo Racing')
+      return 'alfaromeo';
+    if (team === 'Alpine' || team === 'Alpine F1 Team') return 'alpine';
+    if (team === 'Aston Martin') return 'astonmartin';
+    if (team === 'Force India') return 'forceindia';
+    if (team === 'Racing Point') return 'racingpoint';
+    if (team === 'Williams') return 'williams';
+    if (team === 'RB' || team === 'Racing Bulls') return 'racingbulls';
+    if (team === 'Kick Sauber') return 'kicksauber';
+    if (team === 'Sauber') return 'alfaromeo';
+    if (team === 'Renault') return 'renault';
+    if (team === 'Haas F1 Team') return 'haas';
+    if (team === 'Haas') return 'haas';
+    if (team === 'Audi') return 'audi';
+    if (team === 'Cadillac') return 'cadillac';
+
+    return 'plcholder';
+  }
+
+  onTeamLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+
+    img.src = 'assets/team-logos/plcholder.svg';
+    img.className = 'plcholder';
   }
 }
