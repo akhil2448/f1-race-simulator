@@ -16,6 +16,42 @@
     (lapSelected)="onLapSelected($event)"
   ></app-race-performance-chart>
 
+  <!-- SELECTED LAP BAR -->
+  @if (selectedLaps.length > 0) {
+    <div class="selected-laps-bar">
+      <div class="selected-laps">
+        @for (lap of selectedLaps; track lap.id; let last = $last) {
+          <div class="selected-lap">
+            <span
+              class="driver-strip"
+              [style.background]="lap.lineColor"
+            ></span>
+
+            <span class="driver-code">
+              {{ lap.driver.driver }}
+            </span>
+
+            <span class="selected-lap-number">
+              LAP {{ lap.lap.lapNumber }}
+            </span>
+          </div>
+
+          @if (!last) {
+            <span class="selection-separator">×</span>
+          }
+        }
+      </div>
+
+      <button
+        type="button"
+        class="analyze-laps-button"
+        [disabled]="selectedLaps.length === 0"
+      >
+        Analyze lap(s)
+      </button>
+    </div>
+  }
+
   <app-lap-details
     *ngIf="selectedLaps.length"
     [selectedLaps]="selectedLaps"

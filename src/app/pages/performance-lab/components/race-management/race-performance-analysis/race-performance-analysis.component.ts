@@ -25,13 +25,17 @@ export class RacePerformanceAnalysisComponent {
     /*
      * Do not select the same lap twice.
      */
-    const alreadySelected = this.selectedLaps.some(
+    const selectedIndex = this.selectedLaps.findIndex(
       (lap) =>
         lap.driver.driver === selected.driver.driver &&
         lap.lap.lapNumber === selected.lap.lapNumber,
     );
 
-    if (alreadySelected) {
+    if (selectedIndex !== -1) {
+      this.selectedLaps = this.selectedLaps.filter(
+        (_, index) => index !== selectedIndex,
+      );
+
       return;
     }
 

@@ -59,6 +59,148 @@
   font-size: 15px;
 }
 
+/* =========================================================
+   SELECTED LAP BAR
+   ========================================================= */
+
+.selected-laps-bar {
+  width: 100%;
+  min-height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 14px;
+  margin-bottom: 18px;
+
+  padding: 8px 12px;
+
+  box-sizing: border-box;
+
+  background: #1f1f1f;
+  border: 1px solid #363636;
+  border-radius: 8px;
+}
+
+/* Selected laps on the left */
+
+.selected-laps {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+}
+
+/* Individual selected lap */
+
+.selected-lap {
+  display: flex;
+  align-items: center;
+
+  height: 36px;
+
+  font-family: Formula1;
+  font-size: 13px;
+  color: #e8e8e8;
+}
+
+/* Driver line color */
+
+.selected-lap .driver-strip {
+  width: 4px;
+  height: 28px;
+
+  margin-right: 10px;
+
+  border-radius: 999px;
+
+  flex-shrink: 0;
+}
+
+/* VER / HAM */
+
+.driver-code {
+  font-family: Formula1Bold;
+  font-size: 16px;
+
+  color: #ffffff;
+
+  margin-right: 8px;
+}
+
+/* LAP 47 */
+
+.selected-lap-number {
+  font-family: Formula1;
+
+  font-size: 15px;
+
+  color: #ddd9d9;
+
+  letter-spacing: 0.04em;
+}
+
+/* × between selections */
+
+.selection-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 16px;
+
+  font-family: Formula1;
+
+  font-size: 32px;
+
+  color: #666;
+}
+
+/* Analyze button */
+
+.analyze-laps-button {
+  height: 36px;
+
+  padding: 0 32px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+
+  background: #1b5fa7;
+
+  color: #ffffff;
+
+  font-family: Formula1Bold;
+  font-size: 16px;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+
+  flex-shrink: 0;
+}
+
+.analyze-laps-button:hover:not(:disabled) {
+  background: #4ae08e;
+  transform: translateY(-1px);
+}
+
+.analyze-laps-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.analyze-laps-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -66,6 +208,43 @@
 
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .selected-laps-bar {
+    min-height: auto;
+
+    gap: 12px;
+
+    padding: 8px 10px;
+  }
+
+  .selected-laps {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .selected-lap {
+    font-size: 12px;
+  }
+
+  .driver-code {
+    font-size: 12px;
+  }
+
+  .selected-lap-number {
+    font-size: 10px;
+  }
+
+  .selection-separator {
+    margin: 0 10px;
+  }
+
+  .analyze-laps-button {
+    padding: 0 12px;
+
+    font-size: 9px;
   }
 }
 

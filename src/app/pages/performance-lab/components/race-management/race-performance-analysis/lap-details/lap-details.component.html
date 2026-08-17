@@ -1,6 +1,6 @@
 <div class="cards">
-  @for (card of selectedLaps; track card) {
-    <div class="lap-card">
+  @for (card of selectedLaps; track card.id) {
+    <div #lapCard class="lap-card" [attr.data-lap-id]="card.id">
       <div class="lap-accent" [style.background]="card.lineColor"></div>
 
       <div class="lap-card-content">

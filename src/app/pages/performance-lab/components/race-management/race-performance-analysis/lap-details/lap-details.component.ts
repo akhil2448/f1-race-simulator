@@ -1,9 +1,15 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
+  AfterViewChecked,
   ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -20,9 +26,23 @@ import { RaceInfo } from '../../../../models/race-performance-analysis.model';
   styleUrls: ['./lap-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LapDetailsComponent {
+export class LapDetailsComponent implements OnChanges, AfterViewChecked {
   @Input({ required: true })
   selectedLaps: SelectedLap[] = [];
+
+  @ViewChildren('lapCard', { read: ElementRef })
+  private lapCards!: QueryList<ElementRef<HTMLElement>>;
+
+  private previousRects = new Map<string, DOMRect>();
+
+  private previousLapIds: string[] = [];
+
+  private previousLaps: SelectedLap[] = [];
+
+  private animationPending = false;
+
+  private animationType: 'queue' | 'replace-first' | 'replace-second' | 'none' =
+    'none';
 
   @Input({ required: true })
   race!: RaceInfo;
@@ -31,6 +51,220 @@ export class LapDetailsComponent {
   remove = new EventEmitter<string>();
   @Output()
   togglePin = new EventEmitter<string>();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['selectedLaps']) {
+      return;
+    }
+
+    const previous = this.previousLaps;
+    const current = this.selectedLaps;
+
+    /*
+     * Initial render.
+     */
+    if (previous.length === 0) {
+      this.previousLaps = [...current];
+      return;
+    }
+
+    /*
+     * No actual selection change.
+     */
+    if (
+      previous.length === current.length &&
+      previous.every((lap, index) => lap.id === current[index]?.id)
+    ) {
+      /*
+       * Pin/unpin only.
+       * We don't animate the card position.
+       */
+      this.previousLaps = [...current];
+      return;
+    }
+
+    /*
+     * We only need the FLIP animation when two cards
+     * already exist and two cards remain.
+     */
+    if (previous.length === 2 && current.length === 2) {
+      /*
+       * Capture the positions of the OLD cards before
+       * Angular updates the DOM.
+       */
+      this.captureCurrentPositions();
+
+      const oldFirst = previous[0];
+      const oldSecond = previous[1];
+
+      const newFirst = current[0];
+      const newSecond = current[1];
+
+      /*
+       * CASE 1
+       *
+       * [A, B] -> [B, C]
+       *
+       * Neither card was pinned.
+       *
+       * B moves from position 2 -> position 1.
+       */
+      if (
+        !oldFirst.pinned &&
+        !oldSecond.pinned &&
+        newFirst.id === oldSecond.id
+      ) {
+        this.animationType = 'queue';
+      } else if (
+        /*
+         * CASE 2
+         *
+         * [A(P), B] -> [A(P), C]
+         */
+        oldFirst.pinned &&
+        !oldSecond.pinned &&
+        newFirst.id === oldFirst.id
+      ) {
+        this.animationType = 'replace-second';
+      } else if (
+        /*
+         * CASE 3
+         *
+         * [A, B(P)] -> [C, B(P)]
+         */
+        !oldFirst.pinned &&
+        oldSecond.pinned &&
+        newSecond.id === oldSecond.id
+      ) {
+        this.animationType = 'replace-first';
+      } else {
+        this.animationType = 'none';
+      }
+
+      this.animationPending = true;
+    }
+
+    this.previousLaps = [...current];
+  }
+
+  private captureCurrentPositions(): void {
+    this.previousRects.clear();
+
+    this.lapCards?.forEach((cardElement) => {
+      const element = cardElement.nativeElement;
+      const id = element.dataset['lapId'];
+
+      if (id) {
+        this.previousRects.set(id, element.getBoundingClientRect());
+      }
+    });
+  }
+
+  ngAfterViewChecked(): void {
+    if (!this.animationPending) {
+      return;
+    }
+
+    this.animationPending = false;
+
+    /*
+     * Wait until Angular has finished rendering the new cards.
+     */
+    requestAnimationFrame(() => {
+      this.runFlipAnimation();
+    });
+  }
+
+  private runFlipAnimation(): void {
+    if (this.animationType === 'none') {
+      this.previousRects.clear();
+      return;
+    }
+
+    this.lapCards.forEach((cardElement) => {
+      const element = cardElement.nativeElement;
+      const id = element.dataset['lapId'];
+
+      if (!id) {
+        return;
+      }
+
+      const oldRect = this.previousRects.get(id);
+      const newRect = element.getBoundingClientRect();
+
+      /*
+       * Existing card.
+       *
+       * Calculate how far it moved.
+       */
+      if (oldRect) {
+        const deltaX = oldRect.left - newRect.left;
+        const deltaY = oldRect.top - newRect.top;
+
+        /*
+         * No movement.
+         */
+        if (deltaX === 0 && deltaY === 0) {
+          return;
+        }
+
+        /*
+         * FLIP:
+         *
+         * First -> Last -> Invert -> Play
+         */
+        element.animate(
+          [
+            {
+              transform: `translate(${deltaX}px, ${deltaY}px)`,
+            },
+            {
+              transform: 'translate(0, 0)',
+            },
+          ],
+          {
+            duration: 420,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both',
+          },
+        );
+
+        return;
+      }
+
+      /*
+       * New card.
+       *
+       * Fade it into its new position.
+       */
+      element.animate(
+        [
+          {
+            opacity: 0,
+            transform: this.isMobile()
+              ? 'translateY(24px)'
+              : 'translateX(24px)',
+          },
+          {
+            opacity: 1,
+            transform: 'translate(0, 0)',
+          },
+        ],
+        {
+          duration: 320,
+          easing: 'ease-out',
+          fill: 'both',
+        },
+      );
+    });
+
+    this.previousRects.clear();
+    this.animationType = 'none';
+  }
+
+  private isMobile(): boolean {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
 
   formatLapTime(time: number | null): string {
     if (time == null) {
