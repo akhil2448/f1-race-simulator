@@ -43,6 +43,8 @@ interface ChartLapPoint {
     color: string;
     borderColor: string;
     borderWidth: number;
+    shadowColor?: string;
+    shadowBlur?: number;
   };
 
   lineColor: string;
@@ -498,6 +500,9 @@ export class RacePerformanceChartComponent {
             continue;
           }
 
+          const highlightColor = this.getLapHighlightColor(lap, driver.driver);
+          const driverColor = this.getDriverColor(index);
+
           const point: ChartLapPoint = {
             value: [lap.lapNumber, lap.lapTime],
 
@@ -507,13 +512,25 @@ export class RacePerformanceChartComponent {
             driverIndex: index,
             stint: stint.stint,
             compound: stint.compound,
-            lineColor: this.getDriverColor(index),
+            lineColor: driverColor,
 
-            itemStyle: {
-              color: this.getTyreColor(stint.compound),
-              borderColor: this.getDriverColor(index),
-              borderWidth: 2,
-            },
+            itemStyle: highlightColor
+              ? {
+                  // PB / SB dot
+                  color: highlightColor,
+                  borderColor: highlightColor,
+                  borderWidth: 3,
+
+                  // Special glow for PB / SB
+                  shadowColor: highlightColor,
+                  shadowBlur: 14,
+                }
+              : {
+                  // Normal tyre dot
+                  color: this.getTyreColor(stint.compound),
+                  borderColor: driverColor,
+                  borderWidth: 2,
+                },
           };
 
           points.push(point);
@@ -553,6 +570,43 @@ export class RacePerformanceChartComponent {
     }
 
     return `#${driver.teamColor}`;
+  }
+
+  private getLapHighlightColor(
+    lap: RaceAnalyzerLap,
+    driver: string,
+  ): string | null {
+    /*
+     * SB always takes priority over PB.
+     *
+     * This is important because the session-best driver may not
+     * currently be selected on the chart.
+     *
+     * We therefore compare against the GLOBAL session-best
+     * driver + lap stored in race metadata.
+     */
+    if (this.isSessionBestLap(lap, driver)) {
+      return '#d77cff';
+    }
+
+    /*
+     * If this lap is a personal best, use PB green.
+     */
+    if (lap.personalBest) {
+      return '#35d07f';
+    }
+
+    /*
+     * Normal lap -> use tyre compound color.
+     */
+    return null;
+  }
+
+  private isSessionBestLap(lap: RaceAnalyzerLap, driver: string): boolean {
+    return (
+      driver === this.analysis.race.sessionFastestDriver &&
+      lap.lapNumber === this.analysis.race.sessionFastestLap
+    );
   }
 
   private getTyreColor(compound: string): string {
