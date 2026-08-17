@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
 import { SelectedLap } from '../../../../models/lap-details.model';
+import { RaceInfo } from '../../../../models/race-performance-analysis.model';
 
 @Component({
   selector: 'app-lap-details',
@@ -22,6 +23,9 @@ import { SelectedLap } from '../../../../models/lap-details.model';
 export class LapDetailsComponent {
   @Input({ required: true })
   selectedLaps: SelectedLap[] = [];
+
+  @Input({ required: true })
+  race!: RaceInfo;
 
   @Output()
   remove = new EventEmitter<string>();
@@ -49,6 +53,13 @@ export class LapDetailsComponent {
     }
 
     return time.toFixed(3);
+  }
+
+  isSessionBest(card: SelectedLap): boolean {
+    return (
+      card.driver.driver === this.race.sessionFastestDriver &&
+      card.lap.lapNumber === this.race.sessionFastestLap
+    );
   }
 
   getTeamLogo(team: string): string {

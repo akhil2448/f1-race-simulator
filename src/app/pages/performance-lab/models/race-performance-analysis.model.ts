@@ -13,6 +13,9 @@ export interface RaceInfo {
   location: string;
   circuit: string;
   totalLaps: number;
+  sessionFastest: number;
+  sessionFastestDriver: string;
+  sessionFastestLap: number;
 }
 
 export interface TrackMetadata {

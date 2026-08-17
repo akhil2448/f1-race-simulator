@@ -264,6 +264,28 @@
   align-items: baseline;
 }
 
+.lap-time-highlight {
+  display: flex;
+  align-items: center;
+
+  height: 42px;
+  padding: 3px;
+
+  border: 2px solid transparent;
+
+  background: #202020;
+
+  gap: 0;
+}
+
+.lap-time-highlight.pb {
+  border-color: #35d07f;
+}
+
+.lap-time-highlight.sb {
+  border-color: #ffd23f;
+}
+
 .lap-number {
   font-family: Formula1Bold;
   font-size: 22px;
@@ -271,9 +293,56 @@
 }
 
 .lap-time {
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+  padding: 0 10px;
+
   font-family: Formula1Bold;
   font-size: 28px;
   color: white;
+}
+
+.lap-best-badge {
+  height: 100%;
+  min-width: 28px;
+  padding: 0 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Formula1Bold;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
+.lap-time-highlight.pb .lap-best-badge {
+  color: #1f1f1f;
+  background: #35d07f;
+}
+
+.lap-time-highlight.sb .lap-best-badge {
+  color: #1f1f1f;
+  background: #ffd23f;
+}
+
+.lap-best-badge + .lap-time::before {
+  content: "";
+
+  width: 2px;
+  height: 28px;
+
+  margin-right: 8px;
+
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+
+  opacity: 0.75;
 }
 
 .sectors {

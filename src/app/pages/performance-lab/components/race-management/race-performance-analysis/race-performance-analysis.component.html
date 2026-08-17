@@ -19,6 +19,7 @@
   <app-lap-details
     *ngIf="selectedLaps.length"
     [selectedLaps]="selectedLaps"
+    [race]="analysis.race"
     (remove)="removeLap($event)"
     (togglePin)="togglePinned($event)"
   ></app-lap-details>

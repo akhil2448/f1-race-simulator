@@ -65,8 +65,20 @@
         <div class="lap-row">
           <div class="lap-number">Lap {{ card.lap.lapNumber }}</div>
 
-          <div class="lap-time">
-            {{ formatLapTime(card.lap.lapTime) }}
+          <div
+            class="lap-time-highlight"
+            [class.sb]="isSessionBest(card)"
+            [class.pb]="!isSessionBest(card) && card.lap.personalBest"
+          >
+            @if (isSessionBest(card)) {
+              <span class="lap-best-badge">SB</span>
+            } @else if (card.lap.personalBest) {
+              <span class="lap-best-badge">PB</span>
+            }
+
+            <span class="lap-time">
+              {{ formatLapTime(card.lap.lapTime) }}
+            </span>
           </div>
         </div>
 
