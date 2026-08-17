@@ -37,52 +37,64 @@
           </div>
 
           <div class="header-right">
-            <button
-              type="button"
-              class="icon-btn pin-btn"
-              [class.pinned]="card.pinned"
-              (click)="togglePin.emit(card.id)"
-              [title]="card.pinned ? 'Unpin lap' : 'Pin lap'"
-            >
-              <span class="material-symbols-outlined"> push_pin </span>
-            </button>
+            <div class="position">P{{ card.lap.position }}</div>
 
-            <button
-              type="button"
-              class="icon-btn close-btn"
-              (click)="remove.emit(card.id)"
-              title="Remove lap"
-            >
-              <span class="material-symbols-outlined"> close </span>
-            </button>
+            <div class="header-actions">
+              <button
+                type="button"
+                class="icon-btn pin-btn"
+                [class.pinned]="card.pinned"
+                (click)="togglePin.emit(card.id)"
+                [title]="card.pinned ? 'Unpin lap' : 'Pin lap'"
+              >
+                <span class="material-symbols-outlined"> push_pin </span>
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn close-btn"
+                (click)="remove.emit(card.id)"
+                title="Remove lap"
+              >
+                <span class="material-symbols-outlined"> close </span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- POSITION -->
+        <div class="lap-row">
+          <div class="lap-number">Lap {{ card.lap.lapNumber }}</div>
 
-        <div class="position">P{{ card.lap.position }}</div>
-
-        <!-- LAP -->
-
-        <div class="lap">
-          <span>Lap {{ card.lap.lapNumber }}</span>
-
-          <span>{{ formatLapTime(card.lap.lapTime) }}</span>
+          <div class="lap-time">
+            {{ formatLapTime(card.lap.lapTime) }}
+          </div>
         </div>
 
         <!-- SECTORS -->
 
         <div class="sectors">
-          <div class="sector s1">
-            {{ formatLapTime(card.lap.sector1) }}
+          <div class="sector sector1">
+            <span class="sector-label"> SECTOR 1 </span>
+
+            <span class="sector-time">
+              {{ formatSectorTime(card.lap.sector1) }}
+            </span>
           </div>
 
-          <div class="sector s2">
-            {{ formatLapTime(card.lap.sector2) }}
+          <div class="sector sector2">
+            <span class="sector-label"> SECTOR 2 </span>
+
+            <span class="sector-time">
+              {{ formatSectorTime(card.lap.sector2) }}
+            </span>
           </div>
 
-          <div class="sector s3">
-            {{ formatLapTime(card.lap.sector3) }}
+          <div class="sector sector3">
+            <span class="sector-label"> SECTOR 3 </span>
+
+            <span class="sector-time">
+              {{ formatSectorTime(card.lap.sector3) }}
+            </span>
           </div>
         </div>
 

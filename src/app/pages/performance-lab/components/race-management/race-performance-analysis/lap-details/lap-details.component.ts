@@ -39,6 +39,18 @@ export class LapDetailsComponent {
     return `${minutes}:${seconds.toFixed(3).padStart(6, '0')}`;
   }
 
+  formatSectorTime(time: number | null): string {
+    if (time == null) {
+      return '--.---';
+    }
+
+    if (time >= 60) {
+      return this.formatLapTime(time);
+    }
+
+    return time.toFixed(3);
+  }
+
   getTeamLogo(team: string): string {
     return 'assets/team-logos/' + this.normalizeTeamName(team) + '.svg';
   }
