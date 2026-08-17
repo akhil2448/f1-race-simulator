@@ -265,16 +265,104 @@ CONTENT
 
   line-height: 1.45;
 
-  color: #9f9f9f;
+  color: #c2c2c2;
 
   font-family: Formula1;
 
   font-style: italic;
-  opacity: 0.9;
+
+  opacity: 1;
+}
+
+.race-flow-note {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+.race-flow-note + .race-flow-note {
+  margin-top: 4px;
+}
+
+.flow-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 168px;
+
+  min-width: 168px;
+
+  box-sizing: border-box;
+
+  padding: 4px 9px;
+
+  border-radius: 4px;
+
+  font-family: Formula1Bold;
+
+  font-size: 10px;
+
+  letter-spacing: 0.02em;
+
+  white-space: nowrap;
+
+  color: #fff;
+
+  font-style: normal;
+}
+
+.flow-button-red {
+  background: #e11d2e;
+}
+
+.flow-button-blue {
+  background: #2468aa;
 }
 
 .mode-description + .mode-note {
   margin-top: 14px;
+}
+
+.mode-note + .mode-note {
+  margin-top: 4px;
+}
+
+.race-flow-note + .mode-note {
+  margin-top: 12px;
+}
+
+.hover-note {
+  margin-top: 12px;
+}
+
+.section-divider {
+  width: 100%;
+  height: 2px;
+
+  margin: 14px 0 12px;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 8%,
+    rgba(0, 220, 200, 0.35) 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(0, 220, 200, 0.35) 70%,
+    rgba(255, 255, 255, 0.08) 92%,
+    transparent 100%
+  );
+}
+
+.hover-note {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .selection-card {
