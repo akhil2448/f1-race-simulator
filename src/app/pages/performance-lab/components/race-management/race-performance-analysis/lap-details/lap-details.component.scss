@@ -664,3 +664,329 @@
 .footer strong {
   margin-top: 0;
 }
+
+/* =========================================================
+   TABLET / MOBILE
+   Stack cards vertically.
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  .cards {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .lap-card {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+  }
+}
+
+/* =========================================================
+   TABLET
+   Compact iPad / tablet cards
+   ========================================================= */
+
+@media (min-width: 901px) and (max-width: 1200px) {
+  .lap-card-content {
+    padding: 16px 18px 18px 22px;
+  }
+
+  .driver-number {
+    font-size: 28px;
+  }
+
+  .driver-name {
+    font-size: 22px;
+  }
+
+  .lap-number {
+    font-size: 20px;
+  }
+
+  .lap-time {
+    font-size: 26px;
+  }
+
+  .sector {
+    height: 34px;
+  }
+
+  .sector-label {
+    font-size: 11px;
+    min-width: 54px;
+    padding: 0 10px;
+  }
+
+  .sector-time {
+    font-size: 15px;
+    padding: 0 12px 0 10px;
+  }
+
+  .tyres {
+    gap: 20px;
+  }
+
+  .footer {
+    gap: 10px;
+  }
+}
+
+/* =========================================================
+   MOBILE LANDSCAPE
+   Keep cards stacked vertically, but reduce their footprint.
+   ========================================================= */
+
+@media (min-width: 568px) and (max-width: 900px) and (orientation: landscape) {
+  .cards {
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .lap-card {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    border-radius: 12px;
+  }
+
+  .lap-card-content {
+    padding: 12px 14px 14px 18px;
+  }
+
+  /* HEADER */
+
+  .header {
+    margin-bottom: 10px;
+  }
+
+  .header-left {
+    gap: 10px;
+  }
+
+  .driver-number {
+    min-width: 48px;
+    font-size: 24px;
+  }
+
+  .driver-strip {
+    width: 3px;
+    height: 36px;
+  }
+
+  .driver-info {
+    gap: 3px;
+  }
+
+  .driver-name {
+    font-size: 20px;
+  }
+
+  .team-info {
+    gap: 6px;
+  }
+
+  .team-name {
+    font-size: 13px;
+  }
+
+  .team-icon img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .header-right {
+    gap: 12px;
+  }
+
+  .position {
+    min-width: 58px;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 15px;
+  }
+
+  .header-actions {
+    gap: 6px;
+    padding-left: 10px;
+    margin-left: 4px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .icon-btn .material-symbols-outlined {
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    line-height: 19px;
+  }
+
+  /* LAP TIME */
+
+  .lap-row {
+    margin-top: 4px;
+  }
+
+  .lap-number {
+    font-size: 18px;
+  }
+
+  .lap-time-highlight {
+    height: 36px;
+    padding: 2px;
+  }
+
+  .lap-time {
+    padding: 0 8px;
+    font-size: 23px;
+  }
+
+  .lap-best-badge {
+    min-width: 24px;
+    padding: 0 6px;
+    font-size: 15px;
+  }
+
+  .lap-best-badge + .lap-time::before {
+    height: 23px;
+    margin-right: 6px;
+  }
+
+  /* SECTORS */
+
+  .sectors {
+    gap: 6px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .sector {
+    height: 32px;
+    padding: 2px;
+  }
+
+  .sector-label {
+    min-width: 52px;
+    padding: 0 9px;
+    font-size: 10px;
+    margin-right: 5px;
+  }
+
+  .sector-time {
+    padding: 0 10px 0 9px;
+    font-size: 13px;
+  }
+
+  .sector-time::before {
+    height: 17px;
+  }
+
+  /* TYRES */
+
+  .tyres {
+    gap: 16px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .tyre-item {
+    gap: 5px;
+  }
+
+  .tyre-label {
+    font-size: 10px;
+  }
+
+  .tyre-value {
+    font-size: 13px;
+  }
+
+  .compound {
+    font-size: 14px;
+  }
+
+  .tyres > * + *::before {
+    margin-right: 10px;
+  }
+
+  /* SPEED SUMMARY */
+
+  .footer {
+    gap: 8px;
+    margin: 12px 0 16px;
+  }
+
+  .footer > div {
+    padding: 7px 5px;
+    border-radius: 8px;
+    font-size: 9px;
+  }
+
+  .footer strong {
+    font-size: 15px;
+  }
+
+  .metric-value {
+    gap: 3px;
+    margin-top: 4px;
+  }
+
+  .metric-value span {
+    font-size: 8px;
+  }
+
+  /* SECTION HEADERS */
+
+  .section-divider {
+    margin: 12px 0;
+  }
+
+  .section-gap {
+    margin-top: 18px;
+  }
+
+  .section-header {
+    margin: 12px 0 10px;
+  }
+
+  .section-title {
+    gap: 7px;
+    margin: 12px 0 9px;
+    font-size: 14px;
+  }
+
+  .section-title::before {
+    width: 3px;
+    height: 15px;
+  }
+
+  .section-subtitle {
+    margin-left: 5px;
+    font-size: 9px;
+  }
+
+  /* DISTRIBUTION BARS */
+
+  .bar-row {
+    margin: 10px 0;
+  }
+
+  .bar-header {
+    margin-bottom: 4px;
+  }
+
+  .bar-label,
+  .bar-value {
+    font-size: 12px;
+  }
+
+  .bar {
+    height: 8px;
+  }
+}
