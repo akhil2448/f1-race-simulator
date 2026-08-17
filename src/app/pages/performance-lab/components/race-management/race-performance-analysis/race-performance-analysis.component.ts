@@ -22,6 +22,9 @@ export class RacePerformanceAnalysisComponent {
   selectedLaps: SelectedLap[] = [];
 
   onLapSelected(selected: SelectedLap): void {
+    /*
+     * Do not select the same lap twice.
+     */
     const alreadySelected = this.selectedLaps.some(
       (lap) =>
         lap.driver.driver === selected.driver.driver &&
@@ -32,12 +35,72 @@ export class RacePerformanceAnalysisComponent {
       return;
     }
 
+    /*
+     * First two selections are always allowed.
+     */
     if (this.selectedLaps.length < 2) {
       this.selectedLaps = [...this.selectedLaps, selected];
       return;
     }
 
-    this.selectedLaps = [this.selectedLaps[1], selected];
+    const firstLap = this.selectedLaps[0];
+    const secondLap = this.selectedLaps[1];
+
+    /*
+     * Both laps are pinned.
+     *
+     * We cannot make a new selection.
+     */
+    if (firstLap.pinned && secondLap.pinned) {
+      this.showPinnedSelectionMessage();
+      return;
+    }
+
+    /*
+     * Both laps are unpinned.
+     *
+     * FIFO behavior:
+     *
+     * [A, B] + C
+     *     ↓
+     * [B, C]
+     *
+     * The oldest selection is removed and the new
+     * selection becomes the second lap.
+     */
+    if (!firstLap.pinned && !secondLap.pinned) {
+      this.selectedLaps = [secondLap, selected];
+      return;
+    }
+
+    /*
+     * Only the first lap is pinned.
+     *
+     * [A(P), B] + C
+     *       ↓
+     * [A(P), C]
+     */
+    if (firstLap.pinned) {
+      this.selectedLaps = [firstLap, selected];
+      return;
+    }
+
+    /*
+     * Only the second lap is pinned.
+     *
+     * [A, B(P)] + C
+     *       ↓
+     * [C, B(P)]
+     */
+    if (secondLap.pinned) {
+      this.selectedLaps = [selected, secondLap];
+    }
+  }
+
+  private showPinnedSelectionMessage(): void {
+    console.warn(
+      'Both selected laps are pinned. Unpin one lap before selecting another.',
+    );
   }
 
   removeLap(id: string): void {
