@@ -287,7 +287,6 @@ export class RaceManagementComponent implements OnInit {
       return;
     }
 
-    this.view = 'performance';
     this.loadingPerformance = true;
 
     try {
@@ -315,8 +314,11 @@ export class RaceManagementComponent implements OnInit {
       }
 
       this.raceContext.save();
+
+      // Only switch views after the analysis was successfully loaded.
+      this.view = 'performance';
     } catch (e) {
-      console.error(e);
+      console.error('Failed to load race performance analysis:', e);
     } finally {
       this.loadingPerformance = false;
     }

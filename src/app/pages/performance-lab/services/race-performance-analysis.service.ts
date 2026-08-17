@@ -20,7 +20,7 @@ export class RacePerformanceAnalysisService {
   ): Observable<RaceAnalyzerResponse> {
     if (this.useMockData) {
       return this.http.get<RaceAnalyzerResponse>(
-        'assets/mock-data/race-analyzer/sample2.json',
+        'assets/mock-data/race-analyzer/sample.json',
       );
     }
 

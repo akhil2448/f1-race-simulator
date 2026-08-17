@@ -7,6 +7,8 @@ import {
   inject,
   OnChanges,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import {
   DualDriverRecommendationResponse,
@@ -54,6 +56,9 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
 
   @Input()
   loading = false;
+
+  @Output()
+  switchToPerformance = new EventEmitter<void>();
 
   @ViewChild('cardsContainer')
   cardsContainer!: ElementRef<HTMLDivElement>;
@@ -107,6 +112,10 @@ export class RaceManagementRecommendationsComponent implements OnChanges {
         behavior: 'smooth',
       });
     }
+  }
+
+  switchToRacePerformance(): void {
+    this.switchToPerformance.emit();
   }
 
   private buildDualRecommendationModel(): void {

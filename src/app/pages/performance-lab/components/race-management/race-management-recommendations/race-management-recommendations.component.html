@@ -10,33 +10,54 @@
   </div>
 } @else {
   <div class="recommendations">
-    @if (
-      (singleRecommendation && singleRecommendation.stints.length > 1) ||
-      (dualRecommendation && dualRecommendation.stintComparisons.length > 1)
-    ) {
-      <div class="stint-selector">
-        @for (
-          stint of singleRecommendation
-            ? singleRecommendation.stints
-            : dualRecommendation!.stintComparisons;
-          track $index;
-          let i = $index
-        ) {
+    <div class="stint-selector-row">
+      @if (
+        (singleRecommendation && singleRecommendation.stints.length > 1) ||
+        (dualRecommendation && dualRecommendation.stintComparisons.length > 1)
+      ) {
+        <div class="stint-selector">
+          @for (
+            stint of singleRecommendation
+              ? singleRecommendation.stints
+              : dualRecommendation!.stintComparisons;
+            track $index;
+            let i = $index
+          ) {
+            <button
+              class="stint-button"
+              [class.active]="i === selectedStintIndex"
+              (click)="selectStint(i)"
+            >
+              @if (singleRecommendation) {
+                STINT {{ $any(stint).stint }}
+              } @else {
+                STINT {{ $any(stint).driverAStint }} /
+                {{ $any(stint).driverBStint }}
+              }
+            </button>
+          }
+        </div>
+      }
+
+      @if (
+        (singleRecommendation && recommendationLaps.length > 0) ||
+        (dualRecommendation &&
+          currentDualStint &&
+          currentDualStint.cards.length > 0)
+      ) {
+        <div class="manual-analysis-inline">
+          <span>Want to select the laps yourself?</span>
+
           <button
-            class="stint-button"
-            [class.active]="i === selectedStintIndex"
-            (click)="selectStint(i)"
+            type="button"
+            class="manual-analysis-button"
+            (click)="switchToRacePerformance()"
           >
-            @if (singleRecommendation) {
-              STINT {{ $any(stint).stint }}
-            } @else {
-              STINT {{ $any(stint).driverAStint }} /
-              {{ $any(stint).driverBStint }}
-            }
+            Analyze Race Performance
           </button>
-        }
-      </div>
-    }
+        </div>
+      }
+    </div>
 
     <div class="carousel-wrapper">
       <button
@@ -66,6 +87,18 @@
               <div class="empty-subtitle">
                 PitWall couldn't find any representative laps that met the
                 quality threshold.
+              </div>
+
+              <div class="empty-manual-analysis">
+                <span>Want to choose the laps yourself?</span>
+
+                <button
+                  type="button"
+                  class="manual-analysis-button"
+                  (click)="switchToRacePerformance()"
+                >
+                  Analyze Race Performance
+                </button>
               </div>
             </div>
           } @else {
