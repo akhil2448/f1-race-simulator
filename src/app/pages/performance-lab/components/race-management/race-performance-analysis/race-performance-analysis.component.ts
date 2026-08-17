@@ -1,15 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  ViewChild,
+} from '@angular/core';
 
 import { RaceAnalyzerResponse } from '../../../models/race-performance-analysis.model';
 import { RacePerformanceChartComponent } from './race-performance-chart/race-performance-chart.component';
 import { LapDetailsComponent } from './lap-details/lap-details.component';
 import { SelectedLap } from '../../../models/lap-details.model';
+import { PinnedSelectionModalComponent } from './pinned-selection-modal/pinned-selection-modal.component';
 
 @Component({
   selector: 'app-race-performance-analysis',
   standalone: true,
-  imports: [CommonModule, RacePerformanceChartComponent, LapDetailsComponent],
+  imports: [
+    CommonModule,
+    RacePerformanceChartComponent,
+    LapDetailsComponent,
+    PinnedSelectionModalComponent,
+  ],
   templateUrl: './race-performance-analysis.component.html',
   styleUrl: './race-performance-analysis.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +30,12 @@ export class RacePerformanceAnalysisComponent {
 
   @Input() analysis: RaceAnalyzerResponse | null = null;
 
+  @ViewChild(RacePerformanceChartComponent)
+  performanceChart?: RacePerformanceChartComponent;
+
   selectedLaps: SelectedLap[] = [];
+
+  showPinnedSelectionModal = false;
 
   onLapSelected(selected: SelectedLap): void {
     /*
@@ -32,10 +48,6 @@ export class RacePerformanceAnalysisComponent {
     );
 
     if (selectedIndex !== -1) {
-      this.selectedLaps = this.selectedLaps.filter(
-        (_, index) => index !== selectedIndex,
-      );
-
       return;
     }
 
@@ -56,7 +68,14 @@ export class RacePerformanceAnalysisComponent {
      * We cannot make a new selection.
      */
     if (firstLap.pinned && secondLap.pinned) {
-      this.showPinnedSelectionMessage();
+      this.performanceChart?.hideTooltip();
+
+      this.showPinnedSelectionModal = true;
+
+      requestAnimationFrame(() => {
+        this.performanceChart?.hideTooltip();
+      });
+
       return;
     }
 
@@ -101,11 +120,11 @@ export class RacePerformanceAnalysisComponent {
     }
   }
 
-  private showPinnedSelectionMessage(): void {
-    console.warn(
-      'Both selected laps are pinned. Unpin one lap before selecting another.',
-    );
-  }
+  // private showPinnedSelectionMessage(): void {
+  //   console.warn(
+  //     'Both selected laps are pinned. Unpin one lap before selecting another.',
+  //   );
+  // }
 
   removeLap(id: string): void {
     this.selectedLaps = this.selectedLaps.filter((lap) => lap.id !== id);
@@ -120,5 +139,9 @@ export class RacePerformanceAnalysisComponent {
           }
         : lap,
     );
+  }
+
+  closePinnedSelectionModal(): void {
+    this.showPinnedSelectionModal = false;
   }
 }

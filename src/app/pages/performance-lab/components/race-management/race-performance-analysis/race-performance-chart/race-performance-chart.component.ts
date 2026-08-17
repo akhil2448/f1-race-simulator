@@ -328,6 +328,12 @@ export class RacePerformanceChartComponent {
     chart.getZr().on('click', this.onCanvasClick.bind(this));
   }
 
+  hideTooltip(): void {
+    this.chart?.dispatchAction({
+      type: 'hideTip',
+    });
+  }
+
   private onSeriesClick(params: any): void {
     //
     // Ignore clicks on symbols.

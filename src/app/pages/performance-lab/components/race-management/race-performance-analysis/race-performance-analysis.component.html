@@ -12,6 +12,7 @@
 
 @if (!loading && analysis) {
   <app-race-performance-chart
+    #performanceChart
     [analysisData]="analysis"
     (lapSelected)="onLapSelected($event)"
   ></app-race-performance-chart>
@@ -59,4 +60,10 @@
     (remove)="removeLap($event)"
     (togglePin)="togglePinned($event)"
   ></app-lap-details>
+}
+
+@if (showPinnedSelectionModal) {
+  <app-pinned-selection-modal
+    (close)="closePinnedSelectionModal()"
+  ></app-pinned-selection-modal>
 }

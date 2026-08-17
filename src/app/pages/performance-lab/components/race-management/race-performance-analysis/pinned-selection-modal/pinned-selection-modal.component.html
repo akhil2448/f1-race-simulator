@@ -1,0 +1,21 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pinned-selection-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-icon">
+      <span class="material-symbols-outlined"> push_pin </span>
+    </div>
+
+    <div class="modal-content">
+      <h2 id="pinned-selection-title">TWO LAPS ARE PINNED</h2>
+
+      <p>Unpin one of the selected laps before selecting another lap.</p>
+    </div>
+
+    <button type="button" class="modal-button" (click)="onClose()">OK</button>
+  </div>
+</div>
