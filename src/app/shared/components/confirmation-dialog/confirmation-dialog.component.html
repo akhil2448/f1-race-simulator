@@ -10,11 +10,15 @@
       </div>
 
       <div class="dialog-actions">
-        <app-button variant="secondary" (clicked)="cancelled.emit()">
+        <app-button
+          class="confirmation-button"
+          variant="secondary"
+          (clicked)="cancelled.emit()"
+        >
           {{ cancelText }}
         </app-button>
 
-        <app-button (clicked)="confirmed.emit()">
+        <app-button class="confirmation-button" (clicked)="confirmed.emit()">
           {{ confirmText }}
         </app-button>
       </div>

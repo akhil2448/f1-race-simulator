@@ -155,6 +155,69 @@
   transform: translateY(1px);
 }
 
+/* ==========================================================
+   CONFIRMATION DIALOG BUTTONS
+   ========================================================== */
+
+:host(.confirmation-button) {
+  display: block;
+}
+
+:host(.confirmation-button) .app-button {
+  min-width: 180px;
+  height: 52px;
+
+  padding: 0 20px;
+
+  font-size: 18px;
+
+  border-width: 2px;
+
+  line-height: 1.15;
+}
+
+/* ==========================================================
+   CONFIRMATION DIALOG BUTTONS
+   MOBILE PORTRAIT
+   ========================================================== */
+
+@media (max-width: 599px) and (orientation: portrait) {
+  :host(.confirmation-button) .app-button {
+    min-width: 130px;
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 12px;
+
+    font-size: 14px;
+
+    border-width: 2px;
+
+    line-height: 1.1;
+  }
+}
+
+/* ==========================================================
+   CONFIRMATION DIALOG BUTTONS
+   TABLET PORTRAIT
+   ========================================================== */
+
+@media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
+  :host(.confirmation-button) .app-button {
+    min-width: 150px;
+    height: 48px;
+
+    padding: 0 16px;
+
+    font-size: 16px;
+
+    border-width: 2px;
+
+    line-height: 1.1;
+  }
+}
+
 @media (max-width: 1024px) and (orientation: landscape) {
   .app-button.xs {
     min-width: 52px;
@@ -186,6 +249,19 @@
     padding: 0 6px;
 
     font-size: 8px;
+  }
+
+  :host(.confirmation-button) .app-button {
+    min-width: 130px;
+    height: 38px;
+
+    padding: 0 12px;
+
+    font-size: 12px;
+
+    border-width: 2px;
+
+    line-height: 1.05;
   }
 }
 
