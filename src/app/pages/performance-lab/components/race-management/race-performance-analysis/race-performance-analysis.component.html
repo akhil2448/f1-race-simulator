@@ -47,6 +47,7 @@
         type="button"
         class="analyze-laps-button"
         [disabled]="selectedLaps.length === 0"
+        (click)="analyzeSelectedLaps()"
       >
         Analyze lap(s)
       </button>
