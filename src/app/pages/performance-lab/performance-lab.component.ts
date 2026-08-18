@@ -22,8 +22,6 @@ type AnalysisMode = 'ultimate' | 'race';
   styleUrl: './performance-lab.component.scss',
 })
 export class PerformanceLabComponent {
-  mode: AnalysisMode = 'ultimate';
-
   private readonly overlay = inject(LoadingOverlayService);
   private readonly raceContext = inject(RaceContextService);
 
@@ -34,8 +32,13 @@ export class PerformanceLabComponent {
   readonly selectedYear = this.raceContext.selectedYear!;
   readonly selectedRace = this.raceContext.selectedRace!;
 
+  mode: AnalysisMode = this.raceContext.performanceLabMode;
+
   toggleMode(mode: AnalysisMode): void {
     this.mode = mode;
+
+    this.raceContext.performanceLabMode = mode;
+    this.raceContext.save();
   }
 
   async goBack(): Promise<void> {

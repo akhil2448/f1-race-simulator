@@ -6,6 +6,8 @@ import {
   OnDestroy,
   DestroyRef,
 } from '@angular/core';
+import { Location } from '@angular/common';
+
 import { RaceContextService } from '../../core/services/race-context.service';
 import { RaceComparisonResponse } from '../../comparison/models/race-comparison.model';
 import { ComparisonTrackMapComponent } from '../../comparison/components/comparison-track-map/comparison-track-map.component';
@@ -41,6 +43,7 @@ export class RaceComparisonPageComponent implements OnInit, OnDestroy {
   private readonly raceContext = inject(RaceContextService);
   private readonly overlay = inject(LoadingOverlayService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private themeService = inject(ComparisonThemeService);
   private destroyRef = inject(DestroyRef);
 
@@ -306,7 +309,7 @@ export class RaceComparisonPageComponent implements OnInit, OnDestroy {
 
       this.raceContext.navigationStep = 'performance-lab';
 
-      await this.router.navigate(['/performance-lab']);
+      this.location.back();
     } finally {
       this.overlay.hide();
     }

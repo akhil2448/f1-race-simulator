@@ -41,6 +41,11 @@ export class RaceContextService {
 
   selectedSession: 'Q1' | 'Q2' | 'Q3' = 'Q3';
 
+  performanceLabMode: 'ultimate' | 'race' = 'ultimate';
+
+  raceManagementView: 'selection' | 'recommendations' | 'performance' =
+    'selection';
+
   selectedDrivers: DriverSelectionDriver[] = [];
   raceManagementSelectedDriverCodes: string[] = [];
 
@@ -70,6 +75,8 @@ export class RaceContextService {
         singleDriverRecommendation: this.singleDriverRecommendation,
         dualDriverRecommendation: this.dualDriverRecommendation,
         racePerformanceAnalysis: this.racePerformanceAnalysis,
+        performanceLabMode: this.performanceLabMode,
+        raceManagementView: this.raceManagementView,
 
         navigationStep: this.navigationStep,
       }),
@@ -98,6 +105,8 @@ export class RaceContextService {
     this.singleDriverRecommendation = data.singleDriverRecommendation ?? null;
     this.dualDriverRecommendation = data.dualDriverRecommendation ?? null;
     this.racePerformanceAnalysis = data.racePerformanceAnalysis ?? null;
+    this.performanceLabMode = data.performanceLabMode ?? 'ultimate';
+    this.raceManagementView = data.raceManagementView ?? 'selection';
 
     this.navigationStep = data.navigationStep;
   }
@@ -113,6 +122,8 @@ export class RaceContextService {
     this.dualDriverRecommendation = null;
     this.racePerformanceAnalysis = null;
     this.selectedSession = 'Q3';
+    this.performanceLabMode = 'ultimate';
+    this.raceManagementView = 'selection';
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
     this.navigationStep = 'home';
@@ -129,6 +140,9 @@ export class RaceContextService {
     this.selectedDrivers = [];
     this.raceManagementSelectedDriverCodes = [];
     this.selectedSession = 'Q3';
+    this.raceManagementView = 'selection';
+    this.performanceLabMode = 'ultimate';
+
     this.save();
   }
 }

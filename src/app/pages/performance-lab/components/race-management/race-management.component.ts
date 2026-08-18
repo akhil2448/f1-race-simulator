@@ -46,7 +46,8 @@ export class RaceManagementComponent implements OnInit {
   loadingRecommendations = false;
   loadingPerformance = false;
 
-  view: 'selection' | 'recommendations' | 'performance' = 'selection';
+  view: 'selection' | 'recommendations' | 'performance' =
+    this.raceContext.raceManagementView;
 
   response: RaceManagementDriversResponse | null = null;
 
@@ -246,6 +247,10 @@ export class RaceManagementComponent implements OnInit {
     }
 
     this.view = 'recommendations';
+
+    this.raceContext.raceManagementView = 'recommendations';
+    this.raceContext.save();
+
     this.loadingRecommendations = true;
 
     try {
@@ -314,10 +319,11 @@ export class RaceManagementComponent implements OnInit {
         this.raceContext.racePerformanceAnalysis = response;
       }
 
-      this.raceContext.save();
-
-      // Only switch views after the analysis was successfully loaded.
       this.view = 'performance';
+
+      this.raceContext.raceManagementView = 'performance';
+
+      this.raceContext.save();
     } catch (e) {
       console.error('Failed to load race performance analysis:', e);
     } finally {
@@ -327,6 +333,8 @@ export class RaceManagementComponent implements OnInit {
 
   changeSelection(): void {
     this.view = 'selection';
+
+    this.raceContext.raceManagementView = 'selection';
 
     this.raceContext.raceManagementSelectedDriverCodes = [];
 
