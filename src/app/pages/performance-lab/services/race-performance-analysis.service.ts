@@ -11,7 +11,7 @@ import { RaceAnalyzerResponse } from '../models/race-performance-analysis.model'
 export class RacePerformanceAnalysisService {
   private readonly http = inject(HttpClient);
 
-  private readonly useMockData = true;
+  private readonly useMockData = false;
 
   getSingleDriverAnalysis(
     year: number,

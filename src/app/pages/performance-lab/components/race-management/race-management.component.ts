@@ -287,6 +287,7 @@ export class RaceManagementComponent implements OnInit {
       return;
     }
 
+    this.view = 'performance';
     this.loadingPerformance = true;
 
     try {

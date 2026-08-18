@@ -137,4 +137,31 @@
     width: 12px;
     height: 12px;
   }
+
+  /* ---------- COMPACT SUPPORT BUTTON ---------- */
+
+  .support-button.compact {
+    min-width: 100px;
+
+    height: 26px;
+
+    padding: 0 9px;
+
+    gap: 5px;
+
+    border-width: 1px;
+  }
+
+  .support-button.compact:hover {
+    border-width: 1.5px;
+  }
+
+  .support-button.compact .button-text {
+    font-size: 0.68rem;
+  }
+
+  .support-button.compact .icon-wrapper {
+    width: 14px;
+    height: 14px;
+  }
 }
