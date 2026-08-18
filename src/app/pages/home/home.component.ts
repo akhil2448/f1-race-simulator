@@ -123,12 +123,21 @@ export class HomeComponent implements AfterViewInit {
 
     {
       title: 'Performance Lab',
-      description: 'Ultimate Pace & Race Managament',
+      description: 'Ultimate Pace & Race Management',
       extraNote: '* Ultimate Pace - Qualifying lap analysis.',
-      extraNote2: '* Race Management - AI-powered representative race laps.',
+      extraNote2: `* Race Management - Explore recommended clean race laps (or) choose your own laps.`,
       type: 'video',
       mediaUrl: 'assets/features/performance-lab.mp4',
     },
+
+    {
+      title: 'Analyze Race Performance',
+      description: 'Choose and compare your own race laps',
+      extraNote: '* Select up to two laps from the race performance chart.',
+      type: 'video',
+      mediaUrl: 'assets/features/analyze-race-performance.mp4',
+    },
+
     {
       title: 'Compare Driving Styles',
       description:
