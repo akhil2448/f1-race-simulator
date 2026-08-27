@@ -155,20 +155,20 @@ export class HomeComponent implements AfterViewInit {
   visibleSections = new Set<number>();
 
   ngAfterViewInit(): void {
-    window.addEventListener(
-      'wheel',
-      () => {
-        document.querySelectorAll('video').forEach((video) => {
-          const v = video as HTMLVideoElement;
+    // window.addEventListener(
+    //   'wheel',
+    //   () => {
+    //     document.querySelectorAll('video').forEach((video) => {
+    //       const v = video as HTMLVideoElement;
 
-          v.muted = true;
-          v.play()
-            .then(() => v.pause())
-            .catch(() => {});
-        });
-      },
-      { once: true },
-    );
+    //       v.muted = true;
+    //       v.play()
+    //         .then(() => v.pause())
+    //         .catch(() => {});
+    //     });
+    //   },
+    //   { once: true },
+    // );
 
     const observer = new IntersectionObserver(
       (entries) => {
