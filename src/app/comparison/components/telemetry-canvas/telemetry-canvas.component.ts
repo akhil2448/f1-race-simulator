@@ -9,7 +9,14 @@ import {
   inject,
 } from '@angular/core';
 
-import * as d3 from 'd3';
+import { select, pointer } from 'd3-selection';
+import { max, min, range } from 'd3-array';
+import { scaleLinear } from 'd3-scale';
+import { axisLeft, axisRight, axisBottom } from 'd3-axis';
+import { line, area, curveLinear } from 'd3-shape';
+
+import type { ScaleLinear } from 'd3-scale';
+import type { Selection } from 'd3-selection';
 
 import { LapPlaybackService } from '../../services/lap-playback.service';
 import { DriverTheme } from '../../models/comparison-theme.model';
@@ -94,153 +101,118 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     },
   };
 
-  private speedGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private rpmGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private throttleGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private brakeGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
-  private deltaGroup!: d3.Selection<SVGGElement, unknown, null, undefined>;
+  private speedGroup!: Selection<SVGGElement, unknown, null, undefined>;
+  private rpmGroup!: Selection<SVGGElement, unknown, null, undefined>;
+  private throttleGroup!: Selection<SVGGElement, unknown, null, undefined>;
+  private brakeGroup!: Selection<SVGGElement, unknown, null, undefined>;
+  private deltaGroup!: Selection<SVGGElement, unknown, null, undefined>;
 
-  private speedMarkerA!: d3.Selection<
+  private speedMarkerA!: Selection<SVGCircleElement, unknown, null, undefined>;
+  private speedMarkerB?: Selection<SVGCircleElement, unknown, null, undefined>;
+
+  private deltaMarkerA!: Selection<SVGCircleElement, unknown, null, undefined>;
+
+  private deltaMarkerB?: Selection<SVGCircleElement, unknown, null, undefined>;
+
+  private rpmMarkerA!: Selection<SVGCircleElement, unknown, null, undefined>;
+  private rpmMarkerB?: Selection<SVGCircleElement, unknown, null, undefined>;
+
+  private throttleMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
-  private speedMarkerB?: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
-
-  private deltaMarkerA!: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
-
-  private deltaMarkerB?: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
-
-  private rpmMarkerA!: d3.Selection<SVGCircleElement, unknown, null, undefined>;
-  private rpmMarkerB?: d3.Selection<SVGCircleElement, unknown, null, undefined>;
-
-  private throttleMarkerA!: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
-  private throttleMarkerB?: d3.Selection<
+  private throttleMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private brakeMarkerA!: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
-  private brakeMarkerB?: d3.Selection<
-    SVGCircleElement,
-    unknown,
-    null,
-    undefined
-  >;
+  private brakeMarkerA!: Selection<SVGCircleElement, unknown, null, undefined>;
+  private brakeMarkerB?: Selection<SVGCircleElement, unknown, null, undefined>;
 
-  private playbackCursor!: d3.Selection<
-    SVGLineElement,
-    unknown,
-    null,
-    undefined
-  >;
+  private playbackCursor!: Selection<SVGLineElement, unknown, null, undefined>;
 
-  private hoverCursor!: d3.Selection<SVGLineElement, unknown, null, undefined>;
+  private hoverCursor!: Selection<SVGLineElement, unknown, null, undefined>;
 
-  private hoverSpeedMarkerA!: d3.Selection<
+  private hoverSpeedMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverSpeedMarkerB?: d3.Selection<
+  private hoverSpeedMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverDeltaMarkerA!: d3.Selection<
+  private hoverDeltaMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverDeltaMarkerB?: d3.Selection<
+  private hoverDeltaMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverRpmMarkerA!: d3.Selection<
+  private hoverRpmMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverRpmMarkerB?: d3.Selection<
+  private hoverRpmMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverThrottleMarkerA!: d3.Selection<
+  private hoverThrottleMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverThrottleMarkerB?: d3.Selection<
+  private hoverThrottleMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverBrakeMarkerA!: d3.Selection<
+  private hoverBrakeMarkerA!: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private hoverBrakeMarkerB?: d3.Selection<
+  private hoverBrakeMarkerB?: Selection<
     SVGCircleElement,
     unknown,
     null,
     undefined
   >;
 
-  private xScale!: d3.ScaleLinear<number, number>;
-  private speedYScale!: d3.ScaleLinear<number, number>;
-  private deltaYScale!: d3.ScaleLinear<number, number>;
-  private rpmYScale!: d3.ScaleLinear<number, number>;
-  private throttleYScale!: d3.ScaleLinear<number, number>;
-  private brakeYScale!: d3.ScaleLinear<number, number>;
+  private xScale!: ScaleLinear<number, number>;
+  private speedYScale!: ScaleLinear<number, number>;
+  private deltaYScale!: ScaleLinear<number, number>;
+  private rpmYScale!: ScaleLinear<number, number>;
+  private throttleYScale!: ScaleLinear<number, number>;
+  private brakeYScale!: ScaleLinear<number, number>;
 
   private chartMargin = {
     top: 15,
@@ -454,7 +426,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const SPEED_TICK = 25;
 
-    const svg = d3.select(this.chartSvgRef.nativeElement);
+    const svg = select(this.chartSvgRef.nativeElement);
 
     svg.selectAll('*').remove();
 
@@ -506,7 +478,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     svg
       .on('mousemove', (event: MouseEvent) => {
-        const [mouseX, mouseY] = d3.pointer(event);
+        const [mouseX, mouseY] = pointer(event);
 
         const chartX = mouseX - margin.left;
 
@@ -515,7 +487,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .on('touchstart', (event: TouchEvent) => {
         event.preventDefault();
 
-        const [touchX] = d3.pointer(
+        const [touchX] = pointer(
           event.touches[0],
           this.chartSvgRef.nativeElement,
         );
@@ -527,7 +499,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .on('touchmove', (event: TouchEvent) => {
         event.preventDefault();
 
-        const [touchX] = d3.pointer(
+        const [touchX] = pointer(
           event.touches[0],
           this.chartSvgRef.nativeElement,
         );
@@ -721,21 +693,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     const maxDistanceA =
-      d3.max(this.driverA.telemetry, (d: any) => Number(d.d)) ?? 0;
+      max(this.driverA.telemetry, (d: any) => Number(d.d)) ?? 0;
 
     const maxDistanceB =
-      d3.max(this.driverB?.telemetry ?? [], (d: any) => Number(d.d)) ?? 0;
+      max(this.driverB?.telemetry ?? [], (d: any) => Number(d.d)) ?? 0;
 
     const maxDistance = Math.max(maxDistanceA, maxDistanceB);
 
-    this.xScale = d3
-      .scaleLinear()
-      .domain([0, maxDistance])
-      .range([0, chartWidth]);
+    this.xScale = scaleLinear().domain([0, maxDistance]).range([0, chartWidth]);
 
-    const xGrid = d3
-      .axisBottom(this.xScale)
-      .tickValues(d3.range(0, maxDistance + 1, 500))
+    const xGrid = axisBottom(this.xScale)
+      .tickValues(range(0, maxDistance + 1, 500))
       .tickSize(chartHeight)
       .tickFormat(() => '');
 
@@ -744,17 +712,17 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
 
     const minSpeedA =
-      d3.min(this.driverA.telemetry, (d: any) => Number(d.speed)) ?? 0;
+      min(this.driverA.telemetry, (d: any) => Number(d.speed)) ?? 0;
 
     const minSpeedB =
-      d3.min(this.driverB?.telemetry ?? [], (d: any) => Number(d.speed)) ??
+      min(this.driverB?.telemetry ?? [], (d: any) => Number(d.speed)) ??
       minSpeedA;
 
     const maxSpeedA =
-      d3.max(this.driverA.telemetry, (d: any) => Number(d.speed)) ?? 0;
+      max(this.driverA.telemetry, (d: any) => Number(d.speed)) ?? 0;
 
     const maxSpeedB =
-      d3.max(this.driverB?.telemetry ?? [], (d: any) => Number(d.speed)) ??
+      max(this.driverB?.telemetry ?? [], (d: any) => Number(d.speed)) ??
       maxSpeedA;
 
     const minSpeed =
@@ -766,8 +734,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     //
     // Speed Y scale
     //
-    this.speedYScale = d3
-      .scaleLinear()
+    this.speedYScale = scaleLinear()
       .domain([minSpeed, maxSpeed])
       .range([speedHeight - PLOT_PADDING, PLOT_PADDING]);
 
@@ -775,10 +742,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Delta Y scale
     //
 
-    const maxAbsDelta = d3.max(deltaSeries, (d) => Math.abs(d.delta)) ?? 0.01;
+    const maxAbsDelta = max(deltaSeries, (d) => Math.abs(d.delta)) ?? 0.01;
 
-    this.deltaYScale = d3
-      .scaleLinear()
+    this.deltaYScale = scaleLinear()
       .domain([-maxAbsDelta, maxAbsDelta])
       .range([deltaHeight - PLOT_PADDING, PLOT_PADDING]);
 
@@ -786,18 +752,15 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // RPM Y scale
     //
 
-    const maxRpmA =
-      d3.max(this.driverA.telemetry, (d: any) => Number(d.rpm)) ?? 0;
+    const maxRpmA = max(this.driverA.telemetry, (d: any) => Number(d.rpm)) ?? 0;
 
     const maxRpmB =
-      d3.max(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ?? 0;
+      max(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ?? 0;
 
-    const minRpmA =
-      d3.min(this.driverA.telemetry, (d: any) => Number(d.rpm)) ?? 0;
+    const minRpmA = min(this.driverA.telemetry, (d: any) => Number(d.rpm)) ?? 0;
 
     const minRpmB =
-      d3.min(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ??
-      minRpmA;
+      min(this.driverB?.telemetry ?? [], (d: any) => Number(d.rpm)) ?? minRpmA;
 
     const minRpm = Math.floor(Math.min(minRpmA, minRpmB) / 1000) * 1000;
 
@@ -805,10 +768,9 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
 
     const rpmTick = 2000;
 
-    const rpmTicks = d3.range(minRpm, maxRpm + rpmTick, rpmTick);
+    const rpmTicks = range(minRpm, maxRpm + rpmTick, rpmTick);
 
-    this.rpmYScale = d3
-      .scaleLinear()
+    this.rpmYScale = scaleLinear()
       .domain([minRpm, maxRpm])
       .range([rpmHeight - PLOT_PADDING, PLOT_PADDING]);
 
@@ -816,13 +778,11 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle Y scale
     //
 
-    this.throttleYScale = d3
-      .scaleLinear()
+    this.throttleYScale = scaleLinear()
       .domain([0, 100])
       .range([throttleSectionHeight - PLOT_PADDING, PLOT_PADDING]);
 
-    this.brakeYScale = d3
-      .scaleLinear()
+    this.brakeYScale = scaleLinear()
       .domain([0, 100])
       .range([brakeSectionHeight - PLOT_PADDING, PLOT_PADDING]);
 
@@ -834,8 +794,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'grid')
       .call(
-        d3
-          .axisLeft(this.speedYScale)
+        axisLeft(this.speedYScale)
           .ticks(6)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -848,7 +807,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     this.speedGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(this.speedYScale).ticks(6));
+      .call(axisLeft(this.speedYScale).ticks(6));
 
     this.speedGroup
       .append('text')
@@ -863,8 +822,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'y-axis')
       .call(
-        d3
-          .axisRight(this.deltaYScale)
+        axisRight(this.deltaYScale)
           .tickValues([-maxAbsDelta, 0, maxAbsDelta])
           .tickFormat((d) => {
             const value = Number(d);
@@ -891,8 +849,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'grid')
       .call(
-        d3
-          .axisLeft(this.rpmYScale)
+        axisLeft(this.rpmYScale)
           .tickValues(rpmTicks)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -906,8 +863,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'grid')
       .call(
-        d3
-          .axisLeft(this.throttleYScale)
+        axisLeft(this.throttleYScale)
           .ticks(5)
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -921,8 +877,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'grid')
       .call(
-        d3
-          .axisLeft(this.brakeYScale)
+        axisLeft(this.brakeYScale)
           .tickValues([0, 50, 100])
           .tickSize(-chartWidth)
           .tickFormat(() => ''),
@@ -947,8 +902,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .append('g')
       .attr('class', 'y-axis')
       .call(
-        d3
-          .axisLeft(this.rpmYScale)
+        axisLeft(this.rpmYScale)
           .tickValues(rpmTicks)
           .tickFormat((d) => `${Number(d) / 1000}`),
       );
@@ -969,7 +923,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     const throttleAxis = this.throttleGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisRight(this.throttleYScale).ticks(5));
+      .call(axisRight(this.throttleYScale).ticks(5));
 
     throttleAxis.attr('transform', `translate(${chartWidth},0)`);
 
@@ -988,7 +942,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     this.brakeGroup
       .append('g')
       .attr('class', 'y-axis')
-      .call(d3.axisLeft(this.brakeYScale).tickValues([0, 50, 100]));
+      .call(axisLeft(this.brakeYScale).tickValues([0, 50, 100]));
 
     this.brakeGroup
       .append('text')
@@ -1008,9 +962,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Speed line
     //
 
-    const speedLine = d3
-      .line<any>()
-      .curve(d3.curveLinear)
+    const speedLine = line<any>()
+      .curve(curveLinear)
       .x((d) => this.xScale(Number(d.d)))
       .y((d) => this.speedYScale(Number(d.speed)));
 
@@ -1018,28 +971,25 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Delta line
     //
 
-    const deltaLine = d3
-      .line<{ d: number; delta: number }>()
+    const deltaLine = line<{ d: number; delta: number }>()
       .defined((d) => d.delta != null)
       .x((d) => this.xScale(d.d))
       .y((d) => this.deltaYScale(d.delta))
-      .curve(d3.curveLinear);
+      .curve(curveLinear);
 
-    const deltaArea = d3
-      .area<{ d: number; delta: number }>()
+    const deltaArea = area<{ d: number; delta: number }>()
       .defined((d) => d.delta != null)
       .x((d) => this.xScale(d.d))
       .y0(() => this.deltaYScale(0))
       .y1((d) => this.deltaYScale(d.delta))
-      .curve(d3.curveLinear);
+      .curve(curveLinear);
 
     //
     // RPM line
     //
 
-    const rpmLine = d3
-      .line<any>()
-      .curve(d3.curveLinear)
+    const rpmLine = line<any>()
+      .curve(curveLinear)
       .x((d) => this.xScale(Number(d.d)))
       .y((d) => this.rpmYScale(Number(d.rpm)));
 
@@ -1047,15 +997,13 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
     // Throttle line
     //
 
-    const throttleLine = d3
-      .line<any>()
-      .curve(d3.curveLinear)
+    const throttleLine = line<any>()
+      .curve(curveLinear)
       .x((d) => this.xScale(Number(d.d)))
       .y((d) => this.throttleYScale(Number(d.throttle)));
 
-    const brakeLine = d3
-      .line<any>()
-      .curve(d3.curveLinear)
+    const brakeLine = line<any>()
+      .curve(curveLinear)
       .x((d) => this.xScale(Number(d.d)))
       .y((d) => this.brakeYScale(Number(d.brake)));
 
@@ -1433,9 +1381,8 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${graphBottom})`)
       .call(
-        d3
-          .axisBottom(this.xScale)
-          .tickValues(d3.range(0, maxDistance + 1, 500))
+        axisBottom(this.xScale)
+          .tickValues(range(0, maxDistance + 1, 500))
           .tickFormat((d) => `${d}`),
       );
   }
@@ -1541,7 +1488,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   }
 
   private drawSectorMarkers(
-    root: d3.Selection<SVGGElement, unknown, null, undefined>,
+    root: Selection<SVGGElement, unknown, null, undefined>,
     chartHeight: number,
   ): void {
     const boundaries = [
@@ -1645,7 +1592,7 @@ export class TelemetryCanvasComponent implements AfterViewInit, OnChanges {
   }
 
   private createHoverMarker(
-    group: d3.Selection<SVGGElement, unknown, null, undefined>,
+    group: Selection<SVGGElement, unknown, null, undefined>,
     color: string,
   ) {
     return group
