@@ -141,16 +141,24 @@
   color: #8d8d8d;
 }
 
+// .material-symbols-rounded {
+//   font-size: 22px;
+
+//   line-height: 20px;
+
+//   font-variation-settings:
+//     "FILL" 1,
+//     "wght" 400,
+//     "GRAD" 0,
+//     "opsz" 24;
+// }
+
 .material-symbols-rounded {
   font-size: 22px;
 
-  line-height: 20px;
+  font-weight: 400;
 
-  font-variation-settings:
-    "FILL" 1,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
+  line-height: 20px;
 }
 
 /* ==========================================================

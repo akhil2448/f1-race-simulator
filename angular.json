@@ -32,7 +32,10 @@
                 "output": "/"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "src/assets/fonts/material-symbols/material-symbols.css"
+            ],
             "scripts": []
           },
           "configurations": {

@@ -7,7 +7,6 @@ import {
   ElementRef,
   QueryList,
   ViewChildren,
-  NgZone,
 } from '@angular/core';
 import { SupportButtonComponent } from '../../shared/components/support-button/support-button.component';
 import { RaceContextService } from '../../core/services/race-context.service';
@@ -23,6 +22,7 @@ export interface Feature {
   type: 'video' | 'image';
 
   mediaUrl: string;
+  posterUrl?: string;
 }
 
 @Component({
@@ -38,7 +38,6 @@ export interface Feature {
 })
 export class HomeComponent implements AfterViewInit {
   constructor(
-    private ngZone: NgZone,
     private router: Router,
     private raceContext: RaceContextService,
     public pwaService: PwaService,
@@ -62,6 +61,7 @@ export class HomeComponent implements AfterViewInit {
         '* Position gaps and intervals are calculated using FIA TIMING-LOOP principles',
       type: 'video',
       mediaUrl: 'assets/features/live-leaderboard.mp4',
+      posterUrl: 'assets/features/live-leaderboard-poster.webp',
     },
     // {
     //   title: 'Controls Area',
@@ -76,6 +76,7 @@ export class HomeComponent implements AfterViewInit {
         'Watch every driver navigate the circuit with real-time car positioning',
       type: 'video',
       mediaUrl: 'assets/features/track-map.mp4',
+      posterUrl: 'assets/features/track-map-poster.webp',
     },
     // {
     //   title: 'Race Control Messages',
@@ -105,20 +106,21 @@ export class HomeComponent implements AfterViewInit {
       description: 'Dive deeper into speed, throttle, brake, RPM and gear data',
       type: 'video',
       mediaUrl: 'assets/features/driver-telemetry.mp4',
+      posterUrl: 'assets/features/driver-telemetry-poster.webp',
     },
     {
       title: 'Red Flag Seek',
       description:
         'Jump directly to the race restart point when a red flag interrupts the session',
       type: 'image',
-      mediaUrl: 'assets/features/redflag-seek.png',
+      mediaUrl: 'assets/features/redflag-seek.webp',
     },
     {
       title: 'FIA Official Classification',
       description:
         'View the official FIA race classification, Fastest lap, and Championship standings at the chequered flag',
       type: 'image',
-      mediaUrl: 'assets/features/final-classification.png',
+      mediaUrl: 'assets/features/final-classification.webp',
     },
 
     {
@@ -128,14 +130,16 @@ export class HomeComponent implements AfterViewInit {
       extraNote2: `* Race Management - Explore recommended clean race laps (or) choose your own laps.`,
       type: 'video',
       mediaUrl: 'assets/features/performance-lab.mp4',
+      posterUrl: 'assets/features/performance-lab-poster.webp',
     },
 
     {
       title: 'Analyze Race Performance',
-      description: 'Choose and compare your own race laps',
-      extraNote: '* Select up to two laps from the race performance chart.',
+      description: 'Compare your lap choices',
+      extraNote: '* Select up to two laps from the performance chart.',
       type: 'video',
       mediaUrl: 'assets/features/analyze-race-performance.mp4',
+      posterUrl: 'assets/features/analyze-race-performance-poster.webp',
     },
 
     {
@@ -146,6 +150,7 @@ export class HomeComponent implements AfterViewInit {
         '* Hover over the telemetry graphs to view the per frame telemtry info.',
       type: 'video',
       mediaUrl: 'assets/features/comparison-telemetry.mp4',
+      posterUrl: 'assets/features/comparison-telemetry-poster.webp',
     },
   ];
 
@@ -154,22 +159,57 @@ export class HomeComponent implements AfterViewInit {
 
   visibleSections = new Set<number>();
 
+  // ngAfterViewInit(): void {
+  //   // window.addEventListener(
+  //   //   'wheel',
+  //   //   () => {
+  //   //     document.querySelectorAll('video').forEach((video) => {
+  //   //       const v = video as HTMLVideoElement;
+
+  //   //       v.muted = true;
+  //   //       v.play()
+  //   //         .then(() => v.pause())
+  //   //         .catch(() => {});
+  //   //     });
+  //   //   },
+  //   //   { once: true },
+  //   // );
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         const index = Number(entry.target.getAttribute('data-index'));
+
+  //         const video = entry.target.querySelector(
+  //           'video',
+  //         ) as HTMLVideoElement | null;
+
+  //         if (entry.isIntersecting) {
+  //           this.visibleSections.add(index);
+
+  //           if (video) {
+  //             // video.currentTime = 0;
+
+  //             video.play().catch(() => {});
+  //           }
+  //         } else {
+  //           if (video) {
+  //             video.pause();
+  //           }
+  //         }
+  //       });
+  //     },
+  //     {
+  //       threshold: 0.7,
+  //     },
+  //   );
+
+  //   this.featureSections.forEach((section) => {
+  //     observer.observe(section.nativeElement);
+  //   });
+  // }
+
   ngAfterViewInit(): void {
-    // window.addEventListener(
-    //   'wheel',
-    //   () => {
-    //     document.querySelectorAll('video').forEach((video) => {
-    //       const v = video as HTMLVideoElement;
-
-    //       v.muted = true;
-    //       v.play()
-    //         .then(() => v.pause())
-    //         .catch(() => {});
-    //     });
-    //   },
-    //   { once: true },
-    // );
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -183,7 +223,8 @@ export class HomeComponent implements AfterViewInit {
             this.visibleSections.add(index);
 
             if (video) {
-              // video.currentTime = 0;
+              video.muted = true;
+              video.playsInline = true;
 
               video.play().catch(() => {});
             }
@@ -202,6 +243,37 @@ export class HomeComponent implements AfterViewInit {
     this.featureSections.forEach((section) => {
       observer.observe(section.nativeElement);
     });
+
+    // Unlock autoplay on the first user scroll,
+    // but ONLY for videos currently visible on screen.
+    window.addEventListener(
+      'wheel',
+      () => {
+        this.featureSections.forEach((section) => {
+          const rect = section.nativeElement.getBoundingClientRect();
+
+          const isVisible =
+            rect.top < window.innerHeight * 0.8 &&
+            rect.bottom > window.innerHeight * 0.2;
+
+          if (!isVisible) {
+            return;
+          }
+
+          const video = section.nativeElement.querySelector(
+            'video',
+          ) as HTMLVideoElement | null;
+
+          if (video) {
+            video.muted = true;
+            video.playsInline = true;
+
+            video.play().catch(() => {});
+          }
+        });
+      },
+      { once: true },
+    );
   }
 
   goToRaceSelection(): void {
