@@ -18,7 +18,7 @@ import {
   GraphicComponent,
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
-import { EChartsOption, ECharts, LineSeriesOption } from 'echarts';
+import type { EChartsOption, ECharts, LineSeriesOption } from 'echarts';
 
 import {
   RaceAnalyzerResponse,
