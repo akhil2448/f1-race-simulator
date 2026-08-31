@@ -9,7 +9,7 @@
 @include mat.core();
 
 // Define the theme object.
-$f1-race-simulator-theme: mat.define-theme(
+$pitwallf1-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
@@ -26,15 +26,15 @@ $f1-race-simulator-theme: mat.define-theme(
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 :root {
-  @include mat.all-component-themes($f1-race-simulator-theme);
+  @include mat.all-component-themes($pitwallf1-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
 // For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
-// @include mat.typography-hierarchy($f1-race-simulator-theme);
+// @include mat.typography-hierarchy($pitwallf1-theme);
 
 // Comment out the line below if you want to use the deprecated `color` inputs.
-// @include mat.color-variants-backwards-compatibility($f1-race-simulator-theme);
+// @include mat.color-variants-backwards-compatibility($pitwallf1-theme);
 @font-face {
   font-family: "KHInterference";
   src: url("/assets/fonts/KHInterference-Regular.otf") format("opentype");
@@ -600,4 +600,3 @@ body {
     margin-left: 4px;
   }
 }
-

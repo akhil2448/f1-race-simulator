@@ -14,7 +14,7 @@ import { SplashScreenComponent } from './pages/splash-screen/splash-screen.compo
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'f1-race-simulator';
+  title = 'pitwallf1';
 
   showInstallDialog = signal(true);
 

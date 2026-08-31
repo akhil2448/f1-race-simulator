@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "f1-race-simulator": {
+    "pitwallf1": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/f1-race-simulator",
+            "outputPath": "dist/pitwallf1",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -70,10 +70,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "f1-race-simulator:build:production"
+              "buildTarget": "pitwallf1:build:production"
             },
             "development": {
-              "buildTarget": "f1-race-simulator:build:development"
+              "buildTarget": "pitwallf1:build:development"
             }
           },
           "defaultConfiguration": "development"
