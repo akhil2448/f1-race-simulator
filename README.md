@@ -347,3 +347,4 @@ The backend is responsible for session loading, caching, race reconstruction, te
 ## PitWall in one sentence
 
 > **A Formula 1 time-series visualization platform that turns historic race data into an interactive replay and performance-analysis experience.**
+
