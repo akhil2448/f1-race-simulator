@@ -805,13 +805,9 @@ export class RacePerformanceChartComponent {
     graphics.push({
       type: 'text',
 
-      left: chartLeft - 34,
+      left: chartLeft - 40,
 
-      bottom:
-        responsive.rainTimeline.stripBottom +
-        responsive.rainTimeline.stripHeight +
-        responsive.rainTimeline.fontSize +
-        4,
+      bottom: responsive.rainTimeline.stripBottom,
 
       rotation: Math.PI / 2,
 
@@ -820,7 +816,7 @@ export class RacePerformanceChartComponent {
         fill: '#ffffff',
         font: `${responsive.rainTimeline.fontSize}px Formula1Bold`,
         textAlign: 'center',
-        textVerticalAlign: 'middle',
+        textVerticalAlign: 'bottom',
         textShadowColor: 'rgba(0,0,0,.8)',
         textShadowBlur: 4,
       },
