@@ -795,114 +795,157 @@ export class RacePerformanceChartComponent {
 
     const responsive = this.getResponsiveChartSettings();
 
-    return this.analysis.trackMetadata.rainRanges.flatMap((range) => {
-      const startX = this.chart.convertToPixel(
-        { xAxisIndex: 0 },
-        range.startLap,
-      );
+    const graphics: any[] = [];
 
-      const endLapPixel = Math.min(
-        range.endLap + 1,
-        this.analysis.race.totalLaps,
-      );
+    // ---------------------------------------------------------
+    // Shared rain-section label
+    // ---------------------------------------------------------
+    const chartLeft = this.chart.convertToPixel({ xAxisIndex: 0 }, 1);
 
-      const endX = this.chart.convertToPixel({ xAxisIndex: 0 }, endLapPixel);
+    graphics.push({
+      type: 'text',
 
-      const label =
-        range.startLap === range.endLap
-          ? `🌧 Rain • ${range.startLap} Lap`
-          : `🌧 Rain • ${range.startLap} - ${range.endLap} Laps`;
+      left: chartLeft - 34,
 
-      const labelWidth = echarts.format.getTextRect(
-        label,
-        `${responsive.rainTimeline.fontSize}px Formula1Bold`,
-      ).width;
+      bottom:
+        responsive.rainTimeline.stripBottom +
+        responsive.rainTimeline.stripHeight +
+        responsive.rainTimeline.fontSize +
+        4,
 
-      const chartLeft = this.chart.convertToPixel({ xAxisIndex: 0 }, 1);
+      rotation: Math.PI / 2,
 
-      const chartRight = this.chart.convertToPixel(
-        { xAxisIndex: 0 },
-        this.analysis.race.totalLaps,
-      );
+      style: {
+        text: '🌧 Rain Laps',
+        fill: '#ffffff',
+        font: `${responsive.rainTimeline.fontSize}px Formula1Bold`,
+        textAlign: 'center',
+        textVerticalAlign: 'middle',
+        textShadowColor: 'rgba(0,0,0,.8)',
+        textShadowBlur: 4,
+      },
 
-      let labelLeft = (startX + endX) / 2 - labelWidth / 2;
-
-      const margin = 6;
-
-      // Prevent clipping on the left edge
-      if (labelLeft < chartLeft + margin) {
-        labelLeft = chartLeft + margin;
-      }
-
-      // Prevent clipping on the right edge
-      if (labelLeft + labelWidth > chartRight - margin) {
-        labelLeft = chartRight - labelWidth - margin;
-      }
-
-      const width = Math.max(1, endX - startX);
-
-      return [
-        {
-          type: 'rect',
-
-          left: startX,
-
-          bottom: responsive.rainTimeline.stripBottom,
-
-          shape: {
-            width,
-            height: responsive.rainTimeline.stripHeight,
-            r: 4,
-          },
-
-          style: {
-            fill: {
-              image:
-                'data:image/svg+xml;utf8,' +
-                encodeURIComponent(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">
-                    <rect width="12" height="12" fill="#2b78ff"/>
-                    <path d="M-2 12 L12 -2 M2 14 L16 0"
-                          stroke="rgba(255,255,255,0.30)"
-                          stroke-width="3"/>
-                </svg>`),
-              repeat: 'repeat',
-            },
-          },
-
-          silent: true,
-        },
-
-        {
-          type: 'text',
-
-          left: labelLeft,
-
-          bottom:
-            responsive.rainTimeline.stripBottom +
-            responsive.rainTimeline.stripHeight +
-            4,
-
-          style: {
-            text: label,
-
-            width: labelWidth,
-
-            textAlign: 'center',
-
-            fill: '#ffffff',
-
-            font: `${responsive.rainTimeline.fontSize}px Formula1Bold`,
-
-            textShadowColor: 'rgba(0,0,0,.8)',
-
-            textShadowBlur: 4,
-          },
-
-          silent: true,
-        },
-      ];
+      silent: true,
     });
+
+    // ---------------------------------------------------------
+    // Individual rain ranges
+    // ---------------------------------------------------------
+    graphics.push(
+      ...this.analysis.trackMetadata.rainRanges.flatMap((range) => {
+        const startX = this.chart.convertToPixel(
+          { xAxisIndex: 0 },
+          range.startLap,
+        );
+
+        const endLapPixel = Math.min(
+          range.endLap + 1,
+          this.analysis.race.totalLaps,
+        );
+
+        const endX = this.chart.convertToPixel({ xAxisIndex: 0 }, endLapPixel);
+
+        // Only display the actual lap/range.
+        // "🌧 Rain" is now shown once as the shared vertical label.
+        const label =
+          range.startLap === range.endLap
+            ? `${range.startLap}`
+            : `${range.startLap} - ${range.endLap}`;
+
+        const labelWidth = echarts.format.getTextRect(
+          label,
+          `${responsive.rainTimeline.fontSize}px Formula1Bold`,
+        ).width;
+
+        const chartRight = this.chart.convertToPixel(
+          { xAxisIndex: 0 },
+          this.analysis.race.totalLaps,
+        );
+
+        let labelLeft = (startX + endX) / 2 - labelWidth / 2;
+
+        const margin = 6;
+
+        // Prevent clipping on the left edge
+        if (labelLeft < chartLeft + margin) {
+          labelLeft = chartLeft + margin;
+        }
+
+        // Prevent clipping on the right edge
+        if (labelLeft + labelWidth > chartRight - margin) {
+          labelLeft = chartRight - labelWidth - margin;
+        }
+
+        const width = Math.max(1, endX - startX);
+
+        return [
+          {
+            type: 'rect',
+
+            left: startX,
+
+            bottom: responsive.rainTimeline.stripBottom,
+
+            shape: {
+              width,
+              height: responsive.rainTimeline.stripHeight,
+              r: 4,
+            },
+
+            style: {
+              fill: {
+                image:
+                  'data:image/svg+xml;utf8,' +
+                  encodeURIComponent(`
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       width="12"
+                       height="12">
+                    <rect
+                      width="12"
+                      height="12"
+                      fill="#2b78ff"
+                    />
+                    <path
+                      d="M-2 12 L12 -2 M2 14 L16 0"
+                      stroke="rgba(255,255,255,0.30)"
+                      stroke-width="3"
+                    />
+                  </svg>
+                `),
+                repeat: 'repeat',
+              },
+            },
+
+            silent: true,
+          },
+
+          {
+            type: 'text',
+
+            left: labelLeft,
+
+            bottom:
+              responsive.rainTimeline.stripBottom +
+              responsive.rainTimeline.stripHeight +
+              4,
+
+            style: {
+              text: label,
+              width: labelWidth,
+              textAlign: 'center',
+              fill: '#ffffff',
+              font: `${responsive.rainTimeline.fontSize}px Formula1Bold`,
+              textShadowColor: 'rgba(0,0,0,.8)',
+              textShadowBlur: 4,
+            },
+
+            silent: true,
+          },
+        ];
+      }),
+    );
+
+    return graphics;
   }
 
   private refreshRainTimeline(): void {
