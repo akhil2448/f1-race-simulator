@@ -104,6 +104,42 @@ body {
   font-weight: 500; /* Light */
 }
 
+/* =========================================================
+   PitWall Global Scrollbar
+   ========================================================= */
+
+html {
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: #e10600 transparent;
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e10600;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff2b2b;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* ===== App Footer ===== */
 
 .app-footer-separator {
