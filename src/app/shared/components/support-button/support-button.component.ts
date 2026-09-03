@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-support-button',
@@ -9,12 +8,29 @@ import { NgClass } from '@angular/common';
 })
 export class SupportButtonComponent {
   @Input() text = 'Support Me';
+  @Input() size: 'normal' | 'compact' | 'trackmap-header' = 'normal';
 
   buyMeCoffeeUrl = 'https://buymeacoffee.com/pitwallf1';
 
-  @Input() size: 'normal' | 'compact' | 'trackmap-header' = 'normal';
+  isClicked = false;
+  hoverSuppressed = false;
+
+  onPointerEnter(): void {
+    this.hoverSuppressed = false;
+  }
+
+  onPointerLeave(): void {
+    this.hoverSuppressed = false;
+  }
 
   openSupportPage(): void {
-    window.open(this.buyMeCoffeeUrl, '_blank', 'noopener,noreferrer');
+    this.isClicked = true;
+
+    setTimeout(() => {
+      this.isClicked = false;
+      this.hoverSuppressed = true;
+
+      window.open(this.buyMeCoffeeUrl, '_blank', 'noopener,noreferrer');
+    }, 100);
   }
 }

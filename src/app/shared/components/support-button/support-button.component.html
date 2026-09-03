@@ -3,6 +3,10 @@
   class="support-button"
   [class.compact]="size === 'compact'"
   [class.trackmap-header]="size === 'trackmap-header'"
+  [class.clicked]="isClicked"
+  [class.hover-suppressed]="hoverSuppressed"
+  (mouseenter)="onPointerEnter()"
+  (mouseleave)="onPointerLeave()"
   (click)="openSupportPage()"
 >
   <span class="icon-wrapper">

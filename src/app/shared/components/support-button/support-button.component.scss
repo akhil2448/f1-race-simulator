@@ -30,8 +30,9 @@
     box-shadow 0.25s ease,
     transform 0.2s ease;
 
+  /* Desktop: show hover state only on real hover devices */
   @media (hover: hover) and (pointer: fine) {
-    &:hover {
+    &:not(.clicked):not(.hover-suppressed):hover {
       background: #ffdd00;
       color: #000;
 
@@ -48,6 +49,26 @@
       .icon-hover {
         opacity: 1;
       }
+    }
+  }
+
+  /* Click/tap feedback */
+  &.clicked {
+    background: #ffdd00;
+    color: #000;
+
+    border-color: #ffdd00;
+
+    box-shadow: 0 0 16px rgba(255, 221, 0, 0.35);
+
+    transform: translateY(-1px);
+
+    .icon-default {
+      opacity: 0;
+    }
+
+    .icon-hover {
+      opacity: 1;
     }
   }
 }
